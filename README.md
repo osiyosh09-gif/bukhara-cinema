@@ -3,11 +3,16 @@
 Windows учун мустақил профессионал видеомуҳаррир.
 Интерфейс тиллари: ўзбекча (кирилл ва лотин) ва русча.
 
-> **Ҳозирги ҳолат: 0-босқич (версия 0.1.0).** Фақат интерфейс қобиғи тайёр.
-> Монтаж функциялари ҳали ишламайди: улар менюда кулранг (ўчирилган) ва
-> қайси босқичда келиши ёзилган. Тўлиқ рўйхат: [docs/STATUS.md](docs/STATUS.md).
+> **Ҳозирги ҳолат: 1-босқич (версия 0.2.0).** Интерфейс, лойиҳани сақлаш/очиш
+> ва медиа кутубхонаси ишлайди. Timeline’да монтаж, ижро ва экспорт ҳали
+> ишламайди: улар менюда кулранг (ўчирилган) ва қайси босқичда келиши ёзилган. Тўлиқ рўйхат: [docs/STATUS.md](docs/STATUS.md).
 
 ## Дастурни ўрнатиш (оддий фойдаланувчи учун)
+
+Энг осон йўл: репозиторийнинг **Releases** бўлимидан охирги версиянинг
+`BukharaCinema-Setup-….exe` файлини юклаб олинг ва ишга туширинг.
+
+Синов йиғмалари (Releases’да ҳали йўқ версиялар):
 
 1. GitHub’да шу репозиторийнинг **Actions** бўлимини очинг.
 2. Энг охирги муваффақиятли (яшил белгили) **build** ишини танланг.
@@ -28,7 +33,8 @@ Windows учун мустақил профессионал видеомуҳар�
 ## Технологиялар
 
 - C++17, Qt 6 (Widgets) — интерфейс
-- MLT + FFmpeg (LGPL) — видео двигатель (1–4-босқичларда қўшилади)
+- FFmpeg (LGPL йиғмаси) — медиа файлларни ўқиш, thumbnail (1-босқичдан)
+- MLT (LGPL) — timeline, preview ва экспорт двигатели (2-босқичдан)
 - Inno Setup — Windows ўрнатувчиси
 - GitHub Actions — Windows’да автомат йиғиш, тест ва ўрнатувчи
 
@@ -38,14 +44,16 @@ Windows учун мустақил профессионал видеомуҳар�
 
 ```bash
 # Linux (Ubuntu 24.04)
-sudo apt install qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools ninja-build
+sudo apt install qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools ninja-build \
+  libavformat-dev libavcodec-dev libavutil-dev libswscale-dev ffmpeg pkg-config
 cmake -S . -B build -G Ninja
 cmake --build build
 ctest --test-dir build --output-on-failure
 ./build/BukharaCinema
 ```
 
-Windows’да MSYS2 UCRT64 муҳити ишлатилади; аниқ қадамлар
+Windows’да MSYS2 UCRT64 муҳити ва BtbN’нинг FFmpeg LGPL йиғмаси
+(`-DFFMPEG_ROOT=…`) ишлатилади; аниқ қадамлар
 [.github/workflows/build.yml](.github/workflows/build.yml) да.
 
 ### Таржималар
@@ -60,6 +68,10 @@ python3 tools/translations.py                       # таржималарни �
 ```
 
 `translations_complete` тести таржимаси йўқ матн қолса хато беради.
+
+### Версия чиқариш
+
+`v0.2.0` каби тег қўйилса, GitHub Actions ўрнатувчини **Releases** бўлимига ўзи жойлайди.
 
 ### Қоидалар
 
