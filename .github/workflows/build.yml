@@ -60,10 +60,12 @@ jobs:
         run: |
           # BtbN/FFmpeg-Builds publishes LGPL-only builds (no x264/x265 or other GPL parts).
           $assets = (gh release view latest -R BtbN/FFmpeg-Builds --json assets | ConvertFrom-Json).assets
-          $asset = $assets | Where-Object { $_.name -match '^ffmpeg-n7\.1-latest-win64-lgpl-shared-7\.1\.zip$' } | Select-Object -First 1
+          # Pinned to the FFmpeg 8.1 release branch; BtbN only keeps the two newest branches,
+          # so fall back to the newest numbered release branch (never "master").
+          $asset = $assets | Where-Object { $_.name -match '^ffmpeg-n8\.1-latest-win64-lgpl-shared-8\.1\.zip$' } | Select-Object -First 1
           if (-not $asset) {
-            $asset = $assets | Where-Object { $_.name -match '^ffmpeg-n7\.\d+-latest-win64-lgpl-shared-7\.\d+\.zip$' } |
-                     Sort-Object name -Descending | Select-Object -First 1
+            $asset = $assets | Where-Object { $_.name -match '^ffmpeg-n\d+\.\d+-latest-win64-lgpl-shared-\d+\.\d+\.zip$' } |
+                     Sort-Object { [version]($_.name -replace '^ffmpeg-n(\d+\.\d+)-.*$','$1') } -Descending | Select-Object -First 1
           }
           if (-not $asset) { $assets.name; throw "No LGPL shared win64 FFmpeg build found" }
           Write-Host "Using $($asset.name)"
