@@ -1,7 +1,9 @@
 name: build
 
 on:
+  # Branch pushes are covered by their pull request; build main directly.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 

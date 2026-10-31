@@ -16,6 +16,12 @@ The Windows build writes the exact list of packaged DLLs, their MSYS2 package,
 version and license to `licenses/components.txt` and copies each package's
 license files into `licenses/<package>/`.
 
+## Build tools (not shipped inside the program)
+
+| Tool | License | Note |
+| --- | --- | --- |
+| Inno Setup 6.7 | Free for **non-commercial** use only | Creates the installer. Commercial distribution needs a paid Inno Setup license, or a switch to NSIS (zlib license, free for any use). |
+
 ## Planned (not shipped yet)
 
 | Component | License | Phase | Note |
