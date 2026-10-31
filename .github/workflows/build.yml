@@ -173,9 +173,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "${{ github.ref_name }}"
-          gh release create $tag (Get-ChildItem out\*).FullName --title "BUKHARA CINEMA $tag" `
-            --notes "Windows 10/11 (64-bit). BukharaCinema-Setup-*.exe — installer; BukharaCinema-portable-*.zip — no installation needed." `
-            --prerelease
+          $files = (Get-ChildItem out\*).FullName
+          # The release may already exist when it was created on github.com (which also creates the tag).
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $files --clobber
+          } else {
+            gh release create $tag $files --title "BUKHARA CINEMA $tag" `
+              --notes "Windows 10/11 (64-bit). BukharaCinema-Setup-*.exe — installer; BukharaCinema-portable-*.zip — no installation needed." `
+              --prerelease
+          }
+          if ($LASTEXITCODE -ne 0) { throw "Publishing the release failed" }
 
       - uses: actions/upload-artifact@v4
         with:
