@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="bukhara-cinema.png">icons/bukhara-cinema.png</file>
+    </qresource>
+</RCC>
