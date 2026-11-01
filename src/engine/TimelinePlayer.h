@@ -2,7 +2,9 @@
 
 #include "core/Project.h"
 
+#include <QByteArray>
 #include <QHash>
+#include <QSet>
 #include <QImage>
 #include <QMutex>
 #include <QObject>
@@ -55,6 +57,9 @@ public:
     // Renders the composed frame at `frame`. Thread-safe, but returns a null
     // image while playing. Used for the paused Program monitor.
     QImage renderFrame(qint64 frame);
+    // Loudness (RMS, 0..1) of the mixed sound of one frame; -1 when not
+    // available. Used by tests now and by audio meters later.
+    double audioLevel(qint64 frame);
 
 signals:
     // Emitted in the GUI thread for each frame shown during playback.
@@ -69,6 +74,7 @@ public:
 private:
     void stopConsumer();
     Mlt::Producer *producerFor(const MediaItem &item, bool audio);
+    Mlt::Producer *titleProducer(const TitleData &title);
 
     mutable QMutex m_mutex; // guards the graph
     std::unique_ptr<Mlt::Profile> m_profile;
@@ -84,6 +90,9 @@ private:
         std::shared_ptr<Mlt::Producer> audio;
     };
     QHash<QUuid, Cached> m_producers;
+    // Rendered titles by content, so unchanged titles are not drawn again.
+    QHash<QByteArray, std::shared_ptr<Mlt::Producer>> m_titles;
+    QSet<QByteArray> m_usedTitles;
     SequenceSettings m_seq;
     qint64 m_duration = 0;
     QSize m_previewLimit{960, 540};

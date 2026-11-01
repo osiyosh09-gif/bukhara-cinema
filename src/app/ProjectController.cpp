@@ -28,17 +28,31 @@ constexpr int kProgramH = 540;
 class TimelineCommand : public QUndoCommand
 {
 public:
-    TimelineCommand(ProjectController *c, const QString &text, Timeline before, Timeline after)
-        : QUndoCommand(text), m_c(c), m_before(std::move(before)), m_after(std::move(after))
+    TimelineCommand(ProjectController *c, const QString &text, Timeline before, Timeline after,
+                    QString mergeKey = QString())
+        : QUndoCommand(text), m_c(c), m_before(std::move(before)), m_after(std::move(after)),
+          m_mergeKey(std::move(mergeKey))
     {
     }
     void undo() override { m_c->applyTimeline(m_before); }
     void redo() override { m_c->applyTimeline(m_after); }
+    // Commands with a merge key (typing in a title, dragging a volume
+    // slider) join the previous command with the same key.
+    int id() const override { return m_mergeKey.isEmpty() ? -1 : 1; }
+    bool mergeWith(const QUndoCommand *other) override
+    {
+        const auto *o = static_cast<const TimelineCommand *>(other);
+        if (o->m_mergeKey != m_mergeKey)
+            return false;
+        m_after = o->m_after;
+        return true;
+    }
 
 private:
     ProjectController *m_c;
     Timeline m_before;
     Timeline m_after;
+    QString m_mergeKey;
 };
 
 ProjectController::ProjectController(QObject *parent)
@@ -470,6 +484,7 @@ void ProjectController::resetUndo()
 
 void ProjectController::syncPlayer()
 {
+    ++m_graphRev;
     if (m_player)
         m_player->setProject(m_project); // stops playback; the graph follows the edit
 }
@@ -483,12 +498,13 @@ void ProjectController::applyTimeline(const Timeline &t)
     requestProgramFrame();
 }
 
-bool ProjectController::editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn)
+bool ProjectController::editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn,
+                                     const QString &mergeKey)
 {
     Timeline after = m_project.timeline;
     if (!fn(after) || after == m_project.timeline)
         return false;
-    m_undo->push(new TimelineCommand(this, text, m_project.timeline, after));
+    m_undo->push(new TimelineCommand(this, text, m_project.timeline, after, mergeKey));
     return true;
 }
 
@@ -581,12 +597,75 @@ void ProjectController::setTrackFlag(int track, const QString &flag, bool on)
         bool *f = flag == QLatin1String("locked") ? &tr.locked
                   : flag == QLatin1String("muted") ? &tr.muted
                   : flag == QLatin1String("hidden") ? &tr.hidden
+                  : flag == QLatin1String("solo")   ? &tr.solo
                                                     : nullptr;
+        if (f == &tr.solo && tr.kind != Timeline::Kind::Audio)
+            return false;
         if (!f || *f == on)
             return false;
         *f = on;
         return true;
     });
+}
+
+QUuid ProjectController::addTitle(qint64 start)
+{
+    QUuid id;
+    const double fps = m_project.sequence.fps();
+    const qint64 length = std::max<qint64>(1, qint64(std::llround(5 * (fps > 0 ? fps : 25))));
+    start = std::max<qint64>(0, start);
+    editTimeline(tr("Add title"), [&](Timeline &t) {
+        // Highest free unlocked video track, so the title lies over the picture.
+        int n = -1;
+        for (int i = t.count(Timeline::Kind::Video) - 1; i >= 0 && n < 0; --i) {
+            const TimelineTrack &track = t.tracks[t.indexOf(Timeline::Kind::Video, i)];
+            if (track.locked)
+                continue;
+            const bool busy = std::any_of(track.clips.begin(), track.clips.end(), [&](const TimelineClip &c) {
+                return c.start < start + length && c.end() > start;
+            });
+            if (!busy)
+                n = i;
+        }
+        if (n < 0) {
+            t.addTrack(Timeline::Kind::Video);
+            n = t.count(Timeline::Kind::Video) - 1;
+        }
+        TitleData title;
+        title.text = tr("Title");
+        id = t.placeTitle(title, n, start, length);
+        return !id.isNull();
+    });
+    return id;
+}
+
+bool ProjectController::setClipTitle(const QUuid &clipId, const TitleData &title)
+{
+    return editTimeline(tr("Edit title"), [&](Timeline &t) {
+        const Timeline::ClipRef r = t.find(clipId);
+        if (!r.isValid() || t.tracks[r.track].locked)
+            return false;
+        TimelineClip &c = t.tracks[r.track].clips[r.index];
+        if (!c.isTitle())
+            return false;
+        c.title = title;
+        c.title.size = std::clamp(c.title.size, 8, 400);
+        return true;
+    }, QStringLiteral("title:") + clipId.toString());
+}
+
+bool ProjectController::setClipAudio(const QUuid &clipId, double gainDb, qint64 fadeIn, qint64 fadeOut)
+{
+    return editTimeline(tr("Clip volume"), [&](Timeline &t) {
+        const Timeline::ClipRef r = t.find(clipId);
+        if (!r.isValid() || t.tracks[r.track].locked || t.tracks[r.track].kind != Timeline::Kind::Audio)
+            return false;
+        TimelineClip &c = t.tracks[r.track].clips[r.index];
+        c.gainDb = std::clamp(gainDb, -60.0, 12.0);
+        c.fadeIn = std::clamp<qint64>(fadeIn, 0, c.length);
+        c.fadeOut = std::clamp<qint64>(fadeOut, 0, c.length - c.fadeIn);
+        return true;
+    }, QStringLiteral("audio:") + clipId.toString());
 }
 
 void ProjectController::setPlayhead(qint64 frame)
@@ -657,27 +736,40 @@ void ProjectController::startProgramFrame()
 {
     m_framePending = false;
     const Timeline &tl = m_project.timeline;
-    QString path;
+    QString path;          // top media clip, for decoding without the engine
     qint64 timeUs = 0;
+    bool visible = false;  // anything to show at all
     for (const QUuid &cid : tl.clipsAt(m_playhead)) {
         const Timeline::ClipRef r = tl.find(cid);
         const TimelineTrack &track = tl.tracks[r.track];
         if (track.kind != Timeline::Kind::Video || track.hidden)
             continue;
         const TimelineClip &c = track.clips[r.index];
+        if (c.isTitle()) {
+            visible = true;
+            continue;
+        }
         const MediaItem *m = m_project.item(c.mediaId);
         if (!m || !isOnline(m->id))
             continue;
-        path = m->path;
-        const double fps = m_project.sequence.fps();
-        timeUs = fps > 0 ? qint64(std::llround((c.in + (m_playhead - c.start)) * 1e6 / fps)) : 0;
-        break;
+        visible = true;
+        if (path.isEmpty()) {
+            path = m->path;
+            const double fps = m_project.sequence.fps();
+            timeUs = fps > 0 ? qint64(std::llround((c.in + (m_playhead - c.start)) * 1e6 / fps)) : 0;
+        }
     }
-    const QString key = path + QLatin1Char('@') + QString::number(timeUs);
+    if (!m_player && path.isEmpty())
+        visible = false; // titles need the engine
+    // With the engine every layer counts, so any edit (graph revision) or
+    // playhead move asks for a new frame.
+    const QString key = !visible   ? QStringLiteral("none")
+                        : m_player ? QStringLiteral("engine:%1@%2").arg(m_graphRev).arg(m_playhead)
+                                   : path + QLatin1Char('@') + QString::number(timeUs);
     if (key == m_lastFrameKey)
         return;
     m_lastFrameKey = key;
-    if (path.isEmpty()) {
+    if (!visible) {
         emit programFrameReady({});
         return;
     }
@@ -689,7 +781,7 @@ void ProjectController::startProgramFrame()
         // The engine composes all tracks exactly like playback (and later
         // export); without it, decode the single top clip directly.
         QImage img = player ? player->renderFrame(frame) : QImage();
-        if (img.isNull())
+        if (img.isNull() && !path.isEmpty())
             img = MediaProbe::frameAt(path, timeUs, kProgramW, kProgramH);
         if (!self)
             return;

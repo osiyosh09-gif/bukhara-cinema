@@ -1,7 +1,12 @@
 #include "engine/TimelinePlayer.h"
 
+#include "engine/EngineServices.h"
+#include "engine/TitleRenderer.h"
+
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QDir>
+#include <QImageReader>
 #include <QMetaObject>
 #include <QMutexLocker>
 #include <QStringList>
@@ -9,6 +14,7 @@
 #include <mlt++/Mlt.h>
 
 #include <algorithm>
+#include <cmath>
 
 namespace bc {
 
@@ -48,13 +54,15 @@ bool Engine::init(QString *error)
         qputenv("MLT_PRESETS_PATH", QDir::toNativeSeparators(data + QStringLiteral("/presets/")).toLocal8Bit());
         break;
     }
-    Mlt::Repository *r = Mlt::Factory::init(repo.isEmpty() ? nullptr : repo.constData());
+    mlt_repository raw = mlt_factory_init(repo.isEmpty() ? nullptr : repo.constData());
+    Mlt::Repository *r = raw ? new Mlt::Repository(raw) : nullptr;
     if (!r) {
         if (error)
             *error = QStringLiteral("MLT modules could not be loaded");
         return false;
     }
     s_repo = r;
+    EngineServices::registerAll(raw);
     const QString missing = missingServices();
     if (!missing.isEmpty()) {
         if (error)
@@ -72,8 +80,13 @@ QString Engine::missingServices()
     QStringList missing;
     std::unique_ptr<Mlt::Properties> producers(s_repo->producers());
     std::unique_ptr<Mlt::Properties> consumers(s_repo->consumers());
-    for (const char *name : {"avformat", "hold", "color"}) {
+    std::unique_ptr<Mlt::Properties> transitions(s_repo->transitions());
+    for (const char *name : {"avformat", "color", "bc_still"}) {
         if (!producers || !producers->property_exists(name))
+            missing << QString::fromLatin1(name);
+    }
+    for (const char *name : {"composite", "mix"}) {
+        if (!transitions || !transitions->property_exists(name))
             missing << QString::fromLatin1(name);
     }
     if (!consumers || !consumers->property_exists("sdl2_audio"))
@@ -149,21 +162,26 @@ Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio)
     std::shared_ptr<Mlt::Producer> &p = audio ? c.audio : c.video;
     if (!p) {
         // MLT's loader adds the normalizing filters (scaling, colour conversion,
-        // resampling); the "avformat:" prefix makes it use FFmpeg for every
-        // file, images included, so the shipped LGPL module set is enough.
-        // A still image has a single frame, so it is wrapped in MLT's "hold"
-        // producer, which repeats that frame for the whole clip.
-        const bool still = item.info.kind == MediaInfo::Kind::Image;
-        const QByteArray resource = (still ? "hold:avformat:" : "avformat:") + item.path.toUtf8();
+        // resampling). Video and sound go through FFmpeg ("avformat:"); still
+        // pictures through our own "bc_still" producer, which keeps their
+        // transparency and shows them for the whole clip.
+        QByteArray resource;
+        if (item.info.kind == MediaInfo::Kind::Image) {
+            if (audio)
+                return nullptr;
+            QImageReader reader(item.path);
+            reader.setAutoTransform(true); // camera rotation (EXIF)
+            const QImage image = reader.read();
+            if (image.isNull())
+                return nullptr;
+            resource = EngineServices::stillResource(image);
+        } else {
+            resource = "avformat:" + item.path.toUtf8();
+        }
         p = std::make_shared<Mlt::Producer>(*m_profile, nullptr, resource.constData());
         if (!p->is_valid()) {
             p.reset();
             return nullptr;
-        }
-        if (still) {
-            // Long enough for any clip; the timeline limits the real length.
-            p->set("length", 0x7fffffff);
-            p->set("out", 0x7fffffff - 1);
         }
         // Each producer decodes only what it is used for.
         if (audio)
@@ -171,6 +189,25 @@ Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio)
         else
             p->set("audio_index", -1);
     }
+    return p.get();
+}
+
+Mlt::Producer *TimelinePlayer::titleProducer(const TitleData &title)
+{
+    const QByteArray key = QCryptographicHash::hash(
+        title.text.toUtf8() + '\0' + QByteArray::number(title.size) + '\0' + title.color.toUtf8() + '\0'
+            + QByteArray::number(int(title.position)) + QByteArray::number(int(title.box)),
+        QCryptographicHash::Sha1);
+    std::shared_ptr<Mlt::Producer> &p = m_titles[key];
+    if (!p) {
+        const QImage img = renderTitle(title, QSize(m_seq.width, m_seq.height));
+        p = std::make_shared<Mlt::Producer>(*m_profile, nullptr, EngineServices::stillResource(img).constData());
+        if (!p->is_valid()) {
+            m_titles.remove(key);
+            return nullptr;
+        }
+    }
+    m_usedTitles.insert(key);
     return p.get();
 }
 
@@ -185,6 +222,7 @@ void TimelinePlayer::setProject(const Project &project)
     if (!m_profile || seq != m_seq) {
         m_tractor.reset();
         m_producers.clear();
+        m_titles.clear();
         m_profile = std::make_unique<Mlt::Profile>();
         m_profile->set_width(seq.width);
         m_profile->set_height(seq.height);
@@ -207,6 +245,7 @@ void TimelinePlayer::setProject(const Project &project)
 
     const Timeline &tl = project.timeline;
     m_duration = tl.duration();
+    m_usedTitles.clear();
     const int bgLength = int(std::max<qint64>(1, m_duration));
 
     auto tractor = std::make_unique<Mlt::Tractor>(*m_profile);
@@ -225,10 +264,25 @@ void TimelinePlayer::setProject(const Project &project)
         for (const TimelineClip &c : track.clips) {
             if (c.start > pos)
                 pl.blank(int(c.start - pos - 1));
-            const MediaItem *m = project.item(c.mediaId);
-            Mlt::Producer *p = m ? producerFor(*m, audio) : nullptr;
+            Mlt::Producer *p = nullptr;
+            if (c.isTitle()) {
+                p = audio ? nullptr : titleProducer(c.title);
+            } else if (const MediaItem *m = project.item(c.mediaId)) {
+                p = producerFor(*m, audio);
+            }
             if (p) {
-                std::unique_ptr<Mlt::Producer> cut(p->cut(int(c.in), int(c.in + c.length - 1)));
+                const int in = c.isTitle() ? 0 : int(c.in);
+                std::unique_ptr<Mlt::Producer> cut(p->cut(in, int(in + c.length - 1)));
+                if (audio && (c.gainDb != 0 || c.fadeIn > 0 || c.fadeOut > 0)) {
+                    Mlt::Filter gain(*m_profile, "bc_gain");
+                    if (gain.is_valid()) {
+                        gain.set("gain_db", c.gainDb);
+                        gain.set("fade_in", double(c.fadeIn));
+                        gain.set("fade_out", double(c.fadeOut));
+                        gain.set_in_and_out(in, int(in + c.length - 1));
+                        cut->attach(gain);
+                    }
+                }
                 pl.append(*cut);
             } else {
                 pl.blank(int(c.length - 1)); // missing file: gap
@@ -237,15 +291,17 @@ void TimelinePlayer::setProject(const Project &project)
         }
     };
 
-    // MLT shows the picture of the highest non-empty track, so V1 goes
-    // above the audio tracks and V2 above V1. Sound is mixed onto track 0.
+    // Sound of every audio track is mixed onto track 0; pictures of the video
+    // tracks are composited onto track 0 from V1 upwards, so V2 lies over V1
+    // and transparent parts (titles, PNG) show what is below.
     int index = 1;
-    for (const TimelineTrack &t : tl.tracks) {
+    for (int ti = 0; ti < tl.tracks.size(); ++ti) {
+        const TimelineTrack &t = tl.tracks[ti];
         if (t.kind != Timeline::Kind::Audio)
             continue;
         Mlt::Playlist pl(*m_profile);
         fill(pl, t, true);
-        pl.set("hide", t.muted ? 3 : 1); // 1 = no picture, 3 = nothing
+        pl.set("hide", tl.isAudible(ti) ? 1 : 3); // 1 = no picture, 3 = nothing
         tractor->set_track(pl, index);
         Mlt::Transition mix(*m_profile, "mix");
         mix.set("always_active", 1);
@@ -260,9 +316,25 @@ void TimelinePlayer::setProject(const Project &project)
         fill(pl, t, false);
         pl.set("hide", t.hidden ? 3 : 2); // 2 = no sound (it lives on the A tracks)
         tractor->set_track(pl, index);
+        if (!t.hidden) {
+            Mlt::Transition over(*m_profile, "composite");
+            over.set("always_active", 1);
+            // Every layer already has the frame size (the loader letterboxes
+            // video, bc_still fits pictures), so it is laid 1:1 over the frame.
+            over.set("fill", 1);
+            over.set("distort", 1);
+            over.set("geometry", "0%/0%:100%x100%:100");
+            tractor->plant_transition(over, 0, index);
+        }
         ++index;
     }
     m_tractor = std::move(tractor);
+    for (auto it = m_titles.begin(); it != m_titles.end();) {
+        if (m_usedTitles.contains(it.key()))
+            ++it;
+        else
+            it = m_titles.erase(it);
+    }
 }
 
 QImage TimelinePlayer::renderFrame(qint64 frame)
@@ -284,6 +356,30 @@ QImage TimelinePlayer::renderFrame(qint64 frame)
     if (!img || w <= 0 || h <= 0)
         return {};
     return QImage(img, w, h, QImage::Format_RGBA8888).copy();
+}
+
+double TimelinePlayer::audioLevel(qint64 frame)
+{
+    if (m_playing)
+        return -1;
+    QMutexLocker lock(&m_mutex);
+    if (!m_tractor)
+        return -1;
+    m_tractor->seek(int(frame));
+    std::unique_ptr<Mlt::Frame> f(m_tractor->get_frame());
+    if (!f)
+        return -1;
+    mlt_audio_format fmt = mlt_audio_f32le;
+    int freq = m_seq.sampleRate > 0 ? m_seq.sampleRate : 48000;
+    int channels = 2;
+    int samples = mlt_audio_calculate_frame_samples(float(m_profile->fps()), freq, frame);
+    auto *pcm = static_cast<float *>(f->get_audio(fmt, freq, channels, samples));
+    if (!pcm || fmt != mlt_audio_f32le || samples <= 0)
+        return -1;
+    double sum = 0;
+    for (int i = 0; i < samples * channels; ++i)
+        sum += double(pcm[i]) * pcm[i];
+    return std::sqrt(sum / (samples * channels));
 }
 
 bool TimelinePlayer::play(qint64 frame)

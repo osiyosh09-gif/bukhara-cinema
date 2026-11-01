@@ -513,6 +513,19 @@ void TimelineView::drawTracks(QPainter &p)
             p.setBrush(Qt::NoBrush);
             if (hidden)
                 p.drawLine(eye.topLeft() + QPoint(2, 2), eye.bottomRight() - QPoint(2, 2));
+        } else {
+            // Mute (M) and solo (S) buttons on audio tracks.
+            const auto letter = [&](int which, const QString &text, bool on, const QColor &onColor) {
+                const QRect b = headerButton(t, which).adjusted(1, 1, -1, -1);
+                p.setPen(on ? onColor : kDim);
+                p.setBrush(on ? onColor : QColor(Qt::transparent));
+                p.drawRoundedRect(b, 3, 3);
+                p.setPen(on ? QColor(0x1e, 0x1e, 0x1e) : kDim);
+                p.drawText(b, Qt::AlignCenter, text);
+                p.setBrush(Qt::NoBrush);
+            };
+            letter(2, QStringLiteral("M"), tl.tracks[t].muted, kGold);
+            letter(1, QStringLiteral("S"), tl.tracks[t].solo, QColor(0x7c, 0xc4, 0x6a));
         }
         p.setRenderHint(QPainter::Antialiasing, false);
     }
@@ -527,14 +540,14 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
     const Timeline &tl = shown();
     const bool video = tl.tracks[track].kind == Timeline::Kind::Video;
     const MediaItem *m = m_ctl->project().item(c.mediaId);
-    const bool online = m && m_ctl->isOnline(c.mediaId);
-    QColor fill = !online ? kOfflineClip : (video ? kVideoClip : kAudioClip);
+    const bool online = c.isTitle() || (m && m_ctl->isOnline(c.mediaId));
+    QColor fill = !online ? kOfflineClip : c.isTitle() ? QColor(0x7a, 0x55, 0x9c) : (video ? kVideoClip : kAudioClip);
     if (tl.tracks[track].locked || (video && tl.tracks[track].hidden))
         fill = fill.darker(150);
     p.fillRect(r, fill);
 
     int textX = r.left() + 4;
-    if (video && online) {
+    if (video && online && !c.isTitle()) {
         const QImage thumb = m_ctl->thumbnail(c.mediaId);
         if (!thumb.isNull() && r.width() > 80) {
             const QImage s = thumb.scaledToHeight(r.height() - 4, Qt::SmoothTransformation);
@@ -542,10 +555,26 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
             textX += s.width() + 2;
         }
     }
-    if (r.width() > 30 && m) {
+    QString label = m ? m->name : QString();
+    if (c.isTitle())
+        label = QStringLiteral("T  ") + c.title.text.simplified();
+    if (!video && c.gainDb != 0)
+        label += QStringLiteral("  %1%2 dB").arg(c.gainDb > 0 ? QStringLiteral("+") : QString()).arg(c.gainDb, 0, 'f', 1);
+    if (r.width() > 30 && !label.isEmpty()) {
         p.setPen(Qt::white);
         p.drawText(QRect(textX, r.top() + 2, r.right() - textX - 2, 16), Qt::AlignLeft | Qt::AlignVCenter,
-                   p.fontMetrics().elidedText(m->name, Qt::ElideRight, std::max(0, r.right() - textX - 2)));
+                   p.fontMetrics().elidedText(label, Qt::ElideRight, std::max(0, r.right() - textX - 2)));
+    }
+    // Fades: a ramp from the bottom corner to the top.
+    if (!video && (c.fadeIn > 0 || c.fadeOut > 0)) {
+        p.save();
+        p.setRenderHint(QPainter::Antialiasing, true);
+        p.setPen(QPen(QColor(255, 255, 255, 170), 1.2));
+        if (c.fadeIn > 0)
+            p.drawLine(QPointF(r.left(), r.bottom()), QPointF(r.left() + c.fadeIn * m_ppf, r.top() + 2));
+        if (c.fadeOut > 0)
+            p.drawLine(QPointF(r.right() - c.fadeOut * m_ppf, r.top() + 2), QPointF(r.right(), r.bottom()));
+        p.restore();
     }
     if (m_selection.contains(c.id)) {
         p.setPen(QPen(kGold, 2));
@@ -585,6 +614,10 @@ void TimelineView::mousePressEvent(QMouseEvent *e)
             m_ctl->setTrackFlag(t, QStringLiteral("locked"), !trk.locked);
         else if (trk.kind == Timeline::Kind::Video && headerButton(t, 1).contains(pos))
             m_ctl->setTrackFlag(t, QStringLiteral("hidden"), !trk.hidden);
+        else if (trk.kind == Timeline::Kind::Audio && headerButton(t, 2).contains(pos))
+            m_ctl->setTrackFlag(t, QStringLiteral("muted"), !trk.muted);
+        else if (trk.kind == Timeline::Kind::Audio && headerButton(t, 1).contains(pos))
+            m_ctl->setTrackFlag(t, QStringLiteral("solo"), !trk.solo);
         return;
     }
 
@@ -795,13 +828,17 @@ bool TimelineView::viewportEvent(QEvent *e)
                 tip = trk.locked ? tr("Unlock track") : tr("Lock track");
             else if (trk.kind == Timeline::Kind::Video && headerButton(t, 1).contains(pos))
                 tip = trk.hidden ? tr("Show track in the Program monitor") : tr("Hide track in the Program monitor");
+            else if (trk.kind == Timeline::Kind::Audio && headerButton(t, 2).contains(pos))
+                tip = trk.muted ? tr("Turn the track sound on") : tr("Mute track");
+            else if (trk.kind == Timeline::Kind::Audio && headerButton(t, 1).contains(pos))
+                tip = trk.solo ? tr("Solo off") : tr("Solo: hear only this track (and other solo tracks)");
         } else if (t >= 0) {
             const Hit h = hitTest(pos);
             if (const TimelineClip *c = m_ctl->timeline().clip(h.clip)) {
                 const double fps = m_ctl->project().sequence.fps();
                 const MediaItem *m = m_ctl->project().item(c->mediaId);
                 tip = QStringLiteral("%1\n%2 – %3 (%4)")
-                          .arg(m ? m->name : QString(), Fmt::frameTimecode(c->start, fps),
+                          .arg(c->isTitle() ? c->title.text.simplified() : m ? m->name : QString(), Fmt::frameTimecode(c->start, fps),
                                Fmt::frameTimecode(c->end(), fps), Fmt::frameTimecode(c->length, fps));
             }
         }

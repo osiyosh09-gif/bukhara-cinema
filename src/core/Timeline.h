@@ -12,22 +12,47 @@ namespace bc {
 struct MediaItem;
 struct SequenceSettings;
 
+// Text drawn by a title clip. Sizes are in pixels of a 1080-line frame and
+// scale with the sequence height.
+struct TitleData
+{
+    enum class Position { Top, Center, Bottom };
+
+    QString text;
+    int size = 80;
+    QString color = QStringLiteral("#ffffff");
+    Position position = Position::Bottom;
+    bool box = false; // dark box behind the text
+
+    bool operator==(const TitleData &o) const
+    {
+        return text == o.text && size == o.size && color == o.color && position == o.position && box == o.box;
+    }
+    bool operator!=(const TitleData &o) const { return !(*this == o); }
+};
+
 // One clip on a track. All positions are in frames of the sequence frame rate.
 struct TimelineClip
 {
     QUuid id;
-    QUuid mediaId;
+    QUuid mediaId;      // null for a title clip
     QUuid linkId;       // video and audio parts of one placement share it; null = not linked
     qint64 start = 0;   // position on the timeline
     qint64 in = 0;      // first used frame of the source
     qint64 length = 0;  // number of frames
+    TitleData title;    // used when isTitle()
+    double gainDb = 0;  // audio clips: volume change in dB
+    qint64 fadeIn = 0;  // audio clips: fade lengths in frames
+    qint64 fadeOut = 0;
 
+    bool isTitle() const { return mediaId.isNull(); }
     qint64 end() const { return start + length; } // exclusive
     bool covers(qint64 frame) const { return frame >= start && frame < end(); }
     bool operator==(const TimelineClip &o) const
     {
         return id == o.id && mediaId == o.mediaId && linkId == o.linkId && start == o.start && in == o.in
-               && length == o.length;
+               && length == o.length && title == o.title && gainDb == o.gainDb && fadeIn == o.fadeIn
+               && fadeOut == o.fadeOut;
     }
 };
 
@@ -40,12 +65,13 @@ struct TimelineTrack
     bool locked = false;
     bool muted = false;    // audio tracks
     bool hidden = false;   // video tracks
+    bool solo = false;     // audio tracks: when any track is solo, only solo tracks sound
     QList<TimelineClip> clips; // sorted by start, never overlapping
 
     bool operator==(const TimelineTrack &o) const
     {
         return id == o.id && kind == o.kind && locked == o.locked && muted == o.muted && hidden == o.hidden
-               && clips == o.clips;
+               && solo == o.solo && clips == o.clips;
     }
 };
 
@@ -115,6 +141,13 @@ public:
     // Removes clips. With ripple, later clips on the same tracks move left to
     // close the gap.
     bool remove(const QList<QUuid> &ids, bool ripple);
+
+    // Places a title clip on the n-th video track. Returns its id (null if the
+    // track is missing or locked).
+    QUuid placeTitle(const TitleData &title, int videoTrack, qint64 start, qint64 length);
+
+    // True when this audio track is heard (not muted, and solo rules allow it).
+    bool isAudible(int track) const;
 
     int addTrack(Kind kind); // returns the index into `tracks`
     bool removeClipsOfMedia(const QUuid &mediaId);

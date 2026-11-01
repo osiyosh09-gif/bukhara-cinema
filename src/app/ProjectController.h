@@ -89,7 +89,16 @@ public:
     bool splitClips(qint64 frame, const QList<QUuid> &clipIds);
     bool removeClips(const QList<QUuid> &clipIds, bool ripple);
     int addTrack(Timeline::Kind kind);
-    void setTrackFlag(int track, const QString &flag, bool on); // "locked", "muted", "hidden"
+    void setTrackFlag(int track, const QString &flag, bool on); // "locked", "muted", "hidden", "solo"
+    // Adds a 5-second title at `start` on the highest video track that is free
+    // there (a new track when none is). Returns the new clip id.
+    QUuid addTitle(qint64 start);
+    // Changes a title clip. Quick successive changes of one clip (typing)
+    // form a single undo step.
+    bool setClipTitle(const QUuid &clipId, const TitleData &title);
+    // Volume (dB) and fades (frames) of an audio clip; also one undo step
+    // while a slider is dragged.
+    bool setClipAudio(const QUuid &clipId, double gainDb, qint64 fadeIn, qint64 fadeOut);
     // Length of a media item in sequence frames, -1 = unlimited (images).
     qint64 mediaFrames(const QUuid &mediaId) const;
 
@@ -129,7 +138,8 @@ private:
     void startThumbnail(const MediaItem &item);
     void refreshOnlineState();
     static QString thumbCachePath(const QString &mediaPath);
-    bool editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn);
+    bool editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn,
+                      const QString &mergeKey = QString());
     void resetUndo();
     void requestProgramFrame();
     void startProgramFrame();
@@ -151,6 +161,7 @@ private:
     bool m_frameBusy = false;
     bool m_framePending = false;
     QString m_lastFrameKey;
+    quint64 m_graphRev = 0; // changes whenever the engine graph is rebuilt
     TimelinePlayer *m_player = nullptr;
     QString m_engineError;
 };

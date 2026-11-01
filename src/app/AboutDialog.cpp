@@ -63,8 +63,8 @@ AboutDialog::AboutDialog(Page page, QWidget *parent)
                        .arg(appName(),
                             tr("Version %1").arg(appVersion()),
                             tr("Independent video editor for Windows."),
-                            tr("Phase 2: timeline editing and playback with sound. Text, audio levels and export "
-                               "arrive in the next phases; see Help > Feature status.")));
+                            tr("Phase 3: editing, playback with sound, titles and clip volume. MP4 export "
+                               "arrives in the next phase; see Help > Feature status.")));
     tabs->addTab(about, tr("About"));
 
     auto *lic = new QTextBrowser(this);

@@ -5,6 +5,8 @@
 #include "app/ProjectController.h"
 #include "app/Theme.h"
 
+#include <QAction>
+
 #include <QApplication>
 #include <QDir>
 #include <QStandardPaths>
@@ -40,6 +42,9 @@ int main(int argc, char *argv[])
                 m.info.hasVideo() ? ids.prepend(m.id) : ids.append(m.id);
             ctl->placeMedia(ids, 0, 0);
             ctl->setPlayhead(40);
+            // A title over the picture, selected so the Clip panel shows it.
+            if (auto *newText = w.findChild<QAction *>(QStringLiteral("actNewText")))
+                newText->trigger();
             ctl->waitForBackgroundWork();
             for (int i = 0; i < 20; ++i)
                 app.processEvents();
