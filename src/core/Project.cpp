@@ -74,7 +74,8 @@ void Project::removeFolder(const QUuid &id)
                   folders.end());
     for (const auto &m : items)
         if (doomed.contains(m.folderId))
-            timeline.removeClipsOfMedia(m.id);
+            for (Timeline *t : allTimelines())
+                t->removeClipsOfMedia(m.id);
     items.erase(std::remove_if(items.begin(), items.end(),
                                [&](const MediaItem &m) { return doomed.contains(m.folderId); }),
                 items.end());
@@ -89,6 +90,27 @@ MediaItem &Project::addItem(const QString &path, const QUuid &folderId)
     m.folderId = folderId;
     items.append(m);
     return items.last();
+}
+
+NestedSequence *Project::nest(const QUuid &id)
+{
+    for (auto &n : nested)
+        if (n.id == id)
+            return &n;
+    return nullptr;
+}
+
+const NestedSequence *Project::nest(const QUuid &id) const
+{
+    return const_cast<Project *>(this)->nest(id);
+}
+
+QList<Timeline *> Project::allTimelines()
+{
+    QList<Timeline *> out{&timeline};
+    for (auto &n : nested)
+        out << &n.timeline;
+    return out;
 }
 
 MediaItem *Project::item(const QUuid &id)
@@ -108,7 +130,8 @@ bool Project::removeItem(const QUuid &id)
 {
     for (int i = 0; i < items.size(); ++i) {
         if (items[i].id == id) {
-            timeline.removeClipsOfMedia(id);
+            for (Timeline *t : allTimelines())
+                t->removeClipsOfMedia(id);
             items.removeAt(i);
             return true;
         }
@@ -223,6 +246,20 @@ QByteArray Project::toJson(const QString &projectFilePath) const
         tl[QStringLiteral("markers")] = timeline.markersToJson();
     root[QStringLiteral("timeline")] = tl;
 
+    if (!nested.isEmpty()) {
+        QJsonArray na;
+        for (const NestedSequence &n : nested) {
+            QJsonObject no;
+            no[QStringLiteral("id")] = idStr(n.id);
+            no[QStringLiteral("name")] = n.name;
+            no[QStringLiteral("tracks")] = n.timeline.toJson();
+            if (!n.timeline.markers.isEmpty())
+                no[QStringLiteral("markers")] = n.timeline.markersToJson();
+            na.append(no);
+        }
+        root[QStringLiteral("nested")] = na;
+    }
+
     return QJsonDocument(root).toJson(QJsonDocument::Indented);
 }
 
@@ -288,20 +325,36 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
         p.items.append(m);
     }
 
+    for (const auto &v : root.value(QStringLiteral("nested")).toArray()) {
+        const QJsonObject o = v.toObject();
+        NestedSequence n;
+        n.id = QUuid(o.value(QStringLiteral("id")).toString());
+        if (n.id.isNull() || p.nest(n.id))
+            continue;
+        n.name = o.value(QStringLiteral("name")).toString();
+        n.timeline = Timeline::fromJson(o.value(QStringLiteral("tracks")).toArray());
+        n.timeline.markersFromJson(o.value(QStringLiteral("markers")).toArray());
+        p.nested << n;
+    }
     if (root.contains(QStringLiteral("timeline"))) {
         p.timeline = Timeline::fromJson(
             root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("tracks")).toArray());
         p.timeline.markersFromJson(
             root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("markers")).toArray());
-        // Drop clips whose media item is not in the project (titles have none).
-        QSet<QUuid> known;
-        for (const auto &m : p.items)
-            known.insert(m.id);
-        for (auto &t : p.timeline.tracks)
-            t.clips.erase(std::remove_if(t.clips.begin(), t.clips.end(),
-                                         [&](const TimelineClip &c) { return !c.isTitle() && !known.contains(c.mediaId); }),
-                          t.clips.end());
     }
+    // Drop clips whose media item or nested sequence is not in the project.
+    QSet<QUuid> known;
+    for (const auto &m : p.items)
+        known.insert(m.id);
+    for (const auto &n : p.nested)
+        known.insert(n.id);
+    for (Timeline *tl : p.allTimelines())
+        for (auto &t : tl->tracks)
+            t.clips.erase(std::remove_if(t.clips.begin(), t.clips.end(),
+                                         [&](const TimelineClip &c) {
+                                             return !c.isTitle() && !known.contains(c.isNested() ? c.nestId : c.mediaId);
+                                         }),
+                          t.clips.end());
 
     out = std::move(p);
     return true;

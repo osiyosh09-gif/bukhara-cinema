@@ -203,7 +203,9 @@ void ClipInspector::refresh()
     }
     const QUuid named = !m_video.isNull() ? m_video : m_audio;
     if (const TimelineClip *c = tl.clip(named)) {
-        if (const MediaItem *m = m_ctl->project().item(c->mediaId))
+        if (c->isNested())
+            header = m_ctl->sequenceName(c->nestId);
+        else if (const MediaItem *m = m_ctl->project().item(c->mediaId))
             header = m->name;
     }
     if (const TimelineClip *c = tl.clip(m_audio)) {

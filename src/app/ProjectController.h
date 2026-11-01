@@ -83,7 +83,8 @@ public:
     void setSequence(const SequenceSettings &s);
 
     // --- timeline (every edit is undoable)
-    const Timeline &timeline() const { return m_project.timeline; }
+    // The timeline being edited: the main sequence or an open nested one.
+    const Timeline &timeline() const;
     QUndoStack *undoStack() const { return m_undo; }
 
     // Places media items one after another starting at `start` on track
@@ -123,6 +124,18 @@ public:
     // Volume (dB) and fades (frames) of an audio clip; also one undo step
     // while a slider is dragged.
     bool setClipAudio(const QUuid &clipId, double gainDb, qint64 fadeIn, qint64 fadeOut);
+    // --- nested sequences (phase 6c)
+    // Moves the clips (and their linked clips) into a new nested sequence and
+    // puts one clip of it in their place (picture and sound, linked).
+    // Returns the id of the nested sequence (null when nothing was nested).
+    QUuid nestClips(const QList<QUuid> &clipIds);
+    // Opens a nested sequence on the timeline (null id = the main sequence).
+    // The Program monitor plays the open one; export is always the main one.
+    bool openSequence(const QUuid &nestId);
+    QUuid openNest() const { return m_openNest; }
+    QString sequenceName(const QUuid &nestId) const; // null = main sequence
+    bool renameSequence(const QUuid &nestId, const QString &name);
+
     // Length of a media item in sequence frames, -1 = unlimited (images).
     qint64 mediaFrames(const QUuid &mediaId) const;
 
@@ -228,6 +241,7 @@ signals:
     void sourceFrameReady(const QImage &image);
     void sourcePlayingChanged(bool playing);
     void clipboardChanged();
+    void openSequenceChanged(); // another sequence is shown on the timeline
 
 private:
     void setModified(bool m);
@@ -242,14 +256,30 @@ private:
     void startNextProxy();
     void refreshOnlineState();
     static QString thumbCachePath(const QString &mediaPath);
+public:
+    // Everything an edit can change (see TimelineCommand).
+    struct EditState
+    {
+        Timeline main;
+        QList<NestedSequence> nested;
+        QUuid open;
+        bool operator==(const EditState &o) const { return main == o.main && nested == o.nested && open == o.open; }
+    };
+
+private:
+    EditState editState() const;
+    Timeline &current();
+    void applyState(const EditState &s);
+    void switchSequence(const QUuid &nestId);
     bool editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn,
                       const QString &mergeKey = QString());
+    bool editProject(const QString &text, const std::function<bool(EditState &)> &fn,
+                     const QString &mergeKey = QString());
     void resetUndo();
     void requestProgramFrame();
     void startProgramFrame();
 
     friend class TimelineCommand;
-    void applyTimeline(const Timeline &t);
     void syncPlayer();
     void syncSourcePlayer(); // rebuilds the source graph when its media changed
     void requestSourceFrame();
@@ -290,6 +320,8 @@ private:
         int n;
     };
     QList<CopiedClip> m_clipboard; // starts relative to the first copied clip
+    QUuid m_openNest;                       // null = main sequence on the timeline
+    QHash<QUuid, qint64> m_nestPlayheads;   // playhead of each sequence while another is open
 
     // Source monitor
     QUuid m_sourceId;

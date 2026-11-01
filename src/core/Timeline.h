@@ -37,7 +37,8 @@ struct TitleData
 struct TimelineClip
 {
     QUuid id;
-    QUuid mediaId;      // null for a title clip
+    QUuid mediaId;      // null for a title or nested clip
+    QUuid nestId;       // a nested sequence (Project::nested) shown as one clip
     QUuid linkId;       // video and audio parts of one placement share it; null = not linked
     qint64 start = 0;   // position on the timeline
     qint64 in = 0;      // first used frame of the source
@@ -47,12 +48,13 @@ struct TimelineClip
     qint64 fadeIn = 0;  // audio clips: fade lengths in frames
     qint64 fadeOut = 0;
 
-    bool isTitle() const { return mediaId.isNull(); }
+    bool isTitle() const { return mediaId.isNull() && nestId.isNull(); }
+    bool isNested() const { return !nestId.isNull(); }
     qint64 end() const { return start + length; } // exclusive
     bool covers(qint64 frame) const { return frame >= start && frame < end(); }
     bool operator==(const TimelineClip &o) const
     {
-        return id == o.id && mediaId == o.mediaId && linkId == o.linkId && start == o.start && in == o.in
+        return id == o.id && mediaId == o.mediaId && nestId == o.nestId && linkId == o.linkId && start == o.start && in == o.in
                && length == o.length && title == o.title && gainDb == o.gainDb && fadeIn == o.fadeIn
                && fadeOut == o.fadeOut;
     }
@@ -205,6 +207,7 @@ public:
 
     int addTrack(Kind kind); // returns the index into `tracks`
     bool removeClipsOfMedia(const QUuid &mediaId);
+    bool removeClipsOfNest(const QUuid &nestId);
     // Converts all positions when the sequence frame rate changes.
     void rescale(double oldFps, double newFps);
 

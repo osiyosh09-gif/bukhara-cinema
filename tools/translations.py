@@ -299,7 +299,7 @@ T = {
     "Show track in the Program monitor": ("Йўлакни Натижа мониторида кўрсатиш", "Показывать дорожку в мониторе программы"),
     "Hide track in the Program monitor": ("Йўлакни Натижа мониторида яшириш", "Скрыть дорожку в мониторе программы"),
     "Drag media from the bin; clips overwrite what is under them; linked video and audio move together; tracks can be locked and hidden.": ("Медиа кутубхонадан судраб ташланади; клип остидагини устидан ёзади; боғланган видео ва овоз бирга кўчади; йўлакларни қулфлаш ва яшириш мумкин.", "Медиа перетаскивается из медиатеки; клип перезаписывает то, что под ним; связанные видео и звук двигаются вместе; дорожки можно блокировать и скрывать."),
-    "Ctrl+Z, Ctrl+Shift+Z, Ctrl+K split, Delete, Shift+Delete ripple delete, S snapping. Custom shortcuts are planned for phase 6.": ("Ctrl+Z, Ctrl+Shift+Z, Ctrl+K бўлиш, Delete, Shift+Delete бўшлиқсиз ўчириш, S ёпишиш. Тугмаларни ўзгартириш 6-босқичда.", "Ctrl+Z, Ctrl+Shift+Z, Ctrl+K разрезать, Delete, Shift+Delete удалить со сдвигом, S привязка. Настройка клавиш — на этапе 6."),
+    "Ctrl+Z, Ctrl+Shift+Z, Ctrl+K split, Delete, Shift+Delete ripple delete, S snapping. Edit > Keyboard shortcuts changes any key.": ("Ctrl+Z, Ctrl+Shift+Z, Ctrl+K бўлиш, Delete, Shift+Delete бўшлиқсиз ўчириш, S ёпишиш. Таҳрир > Тезкор тугмалар орқали исталган тугмани ўзгартириш мумкин.", "Ctrl+Z, Ctrl+Shift+Z, Ctrl+K разрезать, Delete, Shift+Delete удалить со сдвигом, S привязка. Правка > Сочетания клавиш меняет любую клавишу."),
     "Shows the frame at the playhead. Real-time playback with sound is the next step.": ("Курсор турган кадр кўрсатилади. Овоз билан реал вақтда ижро кейинги қадамда.", "Показывается кадр под указателем. Воспроизведение со звуком в реальном времени — следующий шаг."),
 }
 
@@ -682,6 +682,41 @@ T.update({
         "Кнопки над таймлайном или клавиши V, C, N, Y, U. Ctrl+C, Ctrl+X, Ctrl+V вставляют в позицию курсора (Ctrl+Shift+V сдвигает следующие клипы вправо). Ctrl+L связывает или разъединяет выбранные видео и звук."),
     "Nested sequences and custom keyboard shortcuts": (
         "Nested sequence ва тугмаларни ўзгартириш", "Вложенные секвенции и свои сочетания клавиш"),
+})
+
+T.update({
+    "Phase 6 done: Source monitor, insert/overwrite, trim tools, nested sequences and custom shortcuts work.": (
+        "6-босқич тайёр: Source монитор, insert/overwrite, trim асбоблари, nested sequence ва тугмаларни ўзгартириш ишлайди.",
+        "Этап 6 готов: монитор источника, вставка/замена, инструменты подрезки, вложенные секвенции и свои сочетания клавиш работают."),
+    "Nest": ("Nest (ички секвенция)", "Вложить (Nest)"),
+    "Nested sequence %1": ("Ички секвенция %1", "Вложенная секвенция %1"),
+    "Main sequence": ("Асосий секвенция", "Основная секвенция"),
+    "Rename sequence": ("Секвенция номини ўзгартириш", "Переименовать секвенцию"),
+    "Sequence name:": ("Секвенция номи:", "Имя секвенции:"),
+    "Rename...": ("Номини ўзгартириш...", "Переименовать..."),
+    "Rename the nested sequence shown on the timeline": (
+        "Timeline'да кўрсатилган ички секвенция номини ўзгартириш",
+        "Переименовать вложенную секвенцию, показанную на таймлайне"),
+    "Put the selected clips into a new nested sequence that works as one clip": (
+        "Танланган клипларни битта клип каби ишлайдиган янги ички секвенцияга жойлаш",
+        "Поместить выбранные клипы в новую вложенную секвенцию, которая работает как один клип"),
+    "No key": ("Тугмасиз", "Без клавиши"),
+    "Default": ("Асл ҳолати", "По умолчанию"),
+    "Keyboard shortcuts": ("Тезкор тугмалар", "Сочетания клавиш"),
+    "Search commands": ("Буйруқларни қидириш", "Поиск команд"),
+    "Command": ("Буйруқ", "Команда"),
+    "Keys": ("Тугмалар", "Клавиши"),
+    "Reset all": ("Ҳаммасини асл ҳолига", "Сбросить все"),
+    "Press the new keys:": ("Янги тугмаларни босинг:", "Нажмите новые клавиши:"),
+    "%1 was used by: %2. It was removed there.": (
+        "%1 аввал «%2» учун эди. У ердан олиб ташланди.",
+        "%1 использовалось для «%2». Там оно удалено."),
+    "Edit > Keyboard shortcuts changes any key.": (
+        "Таҳрир > Тезкор тугмалар орқали исталган тугмани ўзгартириш мумкин.",
+        "Правка > Сочетания клавиш меняет любую клавишу."),
+    "Select clips and choose Clip > Nest (also in the clip right-click menu): they become one clip. Double-click it to edit inside; the list above the timeline goes back to the main sequence. Edit > Keyboard shortcuts changes the key of any command; keys are kept in the settings.": (
+        "Клипларни танлаб Клип > Nest танланг (клипдаги ўнг тугма менюсида ҳам бор): улар битта клипга айланади. Ичида таҳрирлаш учун уни икки марта босинг; timeline устидаги рўйхат асосий секвенцияга қайтаради. Таҳрир > Тезкор тугмалар исталган буйруқ тугмасини ўзгартиради; тугмалар созламаларда сақланади.",
+        "Выберите клипы и Клип > Вложить (есть и в меню правой кнопки): они станут одним клипом. Двойной щелчок открывает его для правки; список над таймлайном возвращает к основной секвенции. Правка > Сочетания клавиш меняет клавишу любой команды; клавиши хранятся в настройках."),
 })
 
 LATIN_OVERRIDES = {

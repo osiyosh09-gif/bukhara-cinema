@@ -145,6 +145,7 @@ TimelinePlayer::~TimelinePlayer()
     stopConsumer();
     QMutexLocker lock(&m_mutex);
     m_tractor.reset();
+    m_nestCache.clear();
     m_producers.clear();
     m_profile.reset();
 }
@@ -233,49 +234,20 @@ Mlt::Producer *TimelinePlayer::titleProducer(const TitleData &title)
     return p.get();
 }
 
-void TimelinePlayer::setProject(const Project &project)
+// Builds the graph of one timeline (the project's, or a nested sequence's,
+// down to kMaxNestDepth levels). `length` is at least the timeline duration;
+// nested sequences get more, so a clip trimmed past their end shows black.
+std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &project, const Timeline &tl, qint64 length,
+                                                           int depth)
 {
-    pause();
-    QMutexLocker lock(&m_mutex);
-    if (!Engine::isReady())
-        return;
-
-    const SequenceSettings &seq = project.sequence;
-    if (!m_profile || seq != m_seq) {
-        m_tractor.reset();
-        m_producers.clear();
-        m_titles.clear();
-        m_profile = std::make_unique<Mlt::Profile>();
-        m_profile->set_width(seq.width);
-        m_profile->set_height(seq.height);
-        m_profile->set_frame_rate(seq.fpsNum, seq.fpsDen);
-        m_profile->set_sample_aspect(1, 1);
-        m_profile->set_display_aspect(seq.width, seq.height);
-        m_profile->set_progressive(1);
-        m_profile->set_colorspace(709);
-        m_profile->set_explicit(1);
-        m_seq = seq;
-    }
-    // Forget producers of removed media.
-    for (auto it = m_producers.begin(); it != m_producers.end();) {
-        const MediaItem *m = project.item(it.key());
-        if (!m || m->path != it->path)
-            it = m_producers.erase(it);
-        else
-            ++it;
-    }
-
-    const Timeline &tl = project.timeline;
-    m_duration = tl.duration();
-    m_usedTitles.clear();
-    const int bgLength = int(std::max<qint64>(1, m_duration));
-
+    const int bgLength = int(std::max<qint64>(1, length));
     auto tractor = std::make_unique<Mlt::Tractor>(*m_profile);
-    // Track 0: black picture and silence under everything.
+    // Track 0: black picture and silence under everything. Inside a nested
+    // sequence it is transparent, so tracks below the nested clip show.
     Mlt::Playlist bgList(*m_profile);
-    Mlt::Producer bg(*m_profile, "color:black");
+    Mlt::Producer bg(*m_profile, depth == 0 ? "color:black" : "color:#00000000");
     if (!bg.is_valid())
-        return;
+        return nullptr;
     bg.set("length", bgLength);
     bg.set("out", bgLength - 1);
     bgList.append(bg, 0, bgLength - 1);
@@ -287,7 +259,9 @@ void TimelinePlayer::setProject(const Project &project)
             if (c.start > pos)
                 pl.blank(int(c.start - pos - 1));
             Mlt::Producer *p = nullptr;
-            if (c.isTitle()) {
+            if (c.isNested()) {
+                p = nestProducer(project, c.nestId, audio, depth);
+            } else if (c.isTitle()) {
                 p = audio ? nullptr : titleProducer(c.title);
             } else if (const MediaItem *m = project.item(c.mediaId)) {
                 p = producerFor(*m, audio);
@@ -350,6 +324,76 @@ void TimelinePlayer::setProject(const Project &project)
         }
         ++index;
     }
+    return tractor;
+}
+
+// A nested sequence as a producer. Picture and sound get separate graphs
+// (like media files), so the two tracks never share one position.
+Mlt::Producer *TimelinePlayer::nestProducer(const Project &project, const QUuid &nestId, bool audio, int depth)
+{
+    if (depth >= kMaxNestDepth)
+        return nullptr; // a sequence inside itself: shown as a gap
+    const QString key = nestId.toString() + (audio ? QStringLiteral(":a") : QStringLiteral(":v"));
+    if (auto it = m_nestCache.find(key); it != m_nestCache.end())
+        return it->get();
+    const NestedSequence *n = project.nest(nestId);
+    if (!n)
+        return nullptr;
+    // Long enough for every use of it, even past its end.
+    qint64 length = n->timeline.duration();
+    for (const Timeline *tl : const_cast<Project &>(project).allTimelines())
+        for (const TimelineTrack &t : tl->tracks)
+            for (const TimelineClip &c : t.clips)
+                if (c.nestId == nestId)
+                    length = std::max(length, c.in + c.length);
+    auto tractor = buildTractor(project, n->timeline, length, depth + 1);
+    if (!tractor)
+        return nullptr;
+    std::shared_ptr<Mlt::Producer> p(tractor.release());
+    m_nestCache.insert(key, p);
+    return p.get();
+}
+
+void TimelinePlayer::setProject(const Project &project)
+{
+    pause();
+    QMutexLocker lock(&m_mutex);
+    if (!Engine::isReady())
+        return;
+
+    const SequenceSettings &seq = project.sequence;
+    if (!m_profile || seq != m_seq) {
+        m_tractor.reset();
+        m_nestCache.clear();
+        m_producers.clear();
+        m_titles.clear();
+        m_profile = std::make_unique<Mlt::Profile>();
+        m_profile->set_width(seq.width);
+        m_profile->set_height(seq.height);
+        m_profile->set_frame_rate(seq.fpsNum, seq.fpsDen);
+        m_profile->set_sample_aspect(1, 1);
+        m_profile->set_display_aspect(seq.width, seq.height);
+        m_profile->set_progressive(1);
+        m_profile->set_colorspace(709);
+        m_profile->set_explicit(1);
+        m_seq = seq;
+    }
+    // Forget producers of removed media.
+    for (auto it = m_producers.begin(); it != m_producers.end();) {
+        const MediaItem *m = project.item(it.key());
+        if (!m || m->path != it->path)
+            it = m_producers.erase(it);
+        else
+            ++it;
+    }
+
+    const Timeline &tl = project.timeline;
+    m_duration = tl.duration();
+    m_usedTitles.clear();
+    m_nestCache.clear();
+    auto tractor = buildTractor(project, tl, std::max<qint64>(1, m_duration), 0);
+    if (!tractor)
+        return;
     m_tractor = std::move(tractor);
     for (auto it = m_titles.begin(); it != m_titles.end();) {
         if (m_usedTitles.contains(it.key()))

@@ -134,6 +134,7 @@ private:
     QAction *m_licensesAct = nullptr;
     QAction *m_logFolderAct = nullptr;
     QAction *m_aboutAct = nullptr;
+    QAction *m_shortcutsAct = nullptr;
     QAction *m_shuttleBackAct = nullptr;
     QAction *m_shuttleStopAct = nullptr;
     QAction *m_shuttleFwdAct = nullptr;

@@ -17,10 +17,11 @@ Plan plan(const Project &project, const QString &name, const QString &destinatio
 
     if (onlyUsed) {
         QSet<QUuid> used;
-        for (const TimelineTrack &t : project.timeline.tracks)
-            for (const TimelineClip &c : t.clips)
-                if (!c.isTitle())
-                    used.insert(c.mediaId);
+        for (const Timeline *tl : p.project.allTimelines()) // nested sequences count too
+            for (const TimelineTrack &t : tl->tracks)
+                for (const TimelineClip &c : t.clips)
+                    if (!c.mediaId.isNull())
+                        used.insert(c.mediaId);
         QList<QUuid> drop;
         for (const MediaItem &m : p.project.items)
             if (!used.contains(m.id))

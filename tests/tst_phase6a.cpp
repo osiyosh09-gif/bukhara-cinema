@@ -161,11 +161,11 @@ private slots:
         QCOMPARE(t.markers[0].frame, qint64(20));
         QCOMPARE(t.markers[1].frame, qint64(100));
 
-        // Saved in the project file (format 4) and read back.
+        // Saved in the project file (format 4 or later) and read back.
         Project p;
         p.timeline = t;
         const QByteArray json = p.toJson(QString());
-        QCOMPARE(QJsonDocument::fromJson(json).object().value(QStringLiteral("version")).toInt(), 4);
+        QVERIFY(QJsonDocument::fromJson(json).object().value(QStringLiteral("version")).toInt() >= 4);
         Project back;
         QString err;
         QVERIFY2(Project::fromJson(json, QString(), back, &err), qPrintable(err));

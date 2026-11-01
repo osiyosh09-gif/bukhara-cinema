@@ -148,7 +148,7 @@ bool ProjectController::sourceEdit(bool insert)
     qint64 in = 0, len = 0;
     if (!m || !sourceRange(m_sourceId, &in, &len))
         return false;
-    const Timeline &tl = m_project.timeline;
+    const Timeline &tl = timeline();
     auto firstFree = [&](Timeline::Kind kind) {
         for (int n = 0; n < tl.count(kind); ++n)
             if (!tl.tracks[tl.indexOf(kind, n)].locked)
@@ -210,10 +210,10 @@ void ProjectController::shuttle(Monitor monitor, int direction)
         from = m_sourcePos;
         dur = sourceDuration();
     } else {
-        if (m_project.timeline.isEmpty())
+        if (timeline().isEmpty())
             return;
         from = m_playhead;
-        dur = m_project.timeline.duration();
+        dur = timeline().duration();
     }
     if (next > 0 && from >= dur - 1)
         from = 0;
@@ -336,7 +336,7 @@ void ProjectController::startSourceFrame()
 QUuid ProjectController::addMarker(qint64 frame)
 {
     frame = std::max<qint64>(0, frame);
-    if (const TimelineMarker *m = m_project.timeline.markerAt(frame))
+    if (const TimelineMarker *m = timeline().markerAt(frame))
         return m->id;
     QUuid id;
     editTimeline(tr("Add marker"), [&](Timeline &t) {
@@ -358,7 +358,7 @@ bool ProjectController::renameMarker(const QUuid &id, const QString &name)
 
 bool ProjectController::goToNextMarker()
 {
-    const qint64 f = m_project.timeline.nextMarker(m_playhead);
+    const qint64 f = timeline().nextMarker(m_playhead);
     if (f < 0)
         return false;
     setPlayhead(f);
@@ -367,7 +367,7 @@ bool ProjectController::goToNextMarker()
 
 bool ProjectController::goToPreviousMarker()
 {
-    const qint64 f = m_project.timeline.prevMarker(m_playhead);
+    const qint64 f = timeline().prevMarker(m_playhead);
     if (f < 0)
         return false;
     setPlayhead(f);

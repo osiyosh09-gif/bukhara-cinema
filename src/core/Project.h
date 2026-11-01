@@ -70,12 +70,23 @@ struct SequenceSettings
     bool operator!=(const SequenceSettings &o) const { return !(*this == o); }
 };
 
+// A sequence used as one clip in another (Clip > Nest). It has the frame
+// size and rate of the project sequence.
+struct NestedSequence
+{
+    QUuid id;
+    QString name;
+    Timeline timeline;
+
+    bool operator==(const NestedSequence &o) const { return id == o.id && name == o.name && timeline == o.timeline; }
+};
+
 // The whole editing project. It is the single source of truth that later
 // phases (timeline, preview, export) read from.
 class Project
 {
 public:
-    static constexpr int kFormatVersion = 4; // 2: timeline added; 3: titles, clip volume and fades; 4: markers
+    static constexpr int kFormatVersion = 5; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences
     static QString fileExtension() { return QStringLiteral("bcproj"); }
 
     QString name = QStringLiteral("Untitled");
@@ -83,6 +94,12 @@ public:
     Timeline timeline = Timeline::makeDefault();
     QList<BinFolder> folders;
     QList<MediaItem> items;
+    QList<NestedSequence> nested;
+
+    NestedSequence *nest(const QUuid &id);
+    const NestedSequence *nest(const QUuid &id) const;
+    // Every timeline of the project: the main one and the nested ones.
+    QList<Timeline *> allTimelines();
 
     // --- folders
     BinFolder &addFolder(const QString &name, const QUuid &parent = {});
