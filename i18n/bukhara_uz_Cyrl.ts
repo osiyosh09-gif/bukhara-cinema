@@ -254,6 +254,11 @@
         <translation>Клипларни танлаб Клип &gt; Nest танланг (клипдаги ўнг тугма менюсида ҳам бор): улар битта клипга айланади. Ичида таҳрирлаш учун уни икки марта босинг; timeline устидаги рўйхат асосий секвенцияга қайтаради. Таҳрир &gt; Тезкор тугмалар исталган буйруқ тугмасини ўзгартиради; тугмалар созламаларда сақланади.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="51" />
+        <source>Clip &gt; Speed / duration (Ctrl+R): 10% to 1000%, or a new duration. Linked sound changes with the picture (its pitch too). Shift the clips after it moves later clips. Reverse playback, speed ramps and pitch-kept sound come later.</source>
+        <translation>Клип &gt; Тезлик / давомийлик (Ctrl+R): 10% дан 1000% гача ёки янги давомийлик. Боғланган овоз ҳам расм билан бирга ўзгаради (тони ҳам). «Кейинги клипларни суриш» кейинги клипларни суради. Орқага ижро, аста-секин тезлик ўзгариши ва тонни сақлаш кейинроқ.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="52" />
         <source>Transitions, effects, masks, chroma key</source>
         <translation>Ўтишлар, эффектлар, ниқоблар, chroma key</translation>
@@ -583,8 +588,8 @@
     </message>
     <message>
         <location filename="../src/app/ClipInspector.cpp" line="247" />
-        <source>Speed changes arrive in the next part of phase 7.</source>
-        <translation>Тезликни ўзгартириш 7-босқичнинг кейинги қисмида.</translation>
+        <source>Speed: Clip &gt; Speed / duration (Ctrl+R).</source>
+        <translation>Тезлик: Клип &gt; Тезлик / давомийлик (Ctrl+R).</translation>
     </message>
     <message>
         <location filename="../src/app/ClipInspector.cpp" line="248" />
@@ -1043,11 +1048,6 @@
         <translation>Овоз кучайтириш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="318" />
-        <source>Speed / duration...</source>
-        <translation>Тезлик / давомийлик...</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="520" />
         <source>Sequence settings...</source>
         <translation>Секвенция созламалари...</translation>
@@ -1386,11 +1386,6 @@
         <translation>Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="548" />
-        <source>Phase 7, part 1: position, scale, rotation and opacity of clips with keyframes work (Clip panel).</source>
-        <translation>7-босқич, 1-қисм: клип жойи, ўлчами, бурилиши ва шаффофлиги keyframe'лар билан ишлайди («Клип» панели).</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="584" />
         <source>Insert</source>
         <translation>Қўйиш</translation>
@@ -1436,6 +1431,11 @@
         <location filename="../src/app/MainWindow.cpp" line="743" />
         <source>Unsaved changes</source>
         <translation>Сақланмаган ўзгаришлар</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="548" />
+        <source>Phase 7 done: clip motion with keyframes (Clip panel) and speed changes (Ctrl+R) work.</source>
+        <translation>7-босқич тайёр: клип ҳаракати keyframe'лар билан («Клип» панели) ва тезликни ўзгартириш (Ctrl+R) ишлайди.</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="668" />
@@ -1923,89 +1923,94 @@
         <translation>Маркерни номлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="15" />
+        <location filename="../src/app/ProjectEditing.cpp" line="16" />
         <source>Rolling edit</source>
         <translation>Roll (кесимни суриш)</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="22" />
+        <location filename="../src/app/ProjectEditing.cpp" line="23" />
         <source>Slip clip</source>
         <translation>Клип ичини суриш (slip)</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="29" />
+        <location filename="../src/app/ProjectEditing.cpp" line="30" />
         <source>Slide clip</source>
         <translation>Клипни суриш (slide)</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="39" />
+        <location filename="../src/app/ProjectEditing.cpp" line="40" />
         <source>Unlink</source>
         <translation>Ажратиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="40" />
+        <location filename="../src/app/ProjectEditing.cpp" line="41" />
         <source>Link</source>
         <translation>Боғлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="73" />
+        <location filename="../src/app/ProjectEditing.cpp" line="74" />
         <source>Cut</source>
         <translation>Қирқиб олиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="85" />
+        <location filename="../src/app/ProjectEditing.cpp" line="86" />
         <source>Paste insert</source>
         <translation>Суриб қўйиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="85" />
+        <location filename="../src/app/ProjectEditing.cpp" line="86" />
         <source>Paste</source>
         <translation>Қўйиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="149" />
+        <location filename="../src/app/ProjectEditing.cpp" line="150" />
         <source>Nest</source>
         <translation>Nest (ички секвенция)</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="154" />
+        <location filename="../src/app/ProjectEditing.cpp" line="155" />
         <source>Nested sequence %1</source>
         <translation>Ички секвенция %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="219" />
+        <location filename="../src/app/ProjectEditing.cpp" line="220" />
         <source>Main sequence</source>
         <translation>Асосий секвенция</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="227" />
+        <location filename="../src/app/ProjectEditing.cpp" line="228" />
         <source>Rename sequence</source>
         <translation>Секвенция номини ўзгартириш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="266" />
+        <location filename="../src/app/ProjectEditing.cpp" line="267" />
         <source>Motion</source>
         <translation>Ҳаракат</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="277" />
+        <location filename="../src/app/ProjectEditing.cpp" line="278" />
         <source>Animate motion</source>
         <translation>Ҳаракатни анимация қилиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="277" />
+        <location filename="../src/app/ProjectEditing.cpp" line="278" />
         <source>Stop animating motion</source>
         <translation>Ҳаракат анимациясини ўчириш</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="294" />
+        <location filename="../src/app/ProjectEditing.cpp" line="295" />
         <source>Keyframe</source>
         <translation>Keyframe</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="312" />
+        <location filename="../src/app/ProjectEditing.cpp" line="313" />
         <source>Reset motion</source>
         <translation>Ҳаракатни тиклаш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="353" />
+        <source>Speed</source>
+        <translation>Тезлик</translation>
     </message>
 </context>
 <context>
@@ -2314,6 +2319,44 @@
     </message>
 </context>
 <context>
+    <name>bc::SpeedDialog</name>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="27" />
+        <source>Clip speed / duration</source>
+        <translation>Клип тезлиги / давомийлиги</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="48" />
+        <source> s</source>
+        <translation> с</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="50" />
+        <source>Shift the clips after it</source>
+        <translation>Кейинги клипларни суриш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="51" />
+        <source>When the clip gets longer or shorter, later clips on its tracks move with its end</source>
+        <translation>Клип узайса ёки қисқарса, унинг йўлакларидаги кейинги клиплар охири билан бирга сурилади</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="54" />
+        <source>The sound plays higher or lower with the speed. Without shifting, a longer clip stops at the next clip. Playing backwards comes later.</source>
+        <translation>Тезлик билан овоз ҳам ингичкароқ ёки йўғонроқ эшитилади. Суриш белгиланмаса, узайган клип кейинги клипгача боради. Орқага ижро кейинроқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="58" />
+        <source>Speed:</source>
+        <translation>Тезлик:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeedDialog.cpp" line="59" />
+        <source>Duration:</source>
+        <translation>Давомийлик:</translation>
+    </message>
+</context>
+<context>
     <name>bc::StatusDialog</name>
     <message>
         <location filename="../src/app/StatusDialog.cpp" line="17" />
@@ -2349,187 +2392,197 @@
 <context>
     <name>bc::TimelinePanel</name>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1153" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1164" />
         <source>Rename sequence</source>
         <translation>Секвенция номини ўзгартириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1153" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1164" />
         <source>Sequence name:</source>
         <translation>Секвенция номи:</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1321" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1348" />
         <source>Duration: %1</source>
         <translation>Давомийлик: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1340" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1368" />
         <source>Unlink audio and video</source>
         <translation>Видео ва овозни ажратиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1340" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1368" />
         <source>Link audio and video</source>
         <translation>Видео ва овозни боғлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1352" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1380" />
         <source>Split at playhead</source>
         <translation>Курсор жойида бўлиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1353" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1381" />
         <source>Delete</source>
         <translation>Ўчириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1354" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1382" />
         <source>Ripple delete</source>
         <translation>Бўшлиқсиз ўчириш (ripple)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1355" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1383" />
         <source>Snapping</source>
         <translation>Ёпишиш (snapping)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1356" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1384" />
         <source>Clips stick to edges and the playhead (S)</source>
         <translation>Клиплар четларга ва курсорга ёпишади (S)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1357" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1385" />
         <source>Add video track</source>
         <translation>Видео йўлак қўшиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1358" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1386" />
         <source>Add audio track</source>
         <translation>Овоз йўлаги қўшиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1359" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1387" />
         <source>Select all clips</source>
         <translation>Барча клипларни танлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1360" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1388" />
         <source>Fit</source>
         <translation>Сиғдириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1361" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1389" />
         <source>Show the whole sequence (\)</source>
         <translation>Бутун секвенцияни кўрсатиш (\)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1362" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1390" />
         <source>Zoom (Ctrl + mouse wheel)</source>
         <translation>Масштаб (Ctrl + сичқонча ғилдираги)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1363" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1391" />
         <source>Split at playhead (Ctrl+K)</source>
         <translation>Курсор жойида бўлиш (Ctrl+K)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1364" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1392" />
         <source>Copy</source>
         <translation>Нусха олиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1365" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1393" />
         <source>Nest</source>
         <translation>Nest (ички секвенция)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1366" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1394" />
+        <source>Speed / duration...</source>
+        <translation>Тезлик / давомийлик...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1395" />
+        <source>Play the clip faster or slower (Ctrl+R)</source>
+        <translation>Клипни тезроқ ёки секинроқ ижро қилиш (Ctrl+R)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1396" />
         <source>Put the selected clips into a new nested sequence that works as one clip</source>
         <translation>Танланган клипларни битта клип каби ишлайдиган янги ички секвенцияга жойлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1367" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1397" />
         <source>Rename...</source>
         <translation>Номини ўзгартириш...</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1368" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1398" />
         <source>Rename the nested sequence shown on the timeline</source>
         <translation>Timeline'да кўрсатилган ички секвенция номини ўзгартириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1370" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1400" />
         <source>Cut</source>
         <translation>Қирқиб олиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1371" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1401" />
         <source>Paste</source>
         <translation>Қўйиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1372" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1402" />
         <source>Paste at the playhead over what is there (Ctrl+V)</source>
         <translation>Курсор жойига, борининг устидан қўйиш (Ctrl+V)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1373" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1403" />
         <source>Paste insert</source>
         <translation>Суриб қўйиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1374" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1404" />
         <source>Paste at the playhead; later clips move right (Ctrl+Shift+V)</source>
         <translation>Курсор жойига қўйиш; кейинги клиплар ўнгга сурилади (Ctrl+Shift+V)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1375" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1405" />
         <source>Selection</source>
         <translation>Танлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1375" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1405" />
         <source>Razor</source>
         <translation>Пичоқ</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1375" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1405" />
         <source>Rolling edit</source>
         <translation>Roll (кесимни суриш)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1376" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1406" />
         <source>Slip</source>
         <translation>Slip</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1376" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1406" />
         <source>Slide</source>
         <translation>Slide</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1378" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1408" />
         <source>Select, move and trim clips (V)</source>
         <translation>Клипларни танлаш, кўчириш ва қисқартириш (V)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1379" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1409" />
         <source>Click a clip to split it there (C)</source>
         <translation>Клипни босилган жойдан бўлиш (C)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1380" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1410" />
         <source>Drag the cut between two clips: one gets longer, the other shorter (N)</source>
         <translation>Икки клип орасидаги кесимни суриш: бири узаяди, бошқаси қисқаради (N)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1381" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1411" />
         <source>Drag inside a clip to use another part of its source in the same place (Y)</source>
         <translation>Клип ичида суриш: шу жойда манбанинг бошқа қисми (Y)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1382" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1412" />
         <source>Drag a clip between its neighbours; they get longer or shorter (U)</source>
         <translation>Клипни қўшниларининг орасида суриш; улар узаяди ёки қисқаради (U)</translation>
     </message>
@@ -2545,47 +2598,47 @@
 <context>
     <name>bc::TimelineView</name>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="406" />
+        <location filename="../src/app/TimelinePanel.cpp" line="407" />
         <source>Drag media from the bin here</source>
         <translation>Медиани кутубхонадан шу ерга судраб ташланг</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="989" />
+        <location filename="../src/app/TimelinePanel.cpp" line="992" />
         <source>Unlock track</source>
         <translation>Йўлак қулфини очиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="989" />
+        <location filename="../src/app/TimelinePanel.cpp" line="992" />
         <source>Lock track</source>
         <translation>Йўлакни қулфлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="991" />
+        <location filename="../src/app/TimelinePanel.cpp" line="994" />
         <source>Show track in the Program monitor</source>
         <translation>Йўлакни Натижа мониторида кўрсатиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="991" />
+        <location filename="../src/app/TimelinePanel.cpp" line="994" />
         <source>Hide track in the Program monitor</source>
         <translation>Йўлакни Натижа мониторида яшириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="993" />
+        <location filename="../src/app/TimelinePanel.cpp" line="996" />
         <source>Turn the track sound on</source>
         <translation>Йўлак овозини ёқиш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="993" />
+        <location filename="../src/app/TimelinePanel.cpp" line="996" />
         <source>Mute track</source>
         <translation>Йўлак овозини ўчириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="995" />
+        <location filename="../src/app/TimelinePanel.cpp" line="998" />
         <source>Solo off</source>
         <translation>Solo’ни ўчириш</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="995" />
+        <location filename="../src/app/TimelinePanel.cpp" line="998" />
         <source>Solo: hear only this track (and other solo tracks)</source>
         <translation>Solo: фақат шу йўлакни (ва бошқа solo йўлакларни) эшитиш</translation>
     </message>

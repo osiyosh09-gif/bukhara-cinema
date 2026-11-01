@@ -15,6 +15,7 @@
 #include <mlt++/Mlt.h>
 
 #include <algorithm>
+#include <clocale>
 #include <cmath>
 
 namespace bc {
@@ -55,6 +56,9 @@ bool Engine::init(QString *error)
         qputenv("MLT_PRESETS_PATH", QDir::toNativeSeparators(data + QStringLiteral("/presets/")).toLocal8Bit());
         break;
     }
+    // MLT reads numbers in text (like the speed in "timewarp:1.5:...") with the
+    // C library's locale; with a Russian or Uzbek locale "1.5" would not parse.
+    std::setlocale(LC_NUMERIC, "C");
     mlt_repository raw = mlt_factory_init(repo.isEmpty() ? nullptr : repo.constData());
     Mlt::Repository *r = raw ? new Mlt::Repository(raw) : nullptr;
     if (!r) {
@@ -82,7 +86,7 @@ QString Engine::missingServices()
     std::unique_ptr<Mlt::Properties> producers(s_repo->producers());
     std::unique_ptr<Mlt::Properties> consumers(s_repo->consumers());
     std::unique_ptr<Mlt::Properties> transitions(s_repo->transitions());
-    for (const char *name : {"avformat", "color", "bc_still"}) {
+    for (const char *name : {"avformat", "color", "bc_still", "timewarp"}) {
         if (!producers || !producers->property_exists(name))
             missing << QString::fromLatin1(name);
     }
@@ -170,7 +174,7 @@ void TimelinePlayer::setProxies(const QHash<QUuid, QString> &proxies)
             it->video.reset();
 }
 
-Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio)
+Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio, double speed)
 {
     Cached &c = m_producers[item.id];
     if (c.path != item.path) {
@@ -180,7 +184,26 @@ Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio)
     const QString videoSource = m_proxies.value(item.id, item.path);
     if (!audio && c.videoSource != videoSource) {
         c.video.reset(); // proxy switched on or off
+        c.warpedVideo.clear();
         c.videoSource = videoSource;
+    }
+    const int warp = int(std::lround(speed * 1000));
+    if (warp != 1000 && item.info.kind != MediaInfo::Kind::Image) {
+        std::shared_ptr<Mlt::Producer> &w = audio ? c.warpedAudio[warp] : c.warpedVideo[warp];
+        if (!w) {
+            const QByteArray resource = "timewarp:" + QByteArray::number(warp / 1000.0, 'f', 3) + ":avformat:"
+                                        + (audio ? item.path : videoSource).toUtf8();
+            w = std::make_shared<Mlt::Producer>(*m_profile, nullptr, resource.constData());
+            if (!w->is_valid()) {
+                w.reset();
+                return nullptr;
+            }
+            if (audio)
+                w->set("video_index", -1);
+            else
+                w->set("audio_index", -1);
+        }
+        return w.get();
     }
     std::shared_ptr<Mlt::Producer> &p = audio ? c.audio : c.video;
     if (!p) {
@@ -264,16 +287,18 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             } else if (c.isTitle()) {
                 p = audio ? nullptr : titleProducer(c.title);
             } else if (const MediaItem *m = project.item(c.mediaId)) {
-                p = producerFor(*m, audio);
+                p = producerFor(*m, audio, c.speed);
             }
             if (p) {
-                const int in = c.isTitle() ? 0 : int(c.in);
+                // A speed-changed producer counts its own (warped) frames.
+                const int in = c.isTitle() ? 0 : c.speed != 1.0 ? int(std::llround(c.in / c.speed)) : int(c.in);
                 std::unique_ptr<Mlt::Producer> cut(p->cut(in, int(in + c.length - 1)));
                 if (!audio && (c.motion.animated() || !c.motion.isIdentity())) {
                     Mlt::Filter motion(*m_profile, "bc_transform");
                     if (motion.is_valid()) {
                         // Keys are in source frames; the filter counts from the cut's in point.
                         motion.set("motion", c.motion.toEngineString(c.in).constData());
+                        motion.set("speed", c.speed);
                         const MediaItem *m = c.mediaId.isNull() ? nullptr : project.item(c.mediaId);
                         if (m && m->info.kind == MediaInfo::Kind::Video && m->info.hasVideo())
                             motion.set("source_aspect", double(m->info.width) / m->info.height);

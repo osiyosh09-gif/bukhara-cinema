@@ -315,7 +315,7 @@ void MainWindow::buildMenus()
             [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
     connect(m_ctl, &ProjectController::timelineChanged, this,
             [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
-    addPlanned(m_clipMenu, QT_TR_NOOP("Speed / duration..."), 7, QStringLiteral("actSpeed"));
+    m_clipMenu->addAction(m_timeline->speedAction());
     m_clipMenu->addAction(m_timeline->linkAction());
     m_toolsMenu = m_clipMenu->addMenu(QString());
     m_toolsMenu->setObjectName(QStringLiteral("menuTools"));
@@ -545,7 +545,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 7, part 1: position, scale, rotation and opacity of clips with keyframes work (Clip panel).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 7 done: clip motion with keyframes (Clip panel) and speed changes (Ctrl+R) work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

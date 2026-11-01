@@ -87,7 +87,8 @@ private:
     QImage renderFrameLocked(qint64 frame);
     bool startReverse(qint64 frame, double speed);
     void reverseStep();
-    Mlt::Producer *producerFor(const MediaItem &item, bool audio);
+    // `speed` != 1 gives MLT's core "timewarp" producer (sound changes pitch).
+    Mlt::Producer *producerFor(const MediaItem &item, bool audio, double speed = 1.0);
     Mlt::Producer *titleProducer(const TitleData &title);
     static constexpr int kMaxNestDepth = 8;
     std::unique_ptr<Mlt::Tractor> buildTractor(const Project &project, const Timeline &tl, qint64 length, int depth);
@@ -106,6 +107,9 @@ private:
         QString videoSource; // path or its proxy
         std::shared_ptr<Mlt::Producer> video;
         std::shared_ptr<Mlt::Producer> audio;
+        // Speed-changed producers by speed in thousandths.
+        QHash<int, std::shared_ptr<Mlt::Producer>> warpedVideo;
+        QHash<int, std::shared_ptr<Mlt::Producer>> warpedAudio;
     };
     QHash<QUuid, Cached> m_producers;
     QHash<QUuid, QString> m_proxies;

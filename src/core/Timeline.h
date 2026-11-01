@@ -9,6 +9,7 @@
 
 #include "core/Motion.h"
 
+#include <cmath>
 #include <functional>
 
 namespace bc {
@@ -50,6 +51,17 @@ struct TimelineClip
     qint64 fadeIn = 0;  // audio clips: fade lengths in frames
     qint64 fadeOut = 0;
     ClipMotion motion;  // video clips: position, scale, rotation, opacity (phase 7)
+    double speed = 1.0; // media clips: 2.0 plays twice as fast (each timeline frame uses 2 source frames)
+
+    // Source frames used by `frames` timeline frames.
+    qint64 src(qint64 frames) const { return speed == 1.0 ? frames : qint64(std::llround(frames * speed)); }
+    // Timeline frames the source before `in` would fill (trimming the head out).
+    qint64 framesBefore() const { return speed == 1.0 ? in : qint64(std::floor(in / speed + 1e-9)); }
+    // Timeline frames the source from `in` to its end would fill.
+    qint64 framesAvailable(qint64 mediaFrames) const
+    {
+        return speed == 1.0 ? mediaFrames - in : qint64(std::floor((mediaFrames - in) / speed + 1e-9));
+    }
 
     bool isTitle() const { return mediaId.isNull() && nestId.isNull(); }
     bool isNested() const { return !nestId.isNull(); }
@@ -59,7 +71,7 @@ struct TimelineClip
     {
         return id == o.id && mediaId == o.mediaId && nestId == o.nestId && linkId == o.linkId && start == o.start && in == o.in
                && length == o.length && title == o.title && gainDb == o.gainDb && fadeIn == o.fadeIn
-               && fadeOut == o.fadeOut && motion == o.motion;
+               && fadeOut == o.fadeOut && motion == o.motion && speed == o.speed;
     }
 };
 

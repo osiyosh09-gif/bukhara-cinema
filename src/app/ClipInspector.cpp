@@ -244,7 +244,7 @@ void ClipInspector::retranslate()
     m_fadeOutLabel->setText(tr("Fade out:"));
     m_fadeIn->setSuffix(tr(" s"));
     m_fadeOut->setSuffix(tr(" s"));
-    m_videoNote->setText(tr("Speed changes arrive in the next part of phase 7."));
+    m_videoNote->setText(tr("Speed: Clip > Speed / duration (Ctrl+R)."));
     m_motionBox->setTitle(tr("Motion"));
     m_posXLabel->setText(tr("Position X:"));
     m_posYLabel->setText(tr("Position Y:"));

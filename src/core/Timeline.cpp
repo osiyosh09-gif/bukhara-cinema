@@ -178,7 +178,7 @@ void Timeline::clearRange(int track, qint64 from, qint64 to)
             TimelineClip right = c;
             right.id = QUuid::createUuid();
             right.linkId = QUuid();
-            right.in += to - c.start;
+            right.in += c.src(to - c.start);
             right.start = to;
             right.length = c.end() - to;
             right.fadeIn = 0;
@@ -191,7 +191,7 @@ void Timeline::clearRange(int track, qint64 from, qint64 to)
             out << c;
         } else if (c.end() > to) {
             const qint64 cut = to - c.start;
-            c.in += cut;
+            c.in += c.src(cut);
             c.start = to;
             c.length -= cut;
             c.fadeIn = 0;
@@ -301,7 +301,7 @@ bool Timeline::insertSpace(qint64 at, qint64 length, const QList<int> &onlyTrack
                         newLinks.insert(c.linkId, QUuid::createUuid());
                     right.linkId = newLinks.value(c.linkId);
                 }
-                right.in += at - c.start;
+                right.in += c.src(at - c.start);
                 right.length = c.end() - at;
                 right.start = at + length;
                 right.fadeIn = 0;
@@ -373,7 +373,7 @@ bool Timeline::roll(const QUuid &id, bool head, qint64 frame, const MediaFrames 
             const qint64 media = l.isTitle() ? -1 : mediaFrames(l.mediaId);
             lo = std::max(lo, l.start + 1);
             if (media >= 0)
-                hi = std::min(hi, l.start + (media - l.in));
+                hi = std::min(hi, l.start + l.framesAvailable(media));
         } else {
             const int r = p.right;
             lo = std::max(lo, r > 0 ? clips[r - 1].end() : 0);
@@ -383,7 +383,7 @@ bool Timeline::roll(const QUuid &id, bool head, qint64 frame, const MediaFrames 
             const qint64 media = rc.isTitle() ? -1 : mediaFrames(rc.mediaId);
             hi = std::min(hi, rc.end() - 1);
             if (media >= 0)
-                lo = std::max(lo, rc.start - rc.in);
+                lo = std::max(lo, rc.start - rc.framesBefore());
         } else {
             const int l = p.left;
             hi = std::min(hi, l + 1 < clips.size() ? clips[l + 1].start : kInf);
@@ -407,7 +407,7 @@ bool Timeline::roll(const QUuid &id, bool head, qint64 frame, const MediaFrames 
             r.start += d;
             r.length -= d;
             if (!r.isTitle() && mediaFrames(r.mediaId) >= 0)
-                r.in += d;
+                r.in = std::max<qint64>(0, r.in + r.src(d));
             r.fadeIn = std::min(r.fadeIn, r.length);
         }
     }
@@ -428,8 +428,8 @@ bool Timeline::slip(const QUuid &id, qint64 deltaFrames, const MediaFrames &medi
         const qint64 media = c.isTitle() ? -1 : mediaFrames(c.mediaId);
         if (media < 0)
             continue; // a still picture looks the same everywhere
-        lo = std::max(lo, -c.in);
-        hi = std::min(hi, media - c.length - c.in);
+        lo = std::max(lo, -c.framesBefore());
+        hi = std::min(hi, c.framesAvailable(media) - c.length);
         refs << r;
     }
     if (refs.isEmpty() || lo > hi)
@@ -438,7 +438,10 @@ bool Timeline::slip(const QUuid &id, qint64 deltaFrames, const MediaFrames &medi
     if (d == 0)
         return false;
     for (const ClipRef &r : refs)
-        tracks[r.track].clips[r.index].in += d;
+        {
+            TimelineClip &c = tracks[r.track].clips[r.index];
+            c.in = std::max<qint64>(0, c.in + c.src(d));
+        }
     return true;
 }
 
@@ -465,7 +468,7 @@ bool Timeline::slide(const QUuid &id, qint64 deltaFrames, const MediaFrames &med
         if (next >= 0) {
             const TimelineClip &n = clips[next];
             if (!n.isTitle() && mediaFrames(n.mediaId) >= 0)
-                lo = std::max(lo, -n.in);
+                lo = std::max(lo, -n.framesBefore());
             hi = std::min(hi, n.length - 1);
         } else {
             hi = std::min(hi, r.index + 1 < clips.size() ? clips[r.index + 1].start - c.end() : kInf);
@@ -475,7 +478,7 @@ bool Timeline::slide(const QUuid &id, qint64 deltaFrames, const MediaFrames &med
             const TimelineClip &p = clips[prev];
             const qint64 media = p.isTitle() ? -1 : mediaFrames(p.mediaId);
             if (media >= 0)
-                hi = std::min(hi, media - p.in - p.length);
+                hi = std::min(hi, p.framesAvailable(media) - p.length);
         }
         refs << r;
     }
@@ -497,7 +500,7 @@ bool Timeline::slide(const QUuid &id, qint64 deltaFrames, const MediaFrames &med
             n.start += d;
             n.length -= d;
             if (!n.isTitle() && mediaFrames(n.mediaId) >= 0)
-                n.in += d;
+                n.in = std::max<qint64>(0, n.in + n.src(d));
             n.fadeIn = std::min(n.fadeIn, n.length);
         }
         clips[r.index].start += d;
@@ -678,12 +681,12 @@ bool Timeline::trimImpl(const QUuid &id, bool head, qint64 frame, const QHash<QU
         const qint64 media = mediaFrames.value(c.mediaId, -1);
         if (head) {
             const qint64 prevEnd = r.index > 0 ? clips[r.index - 1].end() : 0;
-            const qint64 sourceStart = media >= 0 ? c.start - c.in : 0;
+            const qint64 sourceStart = media >= 0 ? c.start - c.framesBefore() : 0;
             lo = std::max({lo, prevEnd, sourceStart});
             hi = std::min(hi, c.end() - 1);
         } else {
             const qint64 nextStart = r.index + 1 < clips.size() ? clips[r.index + 1].start : kInf;
-            const qint64 sourceEnd = media >= 0 ? c.start + (media - c.in) : kInf;
+            const qint64 sourceEnd = media >= 0 ? c.start + c.framesAvailable(media) : kInf;
             lo = std::max(lo, c.start + 1);
             hi = std::min({hi, nextStart, sourceEnd});
         }
@@ -698,7 +701,7 @@ bool Timeline::trimImpl(const QUuid &id, bool head, qint64 frame, const QHash<QU
         TimelineClip &c = tracks[r.track].clips[r.index];
         if (head) {
             const qint64 delta = frame - c.start;
-            c.in = std::max<qint64>(0, c.in + delta);
+            c.in = std::max<qint64>(0, c.in + c.src(delta));
             c.start = frame;
             c.length -= delta;
         } else {
@@ -734,7 +737,7 @@ QList<QUuid> Timeline::splitAt(qint64 frame, const QList<QUuid> &only)
                     newLinks.insert(c.linkId, QUuid::createUuid());
                 right.linkId = newLinks.value(c.linkId);
             }
-            right.in += frame - c.start;
+            right.in += c.src(frame - c.start);
             right.start = frame;
             right.length = c.end() - frame;
             right.fadeIn = 0;
@@ -921,6 +924,8 @@ QJsonArray Timeline::toJson() const
                 co[QStringLiteral("fadeIn")] = double(c.fadeIn);
             if (c.fadeOut > 0)
                 co[QStringLiteral("fadeOut")] = double(c.fadeOut);
+            if (c.speed != 1.0)
+                co[QStringLiteral("speed")] = c.speed;
             const QJsonObject motion = c.motion.toJson();
             if (!motion.isEmpty())
                 co[QStringLiteral("motion")] = motion;
@@ -980,6 +985,8 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             c.gainDb = std::clamp(co.value(QStringLiteral("gainDb")).toDouble(), -60.0, 12.0);
             c.fadeIn = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeIn")).toDouble()));
             c.fadeOut = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeOut")).toDouble()));
+            if (!c.mediaId.isNull())
+                c.speed = std::clamp(co.value(QStringLiteral("speed")).toDouble(1.0), 0.1, 10.0);
             if (t.kind == Kind::Video)
                 c.motion = ClipMotion::fromJson(co.value(QStringLiteral("motion")).toObject());
             if (c.length > 0)
