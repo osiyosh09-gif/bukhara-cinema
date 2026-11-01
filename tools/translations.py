@@ -512,6 +512,74 @@ T.update({
         "При каждом сохранении старый файл проекта остаётся в папке «Backups» рядом с ним."),
 })
 
+# Phase 5 (part 2): proxies, media cache, collect project
+T.update({
+    "4K and other big videos then play smoothly; export still uses the originals.": (
+        "Шунда 4K ва бошқа катта видеолар равон ижро бўлади; экспорт барибир асл файллардан.",
+        "Тогда 4K и другие большие видео воспроизводятся плавно; экспорт всё равно из оригиналов."),
+    "A light copy for smooth playback; export still uses the original file.": (
+        "Равон ижро учун енгил нусха; экспорт барибир асл файлдан.",
+        "Лёгкая копия для плавного воспроизведения; экспорт всё равно из оригинала."),
+    "Audio waveforms": ("Овоз тўлқинлари", "Формы звуковой волны"),
+    "Collect project": ("Лойиҳани йиғиш", "Сбор проекта"),
+    "Collect project...": ("Лойиҳани йиғиш...", "Собрать проект..."),
+    "Collect": ("Йиғиш", "Собрать"),
+    "Copies the project file and its media into one new folder, for example to move it to another computer or to archive it. The open project does not change.": (
+        "Лойиҳа файли ва унинг медиасини битта янги папкага нусхалайди, масалан, бошқа компьютерга кўчириш ёки архивлаш учун. Очиқ лойиҳа ўзгармайди.",
+        "Копирует файл проекта и его медиа в одну новую папку, например, чтобы перенести на другой компьютер или в архив. Открытый проект не меняется."),
+    "Copy the project and its media into one folder": ("Лойиҳа ва медиани битта папкага нусхалаш", "Скопировать проект и медиа в одну папку"),
+    "Could not collect the project: %1": ("Лойиҳани йиғиб бўлмади: %1", "Не удалось собрать проект: %1"),
+    "Could not make a proxy: %1": ("Proxy тайёрлаб бўлмади: %1", "Не удалось создать прокси: %1"),
+    "Create proxy": ("Proxy тайёрлаш", "Создать прокси"),
+    "Delete all proxy videos? Big videos will play less smoothly until new proxies are made.": (
+        "Барча proxy видеолар ўчирилсинми? Янги proxy тайёрлангунча катта видеолар секинроқ ижро бўлади.",
+        "Удалить все прокси-видео? Пока не будут созданы новые, большие видео будут воспроизводиться менее плавно."),
+    "Delete proxy": ("Proxy'ни ўчириш", "Удалить прокси"),
+    "Destination folder": ("Мақсад папка", "Папка назначения"),
+    "Destination folder:": ("Қаерга:", "Куда:"),
+    "File > Media cache shows and deletes thumbnails, waveforms and proxies. File > Collect project copies the project and its media into a new folder.": (
+        "Файл > Медиа кэши: thumbnail, waveform ва proxy ҳажмини кўриш ва ўчириш. Файл > Лойиҳани йиғиш: лойиҳа ва медиани янги папкага нусхалайди.",
+        "Файл > Кэш медиа показывает и удаляет миниатюры, формы волны и прокси. Файл > Собрать проект копирует проект и медиа в новую папку."),
+    "Files to copy: %1 (%2).": ("Нусхаланадиган файллар: %1 (%2).", "Файлов для копирования: %1 (%2)."),
+    "Make proxies for videos larger than Full HD automatically": (
+        "Full HD'дан катта видеоларга proxy'ни автоматик тайёрлаш",
+        "Автоматически создавать прокси для видео больше Full HD"),
+    "Making proxy: %1% (%2 more)": ("Proxy тайёрланяпти: %1% (яна %2 та)", "Создание прокси: %1% (ещё %2)"),
+    "Making proxy: %1%": ("Proxy тайёрланяпти: %1%", "Создание прокси: %1%"),
+    "Media cache and collecting a project into one folder": ("Медиа кэши ва лойиҳани битта папкага йиғиш", "Кэш медиа и сбор проекта в одну папку"),
+    "Media cache": ("Медиа кэши", "Кэш медиа"),
+    "Media cache...": ("Медиа кэши...", "Кэш медиа..."),
+    "Media not used in the sequence left out: %1.": ("Секвенцияда ишлатилмаган медиа қўшилмади: %1.", "Медиа, не используемые в секвенции, пропущены: %1."),
+    "Missing files that cannot be copied: %1.": ("Топилмаган ва нусхаланмайдиган файллар: %1.", "Отсутствующие файлы, которые нельзя скопировать: %1."),
+    "New project: %1": ("Янги лойиҳа: %1", "Новый проект: %1"),
+    "Only media used in the sequence": ("Фақат секвенцияда ишлатилган медиа", "Только медиа, используемые в секвенции"),
+    "Open collected project": ("Йиғилган лойиҳани очиш", "Открыть собранный проект"),
+    "Phase 5: editing, playback, titles, MP4 export, autosave, waveforms and proxies work.": (
+        "5-босқич: монтаж, ижро, титрлар, MP4 экспорт, автосақлаш, овоз тўлқини ва proxy ишлайди.",
+        "Этап 5: монтаж, воспроизведение, титры, экспорт в MP4, автосохранение, формы волны и прокси работают."),
+    "Phase 5: editing, playback, titles, clip volume, MP4 export, autosave with crash recovery, audio waveforms and proxies. See Help > Feature status.": (
+        "5-босқич: монтаж, ижро, титрлар, клип овози, MP4 экспорт, автосақлаш ва бузилишдан кейин тиклаш, овоз тўлқини ва proxy. Ёрдам > Функциялар ҳолати бўлимига қаранг.",
+        "Этап 5: монтаж, воспроизведение, титры, громкость клипов, экспорт в MP4, автосохранение с восстановлением после сбоя, формы волны и прокси. См. Справка > Состояние функций."),
+    "Play big videos from their light proxy copies. Export always uses the originals.": (
+        "Катта видеоларни енгил proxy нусхаларидан ижро қилиш. Экспорт ҳар доим асл файллардан.",
+        "Воспроизводить большие видео из лёгких прокси-копий. Экспорт всегда из оригиналов."),
+    "Proxy files for smooth playback of big videos": ("Катта видеоларни равон ижро қилиш учун proxy файллар", "Прокси-файлы для плавного воспроизведения больших видео"),
+    "Proxy videos": ("Proxy видеолар", "Прокси-видео"),
+    "Stop making proxies": ("Proxy тайёрлашни тўхтатиш", "Остановить создание прокси"),
+    "The program keeps thumbnails, audio waveforms and proxy videos made from your media in a cache folder. Deleting them is safe: they are made again when needed. Your media files and projects are not touched.": (
+        "Дастур медиадан тайёрланган thumbnail, овоз тўлқини ва proxy видеоларни кэш папкасида сақлайди. Уларни ўчириш хавфсиз: керак бўлганда қайта тайёрланади. Медиа файллар ва лойиҳаларингизга тегилмайди.",
+        "Программа хранит миниатюры, формы волны и прокси-видео, созданные из ваших медиа, в папке кэша. Удалять их безопасно: при необходимости они создаются заново. Ваши медиафайлы и проекты не затрагиваются."),
+    "This folder already exists: choose another destination.": ("Бу папка аллақачон бор: бошқа жойни танланг.", "Эта папка уже существует: выберите другое место."),
+    "Thumbnails": ("Thumbnail'лар", "Миниатюры"),
+    "Total: %1 in %2": ("Жами: %1, папка: %2", "Всего: %1 в %2"),
+    "Use proxies for playback": ("Ижрода proxy ишлатиш", "Использовать прокси при воспроизведении"),
+    "Videos larger than Full HD get a 540p proxy in the background (File > Settings); any video can get one from the media bin menu. Sequence > Use proxies for playback switches them; export always uses the originals.": (
+        "Full HD'дан катта видеоларга фонда 540p proxy тайёрланади (Файл > Созламалар); исталган видеога медиа кутубхонаси менюсидан ҳам. Секвенция > Ижрода proxy ишлатиш орқали ёқилади/ўчирилади; экспорт ҳар доим асл файллардан.",
+        "Для видео больше Full HD в фоне создаётся прокси 540p (Файл > Настройки); для любого видео — из меню медиатеки. Секвенция > Использовать прокси при воспроизведении включает их; экспорт всегда из оригиналов."),
+    "making proxy...": ("proxy тайёрланяпти...", "создаётся прокси..."),
+    "proxy": ("proxy бор", "есть прокси"),
+})
+
 
 # Manual Latin overrides where transliteration is not ideal.
 LATIN_OVERRIDES = {

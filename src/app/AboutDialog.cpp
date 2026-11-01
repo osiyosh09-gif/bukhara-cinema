@@ -64,7 +64,7 @@ AboutDialog::AboutDialog(Page page, QWidget *parent)
                             tr("Version %1").arg(appVersion()),
                             tr("Independent video editor for Windows."),
                             tr("Phase 5: editing, playback, titles, clip volume, MP4 export, autosave with crash "
-                               "recovery and audio waveforms. See Help > Feature status.")));
+                               "recovery, audio waveforms and proxies. See Help > Feature status.")));
     tabs->addTab(about, tr("About"));
 
     auto *lic = new QTextBrowser(this);

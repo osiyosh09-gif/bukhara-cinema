@@ -10,6 +10,7 @@ class QTabWidget;
 class QToolBar;
 class QSplitter;
 class QLabel;
+class QToolButton;
 
 namespace bc {
 
@@ -80,6 +81,9 @@ private:
     void addTitle(); // Graphics > New text: title at the playhead, ready to type
     void openExport(); // File > Export
     void openVersions(); // File > Previous versions
+    void openCollect();  // File > Collect project
+    void openCache();    // File > Media cache
+    void updateProxyStatus();
 
     struct PlannedAction
     {
@@ -105,6 +109,9 @@ private:
     QAction *m_saveAct = nullptr;
     QAction *m_saveAsAct = nullptr;
     QAction *m_versionsAct = nullptr;
+    QAction *m_collectAct = nullptr;
+    QAction *m_cacheAct = nullptr;
+    QAction *m_useProxiesAct = nullptr;
     QAction *m_importAct = nullptr;
     QAction *m_sequenceAct = nullptr;
     QAction *m_undoAct = nullptr;
@@ -134,6 +141,8 @@ private:
     ClipInspector *m_clipInspector = nullptr;
     QSplitter *m_monitorSplit = nullptr;
     QLabel *m_statusLabel = nullptr;
+    QLabel *m_proxyLabel = nullptr;
+    QToolButton *m_proxyCancel = nullptr;
 
     ProjectController *m_ctl = nullptr;
     Autosave *m_autosave = nullptr;

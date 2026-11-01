@@ -9,7 +9,9 @@
 #include <QSet>
 #include <QThreadPool>
 
+#include <atomic>
 #include <functional>
+#include <memory>
 
 class QUndoStack;
 
@@ -128,6 +130,24 @@ public:
     void cancelExport();
     bool isExporting() const;
 
+    // --- proxies (light copies of big videos for smooth playback)
+    // Global settings (QSettings "proxy/use", "proxy/auto"), both on by default.
+    static bool proxiesEnabledSetting();
+    static bool autoProxySetting();
+    bool useProxies() const { return m_useProxies; }
+    void setUseProxies(bool on);
+    bool hasProxy(const QUuid &id) const { return m_proxies.contains(id); }
+    bool isMakingProxy(const QUuid &id) const { return m_proxyQueue.contains(id) || m_proxyRunning == id; }
+    int proxyJobsLeft() const { return int(m_proxyQueue.size()) + (m_proxyRunning.isNull() ? 0 : 1); }
+    // Queues proxies for the given video items (skips ones that have one).
+    // Returns the number queued.
+    int createProxies(const QList<QUuid> &ids);
+    void cancelProxies();
+    void deleteProxies(const QList<QUuid> &ids);
+    // Forgets proxies whose files are gone (after the cache was cleared).
+    void refreshProxies();
+    void waitForProxies(); // tests
+
     // Blocks until background probing/thumbnails are done (tests, closing).
     void waitForBackgroundWork();
 
@@ -145,6 +165,9 @@ signals:
     void playingChanged(bool playing);
     void exportProgress(qint64 frame, qint64 total, qint64 remainingMs);
     void exportFinished(bool ok, const QString &error);
+    // Proxy work: progress of the running file (0..1) and when each ends.
+    void proxyProgress(const QUuid &id, double fraction, int jobsLeft);
+    void proxyFinished(const QUuid &id, bool ok, const QString &error);
 
 private:
     void setModified(bool m);
@@ -155,6 +178,8 @@ private:
     void startWaveform(const MediaItem &item);
     static QString waveCachePath(const QString &mediaPath);
     void adopt(Project &&p, const QString &filePath, bool modified);
+    void checkProxy(const MediaItem &item); // after probing: known proxy, or auto-create
+    void startNextProxy();
     void refreshOnlineState();
     static QString thumbCachePath(const QString &mediaPath);
     bool editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn,
@@ -175,6 +200,12 @@ private:
     QHash<QUuid, QImage> m_thumbs;
     QHash<QUuid, QByteArray> m_waves;
     quint64 m_changeSerial = 0;
+    QHash<QUuid, QString> m_proxies;  // media id -> ready proxy file
+    QList<QUuid> m_proxyQueue;
+    QUuid m_proxyRunning;
+    std::shared_ptr<std::atomic_bool> m_proxyCancel;
+    QThreadPool m_proxyPool;          // one proxy at a time
+    bool m_useProxies = true;
     QThreadPool m_pool;
     quint64 m_generation = 0; // ignores results of jobs started for an older project
     QUndoStack *m_undo = nullptr;

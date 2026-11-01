@@ -6,6 +6,7 @@ class QComboBox;
 class QLabel;
 class QDialogButtonBox;
 class QSpinBox;
+class QCheckBox;
 
 namespace bc {
 
@@ -34,6 +35,7 @@ private:
     QComboBox *m_autosaveCombo;
     QLabel *m_backupLabel;
     QSpinBox *m_backupSpin;
+    QCheckBox *m_autoProxy;
     QDialogButtonBox *m_buttons;
 };
 

@@ -152,12 +152,28 @@ QSize TimelinePlayer::previewSize() const
     return QSize(std::max(2, s.width() & ~1), std::max(2, s.height() & ~1));
 }
 
+void TimelinePlayer::setProxies(const QHash<QUuid, QString> &proxies)
+{
+    pause();
+    QMutexLocker lock(&m_mutex);
+    m_proxies = proxies;
+    // Close files that are no longer wanted (a deleted proxy must not stay open).
+    for (auto it = m_producers.begin(); it != m_producers.end(); ++it)
+        if (it->video && it->videoSource != m_proxies.value(it.key(), it->path))
+            it->video.reset();
+}
+
 Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio)
 {
     Cached &c = m_producers[item.id];
     if (c.path != item.path) {
         c = Cached();
         c.path = item.path;
+    }
+    const QString videoSource = m_proxies.value(item.id, item.path);
+    if (!audio && c.videoSource != videoSource) {
+        c.video.reset(); // proxy switched on or off
+        c.videoSource = videoSource;
     }
     std::shared_ptr<Mlt::Producer> &p = audio ? c.audio : c.video;
     if (!p) {
@@ -176,7 +192,7 @@ Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio)
                 return nullptr;
             resource = EngineServices::stillResource(image);
         } else {
-            resource = "avformat:" + item.path.toUtf8();
+            resource = "avformat:" + (audio ? item.path : videoSource).toUtf8();
         }
         p = std::make_shared<Mlt::Producer>(*m_profile, nullptr, resource.constData());
         if (!p->is_valid()) {

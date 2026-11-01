@@ -39,6 +39,12 @@ target_compile_definitions(tst_phase5 PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
 add_test(NAME phase5_reliability COMMAND tst_phase5)
 set_tests_properties(phase5_reliability PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
 
+add_executable(tst_phase5b tst_phase5b.cpp)
+target_link_libraries(tst_phase5b PRIVATE bc_ui Qt6::Test)
+target_compile_definitions(tst_phase5b PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
+add_test(NAME phase5b_proxies_collect COMMAND tst_phase5b)
+set_tests_properties(phase5b_proxies_collect PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 600)
+
 find_package(Python3 COMPONENTS Interpreter)
 if(Python3_Interpreter_FOUND)
     add_test(NAME translations_complete

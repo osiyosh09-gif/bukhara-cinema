@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.7.0
+    VERSION 0.8.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -26,6 +26,9 @@ add_library(bc_core STATIC
     src/core/Timeline.h         src/core/Timeline.cpp
     src/core/Waveform.h         src/core/Waveform.cpp
     src/core/Backups.h          src/core/Backups.cpp
+    src/core/MediaCache.h       src/core/MediaCache.cpp
+    src/core/Proxy.h            src/core/Proxy.cpp
+    src/core/Collector.h        src/core/Collector.cpp
 )
 target_include_directories(bc_core PUBLIC src)
 target_link_libraries(bc_core PUBLIC Qt6::Core Qt6::Gui FFmpeg::FFmpeg)
@@ -57,12 +60,15 @@ add_library(bc_ui STATIC
     src/app/ExportDialog.h      src/app/ExportDialog.cpp
     src/app/Autosave.h          src/app/Autosave.cpp
     src/app/RecoveryDialog.h    src/app/RecoveryDialog.cpp
+    src/app/CacheDialog.h       src/app/CacheDialog.cpp
+    src/app/CollectDialog.h     src/app/CollectDialog.cpp
     src/app/SettingsDialog.h    src/app/SettingsDialog.cpp
     src/app/AboutDialog.h       src/app/AboutDialog.cpp
     src/app/StatusDialog.h      src/app/StatusDialog.cpp
     src/app/MainWindow.h        src/app/MainWindow.cpp
     src/app/Logging.h           src/app/Logging.cpp
     src/app/ProjectController.h src/app/ProjectController.cpp
+    src/app/ProjectProxies.cpp
     src/app/MediaBinPanel.h     src/app/MediaBinPanel.cpp
     src/app/ProjectInfoPanel.h  src/app/ProjectInfoPanel.cpp
     src/app/SequenceSettingsDialog.h src/app/SequenceSettingsDialog.cpp

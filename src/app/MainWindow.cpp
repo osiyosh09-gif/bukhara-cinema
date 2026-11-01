@@ -11,7 +11,9 @@
 #include "app/ProjectController.h"
 #include "app/ProjectInfoPanel.h"
 #include "app/SequenceSettingsDialog.h"
+#include "app/CacheDialog.h"
 #include "app/ClipInspector.h"
+#include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
@@ -39,6 +41,7 @@
 #include <QStyle>
 #include <QTabWidget>
 #include <QToolBar>
+#include <QToolButton>
 #include <QUndoStack>
 #include <QUrl>
 
@@ -68,6 +71,30 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_statusLabel = new QLabel(this);
     statusBar()->addWidget(m_statusLabel, 1);
+    // Proxy work in the background: "Making proxy: 37% (2 more)" + stop.
+    m_proxyLabel = new QLabel(this);
+    m_proxyLabel->setObjectName(QStringLiteral("proxyStatus"));
+    m_proxyCancel = new QToolButton(this);
+    m_proxyCancel->setObjectName(QStringLiteral("proxyCancel"));
+    m_proxyCancel->setAutoRaise(true);
+    m_proxyCancel->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
+    connect(m_proxyCancel, &QToolButton::clicked, m_ctl, &ProjectController::cancelProxies);
+    statusBar()->addPermanentWidget(m_proxyLabel);
+    statusBar()->addPermanentWidget(m_proxyCancel);
+    m_proxyLabel->hide();
+    m_proxyCancel->hide();
+    connect(m_ctl, &ProjectController::proxyProgress, this, [this](const QUuid &, double f, int left) {
+        m_proxyLabel->setText(left > 1 ? tr("Making proxy: %1% (%2 more)").arg(int(f * 100)).arg(left - 1)
+                                       : tr("Making proxy: %1%").arg(int(f * 100)));
+        m_proxyLabel->show();
+        m_proxyCancel->show();
+    });
+    connect(m_ctl, &ProjectController::proxyFinished, this, [this](const QUuid &, bool ok, const QString &err) {
+        if (!ok && err != QLatin1String("cancelled"))
+            statusBar()->showMessage(tr("Could not make a proxy: %1").arg(err), 8000);
+        updateProxyStatus();
+    });
+    connect(m_ctl, &ProjectController::itemUpdated, this, &MainWindow::updateProxyStatus);
 
     connect(m_ctl, &ProjectController::modifiedChanged, this, &MainWindow::updateTitle);
     connect(m_ctl, &ProjectController::fileNameChanged, this, &MainWindow::updateTitle);
@@ -210,6 +237,8 @@ void MainWindow::buildMenus()
     m_versionsAct->setEnabled(false);
     connect(m_ctl, &ProjectController::fileNameChanged, this,
             [this](const QString &path) { m_versionsAct->setEnabled(!path.isEmpty()); });
+    m_collectAct = m_fileMenu->addAction(QString(), this, &MainWindow::openCollect);
+    m_collectAct->setObjectName(QStringLiteral("actCollect"));
     m_fileMenu->addSeparator();
     m_importAct = m_fileMenu->addAction(QString(), m_bin, &MediaBinPanel::importDialog);
     m_importAct->setObjectName(QStringLiteral("actImport"));
@@ -227,6 +256,8 @@ void MainWindow::buildMenus()
     connect(m_ctl, &ProjectController::projectReset, this, updateExport);
     m_exportAct->setEnabled(false);
     m_fileMenu->addSeparator();
+    m_cacheAct = m_fileMenu->addAction(QString(), this, &MainWindow::openCache);
+    m_cacheAct->setObjectName(QStringLiteral("actMediaCache"));
     m_settingsAct = m_fileMenu->addAction(QString(), this, &MainWindow::openSettings);
     m_settingsAct->setObjectName(QStringLiteral("actSettings"));
     m_settingsAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+,")));
@@ -283,6 +314,11 @@ void MainWindow::buildMenus()
     m_playAct->setObjectName(QStringLiteral("actPlayPause"));
     m_playAct->setShortcut(QKeySequence(Qt::Key_Space));
     m_playAct->setEnabled(m_ctl->canPlay());
+    m_useProxiesAct = m_sequenceMenu->addAction(QString());
+    m_useProxiesAct->setObjectName(QStringLiteral("actUseProxies"));
+    m_useProxiesAct->setCheckable(true);
+    m_useProxiesAct->setChecked(m_ctl->useProxies());
+    connect(m_useProxiesAct, &QAction::toggled, m_ctl, &ProjectController::setUseProxies);
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
 
     m_markersMenu = mb->addMenu(QString());
@@ -376,6 +412,12 @@ void MainWindow::retranslate()
     m_saveAct->setText(tr("Save"));
     m_saveAsAct->setText(tr("Save as..."));
     m_versionsAct->setText(tr("Previous versions..."));
+    m_collectAct->setText(tr("Collect project..."));
+    m_collectAct->setToolTip(tr("Copy the project and its media into one folder"));
+    m_cacheAct->setText(tr("Media cache..."));
+    m_useProxiesAct->setText(tr("Use proxies for playback"));
+    m_useProxiesAct->setToolTip(tr("Play big videos from their light proxy copies. Export always uses the originals."));
+    m_proxyCancel->setToolTip(tr("Stop making proxies"));
     m_importAct->setText(tr("Import media..."));
     m_sequenceAct->setText(tr("Sequence settings..."));
     m_settingsAct->setText(tr("Settings..."));
@@ -405,7 +447,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 5: editing, playback, titles, MP4 export, autosave and waveforms work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 5: editing, playback, titles, MP4 export, autosave, waveforms and proxies work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -624,6 +666,27 @@ void MainWindow::openVersions()
         return;
     }
     statusBar()->showMessage(tr("An earlier version is open. Save to make it the current project."), 8000);
+}
+
+void MainWindow::openCollect()
+{
+    CollectDialog dlg(m_ctl, this);
+    if (dlg.exec() == QDialog::Accepted && !dlg.collectedProject().isEmpty() && maybeSave())
+        openProjectFile(dlg.collectedProject());
+}
+
+void MainWindow::openCache()
+{
+    CacheDialog dlg(m_ctl, this);
+    dlg.exec();
+}
+
+void MainWindow::updateProxyStatus()
+{
+    if (m_ctl->proxyJobsLeft() == 0) {
+        m_proxyLabel->hide();
+        m_proxyCancel->hide();
+    }
 }
 
 bool MainWindow::checkRecovery()

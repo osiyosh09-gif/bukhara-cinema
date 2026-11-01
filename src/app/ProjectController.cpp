@@ -1,6 +1,7 @@
 #include "app/ProjectController.h"
 
 #include "core/Backups.h"
+#include "core/MediaCache.h"
 #include "core/MediaProbe.h"
 #include "core/Waveform.h"
 #include "engine/TimelinePlayer.h"
@@ -64,6 +65,8 @@ ProjectController::ProjectController(QObject *parent)
 {
     // The target PC has 2 cores: keep background decoding modest.
     m_pool.setMaxThreadCount(2);
+    m_proxyPool.setMaxThreadCount(1);
+    m_useProxies = proxiesEnabledSetting();
     m_undo = new QUndoStack(this);
     m_undo->setUndoLimit(200);
 
@@ -99,8 +102,12 @@ ProjectController::~ProjectController()
     // react to them any more (the main window is being destroyed too).
     m_undo->blockSignals(true);
     ++m_generation;
+    m_proxyQueue.clear();
+    if (m_proxyCancel)
+        m_proxyCancel->store(true);
     m_pool.clear();
     m_pool.waitForDone();
+    m_proxyPool.waitForDone();
 }
 
 QString ProjectController::displayName() const
@@ -120,6 +127,8 @@ void ProjectController::newProject()
     m_project = Project();
     m_thumbs.clear();
     m_waves.clear();
+    m_proxies.clear();
+    cancelProxies();
     m_pendingProbe.clear();
     m_online.clear();
     m_playhead = 0;
@@ -167,9 +176,17 @@ void ProjectController::adopt(Project &&p, const QString &filePath, bool modifie
         m_project.name = QFileInfo(filePath).completeBaseName();
     m_thumbs.clear();
     m_waves.clear();
+    m_proxies.clear();
+    cancelProxies();
     m_pendingProbe.clear();
     setFilePath(filePath);
     refreshOnlineState();
+    // Proxies made earlier: known before the first graph is built.
+    for (const MediaItem &m : m_project.items) {
+        const QString proxy = MediaCache::pathFor(MediaCache::Kind::Proxy, m.path);
+        if (m.info.kind == MediaInfo::Kind::Video && m_online.contains(m.id) && QFileInfo::exists(proxy))
+            m_proxies.insert(m.id, proxy);
+    }
     m_playhead = 0;
     m_lastFrameKey.clear();
     resetUndo();
@@ -190,6 +207,7 @@ void ProjectController::adopt(Project &&p, const QString &filePath, bool modifie
         } else {
             startThumbnail(m);
             startWaveform(m);
+            checkProxy(m);
         }
     }
 }
@@ -529,8 +547,10 @@ void ProjectController::resetUndo()
 void ProjectController::syncPlayer()
 {
     ++m_graphRev;
-    if (m_player)
-        m_player->setProject(m_project); // stops playback; the graph follows the edit
+    if (m_player) {
+        m_player->setProxies(m_useProxies ? m_proxies : QHash<QUuid, QString>());
+        m_player->setProject(m_project);
+    } // stops playback; the graph follows the edit
 }
 
 void ProjectController::applyTimeline(const Timeline &t)
@@ -868,13 +888,7 @@ void ProjectController::startProgramFrame()
 
 QString ProjectController::thumbCachePath(const QString &mediaPath)
 {
-    const QFileInfo fi(mediaPath);
-    const QByteArray key = (fi.absoluteFilePath() + QString::number(fi.size())
-                            + QString::number(fi.lastModified().toMSecsSinceEpoch()))
-                               .toUtf8();
-    const QString hash = QString::fromLatin1(QCryptographicHash::hash(key, QCryptographicHash::Sha1).toHex());
-    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + QStringLiteral("/thumbs/") + hash
-           + QStringLiteral(".jpg");
+    return MediaCache::pathFor(MediaCache::Kind::Thumbnail, mediaPath);
 }
 
 void ProjectController::startProbe(const MediaItem &item)
@@ -906,6 +920,7 @@ void ProjectController::startProbe(const MediaItem &item)
                 self->setModified(true);
                 self->startThumbnail(*m);
                 self->startWaveform(*m);
+                self->checkProxy(*m);
             }
             emit self->itemUpdated(id);
         }, Qt::QueuedConnection);
@@ -946,10 +961,7 @@ void ProjectController::startThumbnail(const MediaItem &item)
 
 QString ProjectController::waveCachePath(const QString &mediaPath)
 {
-    QString p = thumbCachePath(mediaPath);
-    p.replace(QStringLiteral("/thumbs/"), QStringLiteral("/waveforms/"));
-    p.replace(QStringLiteral(".jpg"), QStringLiteral(".bcwf"));
-    return p;
+    return MediaCache::pathFor(MediaCache::Kind::Waveform, mediaPath);
 }
 
 void ProjectController::startWaveform(const MediaItem &item)
