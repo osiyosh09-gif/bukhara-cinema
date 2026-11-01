@@ -79,7 +79,7 @@ private slots:
                 QVERIFY2(!a->isEnabled(), qPrintable(a->objectName()));
             }
         }
-        QVERIFY(planned >= 8); // phases 2-6 turned editing, titles, audio, export and markers into real actions
+        QVERIFY(planned >= 5); // phases 2-6 turned editing, titles, audio, export, markers and clipboard into real actions
 
         // With no clip opened, the Source monitor buttons must not pretend to work.
         auto *source = w.findChild<MonitorView *>(QStringLiteral("sourceMonitor"));
@@ -121,7 +121,7 @@ private slots:
         QCOMPARE(Language::instance().current(), code);
         QCOMPARE(menuAt(w, 1)->title(), editMenu);
         QCOMPARE(w.findChild<QTabWidget *>(QStringLiteral("leftTabs"))->tabText(0), mediaBin);
-        auto *planned = w.findChild<QAction *>(QStringLiteral("actCut"));
+        auto *planned = w.findChild<QAction *>(QStringLiteral("actShortcuts"));
         QVERIFY(planned->text().endsWith(phaseTag));
 
         // Persisted for the next start.

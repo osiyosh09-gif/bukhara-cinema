@@ -7,6 +7,7 @@
 #include "app/ProjectController.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDragEnterEvent>
 #include <QEvent>
@@ -688,11 +689,35 @@ void TimelineView::mousePressEvent(QMouseEvent *e)
 
     m_dragClip = h.clip;
     m_dragTrack = h.track;
-    if ((h.headEdge || h.tailEdge) && !tl.tracks[h.track].locked) {
-        m_drag = Drag::Trim;
+    const bool locked = tl.tracks[h.track].locked;
+    switch (m_tool) {
+    case Tool::Razor:
+        m_drag = Drag::None;
+        if (!locked) {
+            qint64 snapped = -1;
+            const QList<QUuid> linked = tl.withLinked({h.clip});
+            const qint64 f = snap(frameUnderMouse(pos.x()), QSet<QUuid>(linked.begin(), linked.end()), &snapped);
+            m_ctl->splitClips(f, {h.clip});
+        }
+        break;
+    case Tool::Roll:
+        m_drag = (h.headEdge || h.tailEdge) && !locked ? Drag::Roll : Drag::None;
         m_trimHead = h.headEdge;
-    } else {
-        m_drag = m_selection.contains(h.clip) ? Drag::Move : Drag::None;
+        break;
+    case Tool::Slip:
+        m_drag = locked ? Drag::None : Drag::Slip;
+        break;
+    case Tool::Slide:
+        m_drag = locked ? Drag::None : Drag::Slide;
+        break;
+    case Tool::Select:
+        if ((h.headEdge || h.tailEdge) && !locked) {
+            m_drag = Drag::Trim;
+            m_trimHead = h.headEdge;
+        } else {
+            m_drag = m_selection.contains(h.clip) ? Drag::Move : Drag::None;
+        }
+        break;
     }
     m_moveDelta = 0;
     m_moveTracks = 0;
@@ -703,8 +728,7 @@ void TimelineView::mouseMoveEvent(QMouseEvent *e)
 {
     const QPoint pos = e->position().toPoint();
     if (m_drag == Drag::None) {
-        const Hit h = hitTest(pos);
-        viewport()->setCursor((h.headEdge || h.tailEdge) ? Qt::SizeHorCursor : Qt::ArrowCursor);
+        updateCursor(pos);
         return;
     }
     if (m_drag == Drag::Scrub) {
@@ -747,8 +771,62 @@ void TimelineView::mouseMoveEvent(QMouseEvent *e)
         Timeline t = tl;
         t.trim(m_dragClip, m_trimHead, frame, [this](const QUuid &mid) { return m_ctl->mediaFrames(mid); });
         m_preview = t;
+    } else if (m_drag == Drag::Roll) {
+        const QList<QUuid> linked = tl.withLinked({m_dragClip});
+        m_trimFrame = snap(frameUnderMouse(pos.x()), QSet<QUuid>(linked.begin(), linked.end()), &m_snapLine);
+        Timeline t = tl;
+        t.roll(m_dragClip, m_trimHead, m_trimFrame, [this](const QUuid &mid) { return m_ctl->mediaFrames(mid); });
+        m_preview = t;
+    } else if (m_drag == Drag::Slip || m_drag == Drag::Slide) {
+        const qint64 dx = qint64(std::llround((pos.x() - m_pressPos.x()) / m_ppf));
+        Timeline t = tl;
+        if (m_drag == Drag::Slip) {
+            // Dragging right shows an earlier part of the source.
+            m_moveDelta = -dx;
+            t.slip(m_dragClip, m_moveDelta, [this](const QUuid &mid) { return m_ctl->mediaFrames(mid); });
+        } else {
+            m_moveDelta = snapDelta(dx, tl.withLinked({m_dragClip}), &m_snapLine);
+            t.slide(m_dragClip, m_moveDelta, [this](const QUuid &mid) { return m_ctl->mediaFrames(mid); });
+        }
+        m_preview = t;
     }
     viewport()->update();
+}
+
+qint64 TimelineView::frameUnderMouse(int x) const
+{
+    return std::max<qint64>(0, qint64(std::llround((x - kHeaderW + horizontalScrollBar()->value()) / m_ppf)));
+}
+
+void TimelineView::updateCursor(const QPoint &pos)
+{
+    const Hit h = hitTest(pos);
+    Qt::CursorShape shape = Qt::ArrowCursor;
+    switch (m_tool) {
+    case Tool::Select:
+        shape = (h.headEdge || h.tailEdge) ? Qt::SizeHorCursor : Qt::ArrowCursor;
+        break;
+    case Tool::Razor:
+        shape = h.clip.isNull() ? Qt::ArrowCursor : Qt::CrossCursor;
+        break;
+    case Tool::Roll:
+        shape = (h.headEdge || h.tailEdge) ? Qt::SplitHCursor : Qt::ArrowCursor;
+        break;
+    case Tool::Slip:
+    case Tool::Slide:
+        shape = h.clip.isNull() ? Qt::ArrowCursor : Qt::SizeHorCursor;
+        break;
+    }
+    viewport()->setCursor(shape);
+}
+
+void TimelineView::setTool(Tool tool)
+{
+    if (tool == m_tool)
+        return;
+    m_tool = tool;
+    viewport()->setCursor(Qt::ArrowCursor);
+    emit toolChanged(tool);
 }
 
 void TimelineView::mouseReleaseEvent(QMouseEvent *e)
@@ -765,6 +843,12 @@ void TimelineView::mouseReleaseEvent(QMouseEvent *e)
             m_ctl->moveClips(selection(), m_moveDelta, tl.tracks[m_dragTrack].kind, m_moveTracks);
         else if (d == Drag::Trim)
             m_ctl->trimClip(m_dragClip, m_trimHead, m_trimFrame);
+        else if (d == Drag::Roll)
+            m_ctl->rollClip(m_dragClip, m_trimHead, m_trimFrame);
+        else if (d == Drag::Slip)
+            m_ctl->slipClip(m_dragClip, m_moveDelta);
+        else if (d == Drag::Slide)
+            m_ctl->slideClip(m_dragClip, m_moveDelta);
     }
     m_dragStarted = false;
     viewport()->update();
@@ -1007,6 +1091,36 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     m_addVideo = makeAction(QStringLiteral("actAddVideoTrack"), {});
     m_addAudio = makeAction(QStringLiteral("actAddAudioTrack"), {});
     m_selectAll = makeAction(QStringLiteral("actSelectAll"), QKeySequence(QKeySequence::SelectAll));
+    m_copy = makeAction(QStringLiteral("actCopy"), QKeySequence(QKeySequence::Copy));
+    m_cut = makeAction(QStringLiteral("actCut"), QKeySequence(QKeySequence::Cut));
+    m_paste = makeAction(QStringLiteral("actPaste"), QKeySequence(QKeySequence::Paste));
+    m_pasteInsert = makeAction(QStringLiteral("actPasteInsert"), QKeySequence(QStringLiteral("Ctrl+Shift+V")));
+    m_link = makeAction(QStringLiteral("actLink"), QKeySequence(QStringLiteral("Ctrl+L")));
+    connect(m_copy, &QAction::triggered, this, [this] { m_ctl->copyClips(m_view->selection()); updateState(); });
+    connect(m_cut, &QAction::triggered, this, [this] { m_ctl->cutClips(m_view->selection()); });
+    connect(m_paste, &QAction::triggered, this, [this] { m_view->setSelection(m_ctl->pasteClips(false)); });
+    connect(m_pasteInsert, &QAction::triggered, this, [this] { m_view->setSelection(m_ctl->pasteClips(true)); });
+    connect(m_link, &QAction::triggered, this, [this] { m_ctl->toggleLink(m_view->selection()); });
+
+    // Tools: one at a time.
+    auto *tools = new QActionGroup(this);
+    const struct { const char *name; const char *key; TimelineView::Tool tool; } toolDefs[] = {
+        {"actToolSelect", "V", TimelineView::Tool::Select}, {"actToolRazor", "C", TimelineView::Tool::Razor},
+        {"actToolRoll", "N", TimelineView::Tool::Roll},     {"actToolSlip", "Y", TimelineView::Tool::Slip},
+        {"actToolSlide", "U", TimelineView::Tool::Slide},
+    };
+    for (const auto &d : toolDefs) {
+        QAction *a = makeAction(QString::fromLatin1(d.name), QKeySequence(QString::fromLatin1(d.key)));
+        a->setCheckable(true);
+        a->setChecked(d.tool == TimelineView::Tool::Select);
+        tools->addAction(a);
+        const TimelineView::Tool tool = d.tool;
+        connect(a, &QAction::triggered, this, [this, tool] { m_view->setTool(tool); });
+        m_tools << a;
+    }
+    connect(m_view, &TimelineView::toolChanged, this, [this](TimelineView::Tool t) {
+        m_tools.value(int(t))->setChecked(true);
+    });
 
     connect(m_split, &QAction::triggered, this, &TimelinePanel::split);
     connect(m_delete, &QAction::triggered, this, [this] { deleteSelection(false); });
@@ -1022,7 +1136,8 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         m_view->setSelection(all);
     });
 
-    m_view->setContextActions({m_split, m_delete, m_rippleDelete}, {m_addVideo, m_addAudio});
+    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_delete, m_rippleDelete},
+                              {m_addVideo, m_addAudio});
 
     m_snapBtn->setDefaultAction(m_snapAct);
     m_snapBtn->setObjectName(QStringLiteral("timelineSnapButton"));
@@ -1058,6 +1173,17 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     bar->addWidget(m_timecode);
     bar->addWidget(m_snapBtn);
     bar->addWidget(m_splitBtn);
+    bar->addSpacing(12);
+    for (QAction *a : m_tools) {
+        auto *b = new QToolButton(this);
+        b->setDefaultAction(a);
+        b->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        b->setAutoRaise(true);
+        b->setObjectName(QStringLiteral("tb_") + a->objectName());
+        b->setStyleSheet(QStringLiteral("QToolButton:checked { background:#3a3a3a; color:#d1a54a; border-radius:3px; }"));
+        bar->addWidget(b);
+        m_toolButtons << b;
+    }
     bar->addStretch();
     bar->addWidget(m_duration);
     bar->addWidget(m_zoom);
@@ -1074,6 +1200,7 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     connect(m_ctl, &ProjectController::sequenceChanged, this, &TimelinePanel::updateState);
     connect(m_ctl, &ProjectController::projectReset, this, &TimelinePanel::updateState);
     connect(m_view, &TimelineView::selectionChanged, this, &TimelinePanel::updateState);
+    connect(m_ctl, &ProjectController::clipboardChanged, this, &TimelinePanel::updateState);
 
     retranslate();
     updateState();
@@ -1111,6 +1238,16 @@ void TimelinePanel::updateState()
         for (const auto &c : t.clips)
             underPlayhead |= m_ctl->playhead() > c.start && m_ctl->playhead() < c.end();
     m_split->setEnabled(underPlayhead);
+    m_copy->setEnabled(hasSel);
+    m_cut->setEnabled(hasSel);
+    m_paste->setEnabled(m_ctl->canPaste());
+    m_pasteInsert->setEnabled(m_ctl->canPaste());
+    const QList<QUuid> sel = m_view->selection();
+    bool linked = false;
+    for (const QUuid &id : sel)
+        linked |= tl.isLinked(id);
+    m_link->setEnabled(linked || sel.size() >= 2);
+    m_link->setText(linked ? tr("Unlink audio and video") : tr("Link audio and video"));
 }
 
 void TimelinePanel::changeEvent(QEvent *e)
@@ -1134,6 +1271,24 @@ void TimelinePanel::retranslate()
     m_fitBtn->setToolTip(tr("Show the whole sequence (\\)"));
     m_zoom->setToolTip(tr("Zoom (Ctrl + mouse wheel)"));
     m_split->setToolTip(tr("Split at playhead (Ctrl+K)"));
+    m_copy->setText(tr("Copy"));
+    m_cut->setText(tr("Cut"));
+    m_paste->setText(tr("Paste"));
+    m_paste->setToolTip(tr("Paste at the playhead over what is there (Ctrl+V)"));
+    m_pasteInsert->setText(tr("Paste insert"));
+    m_pasteInsert->setToolTip(tr("Paste at the playhead; later clips move right (Ctrl+Shift+V)"));
+    const char *const toolText[] = {QT_TR_NOOP("Selection"), QT_TR_NOOP("Razor"), QT_TR_NOOP("Rolling edit"),
+                                    QT_TR_NOOP("Slip"), QT_TR_NOOP("Slide")};
+    const char *const toolTip[] = {
+        QT_TR_NOOP("Select, move and trim clips (V)"),
+        QT_TR_NOOP("Click a clip to split it there (C)"),
+        QT_TR_NOOP("Drag the cut between two clips: one gets longer, the other shorter (N)"),
+        QT_TR_NOOP("Drag inside a clip to use another part of its source in the same place (Y)"),
+        QT_TR_NOOP("Drag a clip between its neighbours; they get longer or shorter (U)")};
+    for (int i = 0; i < m_tools.size(); ++i) {
+        m_tools[i]->setText(tr(toolText[i]));
+        m_tools[i]->setToolTip(tr(toolTip[i]));
+    }
     updateState();
 }
 

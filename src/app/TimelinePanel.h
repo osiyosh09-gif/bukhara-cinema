@@ -29,6 +29,17 @@ class TimelineView : public QAbstractScrollArea
 public:
     explicit TimelineView(ProjectController *controller, QWidget *parent = nullptr);
 
+    // What a mouse drag on a clip does.
+    enum class Tool {
+        Select, // select, move, trim the ends
+        Razor,  // click: split the clip there
+        Roll,   // drag a cut between two clips
+        Slip,   // drag inside a clip: other part of the source, same place
+        Slide,  // drag a clip between its neighbours
+    };
+    Tool tool() const { return m_tool; }
+    void setTool(Tool tool);
+
     QList<QUuid> selection() const { return QList<QUuid>(m_selection.begin(), m_selection.end()); }
     void setSelection(const QList<QUuid> &ids);
 
@@ -59,6 +70,7 @@ public:
 signals:
     void selectionChanged();
     void zoomChanged(double ppf);
+    void toolChanged(TimelineView::Tool tool);
 
 protected:
     void paintEvent(QPaintEvent *e) override;
@@ -85,7 +97,7 @@ private:
     static constexpr int kEdgePx = 6;
     static constexpr int kSnapPx = 8;
 
-    enum class Drag { None, Scrub, Move, Trim };
+    enum class Drag { None, Scrub, Move, Trim, Roll, Slip, Slide };
 
     struct Hit
     {
@@ -113,12 +125,15 @@ private:
     void drawRuler(QPainter &p);
     void drawTracks(QPainter &p);
     void drawClip(QPainter &p, int track, const TimelineClip &c);
+    void updateCursor(const QPoint &pos);
+    qint64 frameUnderMouse(int x) const;
 
     ProjectController *m_ctl;
     QList<QAction *> m_clipActions;
     QList<QAction *> m_trackActions;
     double m_ppf = 4.0;
     bool m_snapping = true;
+    Tool m_tool = Tool::Select;
     QSet<QUuid> m_selection;
 
     Drag m_drag = Drag::None;
@@ -158,6 +173,13 @@ public:
     QAction *addVideoTrackAction() const { return m_addVideo; }
     QAction *addAudioTrackAction() const { return m_addAudio; }
     QAction *selectAllAction() const { return m_selectAll; }
+    QAction *copyAction() const { return m_copy; }
+    QAction *cutAction() const { return m_cut; }
+    QAction *pasteAction() const { return m_paste; }
+    QAction *pasteInsertAction() const { return m_pasteInsert; }
+    QAction *linkAction() const { return m_link; }
+    // Select, Razor, Roll, Slip, Slide (checkable, one at a time).
+    QList<QAction *> toolActions() const { return m_tools; }
 
     void split();
     void deleteSelection(bool ripple);
@@ -185,6 +207,13 @@ private:
     QAction *m_addVideo;
     QAction *m_addAudio;
     QAction *m_selectAll;
+    QAction *m_copy;
+    QAction *m_cut;
+    QAction *m_paste;
+    QAction *m_pasteInsert;
+    QAction *m_link;
+    QList<QAction *> m_tools;
+    QList<QToolButton *> m_toolButtons;
 };
 
 } // namespace bc

@@ -637,6 +637,53 @@ T.update({
         "Roll, slip, slide, копирование и вставка, связь и разъединение, вложенные секвенции, свои сочетания клавиш"),
 })
 
+# Phase 6 (part 2): razor, roll, slip, slide, clipboard, link
+T.update({
+    "Click a clip to split it there (C)": ("Клипни босилган жойдан бўлиш (C)", "Щёлкните клип, чтобы разрезать его там (C)"),
+    "Drag a clip between its neighbours; they get longer or shorter (U)": (
+        "Клипни қўшниларининг орасида суриш; улар узаяди ёки қисқаради (U)",
+        "Сдвиг клипа между соседями; они удлиняются или укорачиваются (U)"),
+    "Drag inside a clip to use another part of its source in the same place (Y)": (
+        "Клип ичида суриш: шу жойда манбанинг бошқа қисми (Y)",
+        "Тяните внутри клипа: другая часть источника на том же месте (Y)"),
+    "Drag the cut between two clips: one gets longer, the other shorter (N)": (
+        "Икки клип орасидаги кесимни суриш: бири узаяди, бошқаси қисқаради (N)",
+        "Сдвиг стыка двух клипов: один удлиняется, другой укорачивается (N)"),
+    "Link audio and video": ("Видео ва овозни боғлаш", "Связать видео и звук"),
+    "Link": ("Боғлаш", "Связать"),
+    "Paste at the playhead over what is there (Ctrl+V)": (
+        "Курсор жойига, борининг устидан қўйиш (Ctrl+V)", "Вставить в позицию курсора поверх (Ctrl+V)"),
+    "Paste at the playhead; later clips move right (Ctrl+Shift+V)": (
+        "Курсор жойига қўйиш; кейинги клиплар ўнгга сурилади (Ctrl+Shift+V)",
+        "Вставить в позицию курсора; следующие клипы сдвигаются вправо (Ctrl+Shift+V)"),
+    "Paste insert": ("Суриб қўйиш", "Вставить со сдвигом"),
+    "Phase 6 (part 2): roll, slip, slide, razor, copy and paste, link and unlink work.": (
+        "6-босқич (2-қисм): roll, slip, slide, пичоқ, нусхалаш ва қўйиш, боғлаш ва ажратиш ишлайди.",
+        "Этап 6 (часть 2): roll, slip, slide, лезвие, копирование и вставка, связь и разъединение работают."),
+    "Phase 6 (part 2): editing with razor, roll, slip and slide, copy and paste, Source monitor with In/Out, insert/overwrite, markers, titles, clip volume, MP4 export, autosave, waveforms and proxies. See Help > Feature status.": (
+        "6-босқич (2-қисм): пичоқ, roll, slip, slide билан монтаж, нусхалаш ва қўйиш, In/Out билан Source монитор, insert/overwrite, маркерлар, титрлар, клип овози, MP4 экспорт, автосақлаш, овоз тўлқини ва proxy. Ёрдам > Функциялар ҳолати бўлимига қаранг.",
+        "Этап 6 (часть 2): монтаж лезвием, roll, slip и slide, копирование и вставка, монитор Source с In/Out, вставка/перезапись, маркеры, титры, громкость клипов, экспорт в MP4, автосохранение, формы волны и прокси. См. Справка > Состояние функций."),
+    "Razor": ("Пичоқ", "Лезвие"),
+    "Rolling edit": ("Roll (кесимни суриш)", "Roll (сдвиг стыка)"),
+    "Select, move and trim clips (V)": ("Клипларни танлаш, кўчириш ва қисқартириш (V)", "Выделение, перемещение и подрезка клипов (V)"),
+    "Selection": ("Танлаш", "Выделение"),
+    "Slide clip": ("Клипни суриш (slide)", "Сдвиг клипа (slide)"),
+    "Slide": ("Slide", "Slide"),
+    "Slip clip": ("Клип ичини суриш (slip)", "Сдвиг содержимого (slip)"),
+    "Slip": ("Slip", "Slip"),
+    "Timeline tools": ("Timeline асбоблари", "Инструменты таймлайна"),
+    "Unlink audio and video": ("Видео ва овозни ажратиш", "Разъединить видео и звук"),
+    "Unlink": ("Ажратиш", "Разъединить"),
+    "Razor, rolling edit, slip and slide tools; copy, cut and paste; link and unlink": (
+        "Пичоқ, roll, slip ва slide асбоблари; нусхалаш, кесиш ва қўйиш; боғлаш ва ажратиш",
+        "Лезвие, roll, slip и slide; копирование, вырезание и вставка; связь и разъединение"),
+    "Tools above the timeline or keys V, C, N, Y, U. Ctrl+C, Ctrl+X, Ctrl+V paste at the playhead (Ctrl+Shift+V pushes later clips right). Ctrl+L links or unlinks the selected video and sound.": (
+        "Timeline устидаги тугмалар ёки V, C, N, Y, U. Ctrl+C, Ctrl+X, Ctrl+V курсор жойига қўяди (Ctrl+Shift+V кейинги клипларни ўнгга суради). Ctrl+L танланган видео ва овозни боғлайди ёки ажратади.",
+        "Кнопки над таймлайном или клавиши V, C, N, Y, U. Ctrl+C, Ctrl+X, Ctrl+V вставляют в позицию курсора (Ctrl+Shift+V сдвигает следующие клипы вправо). Ctrl+L связывает или разъединяет выбранные видео и звук."),
+    "Nested sequences and custom keyboard shortcuts": (
+        "Nested sequence ва тугмаларни ўзгартириш", "Вложенные секвенции и свои сочетания клавиш"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

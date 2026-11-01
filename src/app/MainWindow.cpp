@@ -285,9 +285,10 @@ void MainWindow::buildMenus()
     connect(m_ctl->undoStack(), &QUndoStack::indexChanged, this, &MainWindow::updateUndoActions);
     connect(m_ctl->undoStack(), &QUndoStack::cleanChanged, this, &MainWindow::updateUndoActions);
     m_editMenu->addSeparator();
-    addPlanned(m_editMenu, QT_TR_NOOP("Cut"), 6, QStringLiteral("actCut"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Copy"), 6, QStringLiteral("actCopy"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Paste"), 6, QStringLiteral("actPaste"));
+    m_editMenu->addAction(m_timeline->cutAction());
+    m_editMenu->addAction(m_timeline->copyAction());
+    m_editMenu->addAction(m_timeline->pasteAction());
+    m_editMenu->addAction(m_timeline->pasteInsertAction());
     m_editMenu->addAction(m_timeline->deleteAction());
     m_editMenu->addAction(m_timeline->rippleDeleteAction());
     m_editMenu->addAction(m_timeline->selectAllAction());
@@ -309,7 +310,10 @@ void MainWindow::buildMenus()
     connect(m_ctl, &ProjectController::timelineChanged, this,
             [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
     addPlanned(m_clipMenu, QT_TR_NOOP("Speed / duration..."), 7, QStringLiteral("actSpeed"));
-    addPlanned(m_clipMenu, QT_TR_NOOP("Link / unlink audio and video"), 6, QStringLiteral("actLink"));
+    m_clipMenu->addAction(m_timeline->linkAction());
+    m_toolsMenu = m_clipMenu->addMenu(QString());
+    m_toolsMenu->setObjectName(QStringLiteral("menuTools"));
+    m_toolsMenu->addActions(m_timeline->toolActions());
     addPlanned(m_clipMenu, QT_TR_NOOP("Nest..."), 6, QStringLiteral("actNest"));
 
     m_sequenceMenu = mb->addMenu(QString());
@@ -460,6 +464,7 @@ void MainWindow::retranslate()
     m_clipMenu->setTitle(tr("&Clip"));
     m_sequenceMenu->setTitle(tr("&Sequence"));
     m_markersMenu->setTitle(tr("&Markers"));
+    m_toolsMenu->setTitle(tr("Timeline tools"));
     m_graphicsMenu->setTitle(tr("&Graphics"));
     m_viewMenu->setTitle(tr("&View"));
     m_windowMenu->setTitle(tr("&Window"));
@@ -533,7 +538,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 6 (part 1): Source monitor, In/Out, insert/overwrite, J/K/L and markers work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 6 (part 2): roll, slip, slide, razor, copy and paste, link and unlink work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

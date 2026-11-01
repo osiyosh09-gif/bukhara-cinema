@@ -7,6 +7,8 @@
 #include <QString>
 #include <QUuid>
 
+#include <functional>
+
 namespace bc {
 
 struct MediaItem;
@@ -141,6 +143,29 @@ public:
     // unlocked tracks when empty) and moves everything at or after `at` right
     // by `length`. Locked tracks never change.
     bool insertSpace(qint64 at, qint64 length, const QList<int> &onlyTracks = {});
+
+    // --- trimming tools (phase 6b). `mediaFrames(mediaId)` < 0 = unlimited
+    // (images, titles). Each works on the clip and its linked clips, and
+    // returns false when nothing changed (limits, locked tracks).
+    using MediaFrames = std::function<qint64(const QUuid &)>;
+
+    // Rolling edit: moves the cut between this clip and the clip touching it
+    // (before the head or after the tail) to `frame`; one gets longer, the
+    // other shorter, the sequence length stays. Without a neighbour the
+    // edge may move into the empty space.
+    bool roll(const QUuid &id, bool head, qint64 frame, const MediaFrames &mediaFrames);
+    // Slip: shows a different part of the source in the same place and length.
+    bool slip(const QUuid &id, qint64 deltaFrames, const MediaFrames &mediaFrames);
+    // Slide: moves the clip; the clip before it gets longer or shorter at
+    // its tail, the clip after it at its head, so nothing else moves.
+    bool slide(const QUuid &id, qint64 deltaFrames, const MediaFrames &mediaFrames);
+
+    // Gives the clips one new link (they move and trim together); returns
+    // false when fewer than two clips were given.
+    bool link(const QList<QUuid> &ids);
+    // Removes the link of the clips (and of the clips linked to them).
+    bool unlink(const QList<QUuid> &ids);
+    bool isLinked(const QUuid &id) const;
 
     // --- markers
     QUuid addMarker(qint64 frame, const QString &name = {}); // one marker per frame: returns the existing one
