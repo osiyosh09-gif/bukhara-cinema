@@ -631,6 +631,27 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
             p.drawLine(QPointF(r.right() - c.fadeOut * m_ppf, r.top() + 2), QPointF(r.right(), r.bottom()));
         p.restore();
     }
+    // Transitions: a light box over the frames they take.
+    {
+        p.save();
+        p.setRenderHint(QPainter::Antialiasing, true);
+        p.setPen(QPen(QColor(255, 255, 255, 170), 1));
+        p.setBrush(QColor(255, 255, 255, 55));
+        const Timeline &tl = m_ctl->timeline();
+        auto box = [&](double x0, double x1) {
+            const QRectF b(x0, r.top() + 1, std::max(4.0, x1 - x0), r.height() - 2);
+            p.drawRect(b);
+            p.drawLine(b.bottomLeft(), b.topRight());
+        };
+        if (!c.head.isNone()) {
+            const bool cut = tl.touchingBefore(c.id) != nullptr;
+            const double w = c.head.length * m_ppf;
+            box(cut ? r.left() - w / 2 : r.left(), cut ? r.left() + w / 2 : r.left() + w);
+        }
+        if (!c.tail.isNone() && !tl.touchingAfter(c.id))
+            box(r.right() + 1 - c.tail.length * m_ppf, r.right() + 1);
+        p.restore();
+    }
     // Motion keyframes: small diamonds along the bottom edge.
     if (video && c.motion.animated()) {
         p.save();
@@ -1138,6 +1159,9 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     m_link = makeAction(QStringLiteral("actLink"), QKeySequence(QStringLiteral("Ctrl+L")));
     m_nest = makeAction(QStringLiteral("actNest"), {});
     m_speed = makeAction(QStringLiteral("actSpeed"), QKeySequence(QStringLiteral("Ctrl+R")));
+    m_transition = makeAction(QStringLiteral("actAddTransition"), QKeySequence(QStringLiteral("Ctrl+D")));
+    connect(m_transition, &QAction::triggered, this,
+            [this] { m_ctl->addDefaultTransitions(m_view->selection(), m_ctl->playhead()); });
     connect(m_speed, &QAction::triggered, this, [this] {
         const QUuid id = speedClip();
         if (id.isNull())
@@ -1206,7 +1230,7 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         m_view->setSelection(all);
     });
 
-    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_delete, m_rippleDelete},
+    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_transition, m_delete, m_rippleDelete},
                               {m_addVideo, m_addAudio});
 
     m_snapBtn->setDefaultAction(m_snapAct);
@@ -1365,6 +1389,7 @@ void TimelinePanel::updateState()
     m_link->setEnabled(linked || sel.size() >= 2);
     m_nest->setEnabled(hasSel);
     m_speed->setEnabled(!speedClip().isNull());
+    m_transition->setEnabled(hasSel);
     m_link->setText(linked ? tr("Unlink audio and video") : tr("Link audio and video"));
 }
 
@@ -1392,6 +1417,8 @@ void TimelinePanel::retranslate()
     m_copy->setText(tr("Copy"));
     m_nest->setText(tr("Nest"));
     m_speed->setText(tr("Speed / duration..."));
+    m_transition->setText(tr("Add transition"));
+    m_transition->setToolTip(tr("A 1-second dissolve at the edit of the selected clips nearest the playhead (Ctrl+D)"));
     m_speed->setToolTip(tr("Play the clip faster or slower (Ctrl+R)"));
     m_nest->setToolTip(tr("Put the selected clips into a new nested sequence that works as one clip"));
     m_renameSeq->setText(tr("Rename..."));

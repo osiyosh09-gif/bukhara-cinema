@@ -144,6 +144,14 @@ public:
     // changes); otherwise it gets that length. Without ripple a longer clip
     // stops at the next clip; with ripple later clips on its tracks move.
     bool setClipSpeed(const QUuid &clipId, double speed, qint64 length = 0, bool ripple = false);
+    // --- transitions (phase 8a)
+    ClipTransition clipTransition(const QUuid &clipId, bool head) const;
+    // Quick successive changes of one end form one undo step.
+    bool setClipTransition(const QUuid &clipId, bool head, const ClipTransition &t);
+    // Ctrl+D: a 1-second dissolve (crossfade for sound) at the end of each
+    // clip (and its linked clips) nearest to `frame`, where there is none.
+    // One undo step; returns how many were added.
+    int addDefaultTransitions(const QList<QUuid> &clipIds, qint64 frame);
     // --- nested sequences (phase 6c)
     // Moves the clips (and their linked clips) into a new nested sequence and
     // puts one clip of it in their place (picture and sound, linked).

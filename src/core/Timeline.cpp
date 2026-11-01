@@ -182,8 +182,10 @@ void Timeline::clearRange(int track, qint64 from, qint64 to)
             right.start = to;
             right.length = c.end() - to;
             right.fadeIn = 0;
+            right.head = {};
             c.length = from - c.start;
             c.fadeOut = 0;
+            c.tail = {};
             out << c << right;
         } else if (c.start < from) {
             c.length = from - c.start;
@@ -305,8 +307,10 @@ bool Timeline::insertSpace(qint64 at, qint64 length, const QList<int> &onlyTrack
                 right.length = c.end() - at;
                 right.start = at + length;
                 right.fadeIn = 0;
+                right.head = {};
                 c.length = at - c.start;
                 c.fadeOut = 0;
+                c.tail = {};
                 out << c << right;
                 changed = true;
             }
@@ -741,8 +745,10 @@ QList<QUuid> Timeline::splitAt(qint64 frame, const QList<QUuid> &only)
             right.start = frame;
             right.length = c.end() - frame;
             right.fadeIn = 0;
+            right.head = {};
             c.length = frame - c.start;
             c.fadeOut = 0;
+            c.tail = {};
             clips.insert(i + 1, right);
             created << right.id;
             ++i;
@@ -860,6 +866,8 @@ void Timeline::rescale(double oldFps, double newFps)
             c.fadeIn = qint64(std::llround(c.fadeIn * f));
             c.fadeOut = qint64(std::llround(c.fadeOut * f));
             c.motion.rescale(f);
+            c.head.length = qint64(std::llround(c.head.length * f));
+            c.tail.length = qint64(std::llround(c.tail.length * f));
             prevEnd = c.end();
         }
     }
@@ -926,6 +934,14 @@ QJsonArray Timeline::toJson() const
                 co[QStringLiteral("fadeOut")] = double(c.fadeOut);
             if (c.speed != 1.0)
                 co[QStringLiteral("speed")] = c.speed;
+            for (const auto &[key, tr] : {std::pair{QStringLiteral("head"), c.head}, std::pair{QStringLiteral("tail"), c.tail}}) {
+                if (tr.isNone())
+                    continue;
+                QJsonObject to2;
+                to2[QStringLiteral("kind")] = ClipTransition::kindToString(tr.kind);
+                to2[QStringLiteral("length")] = double(tr.length);
+                co[key] = to2;
+            }
             const QJsonObject motion = c.motion.toJson();
             if (!motion.isEmpty())
                 co[QStringLiteral("motion")] = motion;
@@ -985,6 +1001,15 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             c.gainDb = std::clamp(co.value(QStringLiteral("gainDb")).toDouble(), -60.0, 12.0);
             c.fadeIn = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeIn")).toDouble()));
             c.fadeOut = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeOut")).toDouble()));
+            for (auto *tr : {&c.head, &c.tail}) {
+                const QJsonObject to2 = co.value(tr == &c.head ? QStringLiteral("head") : QStringLiteral("tail")).toObject();
+                tr->kind = ClipTransition::kindFromString(to2.value(QStringLiteral("kind")).toString());
+                tr->length = std::max<qint64>(0, qint64(to2.value(QStringLiteral("length")).toDouble()));
+                if (t.kind == Kind::Audio && tr->kind != ClipTransition::Kind::None)
+                    tr->kind = ClipTransition::Kind::Dissolve;
+                if (tr->isNone())
+                    *tr = {};
+            }
             if (!c.mediaId.isNull())
                 c.speed = std::clamp(co.value(QStringLiteral("speed")).toDouble(1.0), 0.1, 10.0);
             if (t.kind == Kind::Video)
@@ -1039,6 +1064,94 @@ void Timeline::markersFromJson(const QJsonArray &a)
                 if (m.id == id)
                     m.id = saved;
     }
+}
+
+// ---------------------------------------------------------------------------
+// Transitions (phase 8a)
+
+QString ClipTransition::kindToString(Kind k)
+{
+    switch (k) {
+    case Kind::Dissolve: return QStringLiteral("dissolve");
+    case Kind::DipBlack: return QStringLiteral("dipBlack");
+    case Kind::DipWhite: return QStringLiteral("dipWhite");
+    case Kind::WipeLeft: return QStringLiteral("wipeLeft");
+    case Kind::WipeRight: return QStringLiteral("wipeRight");
+    case Kind::None: break;
+    }
+    return QStringLiteral("none");
+}
+
+ClipTransition::Kind ClipTransition::kindFromString(const QString &s)
+{
+    for (Kind k : {Kind::Dissolve, Kind::DipBlack, Kind::DipWhite, Kind::WipeLeft, Kind::WipeRight})
+        if (s == kindToString(k))
+            return k;
+    return Kind::None;
+}
+
+const TimelineClip *Timeline::touchingAfter(const QUuid &id) const
+{
+    const ClipRef r = find(id);
+    if (!r.isValid())
+        return nullptr;
+    const auto &clips = tracks[r.track].clips;
+    if (r.index + 1 < clips.size() && clips[r.index + 1].start == clips[r.index].end())
+        return &clips[r.index + 1];
+    return nullptr;
+}
+
+const TimelineClip *Timeline::touchingBefore(const QUuid &id) const
+{
+    const ClipRef r = find(id);
+    if (!r.isValid())
+        return nullptr;
+    const auto &clips = tracks[r.track].clips;
+    if (r.index > 0 && clips[r.index - 1].end() == clips[r.index].start)
+        return &clips[r.index - 1];
+    return nullptr;
+}
+
+ClipTransition Timeline::transitionAt(const QUuid &id, bool head) const
+{
+    const TimelineClip *c = clip(id);
+    if (!c)
+        return {};
+    if (head)
+        return c->head;
+    if (const TimelineClip *next = touchingAfter(id))
+        return next->head;
+    return c->tail;
+}
+
+bool Timeline::setTransition(const QUuid &id, bool head, const ClipTransition &t0)
+{
+    const ClipRef r = find(id);
+    if (!r.isValid() || tracks[r.track].locked)
+        return false;
+    ClipTransition t = t0;
+    if (tracks[r.track].kind == Kind::Audio && t.kind != ClipTransition::Kind::None)
+        t.kind = ClipTransition::Kind::Dissolve;
+    auto &clips = tracks[r.track].clips;
+    int target = r.index;
+    if (!head && touchingAfter(id)) {
+        target = r.index + 1; // a cut: it belongs to the head of the next clip
+        head = true;
+    }
+    TimelineClip &c = clips[target];
+    qint64 limit = c.length;
+    if (head) {
+        if (target > 0 && clips[target - 1].end() == c.start)
+            limit = std::min(limit, clips[target - 1].length);
+    }
+    t.length = std::clamp<qint64>(t.length, 0, limit);
+    if (t.isNone())
+        t = {};
+    ClipTransition &slot = head ? c.head : c.tail;
+    if (slot == t)
+        return false;
+    slot = t;
+    return true;
 }
 
 } // namespace bc
