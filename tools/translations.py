@@ -926,6 +926,31 @@ T.update({
     "White balance": ("Оқ баланс", "Баланс белого"),
 })
 
+T.update({
+    "%1 (not found or not a valid .cube file: the picture is left as it is)": (
+        "%1 (топилмади ёки тўғри .cube файл эмас: расм ўзгармайди)",
+        "%1 (не найден или не является файлом .cube: изображение не меняется)"),
+    "Apply LUT": ("LUT қўйиш", "Применить LUT"),
+    "Choose .cube file...": (".cube файлни танлаш...", "Выбрать файл .cube..."),
+    "Choose a LUT": ("LUT танлаш", "Выбор LUT"),
+    "Colour panel > Look (LUT): choose a .cube file (3D or 1D) and its strength. Applied after the basic correction. Collect project copies the LUT files too. A missing file leaves the picture unchanged and is shown in red.": (
+        "«Ранг» панели > «Кўриниш (LUT)»: .cube файлни (3D ёки 1D) ва кучини танланг. Асосий ранг тузатишдан кейин қўйилади. «Лойиҳани йиғиш» LUT файлларини ҳам нусхалайди. Файл топилмаса, расм ўзгармайди ва номи қизил кўринади.",
+        "Панель «Цвет» > «Образ (LUT)»: выберите файл .cube (3D или 1D) и силу. Применяется после базовой коррекции. «Собрать проект» копирует и файлы LUT. Если файла нет, изображение не меняется, а имя показано красным."),
+    "Colour wheels, scopes": ("Ранг ғилдираклари, scope'лар", "Цветовые круги, осциллографы"),
+    "LUT files (*.cube)": ("LUT файллари (*.cube)", "Файлы LUT (*.cube)"),
+    "LUT looks (.cube files)": ("LUT кўринишлари (.cube файллар)", "Образы LUT (файлы .cube)"),
+    "Look (LUT)": ("Кўриниш (LUT)", "Образ (LUT)"),
+    "No LUT": ("LUT йўқ", "Нет LUT"),
+    "Phase 9, part 2: colour correction and LUT looks work (Colour panel).": (
+        "9-босқич, 2-қисм: ранг тузатиш ва LUT ишлайди («Ранг» панели).",
+        "Этап 9, часть 2: цветокоррекция и LUT работают (панель «Цвет»)."),
+    "Remove LUT": ("LUT'ни олиб ташлаш", "Убрать LUT"),
+    "Strength, %": ("Кучи, %", "Сила, %"),
+    "This file could not be read as a .cube LUT:\n%1": (
+        "Бу файлни .cube LUT сифатида ўқиб бўлмади:\n%1",
+        "Не удалось прочитать файл как LUT .cube:\n%1"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

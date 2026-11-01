@@ -189,11 +189,6 @@
         <translation>Выберите видеоклип и откройте вкладку «Цвет». Применяется до эффектов; «Сбросить цвет» возвращает исходный вид. Значения пока не меняются во времени.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="56" />
-        <source>LUT, colour wheels, scopes</source>
-        <translation>LUT, цветовые круги, осциллографы</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Настройки эпизода: размер, частота кадров, звук</translation>
@@ -304,32 +299,47 @@
         <translation>Выберите видеоклип и откройте вкладку «Эффекты»: добавляйте эффекты, снимайте отметку для сравнения, меняйте порядок стрелками и задавайте значения. Эффекты работают сверху вниз, до настроек движения. Значения пока не меняются во времени.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="56" />
+        <source>LUT looks (.cube files)</source>
+        <translation>Образы LUT (файлы .cube)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="56" />
+        <source>Colour panel &gt; Look (LUT): choose a .cube file (3D or 1D) and its strength. Applied after the basic correction. Collect project copies the LUT files too. A missing file leaves the picture unchanged and is shown in red.</source>
+        <translation>Панель «Цвет» &gt; «Образ (LUT)»: выберите файл .cube (3D или 1D) и силу. Применяется после базовой коррекции. «Собрать проект» копирует и файлы LUT. Если файла нет, изображение не меняется, а имя показано красным.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="57" />
+        <source>Colour wheels, scopes</source>
+        <translation>Цветовые круги, осциллографы</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="58" />
         <source>Audio mixer, EQ, compressor, noise reduction, loudness</source>
         <translation>Аудиомикшер, эквалайзер, компрессор, шумоподавление, громкость (loudness)</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="58" />
+        <location filename="../src/app/FeatureStatus.cpp" line="59" />
         <source>Subtitles and SRT import/export</source>
         <translation>Субтитры и импорт/экспорт SRT</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="59" />
+        <location filename="../src/app/FeatureStatus.cpp" line="60" />
         <source>Multicamera editing</source>
         <translation>Многокамерный монтаж</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="60" />
+        <location filename="../src/app/FeatureStatus.cpp" line="61" />
         <source>Export queue, render preview, GPU acceleration</source>
         <translation>Очередь экспорта, предпросмотр рендера, ускорение GPU</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="61" />
+        <location filename="../src/app/FeatureStatus.cpp" line="62" />
         <source>AI assistants: transcription, text-based editing, scene detection</source>
         <translation>AI-помощники: транскрипция, монтаж по тексту, определение сцен</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="62" />
+        <location filename="../src/app/FeatureStatus.cpp" line="63" />
         <source>Plugins and project interchange</source>
         <translation>Плагины и обмен проектами</translation>
     </message>
@@ -871,104 +881,152 @@
 <context>
     <name>bc::ColorPanel</name>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="26" />
+        <location filename="../src/app/ColorPanel.cpp" line="33" />
         <source>Temperature</source>
         <translation>Температура</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="28" />
+        <location filename="../src/app/ColorPanel.cpp" line="35" />
         <source>Tint</source>
         <translation>Оттенок</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="30" />
+        <location filename="../src/app/ColorPanel.cpp" line="37" />
         <source>Exposure</source>
         <translation>Экспозиция</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="32" />
+        <location filename="../src/app/ColorPanel.cpp" line="39" />
         <source>Contrast</source>
         <translation>Контраст</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="34" />
+        <location filename="../src/app/ColorPanel.cpp" line="41" />
         <source>Highlights</source>
         <translation>Света</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="36" />
+        <location filename="../src/app/ColorPanel.cpp" line="43" />
         <source>Shadows</source>
         <translation>Тени</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="38" />
+        <location filename="../src/app/ColorPanel.cpp" line="45" />
         <source>Saturation, %</source>
         <translation>Насыщенность, %</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="40" />
+        <location filename="../src/app/ColorPanel.cpp" line="47" />
         <source>Vibrance</source>
         <translation>Красочность</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="133" />
+        <location filename="../src/app/ColorPanel.cpp" line="49" />
+        <source>Strength, %</source>
+        <translation>Сила, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="177" />
         <source>White balance</source>
         <translation>Баланс белого</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="134" />
+        <location filename="../src/app/ColorPanel.cpp" line="178" />
         <source>Light</source>
         <translation>Свет</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="135" />
+        <location filename="../src/app/ColorPanel.cpp" line="179" />
         <source>Colour</source>
         <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="138" />
+        <location filename="../src/app/ColorPanel.cpp" line="180" />
+        <source>Look (LUT)</source>
+        <translation>Образ (LUT)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="181" />
+        <source>Choose .cube file...</source>
+        <translation>Выбрать файл .cube...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="182" />
+        <source>Remove</source>
+        <translation>Убрать</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="185" />
         <source>Left: cooler (blue), right: warmer (yellow)</source>
         <translation>Влево: холоднее (синее), вправо: теплее (желтее)</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="139" />
+        <location filename="../src/app/ColorPanel.cpp" line="186" />
         <source>Left: greener, right: more magenta</source>
         <translation>Влево: зеленее, вправо: пурпурнее</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="140" />
+        <location filename="../src/app/ColorPanel.cpp" line="187" />
         <source>In stops: +1 is twice as bright</source>
         <translation>В ступенях: +1 — вдвое ярче</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="141" />
+        <location filename="../src/app/ColorPanel.cpp" line="188" />
         <source>Reset colour</source>
         <translation>Сбросить цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="142" />
+        <location filename="../src/app/ColorPanel.cpp" line="189" />
         <source>Colour correction is applied before the effects. Values do not change over time yet.</source>
         <translation>Цветокоррекция применяется до эффектов. Значения пока не меняются во времени.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="163" />
+        <location filename="../src/app/ColorPanel.cpp" line="210" />
         <source>Select a video clip on the timeline to correct its colour.</source>
         <translation>Выберите видеоклип на таймлайне, чтобы исправить его цвет.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="164" />
+        <location filename="../src/app/ColorPanel.cpp" line="211" />
         <source>Several clips are selected. Select one clip.</source>
         <translation>Выбрано несколько клипов. Выберите один клип.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="165" />
+        <location filename="../src/app/ColorPanel.cpp" line="212" />
         <source>Colour correction works on pictures. Select a video clip.</source>
         <translation>Цветокоррекция работает с изображением. Выберите видеоклип.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="169" />
+        <location filename="../src/app/ColorPanel.cpp" line="216" />
         <source>Title</source>
         <translation>Титр</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="236" />
+        <source>No LUT</source>
+        <translation>Нет LUT</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="239" />
+        <source>%1 (not found or not a valid .cube file: the picture is left as it is)</source>
+        <translation>%1 (не найден или не является файлом .cube: изображение не меняется)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="261" />
+        <location filename="../src/app/ColorPanel.cpp" line="269" />
+        <source>Choose a LUT</source>
+        <translation>Выбор LUT</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="263" />
+        <source>LUT files (*.cube)</source>
+        <translation>Файлы LUT (*.cube)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="270" />
+        <source>This file could not be read as a .cube LUT:
+%1</source>
+        <translation>Не удалось прочитать файл как LUT .cube:
+%1</translation>
     </message>
 </context>
 <context>
@@ -1792,6 +1850,11 @@
         <translation>Клип</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="552" />
+        <source>Phase 9, part 2: colour correction and LUT looks work (Colour panel).</source>
+        <translation>Этап 9, часть 2: цветокоррекция и LUT работают (панель «Цвет»).</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="588" />
         <source>Insert</source>
         <translation>Вставка</translation>
@@ -1837,11 +1900,6 @@
         <location filename="../src/app/MainWindow.cpp" line="747" />
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="552" />
-        <source>Phase 9, part 1: basic colour correction works (Colour panel).</source>
-        <translation>Этап 9, часть 1: базовая цветокоррекция работает (панель «Цвет»).</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="672" />
@@ -2467,6 +2525,16 @@
         <location filename="../src/app/ProjectEditing.cpp" line="523" />
         <source>Reset colour</source>
         <translation>Сбросить цвет</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="534" />
+        <source>Remove LUT</source>
+        <translation>Убрать LUT</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="534" />
+        <source>Apply LUT</source>
+        <translation>Применить LUT</translation>
     </message>
 </context>
 <context>

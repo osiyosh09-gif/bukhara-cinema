@@ -522,9 +522,20 @@ bool ProjectController::resetClipColor(const QUuid &clipId)
 {
     return editTimeline(tr("Reset colour"), [&](Timeline &t) {
         TimelineClip *c = videoClip(t, clipId);
-        if (!c || c->color.isNeutral())
+        if (!c || c->color == ClipColor())
             return false;
         c->color = ClipColor();
+        return true;
+    });
+}
+
+bool ProjectController::setClipLut(const QUuid &clipId, const QString &path)
+{
+    return editTimeline(path.isEmpty() ? tr("Remove LUT") : tr("Apply LUT"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || c->color.lut == path)
+            return false;
+        c->color.lut = path;
         return true;
     });
 }

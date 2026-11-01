@@ -1,4 +1,5 @@
 #include "core/Color.h"
+#include "core/Lut.h"
 
 #include <QJsonDocument>
 
@@ -16,7 +17,8 @@ QList<EffectParamSpec> ClipColor::specs()
             {QStringLiteral("highlights"), -100, 100, 0, 1, 0},
             {QStringLiteral("shadows"), -100, 100, 0, 1, 0},
             {QStringLiteral("saturation"), 0, 200, 100, 1, 0},
-            {QStringLiteral("vibrance"), -100, 100, 0, 1, 0}};
+            {QStringLiteral("vibrance"), -100, 100, 0, 1, 0},
+            {QStringLiteral("lut_amount"), 0, 100, 100, 1, 0}};
 }
 
 double ClipColor::value(const QString &key) const
@@ -44,12 +46,22 @@ bool ClipColor::setValue(const QString &key, double v)
     return false;
 }
 
-bool ClipColor::isNeutral() const
+namespace {
+
+// White balance, tone and saturation all at their defaults.
+bool basicNeutral(const ClipColor &c)
 {
-    for (const auto &s : specs())
-        if (value(s.key) != s.def)
+    for (const auto &s : ClipColor::specs())
+        if (s.key != QLatin1String("lut_amount") && c.value(s.key) != s.def)
             return false;
     return true;
+}
+
+} // namespace
+
+bool ClipColor::isNeutral() const
+{
+    return basicNeutral(*this) && !hasLut();
 }
 
 bool ClipColor::operator==(const ClipColor &o) const
@@ -57,7 +69,7 @@ bool ClipColor::operator==(const ClipColor &o) const
     for (const auto &s : specs())
         if (value(s.key) != o.value(s.key))
             return false;
-    return true;
+    return lut == o.lut;
 }
 
 QJsonObject ClipColor::toJson() const
@@ -66,6 +78,8 @@ QJsonObject ClipColor::toJson() const
     for (const auto &s : specs())
         if (value(s.key) != s.def)
             o[s.key] = value(s.key);
+    if (!lut.isEmpty())
+        o[QStringLiteral("lut")] = lut;
     return o;
 }
 
@@ -75,6 +89,7 @@ ClipColor ClipColor::fromJson(const QJsonObject &o)
     for (const auto &s : specs())
         if (o.contains(s.key))
             c.setValue(s.key, o.value(s.key).toDouble(s.def));
+    c.lut = o.value(QStringLiteral("lut")).toString();
     return c;
 }
 
@@ -95,12 +110,9 @@ inline uint8_t toByte(double v)
     return uint8_t(std::clamp(int(std::lround(v * 255.0)), 0, 255));
 }
 
-} // namespace
-
-void applyColor(uint8_t *img, size_t n, const ClipColor &c)
+// White balance, tone, saturation and vibrance.
+void applyBasic(uint8_t *img, size_t n, const ClipColor &c)
 {
-    if (!img || c.isNeutral())
-        return;
     const double temp = c.value(QStringLiteral("temperature")) / 100.0;
     const double tint = c.value(QStringLiteral("tint")) / 100.0;
     // White balance as channel gains: warmer = more red, less blue; tint + = magenta (less green).
@@ -141,6 +153,32 @@ void applyColor(uint8_t *img, size_t n, const ClipColor &c)
         img[0] = uint8_t(std::clamp(int(std::lround(r)), 0, 255));
         img[1] = uint8_t(std::clamp(int(std::lround(g)), 0, 255));
         img[2] = uint8_t(std::clamp(int(std::lround(b)), 0, 255));
+    }
+}
+
+} // namespace
+
+void applyColor(uint8_t *img, size_t n, const ClipColor &c)
+{
+    if (!img || c.isNeutral())
+        return;
+    if (!basicNeutral(c))
+        applyBasic(img, n, c);
+    if (!c.hasLut())
+        return;
+    // A missing or broken file leaves the picture as it is (the panel says so).
+    const std::shared_ptr<const Lut> lut = Lut::cached(c.lut);
+    if (!lut)
+        return;
+    const float amount = float(c.value(QStringLiteral("lut_amount")) / 100.0);
+    uint8_t *p = img;
+    for (size_t i = 0; i < n; ++i, p += 4) {
+        float r = p[0] / 255.0f, g = p[1] / 255.0f, b = p[2] / 255.0f;
+        const float r0 = r, g0 = g, b0 = b;
+        lut->apply(r, g, b);
+        p[0] = uint8_t(std::clamp(int(std::lround((r0 + (r - r0) * amount) * 255.0f)), 0, 255));
+        p[1] = uint8_t(std::clamp(int(std::lround((g0 + (g - g0) * amount) * 255.0f)), 0, 255));
+        p[2] = uint8_t(std::clamp(int(std::lround((b0 + (b - b0) * amount) * 255.0f)), 0, 255));
     }
 }
 

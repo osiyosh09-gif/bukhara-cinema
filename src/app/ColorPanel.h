@@ -42,6 +42,7 @@ private:
     void retranslate();
     void refresh();
     void apply(const QString &key, double value);
+    void chooseLut();
 
     ProjectController *m_ctl;
     TimelineView *m_view;
@@ -54,6 +55,10 @@ private:
     QGroupBox *m_balanceBox;
     QGroupBox *m_toneBox;
     QGroupBox *m_colorBox;
+    QGroupBox *m_lutBox;
+    QLabel *m_lutName;
+    QToolButton *m_lutChoose;
+    QToolButton *m_lutRemove;
     QToolButton *m_reset;
     QLabel *m_note;
     QHash<QString, Row> m_rows;
