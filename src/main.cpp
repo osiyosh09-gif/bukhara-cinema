@@ -29,9 +29,12 @@ int main(int argc, char *argv[])
     bc::MainWindow window;
     window.show();
 
-    // A .bcproj passed on the command line (double-click in Explorer).
+    // Work left unsaved by a crash comes first; otherwise a .bcproj passed
+    // on the command line (double-click in Explorer).
+    const bool smoke = QCoreApplication::arguments().contains(QStringLiteral("--smoke-test"));
+    const bool recovered = !smoke && window.checkRecovery();
     for (const QString &arg : QCoreApplication::arguments().mid(1)) {
-        if (arg.endsWith(QStringLiteral(".bcproj"), Qt::CaseInsensitive)) {
+        if (!recovered && arg.endsWith(QStringLiteral(".bcproj"), Qt::CaseInsensitive)) {
             window.openProjectFile(arg);
             break;
         }
@@ -39,7 +42,7 @@ int main(int argc, char *argv[])
 
     // Used by the Windows build pipeline: start, show the window, exit.
     // It proves that every required DLL was packaged.
-    if (QCoreApplication::arguments().contains(QStringLiteral("--smoke-test")))
+    if (smoke)
         QTimer::singleShot(1500, &app, [] {
             // The video engine and its modules must be packaged too.
             const QString missing = bc::Engine::missingServices();

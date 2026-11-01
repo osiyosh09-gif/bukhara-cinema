@@ -1,5 +1,7 @@
 #include "app/TimelinePanel.h"
 
+#include "core/Waveform.h"
+
 #include "app/Formatting.h"
 #include "app/MediaBinPanel.h"
 #include "app/ProjectController.h"
@@ -553,6 +555,29 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
             const QImage s = thumb.scaledToHeight(r.height() - 4, Qt::SmoothTransformation);
             p.drawImage(QPoint(r.left() + 2, r.top() + 2), s);
             textX += s.width() + 2;
+        }
+    }
+    // Audio waveform of the used part of the source, scaled by the clip volume.
+    if (!video && online && m) {
+        const QByteArray peaks = m_ctl->waveform(c.mediaId);
+        const double fps = m_ctl->project().sequence.fps();
+        if (!peaks.isEmpty() && fps > 0 && m_ppf > 0) {
+            const double gain = std::pow(10.0, c.gainDb / 20.0);
+            const int top = r.top() + 2; // the name is drawn over it
+            const int h = r.bottom() - 2 - top;
+            const double mid = top + h / 2.0;
+            const int x0 = std::max(r.left(), kHeaderW);
+            const int x1 = std::min(r.right(), viewport()->width());
+            p.save();
+            p.setPen(QColor(0xa8, 0xe0, 0xb4, 200));
+            for (int x = x0; x <= x1 && h > 4; ++x) {
+                const double f = c.in + (x - r.left()) / m_ppf;
+                const int v = Waveform::peakIn(peaks, f / fps, (f + 1 / m_ppf) / fps);
+                const double a = std::min(1.0, v / 255.0 * gain) * h / 2.0;
+                if (a >= 0.5)
+                    p.drawLine(QPointF(x + 0.5, mid - a), QPointF(x + 0.5, mid + a));
+            }
+            p.restore();
         }
     }
     QString label = m ? m->name : QString();

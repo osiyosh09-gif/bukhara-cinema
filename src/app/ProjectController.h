@@ -37,6 +37,12 @@ public:
     bool open(const QString &path, QString *error);
     bool save(QString *error);                       // requires filePath()
     bool saveAs(const QString &path, QString *error);
+    // Opens a copy of a project (an autosave or an earlier version) as if it
+    // were the file at originalPath (empty = untitled). The project counts as
+    // modified, so the next save writes it to originalPath.
+    bool openCopy(const QString &dataPath, const QString &originalPath, QString *error);
+    // Grows with every change; autosave writes only when it moved.
+    quint64 changeSerial() const { return m_changeSerial; }
 
     static QStringList recentProjects();
 
@@ -69,6 +75,8 @@ public:
     QString relinkMismatch(const QUuid &id, const QString &newPath) const;
 
     QImage thumbnail(const QUuid &id) const { return m_thumbs.value(id); }
+    // Audio peaks (see Waveform), empty until computed in the background.
+    QByteArray waveform(const QUuid &id) const { return m_waves.value(id); }
 
     void setSequence(const SequenceSettings &s);
 
@@ -144,6 +152,9 @@ private:
     void addRecent(const QString &path);
     void startProbe(const MediaItem &item);
     void startThumbnail(const MediaItem &item);
+    void startWaveform(const MediaItem &item);
+    static QString waveCachePath(const QString &mediaPath);
+    void adopt(Project &&p, const QString &filePath, bool modified);
     void refreshOnlineState();
     static QString thumbCachePath(const QString &mediaPath);
     bool editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn,
@@ -162,6 +173,8 @@ private:
     QSet<QUuid> m_online;
     QSet<QUuid> m_pendingProbe;
     QHash<QUuid, QImage> m_thumbs;
+    QHash<QUuid, QByteArray> m_waves;
+    quint64 m_changeSerial = 0;
     QThreadPool m_pool;
     quint64 m_generation = 0; // ignores results of jobs started for an older project
     QUndoStack *m_undo = nullptr;

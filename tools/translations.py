@@ -455,6 +455,64 @@ T.update({
     "The video engine (MLT) is not loaded.": ("Видео двигатели (MLT) юкланмаган.", "Видеодвижок (MLT) не загружен."),
 })
 
+# Phase 5 (part 1): autosave, recovery, versions, waveforms
+T.update({
+    "Phase 5: editing, playback, titles, clip volume, MP4 export, autosave with crash recovery and audio waveforms. See Help > Feature status.": (
+        "5-босқич: монтаж, ижро, титрлар, клип овози, MP4 экспорт, автосақлаш ва бузилишдан кейин тиклаш, овоз тўлқини. Ёрдам > Функциялар ҳолати бўлимига қаранг.",
+        "Этап 5: монтаж, воспроизведение, титры, громкость клипов, экспорт в MP4, автосохранение с восстановлением после сбоя и формы звуковой волны. См. Справка > Состояние функций."),
+    "Phase 5: editing, playback, titles, MP4 export, autosave and waveforms work.": (
+        "5-босқич: монтаж, ижро, титрлар, MP4 экспорт, автосақлаш ва овоз тўлқини ишлайди.",
+        "Этап 5: монтаж, воспроизведение, титры, экспорт в MP4, автосохранение и формы волны работают."),
+    "Open this version": ("Шу версияни очиш", "Открыть эту версию"),
+    "Previous versions": ("Олдинги версиялар", "Предыдущие версии"),
+    "Previous versions...": ("Олдинги версиялар...", "Предыдущие версии..."),
+    "No previous versions yet. Each time you save, the old file is kept in the \"Backups\" folder next to the project.": (
+        "Ҳали олдинги версиялар йўқ. Ҳар сақлаганингизда эски файл лойиҳа ёнидаги «Backups» папкасида қолади.",
+        "Предыдущих версий пока нет. При каждом сохранении старый файл остаётся в папке «Backups» рядом с проектом."),
+    "Each save keeps the old file in the \"Backups\" folder next to the project. An opened version replaces the project only when you save it.": (
+        "Ҳар сақлашда эски файл лойиҳа ёнидаги «Backups» папкасида қолади. Очилган версия фақат сиз сақлаганингизда лойиҳанинг ўрнини эгаллайди.",
+        "При каждом сохранении старый файл остаётся в папке «Backups» рядом с проектом. Открытая версия заменит проект, только когда вы его сохраните."),
+    "Audio waveforms on the timeline": ("Timeline'да овоз тўлқини (waveform)", "Формы звуковой волны на таймлайне"),
+    "Computed in the background once per file and kept in the cache; follow the clip volume.": (
+        "Ҳар файл учун бир марта фонда ҳисобланади ва кэшда сақланади; клип овози ўзгарса, тўлқин ҳам ўзгаради.",
+        "Рассчитываются в фоне один раз для каждого файла и хранятся в кэше; учитывают громкость клипа."),
+    "Proxy files, cache management, collecting a project into one folder": (
+        "Proxy файллар, кэшни бошқариш, лойиҳани битта папкага йиғиш",
+        "Прокси-файлы, управление кэшем, сбор проекта в одну папку"),
+    "Autosave, crash recovery, previous versions": (
+        "Автосақлаш, бузилишдан кейин тиклаш, олдинги версиялар",
+        "Автосохранение, восстановление после сбоя, предыдущие версии"),
+    "A copy is written every 2 minutes while there are unsaved changes (File > Settings). After a crash the next start offers to recover it. Each save keeps the old file in the Backups folder; File > Previous versions opens one.": (
+        "Сақланмаган ўзгаришлар бўлса, ҳар 2 дақиқада нусха ёзилади (Файл > Созламалар). Дастур кутилмаганда ёпилса, кейинги очилишда уни тиклаш таклиф қилинади. Ҳар сақлашда эски файл Backups папкасида қолади; Файл > Олдинги версиялар орқали очилади.",
+        "Пока есть несохранённые изменения, копия записывается каждые 2 минуты (Файл > Настройки). После сбоя при следующем запуске предлагается её восстановить. При каждом сохранении старый файл остаётся в папке Backups; Файл > Предыдущие версии открывает его."),
+    "Autosaved at %1": ("%1 да автосақланди", "Автосохранено в %1"),
+    "Autosave failed: %1": ("Автосақлаб бўлмади: %1", "Ошибка автосохранения: %1"),
+    "An earlier version is open. Save to make it the current project.": (
+        "Олдинги версия очилди. Уни асосий лойиҳа қилиш учун сақланг.",
+        "Открыта предыдущая версия. Сохраните, чтобы сделать её текущим проектом."),
+    "Recover unsaved work": ("Сақланмаган ишни тиклаш", "Восстановление несохранённой работы"),
+    "Unsaved work recovered. Save the project to keep it.": (
+        "Сақланмаган иш тикланди. Йўқолмаслиги учун лойиҳани сақланг.",
+        "Несохранённая работа восстановлена. Сохраните проект, чтобы её не потерять."),
+    "Recover": ("Тиклаш", "Восстановить"),
+    "BUKHARA CINEMA was not closed normally last time. These autosaved copies contain changes that were not saved. Recover one to continue working; then save it.": (
+        "Ўтган сафар BUKHARA CINEMA одатдагидек ёпилмади. Бу автосақланган нусхаларда сақланмаган ўзгаришлар бор. Ишни давом эттириш учун бирини тикланг, кейин сақланг.",
+        "В прошлый раз BUKHARA CINEMA была закрыта некорректно. В этих автосохранённых копиях есть несохранённые изменения. Восстановите одну, чтобы продолжить работу, затем сохраните."),
+    "Delete this copy? The unsaved changes in it will be lost.": (
+        "Бу нусха ўчирилсинми? Ундаги сақланмаган ўзгаришлар йўқолади.",
+        "Удалить эту копию? Несохранённые изменения в ней будут потеряны."),
+    "never saved": ("ҳали сақланмаган", "ещё не сохранялся"),
+    "Autosave:": ("Автосақлаш:", "Автосохранение:"),
+    "Off": ("Ўчирилган", "Выключено"),
+    "Every %1 min": ("Ҳар %1 дақиқада", "Каждые %1 мин"),
+    "Previous versions to keep:": ("Сақланадиган олдинги версиялар:", "Хранить предыдущих версий:"),
+    "None": ("Йўқ", "Нет"),
+    "Each save keeps the old project file in the \"Backups\" folder next to it.": (
+        "Ҳар сақлашда эски лойиҳа файли ёнидаги «Backups» папкасида қолади.",
+        "При каждом сохранении старый файл проекта остаётся в папке «Backups» рядом с ним."),
+})
+
+
 # Manual Latin overrides where transliteration is not ideal.
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
