@@ -104,6 +104,10 @@ class TestPhase5 : public QObject
 private slots:
     void initTestCase()
     {
+        // Without these Windows has no registry place for QSettings (the
+        // real program sets them in main()).
+        QCoreApplication::setOrganizationName(QStringLiteral("BukharaCinemaTests"));
+        QCoreApplication::setApplicationName(QStringLiteral("tst_phase5"));
         QStandardPaths::setTestModeEnabled(true);
         QSettings().clear();
         QVERIFY(m_dir.isValid());
