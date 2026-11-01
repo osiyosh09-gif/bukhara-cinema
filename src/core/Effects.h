@@ -26,7 +26,7 @@ struct EffectParamSpec
 // applied in order before its motion. Values are not animated.
 struct ClipEffect
 {
-    enum class Kind { BrightnessContrast, Saturation, Blur, Sharpen, Crop, Mirror };
+    enum class Kind { BrightnessContrast, Saturation, Blur, Sharpen, Crop, Mirror, ChromaKey, Mask };
 
     Kind kind = Kind::BrightnessContrast;
     bool enabled = true;

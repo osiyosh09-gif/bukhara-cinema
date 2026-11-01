@@ -548,7 +548,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 8, part 2: clip effects work (Effects panel).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 8 done: effects, chroma key and masks work (Effects panel).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

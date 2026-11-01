@@ -169,6 +169,16 @@
         <translation>Ctrl+D playhead'га энг яқин кесимга 1 сониялик dissolve қўяди; «Клип» панелида бош ва охирдаги ўтиш тури ва узунлиги танланади. Ёнма-ён клиплар аралашиб ўтади (файлда ортиқча кадр бўлса, ундан фойдаланилади); бўш учда клип аста пайдо бўлади ёки йўқолади.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="54" />
+        <source>Chroma key and masks</source>
+        <translation>Chroma key ва маскалар</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="54" />
+        <source>In the Effects panel: Chroma key makes one colour (green or blue screen) transparent so the track below shows through; Mask keeps a rectangle or ellipse (or hides it with Invert) with a soft edge. Picking the colour with a dropper, drawn (bezier) masks and moving masks come later.</source>
+        <translation>«Эффектлар» панелида: Chroma key битта рангни (яшил ёки кўк фон) шаффоф қилади, остидаги йўлак кўринади; Маска тўртбурчак ёки эллипсни қолдиради («Тескари» билан яширади), чети юмшоқ бўлади. Рангни томизғич билан олиш, қўлда чизилган (bezier) ва ҳаракатланадиган маскалар кейинроқ.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Секвенция созламалари: ўлчам, кадрлар частотаси, аудио</translation>
@@ -277,11 +287,6 @@
         <location filename="../src/app/FeatureStatus.cpp" line="53" />
         <source>Select a video clip and open the Effects tab: add effects, untick to compare, reorder with the arrows, change values. Effects work from top to bottom, before the motion settings. Values do not change over time yet.</source>
         <translation>Видео клипни танлаб, «Эффектлар» панелини очинг: эффект қўшинг, белгисини олиб солиштиринг, стрелкалар билан тартибини ўзгартиринг, қийматини ёзинг. Эффектлар юқоридан пастга, ҳаракат созламаларидан олдин ишлайди. Қийматлар ҳозирча вақт бўйича ўзгармайди.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="54" />
-        <source>Masks, chroma key</source>
-        <translation>Маскалар, chroma key</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="55" />
@@ -886,112 +891,182 @@
         <translation>Ойна (акс)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="58" />
+        <location filename="../src/app/EffectsPanel.cpp" line="52" />
+        <source>Chroma key (remove a colour)</source>
+        <translation>Chroma key (рангни олиб ташлаш)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="54" />
+        <source>Mask (rectangle or ellipse)</source>
+        <translation>Маска (тўртбурчак ёки эллипс)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="62" />
         <source>Brightness</source>
         <translation>Ёрқинлик</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="60" />
+        <location filename="../src/app/EffectsPanel.cpp" line="64" />
         <source>Contrast</source>
         <translation>Контраст</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="62" />
+        <location filename="../src/app/EffectsPanel.cpp" line="66" />
         <source>Saturation, %</source>
         <translation>Тўйинганлик, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="64" />
+        <location filename="../src/app/EffectsPanel.cpp" line="68" />
         <source>Radius, px</source>
         <translation>Радиус, px</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="66" />
+        <location filename="../src/app/EffectsPanel.cpp" line="70" />
         <source>Amount, %</source>
         <translation>Кучи, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="68" />
+        <location filename="../src/app/EffectsPanel.cpp" line="72" />
         <source>Left, %</source>
         <translation>Чапдан, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="70" />
+        <location filename="../src/app/EffectsPanel.cpp" line="74" />
         <source>Right, %</source>
         <translation>Ўнгдан, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="72" />
+        <location filename="../src/app/EffectsPanel.cpp" line="76" />
         <source>Top, %</source>
         <translation>Юқоридан, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="74" />
+        <location filename="../src/app/EffectsPanel.cpp" line="78" />
         <source>Bottom, %</source>
         <translation>Пастдан, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="76" />
+        <location filename="../src/app/EffectsPanel.cpp" line="80" />
         <source>Flip left and right</source>
         <translation>Чап ва ўнгни алмаштириш</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="78" />
+        <location filename="../src/app/EffectsPanel.cpp" line="82" />
         <source>Flip upside down</source>
         <translation>Тепа ва пастни алмаштириш</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="192" />
+        <location filename="../src/app/EffectsPanel.cpp" line="84" />
+        <source>Key colour (hue), °</source>
+        <translation>Ранг (hue), °</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="86" />
+        <source>Tolerance, °</source>
+        <translation>Чегара, °</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="88" />
+        <source>Softness, °</source>
+        <translation>Юмшоқлик, °</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="90" />
+        <source>Keep greys below, %</source>
+        <translation>Кулранг ҳимояси, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="92" />
+        <source>Spill removal, %</source>
+        <translation>Spill тозалаш, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="94" />
+        <source>Ellipse</source>
+        <translation>Эллипс</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="96" />
+        <source>Centre X, %</source>
+        <translation>Марказ X, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="98" />
+        <source>Centre Y, %</source>
+        <translation>Марказ Y, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="100" />
+        <source>Width, %</source>
+        <translation>Кенглик, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="102" />
+        <source>Height, %</source>
+        <translation>Баландлик, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="104" />
+        <source>Soft edge, px</source>
+        <translation>Юмшоқ чет, px</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="106" />
+        <source>Invert (hide the inside)</source>
+        <translation>Тескари (ичини яшириш)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="220" />
         <source>Add</source>
         <translation>Қўшиш</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="193" />
+        <location filename="../src/app/EffectsPanel.cpp" line="221" />
         <source>Add the chosen effect to the clip</source>
         <translation>Танланган эффектни клипга қўшиш</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="194" />
+        <location filename="../src/app/EffectsPanel.cpp" line="222" />
         <source>Move up (effects work from top to bottom)</source>
         <translation>Юқорига (эффектлар юқоридан пастга ишлайди)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="195" />
+        <location filename="../src/app/EffectsPanel.cpp" line="223" />
         <source>Move down</source>
         <translation>Пастга</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="196" />
+        <location filename="../src/app/EffectsPanel.cpp" line="224" />
         <source>Remove</source>
         <translation>Олиб ташлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="197" />
+        <location filename="../src/app/EffectsPanel.cpp" line="225" />
         <source>Values</source>
         <translation>Қийматлар</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="198" />
+        <location filename="../src/app/EffectsPanel.cpp" line="226" />
         <source>Effects are drawn before the motion settings. Untick an effect to compare without it.</source>
         <translation>Эффектлар ҳаракат созламаларидан олдин чизилади. Эффектсиз солиштириш учун унинг белгисини олинг.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="222" />
+        <location filename="../src/app/EffectsPanel.cpp" line="250" />
         <source>Select a video clip on the timeline to add effects.</source>
         <translation>Эффект қўшиш учун timeline'да видео клипни танланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="223" />
+        <location filename="../src/app/EffectsPanel.cpp" line="251" />
         <source>Several clips are selected. Select one clip.</source>
         <translation>Бир нечта клип танланган. Битта клипни танланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="224" />
+        <location filename="../src/app/EffectsPanel.cpp" line="252" />
         <source>Effects work on pictures. Select a video clip.</source>
         <translation>Эффектлар расмга қўйилади. Видео клипни танланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="228" />
+        <location filename="../src/app/EffectsPanel.cpp" line="256" />
         <source>Title</source>
         <translation>Титр</translation>
     </message>
@@ -1605,6 +1680,11 @@
         <translation>Клип</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="551" />
+        <source>Phase 8 done: effects, chroma key and masks work (Effects panel).</source>
+        <translation>8-босқич тугади: эффектлар, chroma key ва маскалар ишлайди («Эффектлар» панели).</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="587" />
         <source>Insert</source>
         <translation>Қўйиш</translation>
@@ -1650,11 +1730,6 @@
         <location filename="../src/app/MainWindow.cpp" line="746" />
         <source>Unsaved changes</source>
         <translation>Сақланмаган ўзгаришлар</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="551" />
-        <source>Phase 8, part 2: clip effects work (Effects panel).</source>
-        <translation>8-босқич, 2-қисм: клип эффектлари ишлайди («Эффектлар» панели).</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="671" />
