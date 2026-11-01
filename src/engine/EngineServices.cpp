@@ -1,5 +1,6 @@
 #include "engine/EngineServices.h"
 
+#include "core/Color.h"
 #include "core/Effects.h"
 #include "core/Motion.h"
 
@@ -311,6 +312,10 @@ int effectsGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format, 
     const int err = mlt_frame_get_image(frame, image, format, width, height, 1);
     if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)
         return err;
+    // Colour correction first, then the effects in their order.
+    const char *colorText = mlt_properties_get(props, "color");
+    if (colorText && *colorText)
+        applyColor(*image, size_t(*width) * *height, ClipColor::fromEngineString(QByteArray(colorText)));
     const char *text = mlt_properties_get(props, "effects");
     const ClipEffects effects = effectsFromEngineString(QByteArray(text ? text : ""));
     if (effects.isEmpty())

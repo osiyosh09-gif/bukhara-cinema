@@ -504,4 +504,29 @@ bool ProjectController::setClipEffectValue(const QUuid &clipId, int index, const
     }, QStringLiteral("effect:%1:%2:%3").arg(clipId.toString()).arg(index).arg(key));
 }
 
+ClipColor ProjectController::clipColor(const QUuid &clipId) const
+{
+    const TimelineClip *c = timeline().clip(clipId);
+    return c && timeline().kindOf(clipId) == Timeline::Kind::Video ? c->color : ClipColor();
+}
+
+bool ProjectController::setClipColorValue(const QUuid &clipId, const QString &key, double value)
+{
+    return editTimeline(tr("Colour correction"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        return c && c->color.setValue(key, value);
+    }, QStringLiteral("color:%1:%2").arg(clipId.toString(), key));
+}
+
+bool ProjectController::resetClipColor(const QUuid &clipId)
+{
+    return editTimeline(tr("Reset colour"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || c->color.isNeutral())
+            return false;
+        c->color = ClipColor();
+        return true;
+    });
+}
+
 } // namespace bc

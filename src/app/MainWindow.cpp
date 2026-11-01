@@ -13,6 +13,7 @@
 #include "app/SequenceSettingsDialog.h"
 #include "app/CacheDialog.h"
 #include "app/ClipInspector.h"
+#include "app/ColorPanel.h"
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
@@ -196,7 +197,7 @@ void MainWindow::buildDocks()
     m_rightTabs->addTab(m_clipInspector, QString());
     m_effectsPanel = new EffectsPanel(m_ctl, m_timeline->view());
     m_rightTabs->addTab(m_effectsPanel, QString());
-    m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Color"); }, 9), QString());
+    m_rightTabs->addTab(new ColorPanel(m_ctl, m_timeline->view()), QString());
     m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Audio mixer"); }, 10), QString());
     m_inspectorDock = new QDockWidget(this);
     m_inspectorDock->setObjectName(QStringLiteral("inspectorDock"));
@@ -548,7 +549,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 8 done: effects, chroma key and masks work (Effects panel).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 9, part 1: basic colour correction works (Colour panel).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

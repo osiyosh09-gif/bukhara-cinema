@@ -7,6 +7,7 @@
 #include <QString>
 #include <QUuid>
 
+#include "core/Color.h"
 #include "core/Effects.h"
 #include "core/Motion.h"
 
@@ -77,6 +78,7 @@ struct TimelineClip
     ClipTransition tail; // fade at the end; used only when no clip touches the end
     double speed = 1.0; // media clips: 2.0 plays twice as fast (each timeline frame uses 2 source frames)
     ClipEffects effects; // video clips: picture effects, applied in order before the motion (phase 8b)
+    ClipColor color;     // video clips: colour correction, applied before the effects (phase 9a)
 
     // Source frames used by `frames` timeline frames.
     qint64 src(qint64 frames) const { return speed == 1.0 ? frames : qint64(std::llround(frames * speed)); }
@@ -97,7 +99,7 @@ struct TimelineClip
         return id == o.id && mediaId == o.mediaId && nestId == o.nestId && linkId == o.linkId && start == o.start && in == o.in
                && length == o.length && title == o.title && gainDb == o.gainDb && fadeIn == o.fadeIn
                && fadeOut == o.fadeOut && motion == o.motion && speed == o.speed && head == o.head && tail == o.tail
-               && effects == o.effects;
+               && effects == o.effects && color == o.color;
     }
 };
 
