@@ -40,7 +40,7 @@ QList<FeatureEntry> entries()
         {S::Ready,   2, QCoreApplication::translate("FeatureStatus", "Playback in Program monitor"), QCoreApplication::translate("FeatureStatus", "Real-time playback with sound (Space), frame steps, start and end. On a slow computer frames are skipped so sound stays in sync.")},
         {S::Planned, 6, QCoreApplication::translate("FeatureStatus", "Source monitor playback, J/K/L shuttle, in and out points"), {}},
         {S::Ready,   3, QCoreApplication::translate("FeatureStatus", "Text titles and audio volume, fades, mute and solo"), QCoreApplication::translate("FeatureStatus", "Graphics > New text (Ctrl+T); text, size, color, place and a dark box in the Clip panel. Clip volume in dB with fade in and out; M and S buttons on audio tracks. Font choice and animated titles come in later phases.")},
-        {S::Planned, 4, QCoreApplication::translate("FeatureStatus", "MP4 export (H.264 + AAC) with progress and cancel"), {}},
+        {S::Ready,   4, QCoreApplication::translate("FeatureStatus", "MP4 export (H.264 + AAC) with progress and cancel"), QCoreApplication::translate("FeatureStatus", "File > Export (Ctrl+M). H.264 through Intel Quick Sync, Windows Media Foundation, NVIDIA or AMD; MPEG-4 Part 2 when none of them works. Size and frame rate follow the sequence settings; other sizes and an export queue come later.")},
         {S::Planned, 5, QCoreApplication::translate("FeatureStatus", "Autosave, crash recovery, versions, backups"), {}},
         {S::Planned, 6, QCoreApplication::translate("FeatureStatus", "Professional editing: insert, overwrite, roll, slip, slide, markers, nesting"), {}},
         {S::Planned, 7, QCoreApplication::translate("FeatureStatus", "Transform, keyframes, speed changes"), {}},

@@ -10,6 +10,7 @@
 #include "app/ProjectInfoPanel.h"
 #include "app/SequenceSettingsDialog.h"
 #include "app/ClipInspector.h"
+#include "app/ExportDialog.h"
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
 #include "app/StatusDialog.h"
@@ -198,7 +199,18 @@ void MainWindow::buildMenus()
     m_importAct = m_fileMenu->addAction(QString(), m_bin, &MediaBinPanel::importDialog);
     m_importAct->setObjectName(QStringLiteral("actImport"));
     m_importAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+I")));
-    addPlanned(m_fileMenu, QT_TR_NOOP("Export..."), 4, QStringLiteral("actExport"));
+    m_exportAct = m_fileMenu->addAction(QString(), this, &MainWindow::openExport);
+    m_exportAct->setObjectName(QStringLiteral("actExport"));
+    m_exportAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+M")));
+    auto updateExport = [this] {
+        const bool on = m_ctl->canPlay() && !m_ctl->timeline().isEmpty();
+        m_exportAct->setEnabled(on);
+        if (m_tbExport)
+            m_tbExport->setEnabled(on);
+    };
+    connect(m_ctl, &ProjectController::timelineChanged, this, updateExport);
+    connect(m_ctl, &ProjectController::projectReset, this, updateExport);
+    m_exportAct->setEnabled(false);
     m_fileMenu->addSeparator();
     m_settingsAct = m_fileMenu->addAction(QString(), this, &MainWindow::openSettings);
     m_settingsAct->setObjectName(QStringLiteral("actSettings"));
@@ -308,10 +320,10 @@ void MainWindow::buildToolbar()
                                     &MainWindow::saveProject);
     m_tbSave->setObjectName(QStringLiteral("tbSave"));
 
-    m_tbExport = m_toolbar->addAction(style()->standardIcon(QStyle::SP_ArrowUp), QString());
+    m_tbExport = m_toolbar->addAction(style()->standardIcon(QStyle::SP_ArrowUp), QString(), this,
+                                      &MainWindow::openExport);
     m_tbExport->setObjectName(QStringLiteral("tbExport"));
-    m_tbExport->setEnabled(false);
-    m_tbExport->setProperty("bc_planned", true);
+    m_tbExport->setEnabled(m_exportAct->isEnabled());
 
     auto *spacer = new QWidget(m_toolbar);
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -363,7 +375,8 @@ void MainWindow::retranslate()
     m_tbSave->setText(tr("Save"));
     m_tbSave->setToolTip(tr("Save project (Ctrl+S)"));
     m_tbExport->setText(tr("Export"));
-    m_tbExport->setToolTip(tr("Planned for phase %1").arg(4));
+    m_tbExport->setToolTip(tr("Export to MP4 (Ctrl+M)"));
+    m_exportAct->setText(tr("Export..."));
 
     m_mediaDock->setWindowTitle(tr("Project"));
     m_inspectorDock->setWindowTitle(tr("Properties"));
@@ -376,7 +389,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 3: editing, playback, titles and clip volume work. MP4 export comes next.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 4: editing, playback, titles, clip volume and MP4 export work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -558,6 +571,14 @@ void MainWindow::updateUndoActions()
     m_redoAct->setEnabled(st->canRedo());
     m_undoAct->setText(st->canUndo() ? tr("Undo: %1").arg(st->undoText()) : tr("Undo"));
     m_redoAct->setText(st->canRedo() ? tr("Redo: %1").arg(st->redoText()) : tr("Redo"));
+}
+
+void MainWindow::openExport()
+{
+    if (!m_exportAct->isEnabled())
+        return;
+    ExportDialog dialog(m_ctl, this);
+    dialog.exec();
 }
 
 void MainWindow::addTitle()

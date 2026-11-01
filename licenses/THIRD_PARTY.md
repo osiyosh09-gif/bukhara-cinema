@@ -19,6 +19,15 @@ GNU LGPL requires.
 | winpthreads | MIT / ZPL | Threads runtime | https://www.mingw-w64.org/ |
 | Qt dependencies from MSYS2 (zlib, libpng, freetype, harfbuzz, pcre2, zstd, double-conversion, ICU, md4c, …) | Permissive licenses (zlib, MIT, BSD, FreeType, ICU) | Fonts, images, text | https://packages.msys2.org/ |
 
+**H.264 export** uses encoders that come with the computer: Intel Quick Sync
+(Intel graphics driver, through FFmpeg's `h264_qsv` and the MIT-licensed
+oneVPL dispatcher in the LGPL FFmpeg build), Windows Media Foundation
+(`h264_mf`, part of Windows), NVIDIA NVENC or AMD AMF. BUKHARA CINEMA
+does not ship its own H.264 encoder; the program itself is not an H.264
+patent licence. For a commercial product, check H.264 patent terms (Via
+Licensing Alliance) before selling. x264 (GPL) is never used. When none of them works, MPEG-4 Part 2 (FFmpeg's own
+`mpeg4` encoder) is used. Sound is AAC (FFmpeg's own `aac` encoder).
+
 The Windows build writes the exact list of packaged DLLs, their MSYS2 package,
 version and license to `licenses/components.txt` and copies each package's
 license files into `licenses/<package>/`.
@@ -28,9 +37,3 @@ license files into `licenses/<package>/`.
 | Tool | License | Note |
 | --- | --- | --- |
 | Inno Setup 6.7 | Free for **non-commercial** use only | Creates the installer. Commercial distribution needs a paid Inno Setup license, or a switch to NSIS (zlib license, free for any use). |
-
-## Planned (not shipped yet)
-
-| Component | License | Phase | Note |
-| --- | --- | --- | --- |
-| H.264 encoding | Intel Quick Sync (oneVPL, MIT) / Windows Media Foundation | 4 | Uses the codec licensed with Windows and the Intel driver |

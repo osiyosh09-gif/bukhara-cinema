@@ -405,6 +405,56 @@ T.update({
     "Volume:": ("Овоз баландлиги:", "Громкость:"),
 })
 
+# Phase 4: MP4 export
+T.update({
+    "Browse...": ("Танлаш...", "Обзор..."),
+    "Cancel export": ("Экспортни бекор қилиш", "Отменить экспорт"),
+    "Choose a file name.": ("Файл номини танланг.", "Выберите имя файла."),
+    "Done: %1": ("Тайёр: %1", "Готово: %1"),
+    "Export cancelled. The unfinished file was deleted.": (
+        "Экспорт бекор қилинди. Тугалланмаган файл ўчирилди.",
+        "Экспорт отменён. Незавершённый файл удалён."),
+    "Export failed: %1": ("Экспорт бажарилмади: %1", "Экспорт не удался: %1"),
+    "Export to MP4 (Ctrl+M)": ("MP4’га экспорт (Ctrl+M)", "Экспорт в MP4 (Ctrl+M)"),
+    "Export to MP4": ("MP4’га экспорт", "Экспорт в MP4"),
+    "Exporting...": ("Экспорт қилинмоқда...", "Идёт экспорт..."),
+    "File > Export (Ctrl+M). H.264 through Intel Quick Sync, Windows Media Foundation, NVIDIA or AMD; MPEG-4 Part 2 when none of them works. Size and frame rate follow the sequence settings; other sizes and an export queue come later.": (
+        "Файл > Экспорт (Ctrl+M). H.264 Intel Quick Sync, Windows Media Foundation, NVIDIA ёки AMD орқали; улар ишламаса MPEG-4 Part 2. Ўлчам ва кадр тезлиги секвенция созламаларидан; бошқа ўлчамлар ва экспорт навбати кейинроқ.",
+        "Файл > Экспорт (Ctrl+M). H.264 через Intel Quick Sync, Windows Media Foundation, NVIDIA или AMD; MPEG-4 Part 2, если ни один не работает. Размер и частота кадров — из настроек секвенции; другие размеры и очередь экспорта — позже."),
+    "File:": ("Файл:", "Файл:"),
+    "Frame %1 of %2": ("%2 кадрдан %1", "Кадр %1 из %2"),
+    "H.264 is not available on this computer (no Intel Quick Sync or Windows Media Foundation encoder was found). The file will use MPEG-4 Part 2: it plays in most players, but some websites may not accept it.": (
+        "Бу компьютерда H.264 мавжуд эмас (Intel Quick Sync ёки Windows Media Foundation кодловчиси топилмади). Файл MPEG-4 Part 2 форматида бўлади: кўп плеерларда очилади, лекин баъзи сайтлар қабул қилмаслиги мумкин.",
+        "H.264 на этом компьютере недоступен (не найден кодировщик Intel Quick Sync или Windows Media Foundation). Файл будет в MPEG-4 Part 2: он открывается в большинстве плееров, но некоторые сайты могут его не принять."),
+    "High (large file)": ("Юқори (катта файл)", "Высокое (большой файл)"),
+    "MP4 video (*.mp4)": ("MP4 видео (*.mp4)", "Видео MP4 (*.mp4)"),
+    "Medium": ("Ўрта", "Среднее"),
+    "Open folder": ("Папкани очиш", "Открыть папку"),
+    "Phase 4: editing, playback, titles, clip volume and MP4 export work.": (
+        "4-босқич: монтаж, ижро, титрлар, клип овози ва MP4 экспорт ишлайди.",
+        "Этап 4: монтаж, воспроизведение, титры, громкость клипов и экспорт в MP4 работают."),
+    "Phase 4: the first complete version: editing, playback, titles, clip volume and MP4 export. See Help > Feature status.": (
+        "4-босқич — биринчи тўлиқ версия: монтаж, ижро, титрлар, клип овози ва MP4 экспорт. Ёрдам > Функциялар ҳолати бўлимига қаранг.",
+        "Этап 4 — первая полная версия: монтаж, воспроизведение, титры, громкость клипов и экспорт в MP4. См. Справка > Состояние функций."),
+    "Picture: %1, %2 fps (sequence settings), %3 Mbit/s. Sound: AAC 192 kbit/s, %4 Hz. Length %5, file about %6 MB.": (
+        "Тасвир: %1, %2 кадр/с (секвенция созламалари), %3 Мбит/с. Овоз: AAC 192 кбит/с, %4 Гц. Давомийлик %5, файл тахминан %6 МБ.",
+        "Изображение: %1, %2 кадр/с (настройки секвенции), %3 Мбит/с. Звук: AAC 192 кбит/с, %4 Гц. Длительность %5, файл примерно %6 МБ."),
+    "Quality:": ("Сифат:", "Качество:"),
+    "Small file": ("Кичик файл", "Маленький файл"),
+    "The file already exists. Replace it?": ("Бундай файл бор. Алмаштирилсинми?", "Файл уже существует. Заменить?"),
+    "Video codec:": ("Видео кодек:", "Видеокодек:"),
+    "about %1 left": ("тахминан %1 қолди", "осталось около %1"),
+    "An export is already running.": ("Экспорт аллақачон бораяпти.", "Экспорт уже идёт."),
+    "The MP4 writer (MLT avformat) is not available.": ("MP4 ёзувчи қисм (MLT avformat) мавжуд эмас.", "Модуль записи MP4 (MLT avformat) недоступен."),
+    "The export could not start.": ("Экспорт бошланмади.", "Не удалось начать экспорт."),
+    "The file was not written. Check the folder and free disk space.": (
+        "Файл ёзилмади. Папкани ва дискдаги бўш жойни текширинг.",
+        "Файл не записан. Проверьте папку и свободное место на диске."),
+    "The sequence could not be prepared for export.": ("Секвенцияни экспортга тайёрлаб бўлмади.", "Не удалось подготовить секвенцию к экспорту."),
+    "The sequence is empty.": ("Секвенция бўш.", "Секвенция пуста."),
+    "The video engine (MLT) is not loaded.": ("Видео двигатели (MLT) юкланмаган.", "Видеодвижок (MLT) не загружен."),
+})
+
 # Manual Latin overrides where transliteration is not ideal.
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",

@@ -72,6 +72,7 @@ public:
     void handleShownFrame(const QImage &image, qint64 frame);
 
 private:
+    friend class Exporter; // renders the same graph into a file
     void stopConsumer();
     Mlt::Producer *producerFor(const MediaItem &item, bool audio);
     Mlt::Producer *titleProducer(const TitleData &title);
