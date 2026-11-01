@@ -14,6 +14,7 @@
 #include "app/CacheDialog.h"
 #include "app/ClipInspector.h"
 #include "app/ColorPanel.h"
+#include "app/ScopesPanel.h"
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
@@ -203,6 +204,15 @@ void MainWindow::buildDocks()
     m_inspectorDock->setObjectName(QStringLiteral("inspectorDock"));
     m_inspectorDock->setWidget(m_rightTabs);
     addDockWidget(Qt::RightDockWidgetArea, m_inspectorDock);
+
+    // Scopes: off until opened from the Window menu (they cost time on a slow computer).
+    m_scopes = new ScopesPanel;
+    m_scopesDock = new QDockWidget(this);
+    m_scopesDock->setObjectName(QStringLiteral("scopesDock"));
+    m_scopesDock->setWidget(m_scopes);
+    addDockWidget(Qt::RightDockWidgetArea, m_scopesDock);
+    m_scopesDock->hide();
+    connect(m_ctl, &ProjectController::programFrameReady, m_scopes, &ScopesPanel::setFrame);
 
     // Bottom: timeline
     m_timelineDock = new QDockWidget(this);
@@ -427,6 +437,9 @@ void MainWindow::buildMenus()
     m_windowMenu->addAction(m_mediaDock->toggleViewAction());
     m_windowMenu->addAction(m_inspectorDock->toggleViewAction());
     m_windowMenu->addAction(m_timelineDock->toggleViewAction());
+    m_scopesAct = m_scopesDock->toggleViewAction();
+    m_scopesAct->setObjectName(QStringLiteral("actScopes"));
+    m_windowMenu->addAction(m_scopesAct);
     m_windowMenu->addSeparator();
     m_resetLayoutAct = m_windowMenu->addAction(QString(), this, &MainWindow::resetLayout);
     m_resetLayoutAct->setObjectName(QStringLiteral("actResetLayout"));
@@ -541,6 +554,7 @@ void MainWindow::retranslate()
     m_mediaDock->setWindowTitle(tr("Project"));
     m_inspectorDock->setWindowTitle(tr("Properties"));
     m_timelineDock->setWindowTitle(tr("Timeline"));
+    m_scopesDock->setWindowTitle(tr("Scopes"));
 
     m_leftTabs->setTabText(0, tr("Media bin"));
     m_leftTabs->setTabText(1, tr("Project files"));
@@ -549,7 +563,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 9, part 2: colour correction and LUT looks work (Colour panel).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 9, part 3: colour correction, LUTs and scopes work (Colour panel, Window > Scopes).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -714,6 +728,7 @@ void MainWindow::resetLayout()
     m_mediaDock->show();
     m_inspectorDock->show();
     m_timelineDock->show();
+    m_scopesDock->hide();
     resizeDocks({m_mediaDock, m_inspectorDock}, {300, 320}, Qt::Horizontal);
     resizeDocks({m_timelineDock}, {300}, Qt::Vertical);
     const int half = m_monitorSplit->width() / 2;

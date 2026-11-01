@@ -21,6 +21,7 @@ class ProjectInfoPanel;
 class TimelinePanel;
 class ClipInspector;
 class EffectsPanel;
+class ScopesPanel;
 class Autosave;
 
 // Main window layout:
@@ -160,6 +161,9 @@ private:
     QTabWidget *m_leftTabs = nullptr;
     QTabWidget *m_rightTabs = nullptr;
     EffectsPanel *m_effectsPanel = nullptr;
+    ScopesPanel *m_scopes = nullptr;
+    QDockWidget *m_scopesDock = nullptr;
+    QAction *m_scopesAct = nullptr;
     ClipInspector *m_clipInspector = nullptr;
     QSplitter *m_monitorSplit = nullptr;
     QLabel *m_statusLabel = nullptr;
