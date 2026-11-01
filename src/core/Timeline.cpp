@@ -945,6 +945,8 @@ QJsonArray Timeline::toJson() const
             const QJsonObject motion = c.motion.toJson();
             if (!motion.isEmpty())
                 co[QStringLiteral("motion")] = motion;
+            if (!c.effects.isEmpty())
+                co[QStringLiteral("effects")] = effectsToJson(c.effects);
             ca.append(co);
         }
         to[QStringLiteral("clips")] = ca;
@@ -1012,8 +1014,10 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             }
             if (!c.mediaId.isNull())
                 c.speed = std::clamp(co.value(QStringLiteral("speed")).toDouble(1.0), 0.1, 10.0);
-            if (t.kind == Kind::Video)
+            if (t.kind == Kind::Video) {
                 c.motion = ClipMotion::fromJson(co.value(QStringLiteral("motion")).toObject());
+                c.effects = effectsFromJson(co.value(QStringLiteral("effects")).toArray());
+            }
             if (c.length > 0)
                 t.clips << c;
         }

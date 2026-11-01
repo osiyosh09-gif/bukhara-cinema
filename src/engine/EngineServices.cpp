@@ -1,5 +1,6 @@
 #include "engine/EngineServices.h"
 
+#include "core/Effects.h"
 #include "core/Motion.h"
 
 #include <QHash>
@@ -211,6 +212,23 @@ void *gainInit(mlt_profile, mlt_service_type, const char *, const void *)
     return filter;
 }
 
+// The picture inside the letterbox bars of a w x h frame (aspect <= 0: all of it).
+QRectF contentRect(int w, int h, double aspect)
+{
+    QRectF content(0, 0, w, h);
+    if (aspect > 0) {
+        const double frameAspect = double(w) / h;
+        if (aspect > frameAspect + 1e-3) {
+            const double ch = w / aspect;
+            content = QRectF(0, (h - ch) / 2, w, ch);
+        } else if (aspect < frameAspect - 1e-3) {
+            const double cw = h * aspect;
+            content = QRectF((w - cw) / 2, 0, cw, h);
+        }
+    }
+    return content;
+}
+
 // ---------------------------------------------------------------------------
 // bc_transform filter: position, scale, rotation and opacity of a clip's
 // picture (keyframes are evaluated per frame). Drawn by Qt, so it needs no
@@ -238,18 +256,7 @@ int transformGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format
     const int h = *height;
     // Video is letterboxed to the frame by the loader; only the picture
     // itself moves (the bars are left out).
-    QRectF content(0, 0, w, h);
-    const double aspect = mlt_properties_get_double(props, "source_aspect");
-    if (aspect > 0) {
-        const double frameAspect = double(w) / h;
-        if (aspect > frameAspect + 1e-3) {
-            const double ch = w / aspect;
-            content = QRectF(0, (h - ch) / 2, w, ch);
-        } else if (aspect < frameAspect - 1e-3) {
-            const double cw = h * aspect;
-            content = QRectF((w - cw) / 2, 0, cw, h);
-        }
-    }
+    const QRectF content = contentRect(w, h, mlt_properties_get_double(props, "source_aspect"));
     const QImage src = QImage(*image, w, h, QImage::Format_RGBA8888).convertToFormat(QImage::Format_RGBA8888_Premultiplied);
     QImage out(w, h, QImage::Format_RGBA8888_Premultiplied);
     out.fill(Qt::transparent);
@@ -288,6 +295,44 @@ void *transformInit(mlt_profile, mlt_service_type, const char *, const void *)
     if (!filter)
         return nullptr;
     filter->process = transformProcess;
+    return filter;
+}
+
+// ---------------------------------------------------------------------------
+// bc_effects filter (phase 8b): the picture effects of a clip (core/Effects),
+// applied before bc_transform. Pure pixel work, no GPL module.
+
+int effectsGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format, int *width, int *height,
+                    int /*writable*/)
+{
+    auto filter = static_cast<mlt_filter>(mlt_frame_pop_service(frame));
+    mlt_properties props = MLT_FILTER_PROPERTIES(filter);
+    *format = mlt_image_rgba;
+    const int err = mlt_frame_get_image(frame, image, format, width, height, 1);
+    if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)
+        return err;
+    const char *text = mlt_properties_get(props, "effects");
+    const ClipEffects effects = effectsFromEngineString(QByteArray(text ? text : ""));
+    if (effects.isEmpty())
+        return 0;
+    applyEffects(*image, *width, *height, effects,
+                 contentRect(*width, *height, mlt_properties_get_double(props, "source_aspect")));
+    return 0;
+}
+
+mlt_frame effectsProcess(mlt_filter filter, mlt_frame frame)
+{
+    mlt_frame_push_service(frame, filter);
+    mlt_frame_push_get_image(frame, effectsGetImage);
+    return frame;
+}
+
+void *effectsInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_filter filter = mlt_filter_new();
+    if (!filter)
+        return nullptr;
+    filter->process = effectsProcess;
     return filter;
 }
 
@@ -462,6 +507,7 @@ void registerAll(mlt_repository_s *repository)
     mlt_repository_register(repository, mlt_service_filter_type, "bc_gain", gainInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_transform", transformInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_fade", fadeInit);
+    mlt_repository_register(repository, mlt_service_filter_type, "bc_effects", effectsInit);
     mlt_repository_register(repository, mlt_service_transition_type, "bc_xfade", xfadeInit);
 }
 

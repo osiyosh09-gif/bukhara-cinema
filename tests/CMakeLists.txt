@@ -91,3 +91,9 @@ endif()
 # Developer helper (not a test): renders screenshots of the main window.
 add_executable(bc_screenshot screenshot.cpp)
 target_link_libraries(bc_screenshot PRIVATE bc_ui)
+
+add_executable(tst_phase8b tst_phase8b.cpp)
+target_link_libraries(tst_phase8b PRIVATE bc_ui Qt6::Test)
+target_compile_definitions(tst_phase8b PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
+add_test(NAME phase8b_effects COMMAND tst_phase8b)
+set_tests_properties(phase8b_effects PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)

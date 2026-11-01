@@ -152,6 +152,17 @@ public:
     // clip (and its linked clips) nearest to `frame`, where there is none.
     // One undo step; returns how many were added.
     int addDefaultTransitions(const QList<QUuid> &clipIds, qint64 frame);
+    // --- picture effects of video clips (phase 8b). `index` is the place in
+    // the clip's list (applied top to bottom).
+    ClipEffects clipEffects(const QUuid &clipId) const;
+    // Adds an effect with default values at the end; returns its index or -1.
+    int addClipEffect(const QUuid &clipId, ClipEffect::Kind kind);
+    bool removeClipEffect(const QUuid &clipId, int index);
+    // Moves the effect one place up (delta -1) or down (+1).
+    bool moveClipEffect(const QUuid &clipId, int index, int delta);
+    bool setClipEffectEnabled(const QUuid &clipId, int index, bool on);
+    // Quick successive changes of one value form one undo step.
+    bool setClipEffectValue(const QUuid &clipId, int index, const QString &key, double value);
     // --- nested sequences (phase 6c)
     // Moves the clips (and their linked clips) into a new nested sequence and
     // puts one clip of it in their place (picture and sound, linked).

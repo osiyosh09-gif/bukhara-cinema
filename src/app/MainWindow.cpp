@@ -13,6 +13,7 @@
 #include "app/SequenceSettingsDialog.h"
 #include "app/CacheDialog.h"
 #include "app/ClipInspector.h"
+#include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
 #include "app/PlaceholderPanel.h"
@@ -193,7 +194,8 @@ void MainWindow::buildDocks()
     m_rightTabs->setObjectName(QStringLiteral("rightTabs"));
     m_clipInspector = new ClipInspector(m_ctl, m_timeline->view());
     m_rightTabs->addTab(m_clipInspector, QString());
-    m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Effects"); }, 8), QString());
+    m_effectsPanel = new EffectsPanel(m_ctl, m_timeline->view());
+    m_rightTabs->addTab(m_effectsPanel, QString());
     m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Color"); }, 9), QString());
     m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Audio mixer"); }, 10), QString());
     m_inspectorDock = new QDockWidget(this);
@@ -546,7 +548,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 8, part 1: transitions between clips work (Ctrl+D, Clip panel).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 8, part 2: clip effects work (Effects panel).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

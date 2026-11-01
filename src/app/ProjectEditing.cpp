@@ -440,4 +440,68 @@ int ProjectController::addDefaultTransitions(const QList<QUuid> &clipIds, qint64
     return added;
 }
 
+ClipEffects ProjectController::clipEffects(const QUuid &clipId) const
+{
+    const TimelineClip *c = timeline().clip(clipId);
+    return c && timeline().kindOf(clipId) == Timeline::Kind::Video ? c->effects : ClipEffects();
+}
+
+int ProjectController::addClipEffect(const QUuid &clipId, ClipEffect::Kind kind)
+{
+    int index = -1;
+    editTimeline(tr("Add effect"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c)
+            return false;
+        c->effects << ClipEffect::make(kind);
+        index = int(c->effects.size()) - 1;
+        return true;
+    });
+    return index;
+}
+
+bool ProjectController::removeClipEffect(const QUuid &clipId, int index)
+{
+    return editTimeline(tr("Remove effect"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || index < 0 || index >= c->effects.size())
+            return false;
+        c->effects.removeAt(index);
+        return true;
+    });
+}
+
+bool ProjectController::moveClipEffect(const QUuid &clipId, int index, int delta)
+{
+    return editTimeline(tr("Move effect"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        const int to = index + delta;
+        if (!c || index < 0 || index >= c->effects.size() || to < 0 || to >= c->effects.size() || to == index)
+            return false;
+        c->effects.move(index, to);
+        return true;
+    });
+}
+
+bool ProjectController::setClipEffectEnabled(const QUuid &clipId, int index, bool on)
+{
+    return editTimeline(on ? tr("Turn effect on") : tr("Turn effect off"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || index < 0 || index >= c->effects.size() || c->effects[index].enabled == on)
+            return false;
+        c->effects[index].enabled = on;
+        return true;
+    });
+}
+
+bool ProjectController::setClipEffectValue(const QUuid &clipId, int index, const QString &key, double value)
+{
+    return editTimeline(tr("Effect"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || index < 0 || index >= c->effects.size())
+            return false;
+        return c->effects[index].setValue(key, value);
+    }, QStringLiteral("effect:%1:%2:%3").arg(clipId.toString()).arg(index).arg(key));
+}
+
 } // namespace bc
