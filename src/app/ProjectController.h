@@ -124,6 +124,19 @@ public:
     // Volume (dB) and fades (frames) of an audio clip; also one undo step
     // while a slider is dragged.
     bool setClipAudio(const QUuid &clipId, double gainDb, qint64 fadeIn, qint64 fadeOut);
+    // --- motion of video clips (phase 7a). `frame` is a timeline frame
+    // (usually the playhead); it picks the keyframe of an animated clip.
+    ClipTransform clipTransformAt(const QUuid &clipId, qint64 frame) const;
+    // Sets the value (a key at `frame` when the clip is animated). Quick
+    // successive changes of one clip form one undo step.
+    bool setClipTransform(const QUuid &clipId, const ClipTransform &value, qint64 frame);
+    bool setClipAnimated(const QUuid &clipId, bool on, qint64 frame);
+    bool hasClipKey(const QUuid &clipId, qint64 frame) const;
+    // Adds a key at `frame` (an animated clip) or removes the one there.
+    bool toggleClipKey(const QUuid &clipId, qint64 frame);
+    bool resetClipMotion(const QUuid &clipId);
+    // Timeline frame of the next (or previous) key of the clip, or -1.
+    qint64 clipKeyNear(const QUuid &clipId, qint64 frame, bool next) const;
     // --- nested sequences (phase 6c)
     // Moves the clips (and their linked clips) into a new nested sequence and
     // puts one clip of it in their place (picture and sound, linked).

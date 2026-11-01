@@ -1,5 +1,7 @@
 #include "engine/EngineServices.h"
 
+#include "core/Motion.h"
+
 #include <QHash>
 #include <QMutex>
 #include <QMutexLocker>
@@ -207,6 +209,82 @@ void *gainInit(mlt_profile, mlt_service_type, const char *, const void *)
     return filter;
 }
 
+// ---------------------------------------------------------------------------
+// bc_transform filter: position, scale, rotation and opacity of a clip's
+// picture (keyframes are evaluated per frame). Drawn by Qt, so it needs no
+// GPL module.
+
+int transformGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format, int *width, int *height,
+                      int /*writable*/)
+{
+    auto filter = static_cast<mlt_filter>(mlt_frame_pop_service(frame));
+    mlt_properties props = MLT_FILTER_PROPERTIES(filter);
+    const qint64 pos = mlt_filter_get_position(filter, frame);
+    *format = mlt_image_rgba;
+    const int err = mlt_frame_get_image(frame, image, format, width, height, 1);
+    if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)
+        return err;
+    const char *motionText = mlt_properties_get(props, "motion");
+    const ClipTransform t = ClipMotion::fromEngineString(QByteArray(motionText ? motionText : "")).at(pos);
+    if (t.isIdentity())
+        return 0;
+    const int w = *width;
+    const int h = *height;
+    // Video is letterboxed to the frame by the loader; only the picture
+    // itself moves (the bars are left out).
+    QRectF content(0, 0, w, h);
+    const double aspect = mlt_properties_get_double(props, "source_aspect");
+    if (aspect > 0) {
+        const double frameAspect = double(w) / h;
+        if (aspect > frameAspect + 1e-3) {
+            const double ch = w / aspect;
+            content = QRectF(0, (h - ch) / 2, w, ch);
+        } else if (aspect < frameAspect - 1e-3) {
+            const double cw = h * aspect;
+            content = QRectF((w - cw) / 2, 0, cw, h);
+        }
+    }
+    const QImage src = QImage(*image, w, h, QImage::Format_RGBA8888).convertToFormat(QImage::Format_RGBA8888_Premultiplied);
+    QImage out(w, h, QImage::Format_RGBA8888_Premultiplied);
+    out.fill(Qt::transparent);
+    {
+        QPainter p(&out);
+        p.setRenderHint(QPainter::SmoothPixmapTransform);
+        p.setRenderHint(QPainter::Antialiasing);
+        p.setOpacity(std::clamp(t.opacity / 100.0, 0.0, 1.0));
+        p.translate(w / 2.0 + t.x * w, h / 2.0 + t.y * h);
+        p.rotate(t.rotation);
+        const double s = std::max(0.0, t.scale / 100.0);
+        p.scale(s, s);
+        p.translate(-w / 2.0, -h / 2.0);
+        p.drawImage(content, src, content);
+    }
+    const QImage straight = out.convertToFormat(QImage::Format_RGBA8888);
+    const int size = w * h * 4;
+    auto *buf = static_cast<uint8_t *>(mlt_pool_alloc(size));
+    for (int y = 0; y < h; ++y)
+        std::memcpy(buf + y * w * 4, straight.constScanLine(y), size_t(w) * 4);
+    mlt_frame_set_image(frame, buf, size, mlt_pool_release);
+    *image = buf;
+    return 0;
+}
+
+mlt_frame transformProcess(mlt_filter filter, mlt_frame frame)
+{
+    mlt_frame_push_service(frame, filter);
+    mlt_frame_push_get_image(frame, transformGetImage);
+    return frame;
+}
+
+void *transformInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_filter filter = mlt_filter_new();
+    if (!filter)
+        return nullptr;
+    filter->process = transformProcess;
+    return filter;
+}
+
 } // namespace
 
 void registerAll(mlt_repository_s *repository)
@@ -215,6 +293,7 @@ void registerAll(mlt_repository_s *repository)
         return;
     mlt_repository_register(repository, mlt_service_producer_type, "bc_still", stillInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_gain", gainInit);
+    mlt_repository_register(repository, mlt_service_filter_type, "bc_transform", transformInit);
 }
 
 QByteArray stillResource(const QImage &image)
