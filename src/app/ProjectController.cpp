@@ -93,6 +93,19 @@ ProjectController::ProjectController(QObject *parent)
             }
         });
         m_player->setProject(m_project);
+
+        m_sourcePlayer = new TimelinePlayer(this);
+        m_sourcePlayer->setPreviewLimit(QSize(kProgramW, kProgramH));
+        connect(m_sourcePlayer, &TimelinePlayer::playingChanged, this, &ProjectController::sourcePlayingChanged);
+        connect(m_sourcePlayer, &TimelinePlayer::frameShown, this, [this](const QImage &img, qint64 frame) {
+            m_sourcePos = frame;
+            emit sourcePositionChanged(frame);
+            emit sourceFrameReady(img);
+        });
+        connect(m_sourcePlayer, &TimelinePlayer::playingChanged, this, [this](bool on) {
+            if (!on)
+                requestSourceFrame();
+        });
     }
 }
 
@@ -130,6 +143,8 @@ void ProjectController::newProject()
     m_proxies.clear();
     cancelProxies();
     m_pendingProbe.clear();
+    m_inPoints.clear();
+    m_outPoints.clear();
     m_online.clear();
     m_playhead = 0;
     m_lastFrameKey.clear();
@@ -179,6 +194,8 @@ void ProjectController::adopt(Project &&p, const QString &filePath, bool modifie
     m_proxies.clear();
     cancelProxies();
     m_pendingProbe.clear();
+    m_inPoints.clear();
+    m_outPoints.clear();
     setFilePath(filePath);
     refreshOnlineState();
     // Proxies made earlier: known before the first graph is built.
@@ -374,6 +391,7 @@ void ProjectController::removeItems(const QList<QUuid> &ids)
     if (any) {
         setModified(true);
         emit binChanged();
+        syncSourcePlayer(); // closes the Source monitor if its item is gone
     }
     if (m_project.timeline != before) {
         resetUndo(); // undo steps could bring back clips of removed media
@@ -395,6 +413,7 @@ void ProjectController::moveItems(const QList<QUuid> &ids, const QUuid &folder)
     if (any) {
         setModified(true);
         emit binChanged();
+        syncSourcePlayer(); // closes the Source monitor if its item is gone
     }
 }
 
@@ -521,10 +540,18 @@ void ProjectController::setSequence(const SequenceSettings &s)
         return;
     const double oldFps = m_project.sequence.fps();
     m_project.sequence = s;
-    if (oldFps != s.fps() && !m_project.timeline.isEmpty()) {
+    if (oldFps > 0 && oldFps != s.fps()) {
+        // Source In/Out points are frames too.
+        for (auto *points : {&m_inPoints, &m_outPoints})
+            for (auto it = points->begin(); it != points->end(); ++it)
+                *it = qint64(std::llround(*it * s.fps() / oldFps));
+        m_sourcePos = qint64(std::llround(m_sourcePos * s.fps() / oldFps));
+    }
+    if (oldFps != s.fps() && (!m_project.timeline.isEmpty() || !m_project.timeline.markers.isEmpty())) {
         // Clip positions are stored in frames: convert them to the new rate.
         m_project.timeline.rescale(oldFps, s.fps());
         m_playhead = qint64(std::llround(m_playhead * s.fps() / oldFps));
+
         resetUndo();
         emit timelineChanged();
         emit playheadChanged(m_playhead);
@@ -551,6 +578,7 @@ void ProjectController::syncPlayer()
         m_player->setProxies(m_useProxies ? m_proxies : QHash<QUuid, QString>());
         m_player->setProject(m_project);
     } // stops playback; the graph follows the edit
+    syncSourcePlayer();
 }
 
 void ProjectController::applyTimeline(const Timeline &t)
@@ -595,13 +623,15 @@ bool ProjectController::previewPlacement(Timeline &t, const QList<QUuid> &mediaI
     qint64 pos = std::max<qint64>(0, start);
     for (const QUuid &id : mediaIds) {
         const MediaItem *m = m_project.item(id);
-        if (!m || !m->probed || !isOnline(id))
+        qint64 in = 0, len = 0;
+        if (!m || !sourceRange(id, &in, &len)) // not read yet or offline
             continue;
-        const QList<QUuid> ids = t.place(*m, m_project.sequence, videoN, audioN, pos);
+        // The In/Out points set in the Source monitor choose the part.
+        const QList<QUuid> ids = t.place(*m, videoN, audioN, pos, in, len);
         if (ids.isEmpty())
             continue;
         made += ids;
-        pos += defaultClipFrames(*m, m_project.sequence);
+        pos += len;
     }
     if (created)
         *created = made;
@@ -786,6 +816,7 @@ bool ProjectController::play()
 {
     if (!m_player || m_project.timeline.isEmpty())
         return false;
+    sourcePause(); // one monitor plays at a time (one sound device)
     if (m_playhead >= m_project.timeline.duration() - 1) {
         m_playhead = 0; // at the end: start again from the beginning
         emit playheadChanged(0);

@@ -443,6 +443,24 @@ void TimelineView::drawRuler(QPainter &p)
             p.drawText(x + 3, 12, Fmt::frameTimecode(fr, fps));
         }
     }
+    // Markers: a small green flag with the name (M adds one at the playhead).
+    for (const TimelineMarker &m : m_ctl->timeline().markers) {
+        const int x = xForFrame(m.frame);
+        if (x < kHeaderW - 8 || x > viewport()->width() + 8)
+            continue;
+        QPainterPath flag;
+        flag.moveTo(x - 5, kRulerH - 14);
+        flag.lineTo(x + 5, kRulerH - 14);
+        flag.lineTo(x + 5, kRulerH - 7);
+        flag.lineTo(x, kRulerH - 3);
+        flag.lineTo(x - 5, kRulerH - 7);
+        flag.closeSubpath();
+        p.fillPath(flag, QColor(0x5f, 0xc8, 0x6e));
+        if (!m.name.isEmpty()) {
+            p.setPen(QColor(0x9f, 0xe0, 0xa8));
+            p.drawText(x + 7, kRulerH - 4, m.name);
+        }
+    }
     p.restore();
 }
 

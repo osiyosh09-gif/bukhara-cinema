@@ -75,7 +75,7 @@ struct SequenceSettings
 class Project
 {
 public:
-    static constexpr int kFormatVersion = 3; // 2: timeline added; 3: titles, clip volume and fades
+    static constexpr int kFormatVersion = 4; // 2: timeline added; 3: titles, clip volume and fades; 4: markers
     static QString fileExtension() { return QStringLiteral("bcproj"); }
 
     QString name = QStringLiteral("Untitled");

@@ -219,6 +219,8 @@ QByteArray Project::toJson(const QString &projectFilePath) const
 
     QJsonObject tl;
     tl[QStringLiteral("tracks")] = timeline.toJson();
+    if (!timeline.markers.isEmpty())
+        tl[QStringLiteral("markers")] = timeline.markersToJson();
     root[QStringLiteral("timeline")] = tl;
 
     return QJsonDocument(root).toJson(QJsonDocument::Indented);
@@ -289,6 +291,8 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
     if (root.contains(QStringLiteral("timeline"))) {
         p.timeline = Timeline::fromJson(
             root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("tracks")).toArray());
+        p.timeline.markersFromJson(
+            root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("markers")).toArray());
         // Drop clips whose media item is not in the project (titles have none).
         QSet<QUuid> known;
         for (const auto &m : p.items)

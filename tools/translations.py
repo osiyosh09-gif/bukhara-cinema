@@ -582,6 +582,61 @@ T.update({
 
 
 # Manual Latin overrides where transliteration is not ideal.
+# Phase 6 (part 1): Source monitor, In/Out, insert/overwrite, J/K/L, markers
+T.update({
+    "Clear In and Out (Source)": ("In ва Out'ни олиб ташлаш (Source)", "Снять In и Out (Source)"),
+    "Delete marker": ("Маркерни ўчириш", "Удалить маркер"),
+    "Double-click a clip in the media bin to watch it here.": (
+        "Бу ерда кўриш учун медиа кутубхонасида клипни икки марта босинг.",
+        "Дважды щёлкните клип в медиатеке, чтобы посмотреть его здесь."),
+    "End of the part to use (O)": ("Ишлатиладиган қисмнинг охири (O)", "Конец используемой части (O)"),
+    "Go to previous marker": ("Олдинги маркерга ўтиш", "К предыдущему маркеру"),
+    "Insert from Source": ("Source'дан қўйиш (Insert)", "Вставка из Source"),
+    "Insert the source In-Out part at the playhead; later clips move right (,)": (
+        "Source'нинг In-Out қисмини курсор жойига қўйиш; кейинги клиплар ўнгга сурилади (,)",
+        "Вставить часть In-Out из Source в позицию курсора; следующие клипы сдвигаются вправо (,)"),
+    "Insert": ("Қўйиш", "Вставка"),
+    "Mark In (Source)": ("In белгиси (Source)", "Отметить In (Source)"),
+    "Mark Out (Source)": ("Out белгиси (Source)", "Отметить Out (Source)"),
+    "Marker name:": ("Маркер номи:", "Имя маркера:"),
+    "No picture (sound only).": ("Тасвир йўқ (фақат овоз).", "Нет изображения (только звук)."),
+    "No video yet.": ("Ҳали видео йўқ.", "Видео пока нет."),
+    "Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked.": (
+        "Қўйиладиган нарса йўқ: Source мониторида клип очинг ва камида битта видео ҳамда аудио йўлакни қулфламанг.",
+        "Нечего вставлять: откройте клип в мониторе Source и оставьте хотя бы одну видео- и аудиодорожку незаблокированной."),
+    "Open in Source monitor": ("Source мониторида очиш", "Открыть в мониторе Source"),
+    "Overwrite from Source": ("Source'дан устидан ёзиш (Overwrite)", "Перезапись из Source"),
+    "Overwrite": ("Устидан ёзиш", "Перезапись"),
+    "Pause (Space, K)": ("Тўхтатиш (Пробел, K)", "Пауза (Пробел, K)"),
+    "Phase 6 (part 1): Source monitor, In/Out, insert/overwrite, J/K/L and markers work.": (
+        "6-босқич (1-қисм): Source монитор, In/Out, insert/overwrite, J/K/L ва маркерлар ишлайди.",
+        "Этап 6 (часть 1): монитор Source, In/Out, вставка/перезапись, J/K/L и маркеры работают."),
+    "Phase 6 (part 1): editing, playback, Source monitor with In/Out, insert/overwrite, markers, titles, clip volume, MP4 export, autosave, waveforms and proxies. See Help > Feature status.": (
+        "6-босқич (1-қисм): монтаж, ижро, In/Out билан Source монитор, insert/overwrite, маркерлар, титрлар, клип овози, MP4 экспорт, автосақлаш, овоз тўлқини ва proxy. Ёрдам > Функциялар ҳолати бўлимига қаранг.",
+        "Этап 6 (часть 1): монтаж, воспроизведение, монитор Source с In/Out, вставка/перезапись, маркеры, титры, громкость клипов, экспорт в MP4, автосохранение, формы волны и прокси. См. Справка > Состояние функций."),
+    "Play (Space, L)": ("Ижро (Пробел, L)", "Воспроизвести (Пробел, L)"),
+    "Play backwards (J, again: faster)": ("Орқага ўйнатиш (J, яна босилса тезроқ)", "Назад (J, ещё раз: быстрее)"),
+    "Play forwards (L, again: faster)": ("Олдинга ўйнатиш (L, яна босилса тезроқ)", "Вперёд (L, ещё раз: быстрее)"),
+    "Put the source In-Out part at the playhead over what is there (.)": (
+        "Source'нинг In-Out қисмини курсор жойидагининг устидан ёзиш (.)",
+        "Поставить часть In-Out из Source в позицию курсора поверх того, что там есть (.)"),
+    "Rename marker": ("Маркерни номлаш", "Переименовать маркер"),
+    "Rename marker...": ("Маркерни номлаш...", "Переименовать маркер..."),
+    "Start of the part to use (I)": ("Ишлатиладиган қисмнинг боши (I)", "Начало используемой части (I)"),
+    "Stop (K)": ("Тўхташ (K)", "Стоп (K)"),
+    "Insert and overwrite edits, timeline markers": (
+        "Insert ва overwrite, timeline маркерлари", "Вставка и перезапись, маркеры таймлайна"),
+    "Comma inserts the source part at the playhead and moves later clips right; period puts it over what is there. M adds a marker, Shift+M and Ctrl+Shift+M jump between markers; markers are saved in the project.": (
+        "Вергул Source қисмини курсор жойига қўйиб, кейинги клипларни ўнгга суради; нуқта борини устидан ёзади. M маркер қўяди, Shift+M ва Ctrl+Shift+M маркерлар орасида юради; маркерлар лойиҳада сақланади.",
+        "Запятая вставляет часть из Source в позицию курсора и сдвигает следующие клипы вправо; точка ставит её поверх. M добавляет маркер, Shift+M и Ctrl+Shift+M переходят между маркерами; маркеры сохраняются в проекте."),
+    "Double-click a clip in the media bin. I and O mark the part to use (kept while the program runs). J, K and L play backwards, stop and play forwards; pressing J or L again plays faster (up to 8x). Backwards playback has no sound.": (
+        "Медиа кутубхонасида клипни икки марта босинг. I ва O ишлатиладиган қисмни белгилайди (дастур ёпилгунча эслаб қолинади). J, K, L: орқага, тўхташ, олдинга; J ёки L яна босилса тезроқ (8 баравархача). Орқага ижрода овоз йўқ.",
+        "Дважды щёлкните клип в медиатеке. I и O отмечают используемую часть (хранятся, пока программа открыта). J, K и L: назад, стоп, вперёд; повторное нажатие J или L ускоряет (до 8x). Назад без звука."),
+    "Roll, slip and slide trims, copy and paste, link and unlink, nesting, custom shortcuts": (
+        "Roll, slip, slide, нусхалаш ва қўйиш, боғлаш ва ажратиш, nested sequence, тугмаларни ўзгартириш",
+        "Roll, slip, slide, копирование и вставка, связь и разъединение, вложенные секвенции, свои сочетания клавиш"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

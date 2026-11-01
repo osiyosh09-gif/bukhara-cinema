@@ -4,14 +4,17 @@
 #include <QWidget>
 #include <functional>
 
+class QAction;
+class QHBoxLayout;
 class QLabel;
 class QToolButton;
 
 namespace bc {
 
-// Source / Program monitor. It can show a still frame (the Program monitor
-// shows the frame at the timeline playhead). Real-time playback arrives in a
-// later step; until then the transport buttons are disabled.
+class MonitorScrubBar;
+
+// Source / Program monitor: the picture, a position bar (with In/Out range
+// and markers) and transport buttons. It only shows; the controller plays.
 class MonitorView : public QWidget
 {
     Q_OBJECT
@@ -30,16 +33,32 @@ public:
     void setTransportEnabled(bool on);
     void setPlaying(bool playing);
 
+    // Position bar: length in frames (0 hides it), position, In/Out range
+    // (-1 = not set) and marker frames.
+    void setDuration(qint64 frames);
+    void setPosition(qint64 frame);
+    void setInOut(qint64 in, qint64 out);
+    void setMarkers(const QList<qint64> &frames);
+    // Extra buttons after the transport (Mark In, Insert, ...): they trigger
+    // `action` and follow its enabled state, with a short label of their own.
+    void addButton(QAction *action, std::function<QString()> shortText);
+    // The monitor that J/K/L and Space act on has a highlighted title.
+    void setActive(bool active);
+    bool isActive() const { return m_active; }
+
 signals:
     void goToStart();
     void stepBack();
     void playPause();
     void stepForward();
     void goToEnd();
+    void seekRequested(qint64 frame);
+    void activated(); // clicked
 
 protected:
     void changeEvent(QEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     void retranslate();
@@ -53,8 +72,13 @@ private:
     QLabel *m_screen;
     QLabel *m_timecode;
     QList<QToolButton *> m_transport;
+    MonitorScrubBar *m_scrub;
+    QHBoxLayout *m_bar;
+    int m_extraPos = 0;
+    QList<QPair<QToolButton *, std::function<QString()>>> m_extra;
     bool m_transportEnabled = false;
     bool m_playing = false;
+    bool m_active = false;
 };
 
 } // namespace bc

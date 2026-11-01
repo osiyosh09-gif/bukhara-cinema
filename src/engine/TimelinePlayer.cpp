@@ -10,6 +10,7 @@
 #include <QMetaObject>
 #include <QMutexLocker>
 #include <QStringList>
+#include <QTimer>
 
 #include <mlt++/Mlt.h>
 
@@ -132,10 +133,15 @@ void onFrameShow(mlt_properties, void *self, mlt_event_data data)
 TimelinePlayer::TimelinePlayer(QObject *parent)
     : QObject(parent)
 {
+    m_revPool.setMaxThreadCount(1);
 }
 
 TimelinePlayer::~TimelinePlayer()
 {
+    ++m_revGen;
+    m_reverse = false;
+    m_playing = false;
+    m_revPool.waitForDone();
     stopConsumer();
     QMutexLocker lock(&m_mutex);
     m_tractor.reset();
@@ -357,6 +363,11 @@ QImage TimelinePlayer::renderFrame(qint64 frame)
 {
     if (m_playing)
         return {};
+    return renderFrameLocked(frame);
+}
+
+QImage TimelinePlayer::renderFrameLocked(qint64 frame)
+{
     QMutexLocker lock(&m_mutex);
     if (!m_tractor)
         return {};
@@ -398,10 +409,16 @@ double TimelinePlayer::audioLevel(qint64 frame)
     return std::sqrt(sum / (samples * channels));
 }
 
-bool TimelinePlayer::play(qint64 frame)
+bool TimelinePlayer::play(qint64 frame, double speed)
 {
-    if (m_playing)
+    if (speed == 0)
+        return false;
+    if (m_playing) {
+        setSpeed(speed);
         return true;
+    }
+    if (speed < 0)
+        return startReverse(frame, speed);
     {
         QMutexLocker lock(&m_mutex);
         if (!m_tractor)
@@ -418,17 +435,70 @@ bool TimelinePlayer::play(qint64 frame)
         consumer->connect(*m_tractor);
         m_showEvent.reset(consumer->listen("consumer-frame-show", this, (mlt_listener)onFrameShow));
         m_tractor->seek(int(frame));
-        m_tractor->set_speed(1);
+        m_tractor->set_speed(speed);
         if (consumer->start() != 0) {
             m_showEvent.reset();
             m_tractor->set_speed(0);
             return false;
         }
         m_consumer = std::move(consumer);
+        m_speed = speed;
+        m_lastShown = frame;
         m_playing = true;
     }
     emit playingChanged(true);
     return true;
+}
+
+// Backwards: MLT's real-time consumer jumps when it starts in reverse, so
+// frames are rendered one by one on a worker thread instead, as fast as the
+// computer allows, and skipped to keep time. There is no sound backwards.
+bool TimelinePlayer::startReverse(qint64 frame, double speed)
+{
+    {
+        QMutexLocker lock(&m_mutex);
+        if (!m_tractor)
+            return false;
+    }
+    m_reverse = true;
+    m_speed = speed;
+    m_revOrigin = std::clamp<qint64>(frame, 0, std::max<qint64>(0, m_duration - 1));
+    m_revShown = m_revOrigin;
+    m_revClock.start();
+    m_playing = true;
+    ++m_revGen;
+    emit playingChanged(true);
+    reverseStep();
+    return true;
+}
+
+void TimelinePlayer::reverseStep()
+{
+    if (!m_playing || !m_reverse)
+        return;
+    const double fps = std::max(1.0, m_seq.fps());
+    const qint64 target = std::max<qint64>(
+        0, m_revOrigin + qint64(std::llround(m_speed * fps * m_revClock.elapsed() / 1000.0)));
+    const quint64 gen = m_revGen;
+    m_revPool.start([this, target, gen] {
+        QImage img = renderFrameLocked(target);
+        QMetaObject::invokeMethod(this, [this, img, target, gen] {
+            if (!m_playing || !m_reverse || gen != m_revGen)
+                return;
+            m_revShown = target;
+            emit frameShown(img, target);
+            if (target <= 0) {
+                pause();
+                emit reachedEnd();
+                return;
+            }
+            // Next frame when its time comes (at once if rendering is slow).
+            const double fps = std::max(1.0, m_seq.fps());
+            const qint64 dueMs = qint64((m_revOrigin - target + 1) * 1000.0 / (fps * -m_speed));
+            QTimer::singleShot(int(std::max<qint64>(0, dueMs - m_revClock.elapsed())), this,
+                               [this, gen] { if (gen == m_revGen) reverseStep(); });
+        }, Qt::QueuedConnection);
+    });
 }
 
 void TimelinePlayer::stopConsumer()
@@ -442,10 +512,41 @@ void TimelinePlayer::stopConsumer()
         m_tractor->set_speed(0);
 }
 
+void TimelinePlayer::setSpeed(double speed)
+{
+    if (!m_playing || speed == 0 || speed == m_speed)
+        return;
+    if ((speed < 0) != (m_speed < 0)) {
+        // Direction change: continue from the frame on screen.
+        const qint64 from = m_reverse ? m_revShown : m_lastShown;
+        pause();
+        play(from, speed);
+        return;
+    }
+    if (m_reverse) {
+        m_revOrigin = m_revShown;
+        m_revClock.restart();
+        m_speed = speed;
+        return;
+    }
+    QMutexLocker lock(&m_mutex);
+    if (m_tractor)
+        m_tractor->set_speed(speed);
+    m_speed = speed;
+}
+
 void TimelinePlayer::pause()
 {
     if (!m_playing)
         return;
+    if (m_reverse) {
+        m_reverse = false;
+        m_playing = false;
+        ++m_revGen;
+        m_revPool.waitForDone(); // the graph may change right after a pause
+        emit playingChanged(false);
+        return;
+    }
     {
         QMutexLocker lock(&m_mutex);
         stopConsumer();
@@ -457,8 +558,9 @@ void TimelinePlayer::pause()
 void TimelinePlayer::handleShownFrame(const QImage &image, qint64 frame)
 {
     QMetaObject::invokeMethod(this, [this, image, frame] {
-        if (!m_playing)
+        if (!m_playing || m_reverse)
             return;
+        m_lastShown = frame;
         emit frameShown(image, frame);
         if (frame >= m_duration - 1) {
             pause();

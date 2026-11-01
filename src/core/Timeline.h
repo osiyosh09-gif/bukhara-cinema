@@ -75,6 +75,17 @@ struct TimelineTrack
     }
 };
 
+// A named point on the timeline (M key). Markers are part of the edit, so
+// adding or removing one can be undone.
+struct TimelineMarker
+{
+    QUuid id;
+    qint64 frame = 0;
+    QString name;
+
+    bool operator==(const TimelineMarker &o) const { return id == o.id && frame == o.frame && name == o.name; }
+};
+
 // The edit: video tracks first (V1, V2, ...), then audio tracks (A1, A2, ...).
 // Every editing operation works in "overwrite" mode: whatever lies under the
 // new position of a clip is trimmed, split or removed, so clips on one track
@@ -92,10 +103,11 @@ public:
     };
 
     QList<TimelineTrack> tracks;
+    QList<TimelineMarker> markers; // sorted by frame
 
     static Timeline makeDefault(); // V1-V3, A1-A3
 
-    bool operator==(const Timeline &o) const { return tracks == o.tracks; }
+    bool operator==(const Timeline &o) const { return tracks == o.tracks && markers == o.markers; }
     bool operator!=(const Timeline &o) const { return !(*this == o); }
 
     int count(Kind kind) const;
@@ -121,6 +133,23 @@ public:
     // skips that part. Returns the ids of the new clips.
     QList<QUuid> place(const MediaItem &item, const SequenceSettings &seq, int videoTrack, int audioTrack,
                        qint64 start);
+    // The same with a part of the source: `length` frames from source frame `in`.
+    QList<QUuid> place(const MediaItem &item, int videoTrack, int audioTrack, qint64 start, qint64 in,
+                       qint64 length);
+
+    // Insert edit helper: splits clips under `at` on the given tracks (all
+    // unlocked tracks when empty) and moves everything at or after `at` right
+    // by `length`. Locked tracks never change.
+    bool insertSpace(qint64 at, qint64 length, const QList<int> &onlyTracks = {});
+
+    // --- markers
+    QUuid addMarker(qint64 frame, const QString &name = {}); // one marker per frame: returns the existing one
+    bool removeMarker(const QUuid &id);
+    bool renameMarker(const QUuid &id, const QString &name);
+    const TimelineMarker *markerAt(qint64 frame) const;
+    // Frame of the next marker after `frame` (or previous before it); -1 if none.
+    qint64 nextMarker(qint64 frame) const;
+    qint64 prevMarker(qint64 frame) const;
 
     // Moves clips by `deltaFrames`. Clips of `trackKind` also move `deltaTracks`
     // tracks (within tracks of the same kind); others stay on their track.
@@ -159,6 +188,8 @@ public:
 
     QJsonArray toJson() const;
     static Timeline fromJson(const QJsonArray &a);
+    QJsonArray markersToJson() const;
+    void markersFromJson(const QJsonArray &a);
 
     // Clears [from, to) on a track (overwrite).
     void clearRange(int track, qint64 from, qint64 to);
