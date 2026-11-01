@@ -81,10 +81,11 @@ private slots:
         }
         QVERIFY(planned >= 14); // phase 2 turned undo/redo, delete, split, tracks and snapping into real actions
 
-        // Transport buttons must not pretend to play.
-        for (auto *mon : w.findChildren<MonitorView *>())
-            for (auto *b : mon->findChildren<QToolButton *>())
-                QVERIFY(!b->isEnabled());
+        // Source monitor cannot play yet: its buttons must not pretend to.
+        // (The Program monitor plays the timeline since phase 2.)
+        auto *source = w.findChild<MonitorView *>(QStringLiteral("sourceMonitor"));
+        for (auto *b : source->findChildren<QToolButton *>())
+            QVERIFY(!b->isEnabled());
 
         // Working items are enabled.
         for (const char *name : {"actSettings", "actExit", "actResetLayout", "actStatus", "actLicenses", "actAbout",

@@ -38,13 +38,21 @@ MonitorView::MonitorView(std::function<QString()> title, QWidget *parent)
     const QList<QStyle::StandardPixmap> icons = {QStyle::SP_MediaSkipBackward, QStyle::SP_MediaSeekBackward,
                                                  QStyle::SP_MediaPlay, QStyle::SP_MediaSeekForward,
                                                  QStyle::SP_MediaSkipForward};
-    for (auto icon : icons) {
+    const QStringList names = {QStringLiteral("tcStart"), QStringLiteral("tcBack"), QStringLiteral("tcPlay"),
+                               QStringLiteral("tcForward"), QStringLiteral("tcEnd")};
+    for (int i = 0; i < icons.size(); ++i) {
         auto *b = new QToolButton(this);
-        b->setIcon(style()->standardIcon(icon));
-        b->setEnabled(false); // playback is planned for phase 2
+        b->setObjectName(names[i]);
+        b->setIcon(style()->standardIcon(icons[i]));
+        b->setEnabled(false); // until setTransportEnabled(true)
         bar->addWidget(b);
         m_transport << b;
     }
+    connect(m_transport[0], &QToolButton::clicked, this, &MonitorView::goToStart);
+    connect(m_transport[1], &QToolButton::clicked, this, &MonitorView::stepBack);
+    connect(m_transport[2], &QToolButton::clicked, this, &MonitorView::playPause);
+    connect(m_transport[3], &QToolButton::clicked, this, &MonitorView::stepForward);
+    connect(m_transport[4], &QToolButton::clicked, this, &MonitorView::goToEnd);
     bar->addStretch();
     lay->addLayout(bar);
 
@@ -54,6 +62,12 @@ MonitorView::MonitorView(std::function<QString()> title, QWidget *parent)
 void MonitorView::setEmptyText(std::function<QString()> text)
 {
     m_emptyText = std::move(text);
+    retranslate();
+}
+
+void MonitorView::setDisabledReason(std::function<QString()> text)
+{
+    m_disabledReason = std::move(text);
     retranslate();
 }
 
@@ -68,11 +82,26 @@ void MonitorView::setTimecode(const QString &tc)
     m_timecode->setText(tc);
 }
 
+void MonitorView::setTransportEnabled(bool on)
+{
+    m_transportEnabled = on;
+    for (auto *b : m_transport)
+        b->setEnabled(on);
+    retranslate();
+}
+
+void MonitorView::setPlaying(bool playing)
+{
+    m_playing = playing;
+    m_transport[2]->setIcon(style()->standardIcon(playing ? QStyle::SP_MediaPause : QStyle::SP_MediaPlay));
+    retranslate();
+}
+
 void MonitorView::showImage()
 {
     if (m_image.isNull()) {
         m_screen->setPixmap(QPixmap());
-        m_screen->setText(m_emptyText ? m_emptyText() : tr("No video yet.\nPlayback is planned for phase 2."));
+        m_screen->setText(m_emptyText ? m_emptyText() : tr("No video yet.\nSource monitor playback is planned for phase 6."));
         return;
     }
     const QSize area = m_screen->contentsRect().size().boundedTo(QSize(4096, 4096)) - QSize(2, 2);
@@ -98,8 +127,17 @@ void MonitorView::retranslate()
 {
     m_titleLabel->setText(m_title());
     showImage();
-    for (auto *b : m_transport)
-        b->setToolTip(tr("Playback is planned for phase 2"));
+    if (!m_transportEnabled) {
+        for (auto *b : m_transport)
+            b->setToolTip(m_disabledReason ? m_disabledReason()
+                                           : tr("Source monitor playback is planned for phase 6"));
+        return;
+    }
+    m_transport[0]->setToolTip(tr("Go to start (Home)"));
+    m_transport[1]->setToolTip(tr("Previous frame (Left)"));
+    m_transport[2]->setToolTip(m_playing ? tr("Pause (Space)") : tr("Play (Space)"));
+    m_transport[3]->setToolTip(tr("Next frame (Right)"));
+    m_transport[4]->setToolTip(tr("Go to end (End)"));
 }
 
 } // namespace bc

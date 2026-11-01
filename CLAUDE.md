@@ -8,3 +8,4 @@
 - Never commit media files. Never delete existing working code without reason.
 - Architecture: `src/core` (Project model, MediaProbe; no widgets) ← `src/app` (ProjectController owns all project mutations; widgets only call it).
 - `tests/bc_screenshot <dir> [media...]` renders the main window per language for visual checks.
+- Video engine: `src/engine` (MLT). Windows CI builds MLT 7.42 from source with LGPL parts only (core, avformat, sdl2) and ships it as `lib/mlt` + `share/mlt`; Linux CI uses Ubuntu's MLT for tests only. `BC_MLT_PREFIX` points tests at another MLT install. Still images use the `hold:avformat:` producer.

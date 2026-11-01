@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -28,6 +28,16 @@ add_library(bc_core STATIC
 target_include_directories(bc_core PUBLIC src)
 target_link_libraries(bc_core PUBLIC Qt6::Core Qt6::Gui FFmpeg::FFmpeg)
 
+# Video engine: MLT (LGPL). On Windows CI it is built from source against the
+# LGPL FFmpeg; never use a distribution package that links GPL FFmpeg there.
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(MLT REQUIRED IMPORTED_TARGET mlt++-7)
+add_library(bc_engine STATIC
+    src/engine/TimelinePlayer.h src/engine/TimelinePlayer.cpp
+)
+target_include_directories(bc_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(bc_engine PUBLIC bc_core Qt6::Core Qt6::Gui PRIVATE PkgConfig::MLT)
+
 # ---------------------------------------------------------------------------
 # Core UI library (shared by the app and the tests)
 # ---------------------------------------------------------------------------
@@ -52,7 +62,7 @@ add_library(bc_ui STATIC
     resources/resources.qrc
 )
 target_include_directories(bc_ui PUBLIC src)
-target_link_libraries(bc_ui PUBLIC bc_core Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
+target_link_libraries(bc_ui PUBLIC bc_core bc_engine Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
 target_compile_definitions(bc_ui PUBLIC
     BC_VERSION="${PROJECT_VERSION}")
 

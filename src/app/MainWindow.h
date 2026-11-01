@@ -100,6 +100,7 @@ private:
     QAction *m_sequenceAct = nullptr;
     QAction *m_undoAct = nullptr;
     QAction *m_redoAct = nullptr;
+    QAction *m_playAct = nullptr;
     QAction *m_settingsAct = nullptr;
     QAction *m_exitAct = nullptr;
     QAction *m_fullScreenAct = nullptr;

@@ -3,6 +3,7 @@
 #include "app/Logging.h"
 #include "app/MainWindow.h"
 #include "app/Theme.h"
+#include "engine/TimelinePlayer.h"
 
 #include <QApplication>
 #include <QIcon>
@@ -39,7 +40,13 @@ int main(int argc, char *argv[])
     // Used by the Windows build pipeline: start, show the window, exit.
     // It proves that every required DLL was packaged.
     if (QCoreApplication::arguments().contains(QStringLiteral("--smoke-test")))
-        QTimer::singleShot(1500, &app, [] { QCoreApplication::exit(0); });
+        QTimer::singleShot(1500, &app, [] {
+            // The video engine and its modules must be packaged too.
+            const QString missing = bc::Engine::missingServices();
+            if (!missing.isEmpty())
+                qCritical("smoke test: missing video engine parts: %s", qPrintable(missing));
+            QCoreApplication::exit(missing.isEmpty() ? 0 : 3);
+        });
 
     const int rc = app.exec();
     qInfo("exit code %d", rc);

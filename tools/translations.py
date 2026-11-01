@@ -316,6 +316,47 @@ T.update({
         "Этап 1: проекты и медиатека. Функции монтажа появятся на следующих этапах; см. Справка > Состояние функций."),
 })
 
+# Phase 2b: playback with sound
+T.update({
+    "Go to start (Home)": ("Бошига ўтиш (Home)", "В начало (Home)"),
+    "Previous frame (Left)": ("Олдинги кадр (Чапга)", "Предыдущий кадр (Влево)"),
+    "Play (Space)": ("Ижро (Пробел)", "Воспроизвести (Пробел)"),
+    "Pause (Space)": ("Тўхтатиш (Пробел)", "Пауза (Пробел)"),
+    "Next frame (Right)": ("Кейинги кадр (Ўнгга)", "Следующий кадр (Вправо)"),
+    "Go to end (End)": ("Охирига ўтиш (End)", "В конец (End)"),
+    "Play": ("Ижро", "Воспроизвести"),
+    "Pause": ("Тўхтатиш", "Пауза"),
+    "Phase 2: timeline editing and playback with sound work. Text, audio levels and export come next.": (
+        "2-босқич: timeline’да монтаж ва овоз билан ижро ишлайди. Матн, овоз даражаси ва экспорт кейинги қадамларда.",
+        "Этап 2: монтаж на таймлайне и воспроизведение со звуком работают. Текст, уровни звука и экспорт — следующие шаги."),
+    "The video engine (MLT) could not be loaded: playback is off. See the log file.": (
+        "Видео двигатели (MLT) юкланмади: ижро ўчирилган. Лог файлига қаранг.",
+        "Не удалось загрузить видеодвижок (MLT): воспроизведение отключено. См. файл журнала."),
+    "Video engine: timeline playback": ("Видео двигатели: timeline ижроси", "Видеодвижок: воспроизведение таймлайна"),
+    "Real-time playback with sound (Space), frame steps, start and end. On a slow computer frames are skipped so sound stays in sync.": (
+        "Овоз билан реал вақтда ижро (Пробел), кадрма-кадр юриш, бошига ва охирига ўтиш. Секин компьютерда овоз мос туриши учун баъзи кадрлар ташлаб кетилади.",
+        "Воспроизведение со звуком в реальном времени (Пробел), шаг по кадрам, переход в начало и конец. На медленном компьютере кадры пропускаются, чтобы звук не отставал."),
+    "Source monitor playback, J/K/L shuttle, in and out points": (
+        "Source мониторида ижро, J/K/L, In ва Out нуқталари",
+        "Воспроизведение в мониторе источника, J/K/L, точки входа и выхода"),
+    "No video yet.\nSource monitor playback is planned for phase 6.": (
+        "Видео ҳали йўқ.\nSource мониторида ижро 6-босқичда режалаштирилган.",
+        "Видео пока нет.\nВоспроизведение в мониторе источника запланировано на этап 6."),
+    "Source monitor playback is planned for phase 6": (
+        "Source мониторида ижро 6-босқичда режалаштирилган",
+        "Воспроизведение в мониторе источника запланировано на этап 6"),
+    "Sound output": ("Овоз чиқариш", "Вывод звука"),
+    "Full license texts are installed in the \"licenses\" folder next to the program. Source code: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html, MLT https://github.com/mltframework/mlt, SDL https://libsdl.org/": (
+        "Лицензияларнинг тўлиқ матни дастур ёнидаги \"licenses\" папкасига ўрнатилади. Манба коди: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html, MLT https://github.com/mltframework/mlt, SDL https://libsdl.org/",
+        "Полные тексты лицензий установлены в папку \"licenses\" рядом с программой. Исходный код: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html, MLT https://github.com/mltframework/mlt, SDL https://libsdl.org/"),
+    "Only the LGPL parts of MLT are shipped; its GPL modules are left out.": (
+        "MLT’нинг фақат LGPL қисмлари қўшилган; GPL модуллари киритилмаган.",
+        "Поставляются только LGPL-части MLT; его GPL-модули не включены."),
+    "Phase 2: timeline editing and playback with sound. Text, audio levels and export arrive in the next phases; see Help > Feature status.": (
+        "2-босқич: timeline’да монтаж ва овоз билан ижро. Матн, овоз даражаси ва экспорт кейинги босқичларда қўшилади; Ёрдам > Функциялар ҳолати бўлимига қаранг.",
+        "Этап 2: монтаж на таймлайне и воспроизведение со звуком. Текст, уровни звука и экспорт появятся на следующих этапах; см. Справка > Состояние функций."),
+})
+
 # Manual Latin overrides where transliteration is not ideal.
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",

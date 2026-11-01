@@ -19,6 +19,8 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QTemporaryDir>
+#include <QSignalSpy>
+#include <QToolButton>
 #include <QUndoStack>
 #include <QtTest>
 
@@ -466,10 +468,75 @@ private slots:
         QCOMPARE(ctl->timeline().count(Kind::Video), 4);
     }
 
+    // --- engine: composition and playback ----------------------------
+
+    void engineComposesTracks()
+    {
+        ProjectController ctl;
+        QVERIFY2(ctl.canPlay(), qPrintable(ctl.engineError()));
+        const QString png = m_dir.filePath(QStringLiteral("green.png"));
+        QImage g(320, 240, QImage::Format_RGB32);
+        g.fill(QColor(0, 200, 0));
+        QVERIFY(g.save(png));
+        QCOMPARE(ctl.importFiles({m_video, png}), 2);
+        waitIdle(ctl);
+        QUuid video, image;
+        for (const MediaItem &m : ctl.project().items)
+            (m.info.kind == MediaInfo::Kind::Image ? image : video) = m.id;
+        ctl.placeMedia({video}, 0, 0);
+        ctl.placeMedia({image}, 1, 20); // V2 from frame 20
+
+        QImage shown;
+        connect(&ctl, &ProjectController::programFrameReady, this, [&](const QImage &i) { shown = i; });
+        auto centre = [&] { return QColor(shown.pixel(shown.width() / 2, shown.height() / 2)); };
+
+        ctl.setPlayhead(30); // V2 (green image) covers V1
+        QTRY_VERIFY_WITH_TIMEOUT(!shown.isNull() && centre().green() > 150 && centre().red() < 60, 10000);
+        ctl.setTrackFlag(1, QStringLiteral("hidden"), true); // hide V2: the video shows
+        QTRY_VERIFY_WITH_TIMEOUT(!shown.isNull() && !(centre().green() > 150 && centre().red() < 60), 10000);
+    }
+
+    void playbackAdvancesAndPauses()
+    {
+        ProjectController ctl;
+        QVERIFY2(ctl.canPlay(), qPrintable(ctl.engineError()));
+        QCOMPARE(ctl.importFiles({m_video}), 1);
+        waitIdle(ctl);
+        ctl.placeMedia({ctl.project().items.first().id}, 0, 0); // 100 frames
+        int frames = 0;
+        connect(&ctl, &ProjectController::programFrameReady, this, [&](const QImage &i) { frames += !i.isNull(); });
+
+        QSignalSpy playing(&ctl, &ProjectController::playingChanged);
+        QVERIFY(ctl.play());
+        QVERIFY(ctl.isPlaying());
+        QTRY_VERIFY_WITH_TIMEOUT(ctl.playhead() > 10, 10000);
+        QVERIFY(frames > 5);
+        ctl.pause();
+        QVERIFY(!ctl.isPlaying());
+        const qint64 stoppedAt = ctl.playhead();
+        QTest::qWait(300);
+        QCOMPARE(ctl.playhead(), stoppedAt);
+
+        // Playback stops by itself at the end of the sequence.
+        ctl.setPlayhead(90);
+        QVERIFY(ctl.play());
+        QTRY_VERIFY_WITH_TIMEOUT(!ctl.isPlaying(), 10000);
+        QVERIFY(ctl.playhead() >= 98);
+        QVERIFY(playing.count() >= 4);
+
+        // An edit stops playback (the graph is rebuilt).
+        ctl.setPlayhead(0);
+        QVERIFY(ctl.play());
+        QVERIFY(ctl.splitClips(50, {}));
+        QVERIFY(!ctl.isPlaying());
+    }
+
     void phase2ActionsAreReal()
     {
         MainWindow w;
-        for (const char *name : {"actUndo", "actRedo", "actSplit", "actDelete", "actRippleDelete", "actSnapping",
+        auto *program = w.findChild<MonitorView *>(QStringLiteral("programMonitor"));
+        QVERIFY(program->findChild<QToolButton *>(QStringLiteral("tcPlay"))->isEnabled());
+        for (const char *name : {"actPlayPause", "actUndo", "actRedo", "actSplit", "actDelete", "actRippleDelete", "actSnapping",
                                  "actAddVideoTrack", "actAddAudioTrack", "actSelectAll"}) {
             auto *a = w.findChild<QAction *>(QString::fromLatin1(name));
             QVERIFY2(a, name);

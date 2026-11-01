@@ -20,9 +20,22 @@ public:
 
     // Text shown when there is no image (re-evaluated on language change).
     void setEmptyText(std::function<QString()> text);
+    // Tooltip of the transport buttons while they are disabled.
+    void setDisabledReason(std::function<QString()> text);
     void setImage(const QImage &image);
     QImage image() const { return m_image; }
     void setTimecode(const QString &tc);
+
+    // Transport buttons work only when a monitor can play.
+    void setTransportEnabled(bool on);
+    void setPlaying(bool playing);
+
+signals:
+    void goToStart();
+    void stepBack();
+    void playPause();
+    void stepForward();
+    void goToEnd();
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -34,11 +47,14 @@ private:
 
     std::function<QString()> m_title;
     std::function<QString()> m_emptyText;
+    std::function<QString()> m_disabledReason;
     QImage m_image;
     QLabel *m_titleLabel;
     QLabel *m_screen;
     QLabel *m_timecode;
     QList<QToolButton *> m_transport;
+    bool m_transportEnabled = false;
+    bool m_playing = false;
 };
 
 } // namespace bc
