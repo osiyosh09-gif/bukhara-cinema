@@ -196,6 +196,7 @@ private slots:
 
         // Playback with and without proxies shows the same picture.
         ctl.placeMedia({big}, 0, 0);
+        {
         TimelinePlayer withProxy, original;
         withProxy.setPreviewLimit(QSize(320, 180));
         original.setPreviewLimit(QSize(320, 180));
@@ -207,6 +208,7 @@ private slots:
             const double d = difference(withProxy.renderFrame(f), original.renderFrame(f));
             QVERIFY2(d < 12, qPrintable(QStringLiteral("frame %1 diff %2").arg(f).arg(d)));
         }
+        } // these players close the proxy file (Windows cannot delete open files)
 
         // Deleting removes the file and goes back to the original.
         ctl.deleteProxies({big, small});

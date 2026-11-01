@@ -89,14 +89,17 @@ bool run(const Plan &plan, QString *error, const std::function<void(qint64)> &pr
         written << c.to;
         for (;;) {
             if (cancel && cancel->load())
-                return fail(QStringLiteral("cancelled"));
+                return out.close(), fail(QStringLiteral("cancelled"));
             const qint64 n = in.read(buf.data(), buf.size());
             if (n < 0)
-                return fail(in.errorString());
+                return out.close(), fail(in.errorString());
             if (n == 0)
                 break;
-            if (out.write(buf.constData(), n) != n)
-                return fail(QStringLiteral("cannot write %1: %2").arg(QDir::toNativeSeparators(c.to), out.errorString()));
+            if (out.write(buf.constData(), n) != n) {
+                const QString e = QStringLiteral("cannot write %1: %2").arg(QDir::toNativeSeparators(c.to), out.errorString());
+                out.close(); // Windows cannot delete an open file
+                return fail(e);
+            }
             copied += n;
             if (progress)
                 progress(copied);
