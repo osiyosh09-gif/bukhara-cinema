@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/Timeline.h"
+
 #include <QDateTime>
 #include <QList>
 #include <QString>
@@ -73,11 +75,12 @@ struct SequenceSettings
 class Project
 {
 public:
-    static constexpr int kFormatVersion = 1;
+    static constexpr int kFormatVersion = 2; // 2: timeline added
     static QString fileExtension() { return QStringLiteral("bcproj"); }
 
     QString name = QStringLiteral("Untitled");
     SequenceSettings sequence;
+    Timeline timeline = Timeline::makeDefault();
     QList<BinFolder> folders;
     QList<MediaItem> items;
 
@@ -85,7 +88,8 @@ public:
     BinFolder &addFolder(const QString &name, const QUuid &parent = {});
     const BinFolder *folder(const QUuid &id) const;
     bool renameFolder(const QUuid &id, const QString &name);
-    // Removes the folder, its sub-folders and the media items inside them.
+    // Removes the folder, its sub-folders and the media items inside them
+    // (and their clips on the timeline).
     void removeFolder(const QUuid &id);
 
     // --- media

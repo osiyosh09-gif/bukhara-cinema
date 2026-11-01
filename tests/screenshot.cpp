@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QStandardPaths>
+#include <QUuid>
 
 int main(int argc, char *argv[])
 {
@@ -28,8 +29,18 @@ int main(int argc, char *argv[])
             QStringList files;
             for (int i = 2; i < argc; ++i)
                 files << QString::fromLocal8Bit(argv[i]);
-            w.controller()->importFiles(files);
-            w.controller()->waitForBackgroundWork();
+            bc::ProjectController *ctl = w.controller();
+            ctl->importFiles(files);
+            ctl->waitForBackgroundWork();
+            for (int i = 0; i < 20; ++i)
+                app.processEvents();
+            // Put everything on the timeline and show a frame in the Program monitor.
+            QList<QUuid> ids;
+            for (const auto &m : ctl->project().items)
+                m.info.hasVideo() ? ids.prepend(m.id) : ids.append(m.id);
+            ctl->placeMedia(ids, 0, 0);
+            ctl->setPlayhead(40);
+            ctl->waitForBackgroundWork();
             for (int i = 0; i < 20; ++i)
                 app.processEvents();
         }

@@ -3,8 +3,8 @@
 IDI_ICON1 ICON "../icons/bukhara-cinema.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 0,2,0,0
-PRODUCTVERSION 0,2,0,0
+FILEVERSION 0,3,0,0
+PRODUCTVERSION 0,3,0,0
 FILEOS VOS_NT_WINDOWS32
 FILETYPE VFT_APP
 BEGIN
@@ -14,9 +14,9 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "BUKHARA CINEMA"
       VALUE "FileDescription", "BUKHARA CINEMA"
-      VALUE "FileVersion", "0.2.0"
+      VALUE "FileVersion", "0.3.0"
       VALUE "ProductName", "BUKHARA CINEMA"
-      VALUE "ProductVersion", "0.2.0"
+      VALUE "ProductVersion", "0.3.0"
       VALUE "OriginalFilename", "BukharaCinema.exe"
     END
   END

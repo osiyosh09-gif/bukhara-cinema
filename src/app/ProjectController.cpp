@@ -9,6 +9,7 @@
 #include <QPointer>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QUndoStack>
 #include <QtConcurrent>
 
 namespace bc {
@@ -17,17 +18,42 @@ namespace {
 constexpr int kThumbW = 160;
 constexpr int kThumbH = 90;
 const char *kRecentKey = "project/recent";
+constexpr int kProgramW = 960; // preview size: enough for the monitor, light for the CPU
+constexpr int kProgramH = 540;
 }
+
+// Undo step that swaps whole timeline states. The timeline is small (a few
+// hundred clips at most), so snapshots are simpler and safer than diffs.
+class TimelineCommand : public QUndoCommand
+{
+public:
+    TimelineCommand(ProjectController *c, const QString &text, Timeline before, Timeline after)
+        : QUndoCommand(text), m_c(c), m_before(std::move(before)), m_after(std::move(after))
+    {
+    }
+    void undo() override { m_c->applyTimeline(m_before); }
+    void redo() override { m_c->applyTimeline(m_after); }
+
+private:
+    ProjectController *m_c;
+    Timeline m_before;
+    Timeline m_after;
+};
 
 ProjectController::ProjectController(QObject *parent)
     : QObject(parent)
 {
     // The target PC has 2 cores: keep background decoding modest.
     m_pool.setMaxThreadCount(2);
+    m_undo = new QUndoStack(this);
+    m_undo->setUndoLimit(200);
 }
 
 ProjectController::~ProjectController()
 {
+    // The undo stack emits index changes while it is destroyed; nobody may
+    // react to them any more (the main window is being destroyed too).
+    m_undo->blockSignals(true);
     ++m_generation;
     m_pool.clear();
     m_pool.waitForDone();
@@ -51,9 +77,14 @@ void ProjectController::newProject()
     m_thumbs.clear();
     m_pendingProbe.clear();
     m_online.clear();
+    m_playhead = 0;
+    m_lastFrameKey.clear();
+    resetUndo();
     setFilePath({});
     setModified(false);
     emit projectReset();
+    emit timelineChanged();
+    requestProgramFrame();
 }
 
 bool ProjectController::open(const QString &path, QString *error)
@@ -69,9 +100,14 @@ bool ProjectController::open(const QString &path, QString *error)
     m_pendingProbe.clear();
     setFilePath(QFileInfo(path).absoluteFilePath());
     refreshOnlineState();
+    m_playhead = 0;
+    m_lastFrameKey.clear();
+    resetUndo();
     setModified(false);
     addRecent(m_filePath);
     emit projectReset();
+    emit timelineChanged();
+    requestProgramFrame();
 
     for (const MediaItem &m : m_project.items) {
         if (!m_online.contains(m.id))
@@ -210,13 +246,20 @@ void ProjectController::renameItem(const QUuid &id, const QString &name)
 
 void ProjectController::removeFolder(const QUuid &id)
 {
+    const Timeline before = m_project.timeline;
     m_project.removeFolder(id);
     setModified(true);
     emit binChanged();
+    if (m_project.timeline != before) {
+        resetUndo(); // undo steps could bring back clips of removed media
+        emit timelineChanged();
+        requestProgramFrame();
+    }
 }
 
 void ProjectController::removeItems(const QList<QUuid> &ids)
 {
+    const Timeline before = m_project.timeline;
     bool any = false;
     for (const QUuid &id : ids) {
         any |= m_project.removeItem(id);
@@ -226,6 +269,11 @@ void ProjectController::removeItems(const QList<QUuid> &ids)
     if (any) {
         setModified(true);
         emit binChanged();
+    }
+    if (m_project.timeline != before) {
+        resetUndo(); // undo steps could bring back clips of removed media
+        emit timelineChanged();
+        requestProgramFrame();
     }
 }
 
@@ -356,9 +404,208 @@ void ProjectController::setSequence(const SequenceSettings &s)
 {
     if (m_project.sequence == s)
         return;
+    const double oldFps = m_project.sequence.fps();
     m_project.sequence = s;
+    if (oldFps != s.fps() && !m_project.timeline.isEmpty()) {
+        // Clip positions are stored in frames: convert them to the new rate.
+        m_project.timeline.rescale(oldFps, s.fps());
+        m_playhead = qint64(std::llround(m_playhead * s.fps() / oldFps));
+        resetUndo();
+        emit timelineChanged();
+        emit playheadChanged(m_playhead);
+    }
     setModified(true);
     emit sequenceChanged();
+    requestProgramFrame();
+}
+
+// ---------------------------------------------------------------------------
+// Timeline
+
+void ProjectController::resetUndo()
+{
+    m_undo->clear();
+}
+
+void ProjectController::applyTimeline(const Timeline &t)
+{
+    m_project.timeline = t;
+    setModified(true);
+    emit timelineChanged();
+    requestProgramFrame();
+}
+
+bool ProjectController::editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn)
+{
+    Timeline after = m_project.timeline;
+    if (!fn(after) || after == m_project.timeline)
+        return false;
+    m_undo->push(new TimelineCommand(this, text, m_project.timeline, after));
+    return true;
+}
+
+qint64 ProjectController::mediaFrames(const QUuid &mediaId) const
+{
+    const MediaItem *m = m_project.item(mediaId);
+    return m ? mediaLengthFrames(*m, m_project.sequence) : -1;
+}
+
+bool ProjectController::previewPlacement(Timeline &t, const QList<QUuid> &mediaIds, int track, qint64 start,
+                                         QList<QUuid> *created) const
+{
+    if (track < 0 || track >= t.tracks.size())
+        return false;
+    const Timeline::Kind kind = t.tracks[track].kind;
+    int n = 0;
+    for (int i = 0; i < track; ++i)
+        if (t.tracks[i].kind == kind)
+            ++n;
+    const int videoN = std::min(n, t.count(Timeline::Kind::Video) - 1);
+    const int audioN = std::min(n, t.count(Timeline::Kind::Audio) - 1);
+
+    QList<QUuid> made;
+    qint64 pos = std::max<qint64>(0, start);
+    for (const QUuid &id : mediaIds) {
+        const MediaItem *m = m_project.item(id);
+        if (!m || !m->probed || !isOnline(id))
+            continue;
+        const QList<QUuid> ids = t.place(*m, m_project.sequence, videoN, audioN, pos);
+        if (ids.isEmpty())
+            continue;
+        made += ids;
+        pos += defaultClipFrames(*m, m_project.sequence);
+    }
+    if (created)
+        *created = made;
+    return !made.isEmpty();
+}
+
+QList<QUuid> ProjectController::placeMedia(const QList<QUuid> &mediaIds, int track, qint64 start)
+{
+    QList<QUuid> created;
+    editTimeline(tr("Place clips"),
+                 [&](Timeline &t) { return previewPlacement(t, mediaIds, track, start, &created); });
+    return created;
+}
+
+bool ProjectController::moveClips(const QList<QUuid> &clipIds, qint64 deltaFrames, Timeline::Kind kind,
+                                  int deltaTracks)
+{
+    return editTimeline(tr("Move clips"), [&](Timeline &t) {
+        return t.move(clipIds, deltaFrames, kind, deltaTracks);
+    });
+}
+
+bool ProjectController::trimClip(const QUuid &clipId, bool head, qint64 frame)
+{
+    return editTimeline(tr("Trim clip"), [&](Timeline &t) {
+        return t.trim(clipId, head, frame, [this](const QUuid &mediaId) { return mediaFrames(mediaId); });
+    });
+}
+
+bool ProjectController::splitClips(qint64 frame, const QList<QUuid> &clipIds)
+{
+    return editTimeline(tr("Split"), [&](Timeline &t) { return !t.splitAt(frame, clipIds).isEmpty(); });
+}
+
+bool ProjectController::removeClips(const QList<QUuid> &clipIds, bool ripple)
+{
+    return editTimeline(ripple ? tr("Ripple delete") : tr("Delete"),
+                        [&](Timeline &t) { return t.remove(clipIds, ripple); });
+}
+
+int ProjectController::addTrack(Timeline::Kind kind)
+{
+    int index = -1;
+    editTimeline(kind == Timeline::Kind::Video ? tr("Add video track") : tr("Add audio track"), [&](Timeline &t) {
+        index = t.addTrack(kind);
+        return true;
+    });
+    return index;
+}
+
+void ProjectController::setTrackFlag(int track, const QString &flag, bool on)
+{
+    editTimeline(tr("Track setting"), [&](Timeline &t) {
+        if (track < 0 || track >= t.tracks.size())
+            return false;
+        TimelineTrack &tr = t.tracks[track];
+        bool *f = flag == QLatin1String("locked") ? &tr.locked
+                  : flag == QLatin1String("muted") ? &tr.muted
+                  : flag == QLatin1String("hidden") ? &tr.hidden
+                                                    : nullptr;
+        if (!f || *f == on)
+            return false;
+        *f = on;
+        return true;
+    });
+}
+
+void ProjectController::setPlayhead(qint64 frame)
+{
+    frame = std::max<qint64>(0, frame);
+    if (frame == m_playhead)
+        return;
+    m_playhead = frame;
+    emit playheadChanged(frame);
+    requestProgramFrame();
+}
+
+// The Program monitor shows the frame of the top visible video clip at the
+// playhead. Decoding runs in the background; while one frame is being
+// decoded, newer requests collapse into one.
+void ProjectController::requestProgramFrame()
+{
+    if (m_frameBusy) {
+        m_framePending = true;
+        return;
+    }
+    startProgramFrame();
+}
+
+void ProjectController::startProgramFrame()
+{
+    m_framePending = false;
+    const Timeline &tl = m_project.timeline;
+    QString path;
+    qint64 timeUs = 0;
+    for (const QUuid &cid : tl.clipsAt(m_playhead)) {
+        const Timeline::ClipRef r = tl.find(cid);
+        const TimelineTrack &track = tl.tracks[r.track];
+        if (track.kind != Timeline::Kind::Video || track.hidden)
+            continue;
+        const TimelineClip &c = track.clips[r.index];
+        const MediaItem *m = m_project.item(c.mediaId);
+        if (!m || !isOnline(m->id))
+            continue;
+        path = m->path;
+        const double fps = m_project.sequence.fps();
+        timeUs = fps > 0 ? qint64(std::llround((c.in + (m_playhead - c.start)) * 1e6 / fps)) : 0;
+        break;
+    }
+    const QString key = path + QLatin1Char('@') + QString::number(timeUs);
+    if (key == m_lastFrameKey)
+        return;
+    m_lastFrameKey = key;
+    if (path.isEmpty()) {
+        emit programFrameReady({});
+        return;
+    }
+    m_frameBusy = true;
+    QPointer<ProjectController> self(this);
+    (void)QtConcurrent::run(&m_pool, [self, path, timeUs] {
+        const QImage img = MediaProbe::frameAt(path, timeUs, kProgramW, kProgramH);
+        if (!self)
+            return;
+        QMetaObject::invokeMethod(self.data(), [self, img] {
+            if (!self)
+                return;
+            self->m_frameBusy = false;
+            emit self->programFrameReady(img);
+            if (self->m_framePending)
+                self->startProgramFrame();
+        }, Qt::QueuedConnection);
+    });
 }
 
 // ---------------------------------------------------------------------------

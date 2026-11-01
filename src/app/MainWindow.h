@@ -17,6 +17,7 @@ class MonitorView;
 class ProjectController;
 class MediaBinPanel;
 class ProjectInfoPanel;
+class TimelinePanel;
 
 // Main window layout:
 //   top     - menus and toolbar (save, export)
@@ -70,6 +71,7 @@ private:
     void updateTitle();
     void rebuildRecentMenu();
     void editSequence();
+    void updateUndoActions();
 
     struct PlannedAction
     {
@@ -96,6 +98,8 @@ private:
     QAction *m_saveAsAct = nullptr;
     QAction *m_importAct = nullptr;
     QAction *m_sequenceAct = nullptr;
+    QAction *m_undoAct = nullptr;
+    QAction *m_redoAct = nullptr;
     QAction *m_settingsAct = nullptr;
     QAction *m_exitAct = nullptr;
     QAction *m_fullScreenAct = nullptr;
@@ -120,6 +124,8 @@ private:
     ProjectController *m_ctl = nullptr;
     MediaBinPanel *m_bin = nullptr;
     ProjectInfoPanel *m_info = nullptr;
+    TimelinePanel *m_timeline = nullptr;
+    MonitorView *m_programMonitor = nullptr;
 
     QByteArray m_defaultState;
     QByteArray m_defaultSplit;
