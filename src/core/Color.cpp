@@ -18,7 +18,51 @@ QList<EffectParamSpec> ClipColor::specs()
             {QStringLiteral("shadows"), -100, 100, 0, 1, 0},
             {QStringLiteral("saturation"), 0, 200, 100, 1, 0},
             {QStringLiteral("vibrance"), -100, 100, 0, 1, 0},
-            {QStringLiteral("lut_amount"), 0, 100, 100, 1, 0}};
+            {QStringLiteral("lut_amount"), 0, 100, 100, 1, 0},
+            // Colour wheels (phase 9d): x/y = point on the wheel, l = master.
+            {QStringLiteral("lift_x"), -100, 100, 0, 1, 0},
+            {QStringLiteral("lift_y"), -100, 100, 0, 1, 0},
+            {QStringLiteral("lift_l"), -100, 100, 0, 1, 0},
+            {QStringLiteral("gamma_x"), -100, 100, 0, 1, 0},
+            {QStringLiteral("gamma_y"), -100, 100, 0, 1, 0},
+            {QStringLiteral("gamma_l"), -100, 100, 0, 1, 0},
+            {QStringLiteral("gain_x"), -100, 100, 0, 1, 0},
+            {QStringLiteral("gain_y"), -100, 100, 0, 1, 0},
+            {QStringLiteral("gain_l"), -100, 100, 0, 1, 0}};
+}
+
+QStringList ClipColor::wheels()
+{
+    return {QStringLiteral("lift"), QStringLiteral("gamma"), QStringLiteral("gain")};
+}
+
+bool ClipColor::isWheelKey(const QString &key)
+{
+    for (const QString &w : wheels())
+        if (key.startsWith(w + QLatin1Char('_')))
+            return true;
+    return false;
+}
+
+void wheelBalance(double x, double y, double rgb[3])
+{
+    // The point is a colour difference (x = Cb, y = Cr as on a vectorscope);
+    // turned into RGB with no change of luma, scaled so the largest channel
+    // moves by the distance from the centre (0 .. 1).
+    const double len = std::hypot(x, y);
+    if (len < 1e-9) {
+        rgb[0] = rgb[1] = rgb[2] = 0;
+        return;
+    }
+    const double cb = x / len, cr = y / len;
+    const double r = 1.5748 * cr;
+    const double b = 1.8556 * cb;
+    const double g = -(0.2126 * r + 0.0722 * b) / 0.7152;
+    const double peak = std::max({std::abs(r), std::abs(g), std::abs(b)});
+    const double amount = std::min(1.0, len / 100.0);
+    rgb[0] = r / peak * amount;
+    rgb[1] = g / peak * amount;
+    rgb[2] = b / peak * amount;
 }
 
 double ClipColor::value(const QString &key) const
@@ -122,6 +166,27 @@ void applyBasic(uint8_t *img, size_t n, const ClipColor &c)
     const double highlights = c.value(QStringLiteral("highlights")) / 100.0;
     const double shadows = c.value(QStringLiteral("shadows")) / 100.0;
 
+    // Colour wheels: per-channel lift, gamma and gain.
+    double lift[3], gamma[3], gainW[3];
+    bool wheels = false;
+    {
+        double bal[3][3];
+        double master[3];
+        const QStringList names = ClipColor::wheels();
+        for (int w = 0; w < 3; ++w) {
+            const double x = c.value(names[w] + QStringLiteral("_x"));
+            const double y = c.value(names[w] + QStringLiteral("_y"));
+            master[w] = c.value(names[w] + QStringLiteral("_l")) / 100.0;
+            wheelBalance(x, y, bal[w]);
+            wheels |= x != 0 || y != 0 || master[w] != 0;
+        }
+        for (int ch = 0; ch < 3; ++ch) {
+            lift[ch] = 0.4 * master[0] + 0.25 * bal[0][ch];
+            gamma[ch] = master[1] + 0.5 * bal[1][ch];
+            gainW[ch] = 1 + 0.5 * master[2] + 0.3 * bal[2][ch];
+        }
+    }
+
     // Each channel goes through the same tone curve after its gain: one table per channel.
     uint8_t lut[3][256];
     for (int ch = 0; ch < 3; ++ch)
@@ -133,6 +198,12 @@ void applyBasic(uint8_t *img, size_t n, const ClipColor &c)
             const double ws = 6.75 * v * (1 - v) * (1 - v); // peak 1 at v = 1/3
             const double wh = 6.75 * v * v * (1 - v);       // peak 1 at v = 2/3
             v += 0.25 * (shadows * ws + highlights * wh);
+            if (wheels) {
+                // Lift moves the blacks (white stays), gamma the mid tones, gain the whites.
+                v += lift[ch] * (1 - v);
+                v = std::pow(std::clamp(v, 0.0, 1.0), std::pow(2.0, -gamma[ch]));
+                v *= gainW[ch];
+            }
             lut[ch][i] = toByte(v);
         }
 

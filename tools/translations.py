@@ -972,6 +972,28 @@ T.update({
         "«Окно > Осциллографы» открывает их; они показывают кадр монитора программы и работают, только пока открыты (при воспроизведении примерно до 12 раз в секунду)."),
 })
 
+T.update({
+    "Colour wheels: lift, gamma, gain": ("Ранг ғилдираклари: lift, gamma, gain", "Цветовые круги: lift, gamma, gain"),
+    "Colour panel > Colour wheels: drag the point towards a colour to tint the dark, middle or bright tones; the slider under a wheel makes them darker or brighter. Double-click puts a wheel back.": (
+        "«Ранг» панели > «Ранг ғилдираклари»: нуқтани рангга томон суринг, қоронғи, ўрта ёки ёруғ жойлар шу рангга киради; ғилдирак остидаги слайдер уларни қоронғироқ ёки ёруғроқ қилади. Икки марта босиш ғилдиракни қайтаради.",
+        "Панель «Цвет» > «Цветовые круги»: перетащите точку к цвету, чтобы окрасить тени, средние тона или света; ползунок под кругом делает их темнее или светлее. Двойной щелчок возвращает круг."),
+    "Phase 9 is done: colour correction, colour wheels, LUTs and scopes work (Colour panel, Window > Scopes).": (
+        "9-босқич тугади: ранг тузатиш, ранг ғилдираклари, LUT ва scope'лар ишлайди («Ранг» панели, «Ойна > Scope'лар»).",
+        "Этап 9 завершён: цветокоррекция, цветовые круги, LUT и осциллографы работают (панель «Цвет», «Окно > Осциллографы»)."),
+    "Lift": ("Lift", "Lift"),
+    "Gamma": ("Gamma", "Gamma"),
+    "Gain": ("Gain", "Gain"),
+    "Reset wheels": ("Ғилдиракларни тиклаш", "Сбросить круги"),
+    "Drag the point towards the colour to add; double-click puts it back": (
+        "Нуқтани қўшиладиган рангга томон суринг; икки марта босиш уни қайтаради",
+        "Перетащите точку к добавляемому цвету; двойной щелчок возвращает её"),
+    "Lift: the dark tones (black level)": ("Lift: қоронғи жойлар (қора даража)", "Lift: тени (уровень чёрного)"),
+    "Gamma: the middle tones": ("Gamma: ўрта тонлар", "Gamma: средние тона"),
+    "Gain: the bright tones (white level)": ("Gain: ёруғ жойлар (оқ даража)", "Gain: света (уровень белого)"),
+    "Colour wheel": ("Ранг ғилдираги", "Цветовой круг"),
+    "Reset colour wheels": ("Ранг ғилдиракларини тиклаш", "Сброс цветовых кругов"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

@@ -518,6 +518,34 @@ bool ProjectController::setClipColorValue(const QUuid &clipId, const QString &ke
     }, QStringLiteral("color:%1:%2").arg(clipId.toString(), key));
 }
 
+bool ProjectController::setClipColorWheel(const QUuid &clipId, const QString &wheel, double x, double y)
+{
+    if (!ClipColor::wheels().contains(wheel))
+        return false;
+    return editTimeline(tr("Colour wheel"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c)
+            return false;
+        const bool a = c->color.setValue(wheel + QStringLiteral("_x"), x);
+        const bool b = c->color.setValue(wheel + QStringLiteral("_y"), y);
+        return a || b;
+    }, QStringLiteral("color:%1:%2").arg(clipId.toString(), wheel));
+}
+
+bool ProjectController::resetClipColorWheels(const QUuid &clipId)
+{
+    return editTimeline(tr("Reset colour wheels"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c)
+            return false;
+        bool changed = false;
+        for (const EffectParamSpec &s : ClipColor::specs())
+            if (ClipColor::isWheelKey(s.key))
+                changed |= c->color.setValue(s.key, s.def);
+        return changed;
+    });
+}
+
 bool ProjectController::resetClipColor(const QUuid &clipId)
 {
     return editTimeline(tr("Reset colour"), [&](Timeline &t) {

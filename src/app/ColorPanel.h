@@ -10,6 +10,8 @@ class QLabel;
 class QSlider;
 class QToolButton;
 
+namespace bc { class ColorWheel; }
+
 namespace bc {
 
 class ProjectController;
@@ -54,6 +56,7 @@ private:
     QWidget *m_body;
     QGroupBox *m_balanceBox;
     QGroupBox *m_toneBox;
+    QGroupBox *m_wheelsBox;
     QGroupBox *m_colorBox;
     QGroupBox *m_lutBox;
     QLabel *m_lutName;
@@ -62,6 +65,8 @@ private:
     QToolButton *m_reset;
     QLabel *m_note;
     QHash<QString, Row> m_rows;
+    QHash<QString, ColorWheel *> m_wheels; // by wheel name
+    QToolButton *m_wheelsReset;
 };
 
 } // namespace bc

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.19.0
+    VERSION 0.20.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -64,6 +64,7 @@ add_library(bc_ui STATIC
     src/app/ClipInspector.h     src/app/ClipInspector.cpp
     src/app/EffectsPanel.h      src/app/EffectsPanel.cpp
     src/app/ColorPanel.h        src/app/ColorPanel.cpp
+    src/app/ColorWheel.h        src/app/ColorWheel.cpp
     src/app/ScopesPanel.h       src/app/ScopesPanel.cpp
     src/app/ExportDialog.h      src/app/ExportDialog.cpp
     src/app/Autosave.h          src/app/Autosave.cpp

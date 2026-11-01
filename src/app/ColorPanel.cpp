@@ -1,5 +1,6 @@
 #include "app/ColorPanel.h"
 
+#include "app/ColorWheel.h"
 #include "app/ProjectController.h"
 #include "app/TimelinePanel.h"
 #include "core/Color.h"
@@ -45,6 +46,12 @@ QString ColorPanel::valueName(const QString &key)
         return tr("Saturation, %");
     if (key == QLatin1String("vibrance"))
         return tr("Vibrance");
+    if (key == QLatin1String("lift_l"))
+        return tr("Lift");
+    if (key == QLatin1String("gamma_l"))
+        return tr("Gamma");
+    if (key == QLatin1String("gain_l"))
+        return tr("Gain");
     if (key == QLatin1String("lut_amount"))
         return tr("Strength, %");
     return key;
@@ -59,6 +66,7 @@ ColorPanel::ColorPanel(ProjectController *controller, TimelineView *view, QWidge
     , m_body(new QWidget)
     , m_balanceBox(new QGroupBox)
     , m_toneBox(new QGroupBox)
+    , m_wheelsBox(new QGroupBox)
     , m_colorBox(new QGroupBox)
     , m_lutBox(new QGroupBox)
     , m_lutName(new QLabel)
@@ -66,6 +74,7 @@ ColorPanel::ColorPanel(ProjectController *controller, TimelineView *view, QWidge
     , m_lutRemove(new QToolButton)
     , m_reset(new QToolButton)
     , m_note(new QLabel)
+    , m_wheelsReset(new QToolButton)
 {
     setObjectName(QStringLiteral("colorPanel"));
     m_empty->setObjectName(QStringLiteral("colorEmpty"));
@@ -100,9 +109,30 @@ ColorPanel::ColorPanel(ProjectController *controller, TimelineView *view, QWidge
         {QStringLiteral("highlights"), m_toneBox},     {QStringLiteral("shadows"), m_toneBox},
         {QStringLiteral("saturation"), m_colorBox},    {QStringLiteral("vibrance"), m_colorBox},
         {QStringLiteral("lut_amount"), m_lutBox}};
-    for (QGroupBox *box : {m_balanceBox, m_toneBox, m_colorBox, m_lutBox}) {
+    for (QGroupBox *box : {m_balanceBox, m_toneBox, m_wheelsBox, m_colorBox, m_lutBox}) {
         new QGridLayout(box);
         body->addWidget(box);
+    }
+    {
+        // Colour wheels side by side: name, wheel, master slider and value.
+        auto *grid = static_cast<QGridLayout *>(m_wheelsBox->layout());
+        grid->setHorizontalSpacing(6);
+        const QStringList names = ClipColor::wheels();
+        for (int col = 0; col < names.size(); ++col) {
+            const QString wheel = names[col];
+            auto *w = new ColorWheel;
+            w->setObjectName(QStringLiteral("colorWheel_") + wheel);
+            grid->addWidget(w, 1, col);
+            grid->setColumnStretch(col, 1);
+            connect(w, &ColorWheel::moved, this, [this, wheel](double x, double y) {
+                if (!m_updating && !m_clip.isNull())
+                    m_ctl->setClipColorWheel(m_clip, wheel, x, y);
+            });
+            m_wheels.insert(wheel, w);
+        }
+        m_wheelsReset->setObjectName(QStringLiteral("colorWheelsReset"));
+        m_wheelsReset->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        grid->addWidget(m_wheelsReset, 4, 0, 1, names.size(), Qt::AlignRight);
     }
     {
         // LUT file row first in its group.
@@ -118,7 +148,10 @@ ColorPanel::ColorPanel(ProjectController *controller, TimelineView *view, QWidge
         grid->addLayout(buttons, 1, 0, 1, 3);
     }
     for (const EffectParamSpec &s : ClipColor::specs()) {
-        QGroupBox *box = boxOf.value(s.key, m_colorBox);
+        const bool wheelKey = ClipColor::isWheelKey(s.key);
+        if (wheelKey && !s.key.endsWith(QLatin1String("_l")))
+            continue; // the point on the wheel itself
+        QGroupBox *box = wheelKey ? m_wheelsBox : boxOf.value(s.key, m_colorBox);
         auto *grid = static_cast<QGridLayout *>(box->layout());
         Row row{new QLabel, new QSlider(Qt::Horizontal), new QDoubleSpinBox, s.step};
         row.slider->setObjectName(QStringLiteral("colorSlider_") + s.key);
@@ -128,11 +161,21 @@ ColorPanel::ColorPanel(ProjectController *controller, TimelineView *view, QWidge
         row.spin->setSingleStep(s.step);
         row.spin->setDecimals(s.decimals);
         row.spin->setKeyboardTracking(false);
-        const int r = grid->rowCount();
-        grid->addWidget(row.label, r, 0);
-        grid->addWidget(row.slider, r, 1);
-        grid->addWidget(row.spin, r, 2);
-        grid->setColumnStretch(1, 1);
+        if (wheelKey) {
+            // Under its wheel: the name above, the master slider and value below.
+            const int col = int(ClipColor::wheels().indexOf(s.key.chopped(2)));
+            row.label->setAlignment(Qt::AlignCenter);
+            row.slider->setMinimumWidth(40);
+            grid->addWidget(row.label, 0, col);
+            grid->addWidget(row.slider, 2, col);
+            grid->addWidget(row.spin, 3, col);
+        } else {
+            const int r = grid->rowCount();
+            grid->addWidget(row.label, r, 0);
+            grid->addWidget(row.slider, r, 1);
+            grid->addWidget(row.spin, r, 2);
+            grid->setColumnStretch(1, 1);
+        }
         const QString key = s.key;
         const double step = s.step;
         connect(row.slider, &QSlider::valueChanged, this, [this, key, step](int v) { apply(key, v * step); });
@@ -155,6 +198,12 @@ ColorPanel::ColorPanel(ProjectController *controller, TimelineView *view, QWidge
         if (!m_clip.isNull())
             m_ctl->setClipLut(m_clip, QString());
     });
+    connect(m_wheelsReset, &QToolButton::clicked, this, [this] {
+        if (m_clip.isNull())
+            return;
+        // One undo step for all three wheels.
+        m_ctl->resetClipColorWheels(m_clip);
+    });
     connect(m_reset, &QToolButton::clicked, this, [this] {
         if (!m_clip.isNull())
             m_ctl->resetClipColor(m_clip);
@@ -176,6 +225,13 @@ void ColorPanel::retranslate()
 {
     m_balanceBox->setTitle(tr("White balance"));
     m_toneBox->setTitle(tr("Light"));
+    m_wheelsBox->setTitle(tr("Colour wheels"));
+    m_wheelsReset->setText(tr("Reset wheels"));
+    for (auto it = m_wheels.begin(); it != m_wheels.end(); ++it)
+        it.value()->setToolTip(tr("Drag the point towards the colour to add; double-click puts it back"));
+    m_rows[QStringLiteral("lift_l")].slider->setToolTip(tr("Lift: the dark tones (black level)"));
+    m_rows[QStringLiteral("gamma_l")].slider->setToolTip(tr("Gamma: the middle tones"));
+    m_rows[QStringLiteral("gain_l")].slider->setToolTip(tr("Gain: the bright tones (white level)"));
     m_colorBox->setTitle(tr("Colour"));
     m_lutBox->setTitle(tr("Look (LUT)"));
     m_lutChoose->setText(tr("Choose .cube file..."));
@@ -230,6 +286,14 @@ void ColorPanel::refresh()
         it->slider->setValue(int(std::lround(v / it->step)));
         it->spin->setValue(v);
     }
+    bool wheelsUsed = false;
+    for (auto it = m_wheels.begin(); it != m_wheels.end(); ++it) {
+        const double x = c->color.value(it.key() + QStringLiteral("_x"));
+        const double y = c->color.value(it.key() + QStringLiteral("_y"));
+        it.value()->setPoint(x, y);
+        wheelsUsed |= x != 0 || y != 0 || c->color.value(it.key() + QStringLiteral("_l")) != 0;
+    }
+    m_wheelsReset->setEnabled(wheelsUsed);
     m_reset->setEnabled(!c->color.isNeutral() || !c->color.lut.isEmpty());
     const QString lut = c->color.lut;
     if (lut.isEmpty()) {

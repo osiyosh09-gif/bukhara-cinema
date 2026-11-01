@@ -167,6 +167,9 @@ public:
     ClipColor clipColor(const QUuid &clipId) const;
     // Quick successive changes of one value form one undo step.
     bool setClipColorValue(const QUuid &clipId, const QString &key, double value);
+    // Moves the point of a colour wheel ("lift", "gamma", "gain"); a drag is one undo step.
+    bool setClipColorWheel(const QUuid &clipId, const QString &wheel, double x, double y);
+    bool resetClipColorWheels(const QUuid &clipId); // all three wheels and their masters
     bool resetClipColor(const QUuid &clipId);
     // A .cube file for the clip's creative look (empty removes it).
     bool setClipLut(const QUuid &clipId, const QString &path);

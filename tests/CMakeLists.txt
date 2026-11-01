@@ -119,4 +119,9 @@ set_tests_properties(phase9b_lut PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscre
 add_executable(tst_phase9c tst_phase9c.cpp)
 target_link_libraries(tst_phase9c PRIVATE bc_ui Qt6::Test)
 add_test(NAME phase9c_scopes COMMAND tst_phase9c)
+
+add_executable(tst_phase9d tst_phase9d.cpp)
+target_link_libraries(tst_phase9d PRIVATE bc_ui Qt6::Test)
+add_test(NAME phase9d_wheels COMMAND tst_phase9d)
+set_tests_properties(phase9d_wheels PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
 set_tests_properties(phase9c_scopes PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
