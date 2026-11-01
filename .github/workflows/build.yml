@@ -125,7 +125,16 @@ jobs:
           export PATH="$PWD/ffmpeg/bin:$PWD/mlt:$PATH"
           export BC_MLT_PREFIX="$(cygpath -m "$PWD/mlt")"
           export SDL_AUDIODRIVER=dummy
-          ctest --test-dir build --output-on-failure
+          if ! ctest --test-dir build --output-on-failure; then
+            # Console output of a crashed test can be lost: run the failed
+            # ones again with QtTest's own log file and show it.
+            export QT_QPA_PLATFORM=offscreen
+            for exe in build/tests/tst_*.exe; do
+              rc=0; "$exe" -o "$exe.log,txt" > /dev/null 2>&1 || rc=$?
+              if [ $rc -ne 0 ]; then echo "== $exe exit code $rc"; cat "$exe.log" || true; fi
+            done
+            exit 1
+          fi
 
       - name: Deploy (exe + Qt DLLs + runtime DLLs + licenses)
         run: |
