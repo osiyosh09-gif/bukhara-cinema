@@ -238,6 +238,28 @@ public:
     // (in the background, the newest request wins); emits multicamGridReady.
     void requestMulticamGrid();
 
+    // --- render preview (phase 13b, ProjectPreview.cpp)
+    // Parts of the open sequence with a picture: heavy ones (effects, colour,
+    // motion, speed, transitions, nested, several layers) are worth rendering;
+    // `rendered` says a preview file is ready (playback then uses it).
+    struct PreviewPart
+    {
+        qint64 start = 0;
+        qint64 length = 0;
+        bool heavy = false;
+        bool rendered = false;
+        qint64 end() const { return start + length; }
+    };
+    QList<PreviewPart> previewParts() const;
+    // Renders the heavy, not yet rendered parts touching from..to (exclusive)
+    // in the background; previewProgress and previewFinished follow. False
+    // (with a reason) when there is nothing to render or it cannot start.
+    bool renderPreview(qint64 from, qint64 to, QString *error = nullptr);
+    void cancelPreviewRender();
+    bool isRenderingPreview() const { return m_previewBusy; }
+    // Deletes every preview file (all projects); returns how many.
+    int deletePreviews();
+
     // Length of a media item in sequence frames, -1 = unlimited (images).
     qint64 mediaFrames(const QUuid &mediaId) const;
 
@@ -362,6 +384,9 @@ signals:
     void loudnessAnalyzed(const QUuid &mediaId, bool ok);
     // Grid of all angles (null image when no multicamera clip is at the playhead).
     void multicamGridReady(const QImage &image, const QUuid &clipId);
+    void previewProgress(qint64 frame, qint64 total);
+    void previewFinished(bool ok, const QString &error); // error empty after cancel
+    void previewsChanged(); // parts rendered or deleted
 
 private:
     void setModified(bool m);
@@ -462,6 +487,13 @@ private:
     QString m_gridLastKey;   // last frame asked for
     bool m_gridBusy = false;
     bool m_gridPending = false;
+    void applyPreviews(); // tells m_player which preview files to use
+    mutable QList<PreviewPart> m_previewParts;
+    mutable quint64 m_previewPartsRev = ~quint64(0);
+    bool m_previewBusy = false;
+    bool m_previewsOff = false;
+    std::shared_ptr<std::atomic_bool> m_previewCancel;
+    QThreadPool m_previewPool; // the preview renderer
     QThreadPool m_gridPool;  // one grid frame at a time; declared last, so it is destroyed (and waited for) first
 };
 

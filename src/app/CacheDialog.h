@@ -9,7 +9,7 @@ namespace bc {
 
 class ProjectController;
 
-// File > Media cache: sizes of thumbnails, waveforms and proxy files, and
+// File > Media cache: sizes of thumbnails, waveforms, proxy and preview files, and
 // buttons to delete them (they are made again when needed).
 class CacheDialog : public QDialog
 {
@@ -21,11 +21,12 @@ public:
     void clearThumbnails();
     void clearWaveforms();
     void clearProxies();
+    void clearPreviews();
 
 private:
     ProjectController *m_ctl;
-    QLabel *m_sizes[3];
-    QPushButton *m_clear[3];
+    QLabel *m_sizes[4];
+    QPushButton *m_clear[4];
     QLabel *m_total;
 };
 

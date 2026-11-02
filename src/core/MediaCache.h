@@ -9,7 +9,8 @@ namespace bc::MediaCache {
 // They are keyed by the media file's path, size and change time, so an
 // edited or replaced file gets new ones.
 // Loudness profiles share the waveform folder (both are small audio summaries).
-enum class Kind { Thumbnail, Waveform, Proxy, Loudness };
+// Rendered previews (phase 13b) are keyed by the sequence part, not a media file.
+enum class Kind { Thumbnail, Waveform, Proxy, Loudness, Preview };
 
 QString root();                                    // .../cache folder
 QString folder(Kind kind);

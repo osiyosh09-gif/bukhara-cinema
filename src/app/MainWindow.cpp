@@ -55,6 +55,8 @@
 #include <QUndoStack>
 #include <QUrl>
 
+#include <limits>
+
 namespace bc {
 
 MainWindow::MainWindow(QWidget *parent)
@@ -105,6 +107,31 @@ MainWindow::MainWindow(QWidget *parent)
         updateProxyStatus();
     });
     connect(m_ctl, &ProjectController::itemUpdated, this, &MainWindow::updateProxyStatus);
+    // Preview rendering in the background: "Rendering preview: 37%" + stop.
+    m_previewLabel = new QLabel(this);
+    m_previewLabel->setObjectName(QStringLiteral("previewStatus"));
+    m_previewCancel = new QToolButton(this);
+    m_previewCancel->setObjectName(QStringLiteral("previewCancel"));
+    m_previewCancel->setAutoRaise(true);
+    m_previewCancel->setIcon(style()->standardIcon(QStyle::SP_DialogCancelButton));
+    connect(m_previewCancel, &QToolButton::clicked, m_ctl, &ProjectController::cancelPreviewRender);
+    statusBar()->addPermanentWidget(m_previewLabel);
+    statusBar()->addPermanentWidget(m_previewCancel);
+    m_previewLabel->hide();
+    m_previewCancel->hide();
+    connect(m_ctl, &ProjectController::previewProgress, this, [this](qint64 done, qint64 total) {
+        m_previewLabel->setText(tr("Rendering preview: %1%").arg(total > 0 ? int(done * 100 / total) : 0));
+        m_previewLabel->show();
+        m_previewCancel->show();
+    });
+    connect(m_ctl, &ProjectController::previewFinished, this, [this](bool ok, const QString &err) {
+        m_previewLabel->hide();
+        m_previewCancel->hide();
+        if (ok)
+            statusBar()->showMessage(tr("Preview rendered: the green parts play from the rendered files."), 6000);
+        else if (!err.isEmpty())
+            statusBar()->showMessage(tr("Could not render the preview: %1").arg(err), 8000);
+    });
 
     connect(m_ctl, &ProjectController::modifiedChanged, this, &MainWindow::updateTitle);
     connect(m_ctl, &ProjectController::fileNameChanged, this, &MainWindow::updateTitle);
@@ -377,7 +404,17 @@ void MainWindow::buildMenus()
     m_useProxiesAct->setCheckable(true);
     m_useProxiesAct->setChecked(m_ctl->useProxies());
     connect(m_useProxiesAct, &QAction::toggled, m_ctl, &ProjectController::setUseProxies);
-    addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
+    m_renderPreviewAct = m_sequenceMenu->addAction(QString(), this, &MainWindow::renderPreview);
+    m_renderPreviewAct->setObjectName(QStringLiteral("actRenderPreview"));
+    m_renderPreviewAct->setShortcut(QKeySequence(Qt::Key_Return));
+    m_renderPreviewAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    m_timeline->addAction(m_renderPreviewAct); // Enter only while the timeline has focus
+    m_renderPreviewAct->setEnabled(m_ctl->canPlay());
+    m_deletePreviewsAct = m_sequenceMenu->addAction(QString(), this, [this] {
+        const int n = m_ctl->deletePreviews();
+        statusBar()->showMessage(tr("Preview files deleted: %1.").arg(n), 4000);
+    });
+    m_deletePreviewsAct->setObjectName(QStringLiteral("actDeletePreviews"));
     m_sequenceMenu->addSeparator();
     m_sequenceMenu->addAction(m_bin->multicamAction());
     // Live switching: 1-9 picture, Alt+1-9 sound, from the playhead on.
@@ -574,6 +611,10 @@ void MainWindow::retranslate()
     m_collectAct->setText(tr("Collect project..."));
     m_collectAct->setToolTip(tr("Copy the project and its media into one folder"));
     m_cacheAct->setText(tr("Media cache..."));
+    m_renderPreviewAct->setText(tr("Render preview"));
+    m_renderPreviewAct->setToolTip(tr("Render the red parts of the selected clips (or of the whole sequence) once, so "
+                                      "they play smoothly (Enter on the timeline)"));
+    m_deletePreviewsAct->setText(tr("Delete preview files"));
     m_useProxiesAct->setText(tr("Use proxies for playback"));
     m_useProxiesAct->setToolTip(tr("Play big videos from their light proxy copies. Export always uses the originals."));
     m_proxyCancel->setToolTip(tr("Stop making proxies"));
@@ -634,7 +675,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 1: export queue (File menu); keep editing while the files are exported.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 2: render preview (Sequence menu, Enter): red parts on the ruler play smoothly once rendered.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -1088,6 +1129,33 @@ void MainWindow::updateMulticamActions()
         for (int i = 0; i < acts->size(); ++i)
             (*acts)[i]->setEnabled(i < n);
     }
+}
+
+void MainWindow::renderPreview()
+{
+    if (m_ctl->isRenderingPreview()) {
+        statusBar()->showMessage(tr("A preview is being rendered already."), 4000);
+        return;
+    }
+    // The selected clips, else the whole sequence.
+    qint64 from = 0, to = std::max<qint64>(1, m_ctl->timeline().duration());
+    const QList<QUuid> sel = m_timeline->view()->selection();
+    if (!sel.isEmpty()) {
+        from = std::numeric_limits<qint64>::max();
+        to = 0;
+        for (const QUuid &id : sel)
+            if (const TimelineClip *c = m_ctl->timeline().clip(id)) {
+                from = std::min(from, c->start);
+                to = std::max(to, c->end());
+            }
+        if (to <= from) {
+            from = 0;
+            to = std::max<qint64>(1, m_ctl->timeline().duration());
+        }
+    }
+    QString err;
+    if (!m_ctl->renderPreview(from, to, &err))
+        statusBar()->showMessage(err, 6000);
 }
 
 } // namespace bc

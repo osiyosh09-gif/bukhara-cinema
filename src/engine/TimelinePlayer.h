@@ -52,6 +52,17 @@ public:
     // Takes effect at the next setProject(). Sound always comes from the
     // original. The exporter never sets any.
     void setProxies(const QHash<QUuid, QString> &proxies);
+    // Rendered previews (phase 13b): in each segment the picture comes from
+    // the file instead of the video tracks (sound and subtitles as usual).
+    // Takes effect at the next setProject(). The exporter never sets any.
+    struct PreviewSegment
+    {
+        qint64 start = 0;
+        qint64 length = 0;
+        QString path;
+    };
+    void setPreviews(const QList<PreviewSegment> &previews);
+    QList<PreviewSegment> previews() const { return m_previews; }
 
     bool isPlaying() const { return m_playing; }
     // Starts playback at `frame`; frames arrive through frameShown().
@@ -119,6 +130,8 @@ private:
     };
     QHash<QUuid, Cached> m_producers;
     QHash<QUuid, QString> m_proxies;
+    QList<PreviewSegment> m_previews;                                // sorted by start
+    QHash<QString, std::shared_ptr<Mlt::Producer>> m_previewProducers; // by file
     // Rendered titles by content, so unchanged titles are not drawn again.
     QHash<QByteArray, std::shared_ptr<Mlt::Producer>> m_titles;
     QSet<QByteArray> m_usedTitles;

@@ -1,5 +1,7 @@
 #include "engine/EngineServices.h"
 
+#include "core/RenderPreview.h"
+
 #include "core/AudioFx.h"
 #include "core/Color.h"
 #include "core/Effects.h"
@@ -148,6 +150,102 @@ void *stillInit(mlt_profile profile, mlt_service_type, const char *, const void 
     mlt_properties_set_int(props, "meta.media.height", still->source.height());
     mlt_properties_set_int(props, "meta.media.progressive", 1);
     (void)profile;
+    return producer;
+}
+
+// ---------------------------------------------------------------------------
+// bc_preview producer: a rendered preview file (phase 13b), decoded with the
+// inverse of the colour conversion it was written with, as RGBA like
+// bc_still (MLT's own decoder converts colours its own way).
+
+int previewGetImage(mlt_frame frame, uint8_t **buffer, mlt_image_format *format, int *width, int *height,
+                    int /*writable*/)
+{
+    auto *producer = static_cast<mlt_producer>(mlt_frame_pop_service(frame));
+    auto *reader = static_cast<RenderPreview::Reader *>(producer->child);
+    mlt_profile profile = mlt_service_profile(MLT_PRODUCER_SERVICE(producer));
+    const int w = std::max(2, *width > 0 ? *width : (profile ? profile->width : reader->size().width()));
+    const int h = std::max(2, *height > 0 ? *height : (profile ? profile->height : reader->size().height()));
+    const qint64 pos = mlt_properties_get_position(MLT_FRAME_PROPERTIES(frame), "bc_preview_pos");
+    QImage img = reader->frame(pos, QSize(w, h));
+    if (img.isNull()) {
+        img = QImage(w, h, QImage::Format_RGBA8888);
+        img.fill(Qt::black);
+    }
+    const int size = w * h * 4;
+    auto *out = static_cast<uint8_t *>(mlt_pool_alloc(size));
+    for (int y = 0; y < h; ++y)
+        std::memcpy(out + y * w * 4, img.constScanLine(y), size_t(w) * 4);
+    mlt_frame_set_image(frame, out, size, mlt_pool_release);
+    mlt_properties props = MLT_FRAME_PROPERTIES(frame);
+    mlt_properties_set_int(props, "width", w);
+    mlt_properties_set_int(props, "height", h);
+    mlt_properties_set_int(props, "format", mlt_image_rgba);
+    *buffer = out;
+    *format = mlt_image_rgba;
+    *width = w;
+    *height = h;
+    return 0;
+}
+
+int previewGetFrame(mlt_producer producer, mlt_frame_ptr frame, int /*index*/)
+{
+    *frame = mlt_frame_init(MLT_PRODUCER_SERVICE(producer));
+    if (!*frame)
+        return 1;
+    const mlt_position pos = mlt_producer_position(producer);
+    mlt_frame_set_position(*frame, pos);
+    mlt_properties props = MLT_FRAME_PROPERTIES(*frame);
+    mlt_properties_set_position(props, "bc_preview_pos", pos);
+    mlt_profile profile = mlt_service_profile(MLT_PRODUCER_SERVICE(producer));
+    mlt_properties_set_int(props, "progressive", 1);
+    mlt_properties_set_double(props, "aspect_ratio", profile ? mlt_profile_sar(profile) : 1.0);
+    if (profile) {
+        mlt_properties_set_int(props, "meta.media.width", profile->width);
+        mlt_properties_set_int(props, "meta.media.height", profile->height);
+    }
+    mlt_frame_push_service(*frame, producer);
+    mlt_frame_push_get_image(*frame, previewGetImage);
+    mlt_producer_prepare_next(producer);
+    return 0;
+}
+
+void previewClose(mlt_producer producer)
+{
+    delete static_cast<RenderPreview::Reader *>(producer->child);
+    producer->child = nullptr;
+    producer->close = nullptr;
+    mlt_producer_close(producer);
+    free(producer);
+}
+
+void *previewInit(mlt_profile, mlt_service_type, const char *, const void *arg)
+{
+    if (!arg)
+        return nullptr;
+    const QString path = QString::fromUtf8(static_cast<const char *>(arg));
+    auto reader = std::make_unique<RenderPreview::Reader>();
+    if (!reader->open(path) || reader->frameCount() <= 0)
+        return nullptr;
+    auto *producer = static_cast<mlt_producer>(calloc(1, sizeof(struct mlt_producer_s)));
+    if (!producer || mlt_producer_init(producer, nullptr) != 0) {
+        free(producer);
+        return nullptr;
+    }
+    const int length = int(reader->frameCount());
+    const QSize size = reader->size();
+    producer->child = reader.release();
+    producer->get_frame = previewGetFrame;
+    producer->close = reinterpret_cast<mlt_destructor>(previewClose);
+    mlt_properties props = MLT_PRODUCER_PROPERTIES(producer);
+    mlt_properties_set(props, "resource", static_cast<const char *>(arg));
+    mlt_properties_set(props, "mlt_service", "bc_preview");
+    mlt_properties_set_int(props, "length", length);
+    mlt_properties_set_int(props, "out", length - 1);
+    mlt_properties_set_int(props, "seekable", 1);
+    mlt_properties_set_int(props, "meta.media.width", size.width());
+    mlt_properties_set_int(props, "meta.media.height", size.height());
+    mlt_properties_set_int(props, "meta.media.progressive", 1);
     return producer;
 }
 
@@ -747,6 +845,7 @@ void registerAll(mlt_repository_s *repository)
     if (!repository)
         return;
     mlt_repository_register(repository, mlt_service_producer_type, "bc_still", stillInit);
+    mlt_repository_register(repository, mlt_service_producer_type, "bc_preview", previewInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_gain", gainInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_meter", meterInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_audiofx", audioFxInit);

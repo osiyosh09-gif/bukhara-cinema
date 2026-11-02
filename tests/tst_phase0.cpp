@@ -79,7 +79,7 @@ private slots:
                 QVERIFY2(!a->isEnabled(), qPrintable(a->objectName()));
             }
         }
-        QVERIFY(planned >= 2); // phases 2-7 turned most editing actions into real ones; later phases stay planned
+        QVERIFY(planned >= 1); // most planned actions became real ones; later phases (AI) stay planned
 
         // With no clip opened, the Source monitor buttons must not pretend to work.
         auto *source = w.findChild<MonitorView *>(QStringLiteral("sourceMonitor"));
@@ -101,9 +101,9 @@ private slots:
         QTest::addColumn<QString>("editMenu");
         QTest::addColumn<QString>("mediaBin");
         QTest::addColumn<QString>("phaseTag");
-        QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[13-босқич]";
-        QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[13-bosqich]";
-        QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 13]";
+        QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[14-босқич]";
+        QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[14-bosqich]";
+        QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 14]";
     }
 
     void languageSwitchUpdatesUi()
@@ -121,7 +121,7 @@ private slots:
         QCOMPARE(Language::instance().current(), code);
         QCOMPARE(menuAt(w, 1)->title(), editMenu);
         QCOMPARE(w.findChild<QTabWidget *>(QStringLiteral("leftTabs"))->tabText(0), mediaBin);
-        auto *planned = w.findChild<QAction *>(QStringLiteral("actRenderPreview"));
+        auto *planned = w.findChild<QAction *>(QStringLiteral("actAutoCaptions"));
         QVERIFY(planned->text().endsWith(phaseTag));
 
         // Persisted for the next start.
