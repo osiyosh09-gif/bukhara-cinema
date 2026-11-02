@@ -128,6 +128,9 @@ ProjectController::~ProjectController()
     if (m_previewCancel)
         m_previewCancel->store(true);
     m_previewPool.waitForDone();
+    if (m_mixCancel)
+        m_mixCancel->store(true);
+    m_mixPool.waitForDone();
     m_gridPool.waitForDone();
 }
 

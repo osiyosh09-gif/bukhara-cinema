@@ -141,6 +141,16 @@ double peakDb(const Profile &p, double fromSec, double toSec)
     return best > 0 ? 20.0 * std::log10(best) : -120.0;
 }
 
+double gainToTarget(const Result &r, double targetLufs, double ceilingDb)
+{
+    if (!r.valid)
+        return 0;
+    double gain = targetLufs - r.lufs;
+    if (r.peakDb + gain > ceilingDb)
+        gain = ceilingDb - r.peakDb;
+    return gain;
+}
+
 Result measure(const Profile &p, double fromSec, double toSec)
 {
     Result r;

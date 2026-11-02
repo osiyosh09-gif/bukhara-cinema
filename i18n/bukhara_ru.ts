@@ -224,6 +224,11 @@
         <translation>Нормализация громкости (LUFS)</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="62" />
+        <source>Clip &gt; Normalize loudness: measures the selected audio clips as in EBU R128 and sets their volume to -14, -16 or -23 LUFS (or your own target) with a peak ceiling. For the whole mix see Sequence &gt; Mix loudness.</source>
+        <translation>Клип &gt; Нормализовать громкость: выбранные аудиоклипы измеряются по EBU R128, их громкость приводится к -14, -16 или -23 LUFS (или своему значению) с ограничением пиков. Для всего микса: «Эпизод &gt; Громкость микса».</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="63" />
         <source>Subtitles tab on the right: add at the playhead, edit time and text, size, colour, box and height for all; drawn in the Program monitor and burned in on export (optional). Graphics menu: import and export .srt (UTF-8 or Windows-1251); export can also write an .srt next to the video.</source>
         <translation>Вкладка «Субтитры» справа: добавление в позиции курсора, правка времени и текста; размер, цвет, подложка и высота для всех. Видны в мониторе Program и впечатываются при экспорте (по желанию). Меню «Графика»: импорт и экспорт .srt (UTF-8 или Windows-1251); экспорт может записать .srt рядом с видео.</translation>
@@ -272,11 +277,6 @@
         <location filename="../src/app/FeatureStatus.cpp" line="69" />
         <source>A line on the time ruler shows red where the picture is heavy (effects, colour, motion, speed, transitions, nested sequences, several layers). Sequence &gt; Render preview (Enter on the timeline) renders those parts of the selected clips, or of the whole sequence, once in the background; they turn green and play from the file. An edit makes a part red again; undo brings its file back. Sound is not rendered. Export always uses the full quality.</source>
         <translation>Полоса на линейке времени показывает красным тяжёлые места (эффекты, цвет, движение, скорость, переходы, вложенные секвенции, несколько слоёв). «Секвенция &gt; Просчитать превью» (Enter на таймлайне) один раз просчитывает в фоне эти места выбранных клипов (или всей секвенции): они становятся зелёными и играют из файла. Правка снова делает место красным, отмена возвращает его файл. Звук не просчитывается. Экспорт всегда в полном качестве.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="70" />
-        <source>GPU acceleration, loudness of the whole mix</source>
-        <translation>Ускорение GPU, громкость всего микса</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
@@ -419,11 +419,6 @@
         <translation>Выберите аудиоклип (для связанного клипа нажмите «Звук») на вкладке «Эффекты»: срез низких, басы, середина и верха; компрессор с порогом, степенью, атакой, восстановлением и компенсацией. Работают до громкости клипа.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="62" />
-        <source>Clip &gt; Normalize loudness: measures the selected audio clips as in EBU R128 and sets their volume to -14, -16 or -23 LUFS (or your own target) with a peak ceiling. Measuring the whole mix comes with phase 13.</source>
-        <translation>Клип &gt; Нормализовать громкость: выбранные аудиоклипы измеряются по EBU R128, их громкость приводится к -14, -16 или -23 LUFS (или своему значению) с ограничением пиков. Измерение всего микса — в фазе 13.</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="63" />
         <source>Subtitles and SRT import/export</source>
         <translation>Субтитры и импорт/экспорт SRT</translation>
@@ -439,12 +434,27 @@
         <translation>В окне экспорта нажмите «В очередь» вместо «Экспорт»: копия проекта в текущем виде ждёт в «Файл &gt; Очередь экспорта». Добавьте несколько файлов (другие имена, качество или версии проекта), затем «Запустить очередь»: они экспортируются один за другим, пока вы продолжаете монтаж. Есть также «Остановить», «Убрать», «Повторить» и «Очистить завершённые».</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="70" />
+        <source>Loudness of the whole mix</source>
+        <translation>Громкость всего микса</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="70" />
+        <source>Sequence &gt; Mix loudness measures the whole mixed sound as it will be exported (every track with its volume, effects and fader, and the master) in LUFS, with its peak. Apply sets the master volume so the mix reaches -14, -16 or -23 LUFS (or your own target) without peaks above the ceiling; the balance between the tracks stays.</source>
+        <translation>«Эпизод &gt; Громкость микса» измеряет весь сведённый звук так, как он будет экспортирован (каждая дорожка со своей громкостью, эффектами и фейдером, и мастер), в LUFS и с пиком. «Применить» ставит громкость мастера так, чтобы микс достиг -14, -16 или -23 LUFS (или своего значения) без пиков выше потолка; баланс между дорожками сохраняется.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="71" />
+        <source>GPU acceleration</source>
+        <translation>Ускорение GPU</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="72" />
         <source>AI assistants: transcription, text-based editing, scene detection</source>
         <translation>AI-помощники: транскрипция, монтаж по тексту, определение сцен</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="72" />
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
         <source>Plugins and project interchange</source>
         <translation>Плагины и обмен проектами</translation>
     </message>
@@ -2030,676 +2040,686 @@
 <context>
     <name>bc::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="187" />
+        <location filename="../src/app/MainWindow.cpp" line="188" />
         <source>Source</source>
         <translation>Источник</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="189" />
+        <location filename="../src/app/MainWindow.cpp" line="190" />
         <source>Program</source>
         <translation>Программа</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="670" />
+        <location filename="../src/app/MainWindow.cpp" line="679" />
         <source>Media bin</source>
         <translation>Медиатека</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="671" />
+        <location filename="../src/app/MainWindow.cpp" line="680" />
         <source>Project files</source>
         <translation>Файлы проекта</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="192" />
+        <location filename="../src/app/MainWindow.cpp" line="193" />
         <source>Drag media from the bin to the timeline.</source>
         <translation>Перетащите медиа из медиатеки на таймлайн.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="193" />
+        <location filename="../src/app/MainWindow.cpp" line="194" />
         <source>No video at the playhead.</source>
         <translation>Под указателем нет видео.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="673" />
+        <location filename="../src/app/MainWindow.cpp" line="682" />
         <source>Effects</source>
         <translation>Эффекты</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="674" />
+        <location filename="../src/app/MainWindow.cpp" line="683" />
         <source>Color</source>
         <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="675" />
+        <location filename="../src/app/MainWindow.cpp" line="684" />
         <source>Audio</source>
         <translation>Звук</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="605" />
+        <location filename="../src/app/MainWindow.cpp" line="612" />
         <source>New project</source>
         <translation>Новый проект</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="606" />
+        <location filename="../src/app/MainWindow.cpp" line="613" />
         <source>Open project...</source>
         <translation>Открыть проект...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="608" />
-        <location filename="../src/app/MainWindow.cpp" line="651" />
-        <location filename="../src/app/MainWindow.cpp" line="888" />
-        <location filename="../src/app/MainWindow.cpp" line="944" />
-        <location filename="../src/app/MainWindow.cpp" line="962" />
+        <location filename="../src/app/MainWindow.cpp" line="615" />
+        <location filename="../src/app/MainWindow.cpp" line="660" />
+        <location filename="../src/app/MainWindow.cpp" line="897" />
+        <location filename="../src/app/MainWindow.cpp" line="953" />
+        <location filename="../src/app/MainWindow.cpp" line="971" />
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="609" />
+        <location filename="../src/app/MainWindow.cpp" line="616" />
         <source>Save as...</source>
         <translation>Сохранить как...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="639" />
+        <location filename="../src/app/MainWindow.cpp" line="648" />
         <source>Import media...</source>
         <translation>Импорт медиа...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="655" />
+        <location filename="../src/app/MainWindow.cpp" line="664" />
         <source>Export...</source>
         <translation>Экспорт...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="991" />
+        <location filename="../src/app/MainWindow.cpp" line="1000" />
         <source>Undo</source>
         <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="991" />
+        <location filename="../src/app/MainWindow.cpp" line="1000" />
         <source>Undo: %1</source>
         <translation>Отменить: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="992" />
+        <location filename="../src/app/MainWindow.cpp" line="1001" />
         <source>Redo</source>
         <translation>Повторить</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="621" />
+        <location filename="../src/app/MainWindow.cpp" line="630" />
         <source>Keyboard shortcuts...</source>
         <translation>Сочетания клавиш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="604" />
+        <location filename="../src/app/MainWindow.cpp" line="611" />
         <source>Audio gain...</source>
         <translation>Усиление звука...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="640" />
+        <location filename="../src/app/MainWindow.cpp" line="649" />
         <source>Sequence settings...</source>
         <translation>Настройки эпизода...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="614" />
+        <location filename="../src/app/MainWindow.cpp" line="621" />
         <source>Render preview</source>
         <translation>Просчитать превью</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="167" />
-        <location filename="../src/app/MainWindow.cpp" line="602" />
+        <location filename="../src/app/MainWindow.cpp" line="168" />
+        <location filename="../src/app/MainWindow.cpp" line="609" />
         <source>Pause</source>
         <translation>Пауза</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="167" />
-        <location filename="../src/app/MainWindow.cpp" line="602" />
+        <location filename="../src/app/MainWindow.cpp" line="168" />
+        <location filename="../src/app/MainWindow.cpp" line="609" />
         <source>Play</source>
         <translation>Воспроизвести</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="634" />
+        <location filename="../src/app/MainWindow.cpp" line="643" />
         <source>Add marker</source>
         <translation>Добавить маркер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="635" />
+        <location filename="../src/app/MainWindow.cpp" line="644" />
         <source>Go to next marker</source>
         <translation>К следующему маркеру</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="603" />
+        <location filename="../src/app/MainWindow.cpp" line="610" />
         <source>New text</source>
         <translation>Новый текст</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="73" />
+        <location filename="../src/app/MainWindow.cpp" line="74" />
         <source>Autosaved at %1</source>
         <translation>Автосохранено в %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="76" />
+        <location filename="../src/app/MainWindow.cpp" line="77" />
         <source>Autosave failed: %1</source>
         <translation>Ошибка автосохранения: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="99" />
+        <location filename="../src/app/MainWindow.cpp" line="100" />
         <source>Making proxy: %1% (%2 more)</source>
         <translation>Создание прокси: %1% (ещё %2)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="100" />
+        <location filename="../src/app/MainWindow.cpp" line="101" />
         <source>Making proxy: %1%</source>
         <translation>Создание прокси: %1%</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="106" />
+        <location filename="../src/app/MainWindow.cpp" line="107" />
         <source>Could not make a proxy: %1</source>
         <translation>Не удалось создать прокси: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="123" />
+        <location filename="../src/app/MainWindow.cpp" line="124" />
         <source>Rendering preview: %1%</source>
         <translation>Просчёт превью: %1%</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="131" />
+        <location filename="../src/app/MainWindow.cpp" line="132" />
         <source>Preview rendered: the green parts play from the rendered files.</source>
         <translation>Превью готово: зелёные места играют из просчитанных файлов.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="133" />
+        <location filename="../src/app/MainWindow.cpp" line="134" />
         <source>Could not render the preview: %1</source>
         <translation>Не удалось просчитать превью: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="198" />
+        <location filename="../src/app/MainWindow.cpp" line="199" />
         <source>Double-click a clip in the media bin to watch it here.</source>
         <translation>Дважды щёлкните клип в медиатеке, чтобы посмотреть его здесь.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="199" />
+        <location filename="../src/app/MainWindow.cpp" line="200" />
         <source>No picture (sound only).</source>
         <translation>Нет изображения (только звук).</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="327" />
+        <location filename="../src/app/MainWindow.cpp" line="328" />
         <source>Export queue finished: %1 done, %2 failed.</source>
         <translation>Очередь экспорта завершена: готово %1, ошибок %2.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="328" />
+        <location filename="../src/app/MainWindow.cpp" line="329" />
         <source>Export queue finished: %1 done.</source>
         <translation>Очередь экспорта завершена: готово %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="415" />
+        <location filename="../src/app/MainWindow.cpp" line="416" />
         <source>Preview files deleted: %1.</source>
         <translation>Файлы превью удалены: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="459" />
-        <location filename="../src/app/MainWindow.cpp" line="465" />
+        <location filename="../src/app/MainWindow.cpp" line="466" />
+        <location filename="../src/app/MainWindow.cpp" line="472" />
         <source>Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked.</source>
         <translation>Нечего вставлять: откройте клип в мониторе Source и оставьте хотя бы одну видео- и аудиодорожку незаблокированной.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="509" />
+        <location filename="../src/app/MainWindow.cpp" line="516" />
         <source>Subtitles from speech (automatic)...</source>
         <translation>Автоматические субтитры по речи...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="584" />
+        <location filename="../src/app/MainWindow.cpp" line="591" />
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="585" />
+        <location filename="../src/app/MainWindow.cpp" line="592" />
         <source>&amp;Edit</source>
         <translation>&amp;Правка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="586" />
+        <location filename="../src/app/MainWindow.cpp" line="593" />
         <source>&amp;Clip</source>
         <translation>&amp;Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="587" />
+        <location filename="../src/app/MainWindow.cpp" line="594" />
         <source>&amp;Sequence</source>
         <translation>&amp;Эпизод</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="588" />
+        <location filename="../src/app/MainWindow.cpp" line="595" />
         <source>&amp;Markers</source>
         <translation>&amp;Маркеры</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="589" />
+        <location filename="../src/app/MainWindow.cpp" line="596" />
         <source>Timeline tools</source>
         <translation>Инструменты таймлайна</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="590" />
+        <location filename="../src/app/MainWindow.cpp" line="597" />
         <source>&amp;Graphics</source>
         <translation>&amp;Графика</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="591" />
+        <location filename="../src/app/MainWindow.cpp" line="598" />
         <source>&amp;View</source>
         <translation>&amp;Вид</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="592" />
+        <location filename="../src/app/MainWindow.cpp" line="599" />
         <source>&amp;Window</source>
         <translation>&amp;Окно</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="593" />
+        <location filename="../src/app/MainWindow.cpp" line="600" />
         <source>&amp;Help</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="598" />
+        <location filename="../src/app/MainWindow.cpp" line="605" />
         <source>Planned for phase %1</source>
         <translation>Запланировано на этап %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="607" />
+        <location filename="../src/app/MainWindow.cpp" line="614" />
         <source>Recent projects</source>
         <translation>Последние проекты</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="610" />
+        <location filename="../src/app/MainWindow.cpp" line="617" />
         <source>Previous versions...</source>
         <translation>Предыдущие версии...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="611" />
+        <location filename="../src/app/MainWindow.cpp" line="618" />
         <source>Collect project...</source>
         <translation>Собрать проект...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="612" />
+        <location filename="../src/app/MainWindow.cpp" line="619" />
         <source>Copy the project and its media into one folder</source>
         <translation>Скопировать проект и медиа в одну папку</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="613" />
+        <location filename="../src/app/MainWindow.cpp" line="620" />
         <source>Media cache...</source>
         <translation>Кэш медиа...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="615" />
+        <location filename="../src/app/MainWindow.cpp" line="622" />
         <source>Render the red parts of the selected clips (or of the whole sequence) once, so they play smoothly (Enter on the timeline)</source>
         <translation>Один раз просчитать красные места выбранных клипов (или всей секвенции), чтобы они играли плавно (Enter на таймлайне)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="617" />
+        <location filename="../src/app/MainWindow.cpp" line="624" />
         <source>Delete preview files</source>
         <translation>Удалить файлы превью</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="618" />
+        <location filename="../src/app/MainWindow.cpp" line="625" />
+        <source>Mix loudness...</source>
+        <translation>Громкость микса...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="626" />
+        <source>Measure the loudness of the whole mix (LUFS) and set the master volume to a target</source>
+        <translation>Измерить громкость всего микса (LUFS) и привести громкость мастера к цели</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="627" />
         <source>Use proxies for playback</source>
         <translation>Использовать прокси при воспроизведении</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="619" />
+        <location filename="../src/app/MainWindow.cpp" line="628" />
         <source>Play big videos from their light proxy copies. Export always uses the originals.</source>
         <translation>Воспроизводить большие видео из лёгких прокси-копий. Экспорт всегда из оригиналов.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="620" />
+        <location filename="../src/app/MainWindow.cpp" line="629" />
         <source>Stop making proxies</source>
         <translation>Остановить создание прокси</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="622" />
+        <location filename="../src/app/MainWindow.cpp" line="631" />
         <source>Play backwards (J, again: faster)</source>
         <translation>Назад (J, ещё раз: быстрее)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="623" />
+        <location filename="../src/app/MainWindow.cpp" line="632" />
         <source>Stop (K)</source>
         <translation>Стоп (K)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="624" />
+        <location filename="../src/app/MainWindow.cpp" line="633" />
         <source>Play forwards (L, again: faster)</source>
         <translation>Вперёд (L, ещё раз: быстрее)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="625" />
+        <location filename="../src/app/MainWindow.cpp" line="634" />
         <source>Insert from Source</source>
         <translation>Вставка из Source</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="626" />
+        <location filename="../src/app/MainWindow.cpp" line="635" />
         <source>Insert the source In-Out part at the playhead; later clips move right (,)</source>
         <translation>Вставить часть In-Out из Source в позицию курсора; следующие клипы сдвигаются вправо (,)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="627" />
+        <location filename="../src/app/MainWindow.cpp" line="636" />
         <source>Overwrite from Source</source>
         <translation>Перезапись из Source</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="628" />
+        <location filename="../src/app/MainWindow.cpp" line="637" />
         <source>Put the source In-Out part at the playhead over what is there (.)</source>
         <translation>Поставить часть In-Out из Source в позицию курсора поверх того, что там есть (.)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="629" />
+        <location filename="../src/app/MainWindow.cpp" line="638" />
         <source>Mark In (Source)</source>
         <translation>Отметить In (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="630" />
+        <location filename="../src/app/MainWindow.cpp" line="639" />
         <source>Start of the part to use (I)</source>
         <translation>Начало используемой части (I)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="631" />
+        <location filename="../src/app/MainWindow.cpp" line="640" />
         <source>Mark Out (Source)</source>
         <translation>Отметить Out (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="632" />
+        <location filename="../src/app/MainWindow.cpp" line="641" />
         <source>End of the part to use (O)</source>
         <translation>Конец используемой части (O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="633" />
+        <location filename="../src/app/MainWindow.cpp" line="642" />
         <source>Clear In and Out (Source)</source>
         <translation>Снять In и Out (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="636" />
+        <location filename="../src/app/MainWindow.cpp" line="645" />
         <source>Go to previous marker</source>
         <translation>К предыдущему маркеру</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="637" />
+        <location filename="../src/app/MainWindow.cpp" line="646" />
         <source>Rename marker...</source>
         <translation>Переименовать маркер...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="638" />
+        <location filename="../src/app/MainWindow.cpp" line="647" />
         <source>Delete marker</source>
         <translation>Удалить маркер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="641" />
+        <location filename="../src/app/MainWindow.cpp" line="650" />
         <source>Settings...</source>
         <translation>Настройки...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="642" />
+        <location filename="../src/app/MainWindow.cpp" line="651" />
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="643" />
+        <location filename="../src/app/MainWindow.cpp" line="652" />
         <source>Full screen</source>
         <translation>Полный экран</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="644" />
+        <location filename="../src/app/MainWindow.cpp" line="653" />
         <source>Reset layout</source>
         <translation>Сбросить расположение панелей</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="645" />
+        <location filename="../src/app/MainWindow.cpp" line="654" />
         <source>Feature status...</source>
         <translation>Состояние функций...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="646" />
+        <location filename="../src/app/MainWindow.cpp" line="655" />
         <source>Licenses...</source>
         <translation>Лицензии...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="647" />
+        <location filename="../src/app/MainWindow.cpp" line="656" />
         <source>Open log folder</source>
         <translation>Открыть папку журнала</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="648" />
+        <location filename="../src/app/MainWindow.cpp" line="657" />
         <source>About BUKHARA CINEMA...</source>
         <translation>О программе BUKHARA CINEMA...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="650" />
+        <location filename="../src/app/MainWindow.cpp" line="659" />
         <source>Main toolbar</source>
         <translation>Главная панель инструментов</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="652" />
+        <location filename="../src/app/MainWindow.cpp" line="661" />
         <source>Save project (Ctrl+S)</source>
         <translation>Сохранить проект (Ctrl+S)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="653" />
+        <location filename="../src/app/MainWindow.cpp" line="662" />
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="654" />
+        <location filename="../src/app/MainWindow.cpp" line="663" />
         <source>Export to MP4 (Ctrl+M)</source>
         <translation>Экспорт в MP4 (Ctrl+M)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="656" />
+        <location filename="../src/app/MainWindow.cpp" line="665" />
         <source>Export queue...</source>
         <translation>Очередь экспорта...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="658" />
+        <location filename="../src/app/MainWindow.cpp" line="667" />
         <source>Project</source>
         <translation>Проект</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="659" />
+        <location filename="../src/app/MainWindow.cpp" line="668" />
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="660" />
+        <location filename="../src/app/MainWindow.cpp" line="669" />
         <source>Timeline</source>
         <translation>Таймлайн</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="661" />
+        <location filename="../src/app/MainWindow.cpp" line="670" />
         <source>Scopes</source>
         <translation>Осциллографы</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="662" />
+        <location filename="../src/app/MainWindow.cpp" line="671" />
         <source>Multicamera monitor</source>
         <translation>Мультикамерный монитор</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="663" />
+        <location filename="../src/app/MainWindow.cpp" line="672" />
         <source>Switch camera</source>
         <translation>Переключить камеру</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="664" />
+        <location filename="../src/app/MainWindow.cpp" line="673" />
         <source>Switch sound</source>
         <translation>Переключить звук</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="666" />
+        <location filename="../src/app/MainWindow.cpp" line="675" />
         <source>Camera %1</source>
         <translation>Камера %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="667" />
+        <location filename="../src/app/MainWindow.cpp" line="676" />
         <source>Sound of camera %1</source>
         <translation>Звук камеры %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="672" />
+        <location filename="../src/app/MainWindow.cpp" line="681" />
         <source>Clip</source>
         <translation>Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="678" />
-        <source>Phase 13, part 2: render preview (Sequence menu, Enter): red parts on the ruler play smoothly once rendered.</source>
-        <translation>Этап 13, часть 2: просчёт превью (меню «Секвенция», Enter): красные места на линейке после просчёта играют плавно.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="714" />
+        <location filename="../src/app/MainWindow.cpp" line="723" />
         <source>Insert</source>
         <translation>Вставка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="715" />
+        <location filename="../src/app/MainWindow.cpp" line="724" />
         <source>Overwrite</source>
         <translation>Перезапись</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1035" />
+        <location filename="../src/app/MainWindow.cpp" line="1044" />
         <source>Previous versions</source>
         <translation>Предыдущие версии</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1038" />
+        <location filename="../src/app/MainWindow.cpp" line="1047" />
         <source>An earlier version is open. Save to make it the current project.</source>
         <translation>Открыта предыдущая версия. Сохраните, чтобы сделать её текущим проектом.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1075" />
+        <location filename="../src/app/MainWindow.cpp" line="1084" />
         <source>Recover unsaved work</source>
         <translation>Восстановление несохранённой работы</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1079" />
+        <location filename="../src/app/MainWindow.cpp" line="1088" />
         <source>Unsaved work recovered. Save the project to keep it.</source>
         <translation>Несохранённая работа восстановлена. Сохраните проект, чтобы её не потерять.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1137" />
+        <location filename="../src/app/MainWindow.cpp" line="1146" />
         <source>A preview is being rendered already.</source>
         <translation>Превью уже просчитывается.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="151" />
-        <location filename="../src/app/MainWindow.cpp" line="679" />
-        <location filename="../src/app/MainWindow.cpp" line="709" />
+        <location filename="../src/app/MainWindow.cpp" line="152" />
+        <location filename="../src/app/MainWindow.cpp" line="688" />
+        <location filename="../src/app/MainWindow.cpp" line="718" />
         <source>The video engine (MLT) could not be loaded: playback is off. See the log file.</source>
         <translation>Не удалось загрузить видеодвижок (MLT): воспроизведение отключено. См. файл журнала.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="992" />
+        <location filename="../src/app/MainWindow.cpp" line="1001" />
         <source>Redo: %1</source>
         <translation>Повторить: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="884" />
+        <location filename="../src/app/MainWindow.cpp" line="893" />
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="676" />
+        <location filename="../src/app/MainWindow.cpp" line="685" />
         <source>Subtitles</source>
         <translation>Субтитры</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="798" />
+        <location filename="../src/app/MainWindow.cpp" line="687" />
+        <source>Phase 13, part 3: loudness of the whole mix (Sequence &gt; Mix loudness): measure in LUFS and set the master volume.</source>
+        <translation>Этап 13, часть 3: громкость всего микса («Эпизод &gt; Громкость микса»): измерение в LUFS и установка громкости мастера.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="807" />
         <source>Rename marker</source>
         <translation>Переименовать маркер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="798" />
+        <location filename="../src/app/MainWindow.cpp" line="807" />
         <source>Marker name:</source>
         <translation>Имя маркера:</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="854" />
+        <location filename="../src/app/MainWindow.cpp" line="863" />
         <source>Export queue</source>
         <translation>Очередь экспорта</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="855" />
+        <location filename="../src/app/MainWindow.cpp" line="864" />
         <source>Exports in the queue are not finished. Close anyway? They will be lost.</source>
         <translation>Экспорты в очереди не завершены. Всё равно закрыть? Они будут потеряны.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="885" />
+        <location filename="../src/app/MainWindow.cpp" line="894" />
         <source>Project "%1" has unsaved changes. Save them?</source>
         <translation>В проекте «%1» есть несохранённые изменения. Сохранить?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="889" />
+        <location filename="../src/app/MainWindow.cpp" line="898" />
         <source>Don't save</source>
         <translation>Не сохранять</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="890" />
+        <location filename="../src/app/MainWindow.cpp" line="899" />
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="911" />
-        <location filename="../src/app/MainWindow.cpp" line="921" />
+        <location filename="../src/app/MainWindow.cpp" line="920" />
+        <location filename="../src/app/MainWindow.cpp" line="930" />
         <source>Open project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="912" />
-        <location filename="../src/app/MainWindow.cpp" line="957" />
+        <location filename="../src/app/MainWindow.cpp" line="921" />
+        <location filename="../src/app/MainWindow.cpp" line="966" />
         <source>BUKHARA CINEMA projects (*.%1)</source>
         <translation>Проекты BUKHARA CINEMA (*.%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="921" />
-        <location filename="../src/app/MainWindow.cpp" line="1035" />
-        <location filename="../src/app/MainWindow.cpp" line="1075" />
+        <location filename="../src/app/MainWindow.cpp" line="930" />
+        <location filename="../src/app/MainWindow.cpp" line="1044" />
+        <location filename="../src/app/MainWindow.cpp" line="1084" />
         <source>Cannot open "%1":
 %2</source>
         <translation>Не удалось открыть «%1»:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="926" />
+        <location filename="../src/app/MainWindow.cpp" line="935" />
         <source>Missing files</source>
         <translation>Потерянные файлы</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="927" />
+        <location filename="../src/app/MainWindow.cpp" line="936" />
         <source>Media files not found: %1. They may have been moved or renamed.</source>
         <translation>Не найдено медиафайлов: %1. Возможно, они перемещены или переименованы.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="929" />
+        <location filename="../src/app/MainWindow.cpp" line="938" />
         <source>Search in folder...</source>
         <translation>Искать в папке...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="930" />
+        <location filename="../src/app/MainWindow.cpp" line="939" />
         <source>Later</source>
         <translation>Позже</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="944" />
-        <location filename="../src/app/MainWindow.cpp" line="962" />
+        <location filename="../src/app/MainWindow.cpp" line="953" />
+        <location filename="../src/app/MainWindow.cpp" line="971" />
         <source>Cannot save the project:
 %1</source>
         <translation>Не удалось сохранить проект:
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="947" />
-        <location filename="../src/app/MainWindow.cpp" line="966" />
+        <location filename="../src/app/MainWindow.cpp" line="956" />
+        <location filename="../src/app/MainWindow.cpp" line="975" />
         <source>Saved: %1</source>
         <translation>Сохранено: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="956" />
+        <location filename="../src/app/MainWindow.cpp" line="965" />
         <source>Save project as</source>
         <translation>Сохранить проект как</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="975" />
+        <location filename="../src/app/MainWindow.cpp" line="984" />
         <source>(empty)</source>
         <translation>(пусто)</translation>
     </message>
@@ -2956,6 +2976,124 @@
     </message>
 </context>
 <context>
+    <name>bc::MixLoudnessDialog</name>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="40" />
+        <source>Mix loudness</source>
+        <translation>Громкость микса</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="48" />
+        <source>-14 LUFS: YouTube, Instagram, Telegram</source>
+        <translation>-14 LUFS: YouTube, Instagram, Telegram</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="49" />
+        <source>-16 LUFS: podcasts, phones</source>
+        <translation>-16 LUFS: подкасты, телефоны</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="50" />
+        <source>-23 LUFS: television (EBU R128)</source>
+        <translation>-23 LUFS: телевидение (EBU R128)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="51" />
+        <source>Custom</source>
+        <translation>Пользовательский</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="59" />
+        <source>No sample may be louder than this after the change (sample peak)</source>
+        <translation>После изменения ни один отсчёт не будет громче этого (sample peak)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="81" />
+        <source>Target:</source>
+        <translation>Цель:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="83" />
+        <source>Peak ceiling:</source>
+        <translation>Потолок пиков:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="85" />
+        <source>The whole sequence is measured as it will be exported: every track with its volume, sound effects and fader, and the master. Apply changes only the master volume (Audio tab), so the balance between the tracks stays.</source>
+        <translation>Весь эпизод измеряется так, как будет экспортирован: каждая дорожка со своей громкостью, звуковыми эффектами и фейдером, и мастер. «Применить» меняет только громкость мастера (вкладка «Аудио»), поэтому баланс между дорожками сохраняется.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="93" />
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="94" />
+        <source>Measure again</source>
+        <translation>Измерить снова</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="96" />
+        <source>Apply</source>
+        <translation>Применить</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="129" />
+        <source>Could not measure: %1</source>
+        <translation>Не удалось измерить: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="164" />
+        <source>Measuring the mix...</source>
+        <translation>Измерение микса...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="165" />
+        <source>The sound of the whole sequence is rendered; you can keep working.</source>
+        <translation>Звук всего эпизода просчитывается; можно продолжать работу.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="170" />
+        <source>The sequence has changed since the last measurement.</source>
+        <translation>Эпизод изменился после последнего измерения.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="172" />
+        <source>Press Measure again.</source>
+        <translation>Нажмите «Измерить снова».</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="177" />
+        <source>The mix is silent.</source>
+        <translation>Микс беззвучен.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="182" />
+        <source>Loudness: %1   Peak: %2</source>
+        <translation>Громкость: %1   Пик: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="188" />
+        <source>The mix is at the target already (master volume %1).</source>
+        <translation>Микс уже на цели (громкость мастера %1).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="190" />
+        <source>The peaks are at the ceiling already: the mix cannot get louder without a compressor or limiter (Effects tab).</source>
+        <translation>Пики уже у потолка: без компрессора или лимитера микс громче не сделать (вкладка «Эффекты»).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="195" />
+        <source>Apply changes the master volume from %1 to %2.</source>
+        <translation>«Применить» изменит громкость мастера с %1 на %2.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MixLoudnessDialog.cpp" line="199" />
+        <source>The mix stays at %1 so that its peaks stay below the ceiling; a compressor (Effects tab) can help.</source>
+        <translation>Микс останется на %1, чтобы пики не превысили потолок; поможет компрессор (вкладка «Эффекты»).</translation>
+    </message>
+</context>
+<context>
     <name>bc::MonitorView</name>
     <message>
         <location filename="../src/app/MonitorView.cpp" line="232" />
@@ -3101,102 +3239,102 @@
 <context>
     <name>bc::ProjectController</name>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="138" />
+        <location filename="../src/app/ProjectController.cpp" line="141" />
         <source>Untitled</source>
         <translation>Без названия</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="485" />
+        <location filename="../src/app/ProjectController.cpp" line="488" />
         <source>different media type</source>
         <translation>другой тип медиа</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="487" />
+        <location filename="../src/app/ProjectController.cpp" line="490" />
         <source>different duration</source>
         <translation>другая длительность</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="708" />
+        <location filename="../src/app/ProjectController.cpp" line="711" />
         <source>Place clips</source>
         <translation>Размещение клипов</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="716" />
+        <location filename="../src/app/ProjectController.cpp" line="719" />
         <source>Move clips</source>
         <translation>Перемещение клипов</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="723" />
+        <location filename="../src/app/ProjectController.cpp" line="726" />
         <source>Trim clip</source>
         <translation>Подрезка клипа</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="730" />
+        <location filename="../src/app/ProjectController.cpp" line="733" />
         <source>Split</source>
         <translation>Разрезание</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="735" />
+        <location filename="../src/app/ProjectController.cpp" line="738" />
         <source>Ripple delete</source>
         <translation>Удалить со сдвигом (ripple)</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="735" />
+        <location filename="../src/app/ProjectController.cpp" line="738" />
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="742" />
+        <location filename="../src/app/ProjectController.cpp" line="745" />
         <source>Add video track</source>
         <translation>Добавить видеодорожку</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="742" />
+        <location filename="../src/app/ProjectController.cpp" line="745" />
         <source>Add audio track</source>
         <translation>Добавить аудиодорожку</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="751" />
+        <location filename="../src/app/ProjectController.cpp" line="754" />
         <source>Track setting</source>
         <translation>Настройка дорожки</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="773" />
+        <location filename="../src/app/ProjectController.cpp" line="776" />
         <source>Track volume</source>
         <translation>Громкость дорожки</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="786" />
+        <location filename="../src/app/ProjectController.cpp" line="789" />
         <source>Track balance</source>
         <translation>Баланс дорожки</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="798" />
+        <location filename="../src/app/ProjectController.cpp" line="801" />
         <source>Master volume</source>
         <translation>Мастер-громкость</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="817" />
+        <location filename="../src/app/ProjectController.cpp" line="820" />
         <source>Add title</source>
         <translation>Добавить титр</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="835" />
+        <location filename="../src/app/ProjectController.cpp" line="838" />
         <source>Title</source>
         <translation>Титр</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="844" />
+        <location filename="../src/app/ProjectController.cpp" line="847" />
         <source>Edit title</source>
         <translation>Изменить титр</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="859" />
+        <location filename="../src/app/ProjectController.cpp" line="862" />
         <source>Clip volume</source>
         <translation>Громкость клипа</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="898" />
+        <location filename="../src/app/ProjectController.cpp" line="901" />
         <source>Another export is running. Wait for it to finish or cancel it.</source>
         <translation>Идёт другой экспорт. Дождитесь его завершения или отмените его.</translation>
     </message>
@@ -3486,9 +3624,30 @@
         <translation>Превью уже просчитывается.</translation>
     </message>
     <message>
+        <location filename="../src/app/ProjectMixLoudness.cpp" line="27" />
+        <source>The mix is being measured already.</source>
+        <translation>Микс уже измеряется.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectMixLoudness.cpp" line="29" />
         <location filename="../src/app/ProjectPreview.cpp" line="74" />
         <source>The video engine is not available.</source>
         <translation>Видеодвижок недоступен.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectMixLoudness.cpp" line="32" />
+        <source>The sequence is empty.</source>
+        <translation>Секвенция пуста.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectMixLoudness.cpp" line="80" />
+        <source>The sound could not be rendered.</source>
+        <translation>Не удалось просчитать звук.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectMixLoudness.cpp" line="118" />
+        <source>Normalize mix loudness</source>
+        <translation>Нормализовать громкость микса</translation>
     </message>
     <message>
         <location filename="../src/app/ProjectPreview.cpp" line="94" />

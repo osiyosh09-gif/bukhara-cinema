@@ -238,6 +238,22 @@ public:
     // (in the background, the newest request wins); emits multicamGridReady.
     void requestMulticamGrid();
 
+    // --- loudness of the whole mix (phase 13c, ProjectMixLoudness.cpp)
+    // Measures the mixed sound of the open sequence as the export hears it
+    // (every track, effects, faders and master) in the background;
+    // mixLoudnessProgress and mixLoudnessMeasured follow.
+    bool measureMixLoudness(QString *error = nullptr);
+    void cancelMixLoudness();
+    bool isMeasuringMix() const { return m_mixBusy; }
+    // The last measurement; `current` is false once the sequence has changed since.
+    Loudness::Result mixLoudness(bool *current = nullptr) const;
+    double mixSeconds() const { return m_mixSeconds; }
+    // Master volume change (dB) that brings the measured mix to the target.
+    double mixGain(double targetLufs, double ceilingDb) const;
+    // Changes the master volume by mixGain (one undo step); false when there
+    // is no current measurement or nothing to change.
+    bool normalizeMix(double targetLufs, double ceilingDb);
+
     // --- render preview (phase 13b, ProjectPreview.cpp)
     // Parts of the open sequence with a picture: heavy ones (effects, colour,
     // motion, speed, transitions, nested, several layers) are worth rendering;
@@ -384,6 +400,8 @@ signals:
     void loudnessAnalyzed(const QUuid &mediaId, bool ok);
     // Grid of all angles (null image when no multicamera clip is at the playhead).
     void multicamGridReady(const QImage &image, const QUuid &clipId);
+    void mixLoudnessProgress(qint64 frame, qint64 total);
+    void mixLoudnessMeasured(bool ok, const QString &error); // error empty after cancel
     void previewProgress(qint64 frame, qint64 total);
     void previewFinished(bool ok, const QString &error); // error empty after cancel
     void previewsChanged(); // parts rendered or deleted
@@ -494,6 +512,12 @@ private:
     bool m_previewsOff = false;
     std::shared_ptr<std::atomic_bool> m_previewCancel;
     QThreadPool m_previewPool; // the preview renderer
+    Loudness::Result m_mixResult;
+    double m_mixSeconds = 0;
+    quint64 m_mixRev = ~quint64(0); // graph the measurement belongs to
+    bool m_mixBusy = false;
+    std::shared_ptr<std::atomic_bool> m_mixCancel;
+    QThreadPool m_mixPool; // the mix measurement
     QThreadPool m_gridPool;  // one grid frame at a time; declared last, so it is destroyed (and waited for) first
 };
 
