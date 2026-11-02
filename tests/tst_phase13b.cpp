@@ -354,7 +354,11 @@ private slots:
         const QStringList left = QDir(RenderPreview::folder()).entryList({QStringLiteral("*.part")}, QDir::Files);
         QVERIFY2(left.isEmpty(), qPrintable(left.join(u',')));
 
-        // Delete all preview files.
+        // Delete all preview files. This test's own player lets go of them
+        // first: Windows cannot delete open files (the controller closes its
+        // Program monitor's files itself).
+        fromFile.setPreviews({});
+        fromFile.setProject(p);
         QVERIFY(ctl.deletePreviews() >= 1);
         QVERIFY(!ctl.previewParts()[0].rendered);
         QVERIFY(QDir(RenderPreview::folder()).entryList(QDir::Files).isEmpty());
