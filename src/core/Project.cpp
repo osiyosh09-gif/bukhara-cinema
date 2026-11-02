@@ -254,6 +254,10 @@ QByteArray Project::toJson(const QString &projectFilePath) const
         tl[QStringLiteral("markers")] = timeline.markersToJson();
     if (timeline.masterGainDb != 0)
         tl[QStringLiteral("master_gain_db")] = timeline.masterGainDb;
+    if (!timeline.subtitles.isEmpty())
+        tl[QStringLiteral("subtitles")] = subtitlesToJson(timeline.subtitles);
+    if (timeline.subtitleStyle != SubtitleStyle())
+        tl[QStringLiteral("subtitle_style")] = timeline.subtitleStyle.toJson();
     root[QStringLiteral("timeline")] = tl;
 
     if (!nested.isEmpty()) {
@@ -267,6 +271,10 @@ QByteArray Project::toJson(const QString &projectFilePath) const
                 no[QStringLiteral("markers")] = n.timeline.markersToJson();
             if (n.timeline.masterGainDb != 0)
                 no[QStringLiteral("master_gain_db")] = n.timeline.masterGainDb;
+            if (!n.timeline.subtitles.isEmpty())
+                no[QStringLiteral("subtitles")] = subtitlesToJson(n.timeline.subtitles);
+            if (n.timeline.subtitleStyle != SubtitleStyle())
+                no[QStringLiteral("subtitle_style")] = n.timeline.subtitleStyle.toJson();
             na.append(no);
         }
         root[QStringLiteral("nested")] = na;
@@ -347,6 +355,8 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
         n.timeline = Timeline::fromJson(o.value(QStringLiteral("tracks")).toArray());
         n.timeline.markersFromJson(o.value(QStringLiteral("markers")).toArray());
         n.timeline.masterGainDb = masterGain(o);
+        n.timeline.subtitles = subtitlesFromJson(o.value(QStringLiteral("subtitles")).toArray());
+        n.timeline.subtitleStyle = SubtitleStyle::fromJson(o.value(QStringLiteral("subtitle_style")).toObject());
         p.nested << n;
     }
     if (root.contains(QStringLiteral("timeline"))) {
@@ -355,6 +365,9 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
         p.timeline.markersFromJson(
             root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("markers")).toArray());
         p.timeline.masterGainDb = masterGain(root.value(QStringLiteral("timeline")).toObject());
+        const QJsonObject tlo = root.value(QStringLiteral("timeline")).toObject();
+        p.timeline.subtitles = subtitlesFromJson(tlo.value(QStringLiteral("subtitles")).toArray());
+        p.timeline.subtitleStyle = SubtitleStyle::fromJson(tlo.value(QStringLiteral("subtitle_style")).toObject());
     }
     // Drop clips whose media item or nested sequence is not in the project.
     QSet<QUuid> known;

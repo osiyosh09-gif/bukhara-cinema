@@ -4,6 +4,7 @@
 
 #include <QDialog>
 
+class QCheckBox;
 class QComboBox;
 class QLabel;
 class QLineEdit;
@@ -44,6 +45,8 @@ private:
     QPushButton *m_browse;
     QComboBox *m_quality;
     QComboBox *m_encoder;
+    QCheckBox *m_burnSubs;
+    QCheckBox *m_writeSrt;
     QLabel *m_info;
     QLabel *m_warning;
     QProgressBar *m_progress;

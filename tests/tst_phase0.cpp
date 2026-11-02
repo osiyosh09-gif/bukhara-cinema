@@ -60,10 +60,10 @@ private slots:
         QCOMPARE(w.dockWidgetArea(w.findChild<QDockWidget *>(QStringLiteral("inspectorDock"))), Qt::RightDockWidgetArea);
         QCOMPARE(w.dockWidgetArea(w.findChild<QDockWidget *>(QStringLiteral("timelineDock"))), Qt::BottomDockWidgetArea);
 
-        // Right panel has the four required sections.
+        // Right panel: clip, effects, colour, audio and (phase 11) subtitles.
         auto *right = w.findChild<QTabWidget *>(QStringLiteral("rightTabs"));
         QVERIFY(right);
-        QCOMPARE(right->count(), 4);
+        QCOMPARE(right->count(), 5);
         auto *left = w.findChild<QTabWidget *>(QStringLiteral("leftTabs"));
         QVERIFY(left);
         QCOMPARE(left->count(), 2);
@@ -88,7 +88,7 @@ private slots:
 
         // Working items are enabled.
         for (const char *name : {"actSettings", "actExit", "actResetLayout", "actStatus", "actLicenses", "actAbout",
-                                 "actFullScreen", "actLogFolder", "actNewText"}) {
+                                 "actFullScreen", "actLogFolder", "actNewText", "actAddSubtitle", "actImportSrt"}) {
             auto *a = w.findChild<QAction *>(QString::fromLatin1(name));
             QVERIFY2(a, name);
             QVERIFY2(a->isEnabled(), name);
@@ -101,9 +101,9 @@ private slots:
         QTest::addColumn<QString>("editMenu");
         QTest::addColumn<QString>("mediaBin");
         QTest::addColumn<QString>("phaseTag");
-        QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[11-босқич]";
-        QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[11-bosqich]";
-        QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 11]";
+        QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[13-босқич]";
+        QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[13-bosqich]";
+        QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 13]";
     }
 
     void languageSwitchUpdatesUi()
@@ -121,7 +121,7 @@ private slots:
         QCOMPARE(Language::instance().current(), code);
         QCOMPARE(menuAt(w, 1)->title(), editMenu);
         QCOMPARE(w.findChild<QTabWidget *>(QStringLiteral("leftTabs"))->tabText(0), mediaBin);
-        auto *planned = w.findChild<QAction *>(QStringLiteral("actImportSrt"));
+        auto *planned = w.findChild<QAction *>(QStringLiteral("actRenderPreview"));
         QVERIFY(planned->text().endsWith(phaseTag));
 
         // Persisted for the next start.

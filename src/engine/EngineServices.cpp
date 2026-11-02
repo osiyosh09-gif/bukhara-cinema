@@ -4,8 +4,13 @@
 #include "core/Color.h"
 #include "core/Effects.h"
 #include "core/Motion.h"
+#include "core/Subtitles.h"
+#include "engine/TitleRenderer.h"
 
 #include <QHash>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QPainter>
@@ -637,6 +642,104 @@ void *xfadeInit(mlt_profile, mlt_service_type, const char *, const void *)
     return transition;
 }
 
+// ---------------------------------------------------------------------------
+// Subtitles (phase 11): bc_subtitles filter on the tractor draws the
+// subtitle under the position into the picture. Property "subtitles" is JSON
+// {"style": {...}, "cues": [[start, end, text], ...]} in sequence frames.
+
+struct SubtitleState
+{
+    struct Cue
+    {
+        qint64 start, end;
+        QString text;
+    };
+    QMutex mutex;
+    QByteArray json;
+    std::vector<Cue> cues;
+    SubtitleStyle style;
+    int shown = -1;
+    QSize size;
+    QImage overlay; // straight RGBA, frame size
+};
+
+int subtitlesGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format, int *width, int *height,
+                      int /*writable*/)
+{
+    auto filter = static_cast<mlt_filter>(mlt_frame_pop_service(frame));
+    mlt_properties props = MLT_FILTER_PROPERTIES(filter);
+    const qint64 pos = mlt_filter_get_position(filter, frame);
+    *format = mlt_image_rgba;
+    const int err = mlt_frame_get_image(frame, image, format, width, height, 1);
+    if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)
+        return err;
+    auto *st = static_cast<SubtitleState *>(mlt_properties_get_data(props, "_state", nullptr));
+    if (!st)
+        return 0;
+    QMutexLocker lock(&st->mutex);
+    const char *json = mlt_properties_get(props, "subtitles");
+    if (json && st->json != json) {
+        st->json = json;
+        st->cues.clear();
+        st->shown = -1;
+        const QJsonObject root = QJsonDocument::fromJson(st->json).object();
+        st->style = SubtitleStyle::fromJson(root.value(QStringLiteral("style")).toObject());
+        for (const auto &v : root.value(QStringLiteral("cues")).toArray()) {
+            const QJsonArray c = v.toArray();
+            st->cues.push_back({qint64(c.at(0).toDouble()), qint64(c.at(1).toDouble()), c.at(2).toString()});
+        }
+    }
+    int index = -1;
+    for (int i = 0; i < int(st->cues.size()); ++i) {
+        if (st->cues[size_t(i)].start > pos)
+            break;
+        if (pos < st->cues[size_t(i)].end)
+            index = i;
+    }
+    if (index < 0)
+        return 0;
+    const QSize size(*width, *height);
+    if (index != st->shown || size != st->size) {
+        st->overlay = renderSubtitle(st->cues[size_t(index)].text, st->style, size);
+        st->shown = index;
+        st->size = size;
+    }
+    // Straight-alpha "over" of the subtitle onto the picture.
+    for (int y = 0; y < *height; ++y) {
+        const uint8_t *src = st->overlay.constScanLine(y);
+        uint8_t *dst = *image + size_t(y) * size_t(*width) * 4;
+        for (int x = 0; x < *width; ++x, src += 4, dst += 4) {
+            const int a = src[3];
+            if (a == 0)
+                continue;
+            const int b = dst[3] * (255 - a) / 255;
+            const int out = a + b;
+            for (int c = 0; c < 3; ++c)
+                dst[c] = uint8_t((src[c] * a + dst[c] * b) / std::max(1, out));
+            dst[3] = uint8_t(out);
+        }
+    }
+    return 0;
+}
+
+mlt_frame subtitlesProcess(mlt_filter filter, mlt_frame frame)
+{
+    mlt_frame_push_service(frame, filter);
+    mlt_frame_push_get_image(frame, subtitlesGetImage);
+    return frame;
+}
+
+void *subtitlesInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_filter filter = mlt_filter_new();
+    if (!filter)
+        return nullptr;
+    filter->process = subtitlesProcess;
+    mlt_properties_set_data(MLT_FILTER_PROPERTIES(filter), "_state", new SubtitleState, 0,
+                            [](void *p) { delete static_cast<SubtitleState *>(p); }, nullptr);
+    return filter;
+}
+
 } // namespace
 
 void registerAll(mlt_repository_s *repository)
@@ -651,6 +754,7 @@ void registerAll(mlt_repository_s *repository)
     mlt_repository_register(repository, mlt_service_filter_type, "bc_fade", fadeInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_effects", effectsInit);
     mlt_repository_register(repository, mlt_service_transition_type, "bc_xfade", xfadeInit);
+    mlt_repository_register(repository, mlt_service_filter_type, "bc_subtitles", subtitlesInit);
 }
 
 QByteArray stillResource(const QImage &image)

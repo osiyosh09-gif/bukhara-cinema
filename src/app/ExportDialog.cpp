@@ -4,6 +4,7 @@
 #include "app/ProjectController.h"
 #include "engine/Exporter.h"
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDesktopServices>
 #include <QDir>
@@ -42,6 +43,8 @@ ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent)
     , m_browse(new QPushButton(this))
     , m_quality(new QComboBox(this))
     , m_encoder(new QComboBox(this))
+    , m_burnSubs(new QCheckBox(this))
+    , m_writeSrt(new QCheckBox(this))
     , m_info(new QLabel(this))
     , m_warning(new QLabel(this))
     , m_progress(new QProgressBar(this))
@@ -75,6 +78,20 @@ ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent)
     for (const auto &e : m_encoders)
         m_encoder->addItem(e.label, e.codec);
     form->addRow(tr("Video codec:"), m_encoder);
+    // Subtitles (phase 11): only when the sequence has some.
+    m_burnSubs->setObjectName(QStringLiteral("exportBurnSubtitles"));
+    m_writeSrt->setObjectName(QStringLiteral("exportWriteSrt"));
+    m_burnSubs->setText(tr("Burn the subtitles into the picture"));
+    m_writeSrt->setText(tr("Also save the subtitles as an .srt file next to the video"));
+    m_burnSubs->setChecked(m_ctl->project().timeline.subtitleStyle.show);
+    m_writeSrt->setChecked(QSettings().value(QStringLiteral("export/writeSrt"), false).toBool());
+    if (!m_ctl->project().timeline.subtitles.isEmpty()) {
+        form->addRow(tr("Subtitles:"), m_burnSubs);
+        form->addRow(QString(), m_writeSrt);
+    } else {
+        m_burnSubs->hide();
+        m_writeSrt->hide();
+    }
     lay->addLayout(form);
     m_info->setWordWrap(true);
     m_info->setStyleSheet(QStringLiteral("color:#9a9a9a;"));
@@ -190,6 +207,8 @@ bool ExportDialog::startExport()
     s.path = file;
     s.encoder = m_encoders.value(std::max(0, m_encoder->currentIndex()));
     s.videoKbps = Exporter::suggestedKbps(m_ctl->project().sequence, m_quality->currentIndex());
+    s.burnSubtitles = m_burnSubs->isChecked();
+    s.writeSrt = m_writeSrt->isChecked();
     QString error;
     if (!m_ctl->startExport(s, &error)) {
         m_status->setText(error);
@@ -198,6 +217,8 @@ bool ExportDialog::startExport()
     QSettings settings;
     settings.setValue(QString::fromLatin1(kLastDirKey), QFileInfo(file).absolutePath());
     settings.setValue(QString::fromLatin1(kQualityKey), m_quality->currentIndex());
+    if (!m_ctl->project().timeline.subtitles.isEmpty())
+        settings.setValue(QStringLiteral("export/writeSrt"), m_writeSrt->isChecked());
     m_openFolder->hide();
     m_status->setText(tr("Exporting..."));
     setRunning(true);
@@ -210,6 +231,8 @@ void ExportDialog::setRunning(bool running)
     m_browse->setEnabled(!running);
     m_quality->setEnabled(!running);
     m_encoder->setEnabled(!running);
+    m_burnSubs->setEnabled(!running);
+    m_writeSrt->setEnabled(!running);
     m_start->setEnabled(!running);
     m_progress->setVisible(true);
     m_close->setText(running ? tr("Cancel export") : tr("Close"));

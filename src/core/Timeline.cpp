@@ -317,12 +317,18 @@ bool Timeline::insertSpace(qint64 at, qint64 length, const QList<int> &onlyTrack
         }
         tracks[t].clips = out;
     }
-    if (onlyTracks.isEmpty())
+    if (onlyTracks.isEmpty()) {
         for (auto &m : markers)
             if (m.frame >= at) {
                 m.frame += length;
                 changed = true;
             }
+        for (auto &s : subtitles)
+            if (s.start >= at) {
+                s.start += length;
+                changed = true;
+            }
+    }
     return changed;
 }
 
@@ -873,6 +879,37 @@ void Timeline::rescale(double oldFps, double newFps)
     }
     for (auto &m : markers)
         m.frame = qint64(std::llround(m.frame * f));
+    for (auto &s : subtitles) {
+        const qint64 end = qint64(std::llround(s.end() * f));
+        s.start = qint64(std::llround(s.start * f));
+        s.length = std::max<qint64>(1, end - s.start);
+    }
+}
+
+const Subtitle *Timeline::subtitleAt(qint64 frame) const
+{
+    const Subtitle *found = nullptr;
+    for (const auto &s : subtitles) {
+        if (s.start > frame)
+            break;
+        if (s.covers(frame))
+            found = &s;
+    }
+    return found;
+}
+
+const Subtitle *Timeline::subtitle(const QUuid &id) const
+{
+    for (const auto &s : subtitles)
+        if (s.id == id)
+            return &s;
+    return nullptr;
+}
+
+void Timeline::sortSubtitles()
+{
+    std::stable_sort(subtitles.begin(), subtitles.end(),
+                     [](const Subtitle &a, const Subtitle &b) { return a.start < b.start; });
 }
 
 QList<qint64> Timeline::snapPoints(const QSet<QUuid> &exclude) const
