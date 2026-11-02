@@ -125,7 +125,9 @@ private slots:
     void model()
     {
         const QList<ClipEffect::Kind> sound = ClipEffect::kinds(true);
-        QCOMPARE(sound, (QList<ClipEffect::Kind>{ClipEffect::Kind::Equalizer, ClipEffect::Kind::Compressor}));
+        QCOMPARE(sound.mid(0, 2), (QList<ClipEffect::Kind>{ClipEffect::Kind::Equalizer, ClipEffect::Kind::Compressor}));
+        for (ClipEffect::Kind k : sound)
+            QVERIFY(ClipEffect::isAudio(k));
         for (ClipEffect::Kind k : ClipEffect::kinds())
             QVERIFY(!ClipEffect::isAudio(k));
         QVERIFY(ClipEffect::make(ClipEffect::Kind::Equalizer).isNeutral());
@@ -286,7 +288,7 @@ private slots:
         QCOMPARE(kind->count(), ClipEffect::kinds().size());
         soundBtn->click();
         QCOMPARE(panel->clip(), audio);
-        QCOMPARE(kind->count(), 2);
+        QCOMPARE(kind->count(), ClipEffect::kinds(true).size());
         QCOMPARE(kind->itemText(0), EffectsPanel::kindName(ClipEffect::Kind::Equalizer));
 
         // Add an equalizer and change the bass from the form.

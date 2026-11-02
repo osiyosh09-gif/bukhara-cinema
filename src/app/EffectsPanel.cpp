@@ -56,6 +56,10 @@ QString EffectsPanel::kindName(ClipEffect::Kind kind)
         return tr("Equalizer (EQ)");
     case ClipEffect::Kind::Compressor:
         return tr("Compressor");
+    case ClipEffect::Kind::NoiseReduction:
+        return tr("Noise reduction");
+    case ClipEffect::Kind::HumRemoval:
+        return tr("Hum removal (50/60 Hz)");
     }
     return {};
 }
@@ -134,6 +138,16 @@ QString EffectsPanel::paramName(const QString &key)
         return tr("Release, ms");
     if (key == QLatin1String("makeup"))
         return tr("Make-up gain, dB");
+    if (key == QLatin1String("reduction"))
+        return tr("Reduction, dB");
+    if (key == QLatin1String("sensitivity"))
+        return tr("Sensitivity, %");
+    if (key == QLatin1String("hum_freq"))
+        return tr("Mains frequency, Hz");
+    if (key == QLatin1String("harmonics"))
+        return tr("Harmonics");
+    if (key == QLatin1String("notch_width"))
+        return tr("Notch width, Hz");
     return key;
 }
 

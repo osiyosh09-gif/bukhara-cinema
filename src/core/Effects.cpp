@@ -30,6 +30,8 @@ constexpr KindName kNames[] = {
     {ClipEffect::Kind::Mask, "mask"},
     {ClipEffect::Kind::Equalizer, "equalizer"},
     {ClipEffect::Kind::Compressor, "compressor"},
+    {ClipEffect::Kind::NoiseReduction, "noise_reduction"},
+    {ClipEffect::Kind::HumRemoval, "hum_removal"},
 };
 
 } // namespace
@@ -45,7 +47,8 @@ QList<ClipEffect::Kind> ClipEffect::kinds(bool audio)
 
 bool ClipEffect::isAudio(Kind kind)
 {
-    return kind == Kind::Equalizer || kind == Kind::Compressor;
+    return kind == Kind::Equalizer || kind == Kind::Compressor || kind == Kind::NoiseReduction
+           || kind == Kind::HumRemoval;
 }
 
 QString ClipEffect::kindToString(Kind k)
@@ -120,6 +123,17 @@ QList<EffectParamSpec> ClipEffect::specs(Kind kind)
                 {QStringLiteral("attack"), 0.1, 200, 10, 1, 1},
                 {QStringLiteral("release"), 10, 2000, 150, 10, 0},
                 {QStringLiteral("makeup"), 0, 24, 0, 0.5, 1}};
+    case Kind::NoiseReduction:
+        // How far steady noise is turned down (dB) and how eagerly sound is
+        // taken for noise (higher = more is removed, voices may sound thinner).
+        return {{QStringLiteral("reduction"), 0, 40, 12, 1, 0},
+                {QStringLiteral("sensitivity"), 0, 100, 50, 5, 0}};
+    case Kind::HumRemoval:
+        // Mains hum: 50 Hz in Uzbekistan and Europe, 60 Hz in America; notches
+        // at the base and its harmonics.
+        return {{QStringLiteral("hum_freq"), 40, 70, 50, 1, 0},
+                {QStringLiteral("harmonics"), 1, 10, 4, 1, 0},
+                {QStringLiteral("notch_width"), 0.5, 10, 2, 0.5, 1}};
     }
     return {};
 }
@@ -184,6 +198,10 @@ bool ClipEffect::isNeutral() const
                && value(QStringLiteral("mid_gain")) == 0 && value(QStringLiteral("high_gain")) == 0;
     case Kind::Compressor:
         return value(QStringLiteral("ratio")) <= 1 && value(QStringLiteral("makeup")) == 0;
+    case Kind::NoiseReduction:
+        return value(QStringLiteral("reduction")) <= 0;
+    case Kind::HumRemoval:
+        return false;
     }
     return true;
 }
@@ -542,6 +560,8 @@ void applyEffects(uint8_t *rgba, int w, int h, const ClipEffects &effects, const
             break;
         case ClipEffect::Kind::Equalizer:
         case ClipEffect::Kind::Compressor:
+        case ClipEffect::Kind::NoiseReduction:
+        case ClipEffect::Kind::HumRemoval:
             break; // sound: core/AudioFx
         }
     }
