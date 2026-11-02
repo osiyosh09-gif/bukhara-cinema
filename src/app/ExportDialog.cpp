@@ -1,5 +1,6 @@
 #include "app/ExportDialog.h"
 
+#include "app/ExportQueue.h"
 #include "app/Formatting.h"
 #include "app/ProjectController.h"
 #include "engine/Exporter.h"
@@ -35,7 +36,7 @@ QString minutesSeconds(qint64 ms)
 }
 } // namespace
 
-ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent)
+ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent, ExportQueue *queue)
     : QDialog(parent)
     , m_ctl(controller)
     , m_encoders(MediaProbe::usableVideoEncoders())
@@ -52,6 +53,8 @@ ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent)
     , m_start(new QPushButton(this))
     , m_close(new QPushButton(this))
     , m_openFolder(new QPushButton(this))
+    , m_addQueue(new QPushButton(this))
+    , m_queue(queue)
 {
     setObjectName(QStringLiteral("exportDialog"));
     setWindowTitle(tr("Export to MP4"));
@@ -108,6 +111,11 @@ ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent)
     m_openFolder->hide();
     buttons->addWidget(m_openFolder);
     buttons->addStretch();
+    m_addQueue->setObjectName(QStringLiteral("exportAddQueue"));
+    m_addQueue->setText(tr("Add to queue"));
+    m_addQueue->setToolTip(tr("Export later, one after another (File > Export queue). The queue keeps the project as it is now."));
+    m_addQueue->setVisible(m_queue != nullptr);
+    buttons->addWidget(m_addQueue);
     m_start->setText(tr("Export"));
     m_start->setDefault(true);
     buttons->addWidget(m_start);
@@ -124,6 +132,7 @@ ExportDialog::ExportDialog(ProjectController *controller, QWidget *parent)
     connect(m_quality, &QComboBox::currentIndexChanged, this, &ExportDialog::updateInfo);
     connect(m_encoder, &QComboBox::currentIndexChanged, this, &ExportDialog::updateInfo);
     connect(m_start, &QPushButton::clicked, this, &ExportDialog::startExport);
+    connect(m_addQueue, &QPushButton::clicked, this, &ExportDialog::addToQueue);
     connect(m_close, &QPushButton::clicked, this, &ExportDialog::reject);
     connect(m_openFolder, &QPushButton::clicked, this, [this] {
         QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(path()).absolutePath()));
@@ -186,34 +195,62 @@ void ExportDialog::updateInfo()
     m_warning->setVisible(!h264);
 }
 
-bool ExportDialog::startExport()
+std::optional<ExportSettings> ExportDialog::settings(bool askReplace)
 {
     QString file = path();
     if (file.isEmpty()) {
         m_status->setText(tr("Choose a file name."));
-        return false;
+        return std::nullopt;
     }
     if (!file.endsWith(QLatin1String(".mp4"), Qt::CaseInsensitive)) {
         file += QStringLiteral(".mp4");
         m_path->setText(file);
     }
-    if (QFileInfo::exists(file) && isVisible()
+    if (askReplace && QFileInfo::exists(file) && isVisible()
         && QMessageBox::question(this, windowTitle(), tr("The file already exists. Replace it?"))
                != QMessageBox::Yes)
-        return false;
-    QDir().mkpath(QFileInfo(file).absolutePath());
-
+        return std::nullopt;
     ExportSettings s;
     s.path = file;
     s.encoder = m_encoders.value(std::max(0, m_encoder->currentIndex()));
     s.videoKbps = Exporter::suggestedKbps(m_ctl->project().sequence, m_quality->currentIndex());
     s.burnSubtitles = m_burnSubs->isChecked();
     s.writeSrt = m_writeSrt->isChecked();
+    return s;
+}
+
+bool ExportDialog::addToQueue()
+{
+    if (!m_queue)
+        return false;
+    const std::optional<ExportSettings> s = settings(true);
+    if (!s)
+        return false;
     QString error;
-    if (!m_ctl->startExport(s, &error)) {
+    if (m_queue->add(m_ctl->project(), *s, m_ctl->displayName(), &error).isNull()) {
         m_status->setText(error);
         return false;
     }
+    QSettings().setValue(QString::fromLatin1(kLastDirKey), QFileInfo(s->path).absolutePath());
+    QSettings().setValue(QString::fromLatin1(kQualityKey), m_quality->currentIndex());
+    m_status->setText(tr("Added to the export queue (waiting: %1). File > Export queue starts it.")
+                          .arg(m_queue->waitingCount()));
+    return true;
+}
+
+bool ExportDialog::startExport()
+{
+    const std::optional<ExportSettings> s = settings(true);
+    if (!s)
+        return false;
+    const QString file = s->path;
+    QDir().mkpath(QFileInfo(file).absolutePath());
+    QString error;
+    if (!m_ctl->startExport(*s, &error)) {
+        m_status->setText(error);
+        return false;
+    }
+    m_mine = true;
     QSettings settings;
     settings.setValue(QString::fromLatin1(kLastDirKey), QFileInfo(file).absolutePath());
     settings.setValue(QString::fromLatin1(kQualityKey), m_quality->currentIndex());
@@ -234,13 +271,14 @@ void ExportDialog::setRunning(bool running)
     m_burnSubs->setEnabled(!running);
     m_writeSrt->setEnabled(!running);
     m_start->setEnabled(!running);
+    m_addQueue->setEnabled(!running);
     m_progress->setVisible(true);
     m_close->setText(running ? tr("Cancel export") : tr("Close"));
 }
 
 void ExportDialog::onProgress(qint64 frame, qint64 total, qint64 remainingMs)
 {
-    if (total <= 0)
+    if (!m_mine || total <= 0)
         return;
     m_progress->setValue(int(frame * 1000 / total));
     QString text = tr("Frame %1 of %2").arg(frame).arg(total);
@@ -251,6 +289,9 @@ void ExportDialog::onProgress(qint64 frame, qint64 total, qint64 remainingMs)
 
 void ExportDialog::onFinished(bool ok, const QString &error)
 {
+    if (!m_mine)
+        return; // an export of the queue
+    m_mine = false;
     setRunning(false);
     if (ok) {
         m_progress->setValue(1000);
@@ -266,7 +307,7 @@ void ExportDialog::onFinished(bool ok, const QString &error)
 
 void ExportDialog::reject()
 {
-    if (m_ctl->isExporting()) {
+    if (m_mine && m_ctl->isExporting()) {
         m_ctl->cancelExport(); // the dialog stays open and says so
         return;
     }

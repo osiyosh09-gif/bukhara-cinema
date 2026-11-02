@@ -21,6 +21,8 @@
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
+#include "app/ExportQueue.h"
+#include "app/ExportQueueDialog.h"
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
 #include "app/Shortcuts.h"
@@ -291,6 +293,14 @@ void MainWindow::buildMenus()
     connect(m_ctl, &ProjectController::timelineChanged, this, updateExport);
     connect(m_ctl, &ProjectController::projectReset, this, updateExport);
     m_exportAct->setEnabled(false);
+    m_exportQueue = new ExportQueue(m_ctl, this);
+    m_exportQueueAct = m_fileMenu->addAction(QString(), this, &MainWindow::openExportQueue);
+    m_exportQueueAct->setObjectName(QStringLiteral("actExportQueue"));
+    connect(m_exportQueue, &ExportQueue::finishedAll, this, [this](int done, int failed) {
+        statusBar()->showMessage(failed > 0 ? tr("Export queue finished: %1 done, %2 failed.").arg(done).arg(failed)
+                                            : tr("Export queue finished: %1 done.").arg(done),
+                                 15000);
+    });
     m_fileMenu->addSeparator();
     m_cacheAct = m_fileMenu->addAction(QString(), this, &MainWindow::openCache);
     m_cacheAct->setObjectName(QStringLiteral("actMediaCache"));
@@ -602,6 +612,7 @@ void MainWindow::retranslate()
     m_tbExport->setText(tr("Export"));
     m_tbExport->setToolTip(tr("Export to MP4 (Ctrl+M)"));
     m_exportAct->setText(tr("Export..."));
+    m_exportQueueAct->setText(tr("Export queue..."));
 
     m_mediaDock->setWindowTitle(tr("Project"));
     m_inspectorDock->setWindowTitle(tr("Properties"));
@@ -623,7 +634,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 12, part 2: multicamera monitor (Window menu); press 1-9 to switch cameras while playing.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 1: export queue (File menu); keep editing while the files are exported.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -798,6 +809,15 @@ void MainWindow::resetLayout()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if ((m_exportQueue->isRunning() || m_exportQueue->waitingCount() > 0)
+        && QMessageBox::question(this, tr("Export queue"),
+                                 tr("Exports in the queue are not finished. Close anyway? They will be lost."))
+               != QMessageBox::Yes) {
+        event->ignore();
+        return;
+    }
+    if (m_exportQueue->isRunning())
+        m_exportQueue->stop();
     if (!maybeSave()) {
         event->ignore();
         return;
@@ -935,8 +955,17 @@ void MainWindow::openExport()
 {
     if (!m_exportAct->isEnabled())
         return;
-    ExportDialog dialog(m_ctl, this);
+    ExportDialog dialog(m_ctl, this, m_exportQueue);
     dialog.exec();
+}
+
+void MainWindow::openExportQueue()
+{
+    if (!m_exportQueueDialog)
+        m_exportQueueDialog = new ExportQueueDialog(m_exportQueue, this); // not modal: editing goes on
+    m_exportQueueDialog->show();
+    m_exportQueueDialog->raise();
+    m_exportQueueDialog->activateWindow();
 }
 
 void MainWindow::addTitle()

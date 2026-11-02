@@ -884,13 +884,23 @@ void ProjectController::setPlayhead(qint64 frame)
 
 bool ProjectController::startExport(const ExportSettings &settings, QString *error)
 {
+    return startExport(m_project, settings, error); // always the main sequence
+}
+
+bool ProjectController::startExport(const Project &project, const ExportSettings &settings, QString *error)
+{
+    if (isExporting()) {
+        if (error)
+            *error = tr("Another export is running. Wait for it to finish or cancel it.");
+        return false;
+    }
     if (!m_exporter) {
         m_exporter = new Exporter(this);
         connect(m_exporter, &Exporter::progress, this, &ProjectController::exportProgress);
         connect(m_exporter, &Exporter::finished, this, &ProjectController::exportFinished);
     }
     pause();
-    return m_exporter->start(m_project, settings, error); // always the main sequence
+    return m_exporter->start(project, settings, error);
 }
 
 void ProjectController::cancelExport()
