@@ -684,7 +684,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 3: loudness of the whole mix (Sequence > Mix loudness): measure in LUFS and set the master volume.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 4: video decoding on the video card (File > Settings shows what was found).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

@@ -1,5 +1,7 @@
 #include "core/Proxy.h"
 
+#include "core/HwAccel.h"
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -49,8 +51,13 @@ bool recommended(const MediaInfo &info)
     return info.kind == MediaInfo::Kind::Video && (info.width > 1920 || info.height > 1080);
 }
 
-bool make(const QString &source, const QString &target, QString *error,
-          const std::function<void(double)> &progress, const std::atomic_bool *cancel)
+namespace {
+
+// One attempt; `hwType` empty = decode on the processor. `onCard` tells
+// whether frames really came from the video card.
+bool makeWith(const QString &source, const QString &target, QString *error,
+              const std::function<void(double)> &progress, const std::atomic_bool *cancel,
+              const QString &hwType, bool *onCard)
 {
     auto fail = [error](const QString &e) {
         if (error)
@@ -74,7 +81,10 @@ bool make(const QString &source, const QString &target, QString *error,
     std::unique_ptr<AVCodecContext, CodecCloser> dc(avcodec_alloc_context3(dec));
     if (!dc || avcodec_parameters_to_context(dc.get(), ist->codecpar) < 0)
         return fail(QStringLiteral("cannot set up the decoder"));
-    dc->thread_count = 0; // all cores: making proxies is a background batch job
+    // The video card decodes when it can (one thread is enough then);
+    // otherwise all cores: making proxies is a background batch job.
+    const bool hw = !hwType.isEmpty() && HwAccel::attach(dc.get(), dec, hwType);
+    dc->thread_count = hw ? 1 : 0;
     dc->pkt_timebase = ist->time_base;
     if ((rc = avcodec_open2(dc.get(), dec, nullptr)) < 0)
         return fail(averr(rc));
@@ -166,7 +176,7 @@ bool make(const QString &source, const QString &target, QString *error,
     }
 
     std::unique_ptr<SwsContext, SwsCloser> sws;
-    std::unique_ptr<AVFrame, FrameCloser> frame(av_frame_alloc()), scaled(av_frame_alloc());
+    std::unique_ptr<AVFrame, FrameCloser> frame(av_frame_alloc()), scaled(av_frame_alloc()), cpuFrame(av_frame_alloc());
     scaled->format = AV_PIX_FMT_YUV420P;
     scaled->width = outW;
     scaled->height = outH;
@@ -226,6 +236,18 @@ bool make(const QString &source, const QString &target, QString *error,
         return drainEncoder();
     };
 
+    // A decoded frame, copied from the video card's memory first if needed.
+    auto takeFrame = [&]() -> bool {
+        if (frame->hw_frames_ctx && onCard)
+            *onCard = true;
+        AVFrame *f = HwAccel::download(frame.get(), cpuFrame.get());
+        if (!f) {
+            failure = QStringLiteral("cannot copy the picture from the video card");
+            return false;
+        }
+        return encodeFrame(f);
+    };
+
     bool ok = true;
     while (ok && av_read_frame(in.get(), pkt.get()) >= 0) {
         if (cancel && cancel->load()) {
@@ -234,7 +256,7 @@ bool make(const QString &source, const QString &target, QString *error,
         } else if (pkt->stream_index == vi) {
             if (avcodec_send_packet(dc.get(), pkt.get()) >= 0)
                 while (ok && avcodec_receive_frame(dc.get(), frame.get()) >= 0)
-                    ok = encodeFrame(frame.get());
+                    ok = takeFrame();
         } else if (map[pkt->stream_index] >= 0) {
             AVStream *os = out->streams[map[pkt->stream_index]];
             av_packet_rescale_ts(pkt.get(), in->streams[pkt->stream_index]->time_base, os->time_base);
@@ -250,7 +272,7 @@ bool make(const QString &source, const QString &target, QString *error,
     if (ok) {
         avcodec_send_packet(dc.get(), nullptr);
         while (ok && avcodec_receive_frame(dc.get(), frame.get()) >= 0)
-            ok = encodeFrame(frame.get());
+            ok = takeFrame();
     }
     if (ok)
         ok = encodeFrame(nullptr); // flush the encoder
@@ -275,6 +297,28 @@ bool make(const QString &source, const QString &target, QString *error,
     if (progress)
         progress(1.0);
     return true;
+}
+
+} // namespace
+
+bool make(const QString &source, const QString &target, QString *error,
+          const std::function<void(double)> &progress, const std::atomic_bool *cancel, QString *decoder)
+{
+    const QString hw = HwAccel::decoder();
+    bool onCard = false;
+    QString err;
+    bool ok = !hw.isEmpty() && makeWith(source, target, &err, progress, cancel, hw, &onCard);
+    if (!ok && !(cancel && cancel->load())) {
+        // No video card, or it failed on this file: the processor does it.
+        onCard = false;
+        err.clear();
+        ok = makeWith(source, target, &err, progress, cancel, QString(), nullptr);
+    }
+    if (decoder)
+        *decoder = ok && onCard ? hw : QString();
+    if (!ok && error)
+        *error = err;
+    return ok;
 }
 
 } // namespace bc::Proxy

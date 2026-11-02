@@ -279,6 +279,16 @@
         <translation>Vaqt chizg‘ichidagi chiziq tasvir og‘ir joylarni (effekt, rang, harakat, tezlik, o‘tishlar, ichki sekvensiya, bir necha qatlam) qizil qilib ko‘rsatadi. «Sekvensiya &gt; Prevyu render» (timeline'da Enter) tanlangan kliplarning (yoki butun sekvensiyaning) shu joylarini fonda bir marta render qiladi: ular yashil bo‘ladi va fayldan o‘ynatiladi. Tahrirdan keyin joy yana qizil bo‘ladi, bekor qilsangiz fayl yana ishlatiladi. Ovoz render qilinmaydi. Eksport doim to‘liq sifatda.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="71" />
+        <source>GPU acceleration: video decoding on the video card</source>
+        <translation>GPU tezlatish: videoni videokartada dekodlash</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="71" />
+        <source>The video card decodes H.264, HEVC and other videos for playback, render preview, export and proxy making (Windows: D3D11VA, DXVA2 or NVIDIA CUDA; Linux: VAAPI or CUDA); when it cannot decode a file, the processor does. Export encodes on the card too (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). File &gt; Settings shows what was found and can switch decoding off. Effects, colour and titles are still computed on the processor.</source>
+        <translation>Videokarta H.264, HEVC va boshqa videolarni o‘ynatish, prevyu render, eksport va proxy tayyorlash uchun dekodlaydi (Windows: D3D11VA, DXVA2 yoki NVIDIA CUDA; Linux: VAAPI yoki CUDA); videokarta faylni dekodlay olmasa, protsessor dekodlaydi. Eksportda kodlash ham videokartada (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). «Fayl &gt; Sozlamalar» nima topilganini ko‘rsatadi va dekodlashni o‘chirish mumkin. Effektlar, rang va matnlar hali protsessorda hisoblanadi.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sekvensiya sozlamalari: o‘lcham, kadrlar chastotasi, audio</translation>
@@ -442,11 +452,6 @@
         <location filename="../src/app/FeatureStatus.cpp" line="70" />
         <source>Sequence &gt; Mix loudness measures the whole mixed sound as it will be exported (every track with its volume, effects and fader, and the master) in LUFS, with its peak. Apply sets the master volume so the mix reaches -14, -16 or -23 LUFS (or your own target) without peaks above the ceiling; the balance between the tracks stays.</source>
         <translation>«Sekvensiya &gt; Aralashma ovoz balandligi» butun aralashgan ovozni eksportdagidek (har bir trek o‘z ovozi, effektlari va feyderi bilan, hamda master) LUFS da va eng baland nuqtasi bilan o‘lchaydi. «Qo‘llash» master ovozini shunday o‘rnatadiki, aralashma −14, −16 yoki −23 LUFS ga (yoki o‘zingiz tanlagan qiymatga) yetadi va cho‘qqilar chegaradan oshmaydi; treklar orasidagi muvozanat saqlanadi.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="71" />
-        <source>GPU acceleration</source>
-        <translation>GPU tezlashtirish</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="72" />
@@ -2562,6 +2567,11 @@
         <translation>Klip</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="687" />
+        <source>Phase 13, part 4: video decoding on the video card (File &gt; Settings shows what was found).</source>
+        <translation>13-bosqich, 4-qism: videoni videokartada dekodlash (nima topilgani «Fayl &gt; Sozlamalar»da).</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="723" />
         <source>Insert</source>
         <translation>Qo‘yish</translation>
@@ -2617,11 +2627,6 @@
         <location filename="../src/app/MainWindow.cpp" line="685" />
         <source>Subtitles</source>
         <translation>Subtitrlar</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="687" />
-        <source>Phase 13, part 3: loudness of the whole mix (Sequence &gt; Mix loudness): measure in LUFS and set the master volume.</source>
-        <translation>13-bosqich, 3-qism: butun aralashmaning ovoz balandligi (Sekvensiya &gt; Aralashma ovoz balandligi): LUFS da o‘lchash va master ovozini o‘rnatish.</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="807" />
@@ -3880,62 +3885,107 @@
 <context>
     <name>bc::SettingsDialog</name>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="99" />
+        <location filename="../src/app/SettingsDialog.cpp" line="119" />
         <source>Settings</source>
         <translation>Sozlamalar</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="100" />
+        <location filename="../src/app/SettingsDialog.cpp" line="120" />
         <source>Interface language:</source>
         <translation>Interfeys tili:</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="101" />
+        <location filename="../src/app/SettingsDialog.cpp" line="121" />
         <source>Autosave:</source>
         <translation>Avtosaqlash:</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="104" />
+        <location filename="../src/app/SettingsDialog.cpp" line="124" />
         <source>Off</source>
         <translation>O‘chirilgan</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="104" />
+        <location filename="../src/app/SettingsDialog.cpp" line="124" />
         <source>Every %1 min</source>
         <translation>Har %1 daqiqada</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="106" />
+        <location filename="../src/app/SettingsDialog.cpp" line="126" />
         <source>Previous versions to keep:</source>
         <translation>Saqlanadigan oldingi versiyalar:</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="107" />
+        <location filename="../src/app/SettingsDialog.cpp" line="127" />
         <source>None</source>
         <translation>Yo‘q</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="108" />
+        <location filename="../src/app/SettingsDialog.cpp" line="128" />
         <source>Make proxies for videos larger than Full HD automatically</source>
         <translation>Full HD'dan katta videolarga proxy'ni avtomatik tayyorlash</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="109" />
+        <location filename="../src/app/SettingsDialog.cpp" line="129" />
         <source>4K and other big videos then play smoothly; export still uses the originals.</source>
         <translation>Shunda 4K va boshqa katta videolar ravon ijro bo‘ladi; eksport baribir asl fayllardan.</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="110" />
+        <location filename="../src/app/SettingsDialog.cpp" line="130" />
         <source>Each save keeps the old project file in the "Backups" folder next to it.</source>
         <translation>Har saqlashda eski loyiha fayli yonidagi «Backups» papkasida qoladi.</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="111" />
+        <location filename="../src/app/SettingsDialog.cpp" line="131" />
+        <source>Video card decoding:</source>
+        <translation>Videokartada dekodlash:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="132" />
+        <source>Automatic</source>
+        <translation>Avtomatik</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="133" />
+        <source>Off (processor only)</source>
+        <translation>O‘chirilgan (faqat protsessor)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="134" />
+        <source>The video card decodes H.264, HEVC and other videos for playback, export and proxies. If it cannot decode a file, the processor does it.</source>
+        <translation>Videokarta H.264, HEVC va boshqa videolarni o‘ynatish, eksport va proxy uchun dekodlaydi. Biror faylni dekodlay olmasa, uni protsessor dekodlaydi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="139" />
+        <source>No video card decoder was found on this computer: the processor decodes.</source>
+        <translation>Bu kompyuterda videokarta dekoderi topilmadi: protsessor dekodlaydi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="140" />
+        <source>Found: %1.</source>
+        <translation>Topildi: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="142" />
+        <source>Export: no hardware H.264 encoder, MPEG-4 is used.</source>
+        <translation>Eksport: H.264 apparat koderi yo‘q, MPEG-4 ishlatiladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="143" />
+        <source>Export can use: %1.</source>
+        <translation>Eksport ishlata oladi: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="144" />
+        <source>Effects and colour are computed on the processor. A change applies to videos opened after it; restart to apply it everywhere.</source>
+        <translation>Effektlar va rang protsessorda hisoblanadi. O‘zgartirish undan keyin ochilgan videolarga ta’sir qiladi; hammasiga ta’sir qilishi uchun dasturni qayta ishga tushiring.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="147" />
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="112" />
+        <location filename="../src/app/SettingsDialog.cpp" line="148" />
         <source>Cancel</source>
         <translation>Bekor qilish</translation>
     </message>

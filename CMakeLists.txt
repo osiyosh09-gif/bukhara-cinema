@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.31.0
+    VERSION 0.32.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -32,6 +32,7 @@ add_library(bc_core STATIC
     src/core/Backups.h          src/core/Backups.cpp
     src/core/MediaCache.h       src/core/MediaCache.cpp
     src/core/Proxy.h            src/core/Proxy.cpp
+    src/core/HwAccel.h          src/core/HwAccel.cpp
     src/core/RenderPreview.h    src/core/RenderPreview.cpp
     src/core/Collector.h        src/core/Collector.cpp
     src/core/Motion.h           src/core/Motion.cpp
