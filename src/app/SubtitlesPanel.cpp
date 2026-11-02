@@ -244,7 +244,7 @@ void SubtitlesPanel::rebuild()
     const Timeline &tl = m_ctl->timeline();
     const double fps = fpsOf(m_ctl);
     if (!m_current.isNull() && !tl.subtitle(m_current))
-        m_current = {};
+        m_current = QUuid();
     m_list->clear();
     QTreeWidgetItem *cur = nullptr;
     for (const Subtitle &s : tl.subtitles) {
