@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.25.0
+    VERSION 0.26.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 

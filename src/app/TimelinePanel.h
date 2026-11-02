@@ -63,6 +63,13 @@ public:
     // Geometry helpers (also used by tests).
     int headerWidth() const { return kHeaderW; }
     int rulerHeight() const { return kRulerH; }
+    // Subtitle strip under the ruler (phase 11b): shown while the sequence has subtitles.
+    int subtitleStripHeight() const;
+    int tracksTop() const { return kRulerH + subtitleStripHeight(); }
+    QRect subtitleRect(const Subtitle &s) const;
+    QUuid subtitleAt(const QPoint &pos, bool *headEdge = nullptr, bool *tailEdge = nullptr) const;
+    QUuid selectedSubtitle() const { return m_subSel; }
+    void setSelectedSubtitle(const QUuid &id);
     qint64 frameAtX(int x) const;
     int xForFrame(qint64 frame) const;
     int trackAtY(int y) const;  // index into timeline().tracks, -1 if none
@@ -72,6 +79,7 @@ signals:
     void selectionChanged();
     void zoomChanged(double ppf);
     void toolChanged(TimelineView::Tool tool);
+    void subtitleClicked(const QUuid &id); // a subtitle on the strip was picked (or double-clicked)
 
 protected:
     void paintEvent(QPaintEvent *e) override;
@@ -93,12 +101,13 @@ protected:
 private:
     static constexpr int kHeaderW = 96;
     static constexpr int kRulerH = 26;
+    static constexpr int kSubsH = 24;
     static constexpr int kVideoH = 42;
     static constexpr int kAudioH = 34;
     static constexpr int kEdgePx = 6;
     static constexpr int kSnapPx = 8;
 
-    enum class Drag { None, Scrub, Move, Trim, Roll, Slip, Slide };
+    enum class Drag { None, Scrub, Move, Trim, Roll, Slip, Slide, SubMove, SubTrim };
 
     struct Hit
     {
@@ -125,6 +134,7 @@ private:
     void ensurePlayheadVisible();
     void drawRuler(QPainter &p);
     void drawTracks(QPainter &p);
+    void drawSubtitles(QPainter &p);
     void drawClip(QPainter &p, int track, const TimelineClip &c);
     void updateCursor(const QPoint &pos);
     qint64 frameUnderMouse(int x) const;
@@ -150,6 +160,11 @@ private:
     qint64 m_moveDelta = 0;
     int m_moveTracks = 0;
     qint64 m_trimFrame = 0;
+
+    // subtitle strip
+    QUuid m_subSel;
+    QUuid m_dragSub;
+    qint64 m_subStart = 0, m_subLength = 0; // preview while dragging
 
     // drop from the media bin
     QList<QUuid> m_dropMedia;

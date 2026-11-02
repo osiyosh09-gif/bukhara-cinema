@@ -289,7 +289,8 @@ public:
     // Adds a subtitle at `frame`: 3 s long, shorter when the next one starts sooner.
     QUuid addSubtitle(qint64 frame, const QString &text = {});
     bool setSubtitleText(const QUuid &id, const QString &text); // typing merges into one step
-    bool setSubtitleTiming(const QUuid &id, qint64 start, qint64 length);
+    // merge: typing in the panel joins one undo step; a timeline drag is its own step.
+    bool setSubtitleTiming(const QUuid &id, qint64 start, qint64 length, bool merge = true);
     int removeSubtitles(const QList<QUuid> &ids);
     bool setSubtitleStyle(const SubtitleStyle &style); // dragging merges into one step
     // Reads an .srt file and places its subtitles `offset` frames later (one

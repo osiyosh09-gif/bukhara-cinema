@@ -62,7 +62,7 @@ bool ProjectController::setSubtitleText(const QUuid &id, const QString &text)
     }, QStringLiteral("subtitle-text:") + id.toString());
 }
 
-bool ProjectController::setSubtitleTiming(const QUuid &id, qint64 start, qint64 length)
+bool ProjectController::setSubtitleTiming(const QUuid &id, qint64 start, qint64 length, bool merge)
 {
     return editTimeline(tr("Subtitle timing"), [&](Timeline &t) {
         Subtitle *s = findSubtitle(t, id);
@@ -74,7 +74,7 @@ bool ProjectController::setSubtitleTiming(const QUuid &id, qint64 start, qint64 
         s->length = length;
         t.sortSubtitles();
         return true;
-    }, QStringLiteral("subtitle-time:") + id.toString());
+    }, merge ? QStringLiteral("subtitle-time:") + id.toString() : QString());
 }
 
 int ProjectController::removeSubtitles(const QList<QUuid> &ids)

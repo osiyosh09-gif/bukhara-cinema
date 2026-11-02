@@ -36,6 +36,9 @@ public:
     int importFile(const QString &path = {});
     bool exportFile(const QString &path = {});
 
+signals:
+    void currentChanged(const QUuid &id); // the subtitle shown for editing
+
 protected:
     void changeEvent(QEvent *e) override;
 
@@ -50,6 +53,7 @@ private:
 
     ProjectController *m_ctl;
     QUuid m_current;
+    QUuid m_shown; // last one announced by currentChanged
     bool m_updating = false;
     QAction *m_addAct;
     QAction *m_deleteAct;
