@@ -45,6 +45,7 @@ private:
     void applyMotion();    // widgets -> video clip (key at the playhead when animated)
     void refreshMotion();  // follows the playhead
     void refreshTransitions();
+    void refreshAngles();
     void applyTransition(bool head);
     QUuid transitionClip() const { return !motionClip().isNull() ? motionClip() : m_audio; }
     QUuid motionClip() const { return !m_title.isNull() ? m_title : m_video; }
@@ -105,6 +106,11 @@ private:
     QComboBox *m_tailKind;
     QDoubleSpinBox *m_tailLen;
     QLabel *m_transNote;
+    QGroupBox *m_angleBox;      // multicamera clips (phase 12a)
+    QLabel *m_videoAngleLabel;
+    QComboBox *m_videoAngle;
+    QLabel *m_audioAngleLabel;
+    QComboBox *m_audioAngle;
     bool m_transAudio = false; // combos hold the sound list
 };
 

@@ -77,8 +77,14 @@ struct NestedSequence
     QUuid id;
     QString name;
     Timeline timeline;
+    // Multicamera sequence (phase 12a): video track n and audio track n hold
+    // angle n, lined up in time; a clip of it shows one angle (TimelineClip::angle).
+    bool multicam = false;
 
-    bool operator==(const NestedSequence &o) const { return id == o.id && name == o.name && timeline == o.timeline; }
+    bool operator==(const NestedSequence &o) const
+    {
+        return id == o.id && name == o.name && timeline == o.timeline && multicam == o.multicam;
+    }
 };
 
 // The whole editing project. It is the single source of truth that later
@@ -86,7 +92,7 @@ struct NestedSequence
 class Project
 {
 public:
-    static constexpr int kFormatVersion = 12; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences; 6: clip motion and speed; 7: transitions; 8: clip effects; 9: colour correction; 10: audio mixer (track volume and pan, master); 11: sound effects on audio clips; 12: subtitles
+    static constexpr int kFormatVersion = 13; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences; 6: clip motion and speed; 7: transitions; 8: clip effects; 9: colour correction; 10: audio mixer (track volume and pan, master); 11: sound effects on audio clips; 12: subtitles; 13: multicamera sequences and clip angles
     static QString fileExtension() { return QStringLiteral("bcproj"); }
 
     QString name = QStringLiteral("Untitled");

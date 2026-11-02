@@ -360,6 +360,8 @@ void MainWindow::buildMenus()
     m_useProxiesAct->setChecked(m_ctl->useProxies());
     connect(m_useProxiesAct, &QAction::toggled, m_ctl, &ProjectController::setUseProxies);
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
+    m_sequenceMenu->addSeparator();
+    m_sequenceMenu->addAction(m_bin->multicamAction());
 
     // J / K / L act on the active monitor (the one clicked last).
     m_sequenceMenu->addSeparator();
@@ -585,7 +587,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 11, part 2: subtitles have their own strip on the timeline (drag to move, drag an edge to retime).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 12, part 1: multicamera sequences lined up by sound (Sequence menu); pick the camera in the Clip tab.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

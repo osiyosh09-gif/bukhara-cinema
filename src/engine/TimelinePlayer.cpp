@@ -298,7 +298,7 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
         for (int i = 0; i < n; ++i) {
             const TimelineClip &c = clips[i];
             if (c.isNested()) {
-                prod[i] = nestProducer(project, c.nestId, audio, depth);
+                prod[i] = nestProducer(project, c.nestId, audio, depth, c.angle);
             } else if (c.isTitle()) {
                 prod[i] = audio ? nullptr : titleProducer(c.title);
                 still[i] = true;
@@ -537,16 +537,18 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
 
 // A nested sequence as a producer. Picture and sound get separate graphs
 // (like media files), so the two tracks never share one position.
-Mlt::Producer *TimelinePlayer::nestProducer(const Project &project, const QUuid &nestId, bool audio, int depth)
+Mlt::Producer *TimelinePlayer::nestProducer(const Project &project, const QUuid &nestId, bool audio, int depth, int angle)
 {
     if (depth >= kMaxNestDepth)
         return nullptr; // a sequence inside itself: shown as a gap
-    const QString key = nestId.toString() + (audio ? QStringLiteral(":a") : QStringLiteral(":v"));
-    if (auto it = m_nestCache.find(key); it != m_nestCache.end())
-        return it->get();
     const NestedSequence *n = project.nest(nestId);
     if (!n)
         return nullptr;
+    QString key = nestId.toString() + (audio ? QStringLiteral(":a") : QStringLiteral(":v"));
+    if (n->multicam)
+        key += QStringLiteral(":%1").arg(angle);
+    if (auto it = m_nestCache.find(key); it != m_nestCache.end())
+        return it->get();
     // Long enough for every use of it, even past its end.
     qint64 length = n->timeline.duration();
     for (const Timeline *tl : const_cast<Project &>(project).allTimelines())
@@ -554,7 +556,23 @@ Mlt::Producer *TimelinePlayer::nestProducer(const Project &project, const QUuid 
             for (const TimelineClip &c : t.clips)
                 if (c.nestId == nestId)
                     length = std::max(length, c.in + c.length + c.tail.length + 250); // room for transition frames
-    auto tractor = buildTractor(project, n->timeline, length, depth + 1);
+    // A multicamera angle: only that angle's track of the needed kind.
+    Timeline angleTimeline;
+    const Timeline *tl = &n->timeline;
+    if (n->multicam) {
+        angleTimeline = n->timeline;
+        int index[2] = {0, 0};
+        for (TimelineTrack &t : angleTimeline.tracks) {
+            const bool isAudio = t.kind == Timeline::Kind::Audio;
+            const bool keep = isAudio == audio && index[isAudio] == angle;
+            ++index[isAudio];
+            t.solo = false;
+            if (!keep)
+                t.clips.clear(); // other angles (and the other kind) are not decoded at all
+        }
+        tl = &angleTimeline;
+    }
+    auto tractor = buildTractor(project, *tl, length, depth + 1);
     if (!tractor)
         return nullptr;
     std::shared_ptr<Mlt::Producer> p(tractor.release());

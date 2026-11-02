@@ -1,6 +1,7 @@
 #include "app/MediaBinPanel.h"
 
 #include "app/Formatting.h"
+#include "app/MulticamDialog.h"
 #include "app/ProjectController.h"
 #include "core/MediaProbe.h"
 
@@ -115,6 +116,7 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     , m_importBtn(new QToolButton(this))
     , m_folderBtn(new QToolButton(this))
     , m_summary(new QLabel(this))
+    , m_multicam(new QAction(this))
 {
     setObjectName(QStringLiteral("mediaBin"));
     m_tree->setObjectName(QStringLiteral("binTree"));
@@ -162,6 +164,11 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     connect(m_folderBtn, &QToolButton::clicked, this, &MediaBinPanel::newFolder);
     connect(m_filter, &QLineEdit::textChanged, this, &MediaBinPanel::applyFilter);
     connect(m_tree, &QWidget::customContextMenuRequested, this, &MediaBinPanel::showContextMenu);
+    m_multicam->setObjectName(QStringLiteral("actCreateMulticam"));
+    m_multicam->setEnabled(false);
+    connect(m_multicam, &QAction::triggered, this, &MediaBinPanel::openMulticamDialog);
+    connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
+            [this] { m_multicam->setEnabled(multicamMedia().size() >= 2); });
     connect(m_tree, &QTreeWidget::itemChanged, this, &MediaBinPanel::onItemChanged);
     connect(m_tree, &BinTree::filesDropped, this, [this](const QStringList &paths, const QUuid &folder) {
         m_ctl->importFiles(paths, folder);
@@ -352,6 +359,9 @@ void MediaBinPanel::retranslate()
     m_folderBtn->setText(tr("Folder"));
     m_folderBtn->setToolTip(tr("New folder"));
     m_filter->setPlaceholderText(tr("Search by name"));
+    m_multicam->setText(tr("Create multicamera sequence..."));
+    m_multicam->setToolTip(tr("Select two or more recordings of one event in the media bin: they are lined up by sound "
+                              "and become the angles of one clip"));
 
     const int total = int(m_ctl->project().items.size());
     const int offline = m_ctl->offlineCount();
@@ -540,9 +550,32 @@ void MediaBinPanel::showContextMenu(const QPoint &pos)
     QAction *dropProxy = menu.addAction(tr("Delete proxy"), this, [this, items] { m_ctl->deleteProxies(items); });
     dropProxy->setEnabled(canDelete);
     menu.addSeparator();
+    menu.addAction(m_multicam);
+    menu.addSeparator();
     QAction *remove = menu.addAction(tr("Remove from project"), this, &MediaBinPanel::removeSelected);
     remove->setEnabled(anySelected);
     menu.exec(m_tree->viewport()->mapToGlobal(pos));
+}
+
+QList<QUuid> MediaBinPanel::multicamMedia() const
+{
+    QList<QUuid> out;
+    for (const QUuid &id : selectedItems()) {
+        const MediaItem *m = m_ctl->project().item(id);
+        if (m && m->probed && m->info.kind != MediaInfo::Kind::Image && (m->info.hasVideo() || m->info.hasAudio()))
+            out << id;
+    }
+    return out;
+}
+
+void MediaBinPanel::openMulticamDialog()
+{
+    const QList<QUuid> ids = multicamMedia();
+    if (ids.size() < 2)
+        return;
+    auto *dlg = new MulticamDialog(m_ctl, ids, window());
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->open();
 }
 
 } // namespace bc
