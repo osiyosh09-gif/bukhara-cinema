@@ -289,6 +289,21 @@
         <translation>Videokarta H.264, HEVC va boshqa videolarni o‘ynatish, prevyu render, eksport va proxy tayyorlash uchun dekodlaydi (Windows: D3D11VA, DXVA2 yoki NVIDIA CUDA; Linux: VAAPI yoki CUDA); videokarta faylni dekodlay olmasa, protsessor dekodlaydi. Eksportda kodlash ham videokartada (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). «Fayl &gt; Sozlamalar» nima topilganini ko‘rsatadi va dekodlashni o‘chirish mumkin. Effektlar, rang va matnlar hali protsessorda hisoblanadi.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="72" />
+        <source>Scene change detection</source>
+        <translation>Sahna almashishlarini topish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="72" />
+        <source>Select video clips on the timeline, then Clip &gt; Detect scene changes: each video is read once on this computer (no internet, no AI model) and the hard cuts between shots are found. Split cuts the clips (with their sound) at every new shot, or markers are put there instead; one undo step. A slider sets the sensitivity. Slow fades between shots are not found.</source>
+        <translation>Timeline'da video kliplarni tanlang, keyin «Klip &gt; Sahna almashishlarini topish»: har bir video shu kompyuterda bir marta o‘qiladi (internetsiz, AI modelsiz) va kadrlar orasidagi keskin kesimlar topiladi. «Kliplarni bo‘lish» kliplarni (ovozi bilan) har bir yangi kadr boshida bo‘ladi, yoki o‘rniga marker qo‘yiladi; bitta bekor qilish qadami. Sezgirlikni polzunok bilan o‘zgartirish mumkin. Sekin almashadigan (fade) o‘tishlar topilmaydi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <source>AI assistants: transcription, text-based editing</source>
+        <translation>AI yordamchilar: nutqni matnga aylantirish, matn orqali montaj</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sekvensiya sozlamalari: o‘lcham, kadrlar chastotasi, audio</translation>
@@ -454,12 +469,7 @@
         <translation>«Sekvensiya &gt; Aralashma ovoz balandligi» butun aralashgan ovozni eksportdagidek (har bir trek o‘z ovozi, effektlari va feyderi bilan, hamda master) LUFS da va eng baland nuqtasi bilan o‘lchaydi. «Qo‘llash» master ovozini shunday o‘rnatadiki, aralashma −14, −16 yoki −23 LUFS ga (yoki o‘zingiz tanlagan qiymatga) yetadi va cho‘qqilar chegaradan oshmaydi; treklar orasidagi muvozanat saqlanadi.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="72" />
-        <source>AI assistants: transcription, text-based editing, scene detection</source>
-        <translation>AI yordamchilar: transkripsiya, matn asosida montaj, sahnalarni aniqlash</translation>
-    </message>
-    <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <location filename="../src/app/FeatureStatus.cpp" line="74" />
         <source>Plugins and project interchange</source>
         <translation>Plaginlar va loyiha almashinuvi</translation>
     </message>
@@ -2055,12 +2065,12 @@
         <translation>Natija</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="679" />
+        <location filename="../src/app/MainWindow.cpp" line="680" />
         <source>Media bin</source>
         <translation>Media kutubxonasi</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="680" />
+        <location filename="../src/app/MainWindow.cpp" line="681" />
         <source>Project files</source>
         <translation>Loyiha fayllari</translation>
     </message>
@@ -2075,113 +2085,113 @@
         <translation>Kursor turgan joyda video yo‘q.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="682" />
+        <location filename="../src/app/MainWindow.cpp" line="683" />
         <source>Effects</source>
         <translation>Effektlar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="683" />
+        <location filename="../src/app/MainWindow.cpp" line="684" />
         <source>Color</source>
         <translation>Rang</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="684" />
+        <location filename="../src/app/MainWindow.cpp" line="685" />
         <source>Audio</source>
         <translation>Ovoz</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="612" />
+        <location filename="../src/app/MainWindow.cpp" line="613" />
         <source>New project</source>
         <translation>Yangi loyiha</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="613" />
+        <location filename="../src/app/MainWindow.cpp" line="614" />
         <source>Open project...</source>
         <translation>Loyihani ochish...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="615" />
-        <location filename="../src/app/MainWindow.cpp" line="660" />
-        <location filename="../src/app/MainWindow.cpp" line="897" />
-        <location filename="../src/app/MainWindow.cpp" line="953" />
-        <location filename="../src/app/MainWindow.cpp" line="971" />
+        <location filename="../src/app/MainWindow.cpp" line="616" />
+        <location filename="../src/app/MainWindow.cpp" line="661" />
+        <location filename="../src/app/MainWindow.cpp" line="898" />
+        <location filename="../src/app/MainWindow.cpp" line="954" />
+        <location filename="../src/app/MainWindow.cpp" line="972" />
         <source>Save</source>
         <translation>Saqlash</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="616" />
+        <location filename="../src/app/MainWindow.cpp" line="617" />
         <source>Save as...</source>
         <translation>Boshqa nom bilan saqlash...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="648" />
+        <location filename="../src/app/MainWindow.cpp" line="649" />
         <source>Import media...</source>
         <translation>Media import...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="664" />
+        <location filename="../src/app/MainWindow.cpp" line="665" />
         <source>Export...</source>
         <translation>Eksport...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1000" />
+        <location filename="../src/app/MainWindow.cpp" line="1001" />
         <source>Undo</source>
         <translation>Bekor qilish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1000" />
+        <location filename="../src/app/MainWindow.cpp" line="1001" />
         <source>Undo: %1</source>
         <translation>Bekor qilish: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1001" />
+        <location filename="../src/app/MainWindow.cpp" line="1002" />
         <source>Redo</source>
         <translation>Qaytarish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="630" />
+        <location filename="../src/app/MainWindow.cpp" line="631" />
         <source>Keyboard shortcuts...</source>
         <translation>Tezkor tugmalar...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="611" />
+        <location filename="../src/app/MainWindow.cpp" line="612" />
         <source>Audio gain...</source>
         <translation>Ovoz kuchaytirish...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="649" />
+        <location filename="../src/app/MainWindow.cpp" line="650" />
         <source>Sequence settings...</source>
         <translation>Sekvensiya sozlamalari...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="621" />
+        <location filename="../src/app/MainWindow.cpp" line="622" />
         <source>Render preview</source>
         <translation>Prevyu render</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="168" />
-        <location filename="../src/app/MainWindow.cpp" line="609" />
+        <location filename="../src/app/MainWindow.cpp" line="610" />
         <source>Pause</source>
         <translation>To‘xtatish</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="168" />
-        <location filename="../src/app/MainWindow.cpp" line="609" />
+        <location filename="../src/app/MainWindow.cpp" line="610" />
         <source>Play</source>
         <translation>Ijro</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="643" />
+        <location filename="../src/app/MainWindow.cpp" line="644" />
         <source>Add marker</source>
         <translation>Marker qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="644" />
+        <location filename="../src/app/MainWindow.cpp" line="645" />
         <source>Go to next marker</source>
         <translation>Keyingi markerga o‘tish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="610" />
+        <location filename="../src/app/MainWindow.cpp" line="611" />
         <source>New text</source>
         <translation>Yangi matn</translation>
     </message>
@@ -2246,485 +2256,485 @@
         <translation>Eksport navbati tugadi: %1 tayyor.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="416" />
+        <location filename="../src/app/MainWindow.cpp" line="417" />
         <source>Preview files deleted: %1.</source>
         <translation>Prevyu fayllari o‘chirildi: %1.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="466" />
-        <location filename="../src/app/MainWindow.cpp" line="472" />
+        <location filename="../src/app/MainWindow.cpp" line="467" />
+        <location filename="../src/app/MainWindow.cpp" line="473" />
         <source>Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked.</source>
         <translation>Qo‘yiladigan narsa yo‘q: Source monitorida klip oching va kamida bitta video hamda audio yo‘lakni qulflamang.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="516" />
+        <location filename="../src/app/MainWindow.cpp" line="517" />
         <source>Subtitles from speech (automatic)...</source>
         <translation>Nutqdan avtomatik subtitr...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="591" />
+        <location filename="../src/app/MainWindow.cpp" line="592" />
         <source>&amp;File</source>
         <translation>&amp;Fayl</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="592" />
+        <location filename="../src/app/MainWindow.cpp" line="593" />
         <source>&amp;Edit</source>
         <translation>&amp;Tahrir</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="593" />
+        <location filename="../src/app/MainWindow.cpp" line="594" />
         <source>&amp;Clip</source>
         <translation>&amp;Klip</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="594" />
+        <location filename="../src/app/MainWindow.cpp" line="595" />
         <source>&amp;Sequence</source>
         <translation>&amp;Sekvensiya</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="595" />
+        <location filename="../src/app/MainWindow.cpp" line="596" />
         <source>&amp;Markers</source>
         <translation>&amp;Markerlar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="596" />
+        <location filename="../src/app/MainWindow.cpp" line="597" />
         <source>Timeline tools</source>
         <translation>Timeline asboblari</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="597" />
+        <location filename="../src/app/MainWindow.cpp" line="598" />
         <source>&amp;Graphics</source>
         <translation>&amp;Grafika</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="598" />
+        <location filename="../src/app/MainWindow.cpp" line="599" />
         <source>&amp;View</source>
         <translation>&amp;Ko‘rinish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="599" />
+        <location filename="../src/app/MainWindow.cpp" line="600" />
         <source>&amp;Window</source>
         <translation>&amp;Oyna</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="600" />
+        <location filename="../src/app/MainWindow.cpp" line="601" />
         <source>&amp;Help</source>
         <translation>&amp;Yordam</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="605" />
+        <location filename="../src/app/MainWindow.cpp" line="606" />
         <source>Planned for phase %1</source>
         <translation>%1-bosqichda rejalashtirilgan</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="614" />
+        <location filename="../src/app/MainWindow.cpp" line="615" />
         <source>Recent projects</source>
         <translation>Oxirgi loyihalar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="617" />
+        <location filename="../src/app/MainWindow.cpp" line="618" />
         <source>Previous versions...</source>
         <translation>Oldingi versiyalar...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="618" />
+        <location filename="../src/app/MainWindow.cpp" line="619" />
         <source>Collect project...</source>
         <translation>Loyihani yig‘ish...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="619" />
+        <location filename="../src/app/MainWindow.cpp" line="620" />
         <source>Copy the project and its media into one folder</source>
         <translation>Loyiha va mediani bitta papkaga nusxalash</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="620" />
+        <location filename="../src/app/MainWindow.cpp" line="621" />
         <source>Media cache...</source>
         <translation>Media keshi...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="622" />
+        <location filename="../src/app/MainWindow.cpp" line="623" />
         <source>Render the red parts of the selected clips (or of the whole sequence) once, so they play smoothly (Enter on the timeline)</source>
         <translation>Tanlangan kliplarning (yoki butun sekvensiyaning) qizil joylarini bir marta render qilish, ular tekis o‘ynashi uchun (timeline'da Enter)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="624" />
+        <location filename="../src/app/MainWindow.cpp" line="625" />
         <source>Delete preview files</source>
         <translation>Prevyu fayllarini o‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="625" />
+        <location filename="../src/app/MainWindow.cpp" line="626" />
         <source>Mix loudness...</source>
         <translation>Aralashma ovoz balandligi...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="626" />
+        <location filename="../src/app/MainWindow.cpp" line="627" />
         <source>Measure the loudness of the whole mix (LUFS) and set the master volume to a target</source>
         <translation>Butun aralashmaning ovoz balandligini (LUFS) o‘lchash va master ovozini maqsadga keltirish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="627" />
+        <location filename="../src/app/MainWindow.cpp" line="628" />
         <source>Use proxies for playback</source>
         <translation>Ijroda proxy ishlatish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="628" />
+        <location filename="../src/app/MainWindow.cpp" line="629" />
         <source>Play big videos from their light proxy copies. Export always uses the originals.</source>
         <translation>Katta videolarni yengil proxy nusxalaridan ijro qilish. Eksport har doim asl fayllardan.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="629" />
+        <location filename="../src/app/MainWindow.cpp" line="630" />
         <source>Stop making proxies</source>
         <translation>Proxy tayyorlashni to‘xtatish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="631" />
+        <location filename="../src/app/MainWindow.cpp" line="632" />
         <source>Play backwards (J, again: faster)</source>
         <translation>Orqaga o‘ynatish (J, yana bosilsa tezroq)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="632" />
+        <location filename="../src/app/MainWindow.cpp" line="633" />
         <source>Stop (K)</source>
         <translation>To‘xtash (K)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="633" />
+        <location filename="../src/app/MainWindow.cpp" line="634" />
         <source>Play forwards (L, again: faster)</source>
         <translation>Oldinga o‘ynatish (L, yana bosilsa tezroq)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="634" />
+        <location filename="../src/app/MainWindow.cpp" line="635" />
         <source>Insert from Source</source>
         <translation>Source'dan qo‘yish (Insert)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="635" />
+        <location filename="../src/app/MainWindow.cpp" line="636" />
         <source>Insert the source In-Out part at the playhead; later clips move right (,)</source>
         <translation>Source'ning In-Out qismini kursor joyiga qo‘yish; keyingi kliplar o‘ngga suriladi (,)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="636" />
+        <location filename="../src/app/MainWindow.cpp" line="637" />
         <source>Overwrite from Source</source>
         <translation>Source'dan ustidan yozish (Overwrite)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="637" />
+        <location filename="../src/app/MainWindow.cpp" line="638" />
         <source>Put the source In-Out part at the playhead over what is there (.)</source>
         <translation>Source'ning In-Out qismini kursor joyidagining ustidan yozish (.)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="638" />
+        <location filename="../src/app/MainWindow.cpp" line="639" />
         <source>Mark In (Source)</source>
         <translation>In belgisi (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="639" />
+        <location filename="../src/app/MainWindow.cpp" line="640" />
         <source>Start of the part to use (I)</source>
         <translation>Ishlatiladigan qismning boshi (I)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="640" />
+        <location filename="../src/app/MainWindow.cpp" line="641" />
         <source>Mark Out (Source)</source>
         <translation>Out belgisi (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="641" />
+        <location filename="../src/app/MainWindow.cpp" line="642" />
         <source>End of the part to use (O)</source>
         <translation>Ishlatiladigan qismning oxiri (O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="642" />
+        <location filename="../src/app/MainWindow.cpp" line="643" />
         <source>Clear In and Out (Source)</source>
         <translation>In va Out'ni olib tashlash (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="645" />
+        <location filename="../src/app/MainWindow.cpp" line="646" />
         <source>Go to previous marker</source>
         <translation>Oldingi markerga o‘tish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="646" />
+        <location filename="../src/app/MainWindow.cpp" line="647" />
         <source>Rename marker...</source>
         <translation>Markerni nomlash...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="647" />
+        <location filename="../src/app/MainWindow.cpp" line="648" />
         <source>Delete marker</source>
         <translation>Markerni o‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="650" />
+        <location filename="../src/app/MainWindow.cpp" line="651" />
         <source>Settings...</source>
         <translation>Sozlamalar...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="651" />
+        <location filename="../src/app/MainWindow.cpp" line="652" />
         <source>Exit</source>
         <translation>Chiqish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="652" />
+        <location filename="../src/app/MainWindow.cpp" line="653" />
         <source>Full screen</source>
         <translation>To‘liq ekran</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="653" />
+        <location filename="../src/app/MainWindow.cpp" line="654" />
         <source>Reset layout</source>
         <translation>Panellar joylashuvini tiklash</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="654" />
+        <location filename="../src/app/MainWindow.cpp" line="655" />
         <source>Feature status...</source>
         <translation>Funksiyalar holati...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="655" />
+        <location filename="../src/app/MainWindow.cpp" line="656" />
         <source>Licenses...</source>
         <translation>Litsenziyalar...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="656" />
+        <location filename="../src/app/MainWindow.cpp" line="657" />
         <source>Open log folder</source>
         <translation>Jurnal papkasini ochish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="657" />
+        <location filename="../src/app/MainWindow.cpp" line="658" />
         <source>About BUKHARA CINEMA...</source>
         <translation>BUKHARA CINEMA haqida...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="659" />
+        <location filename="../src/app/MainWindow.cpp" line="660" />
         <source>Main toolbar</source>
         <translation>Asosiy asboblar paneli</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="661" />
+        <location filename="../src/app/MainWindow.cpp" line="662" />
         <source>Save project (Ctrl+S)</source>
         <translation>Loyihani saqlash (Ctrl+S)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="662" />
+        <location filename="../src/app/MainWindow.cpp" line="663" />
         <source>Export</source>
         <translation>Eksport</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="663" />
+        <location filename="../src/app/MainWindow.cpp" line="664" />
         <source>Export to MP4 (Ctrl+M)</source>
         <translation>MP4’ga eksport (Ctrl+M)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="665" />
+        <location filename="../src/app/MainWindow.cpp" line="666" />
         <source>Export queue...</source>
         <translation>Eksport navbati...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="667" />
+        <location filename="../src/app/MainWindow.cpp" line="668" />
         <source>Project</source>
         <translation>Loyiha</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="668" />
+        <location filename="../src/app/MainWindow.cpp" line="669" />
         <source>Properties</source>
         <translation>Parametrlar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="669" />
+        <location filename="../src/app/MainWindow.cpp" line="670" />
         <source>Timeline</source>
         <translation>Timeline</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="670" />
+        <location filename="../src/app/MainWindow.cpp" line="671" />
         <source>Scopes</source>
         <translation>Scope'lar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="671" />
+        <location filename="../src/app/MainWindow.cpp" line="672" />
         <source>Multicamera monitor</source>
         <translation>Multikam monitor</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="672" />
+        <location filename="../src/app/MainWindow.cpp" line="673" />
         <source>Switch camera</source>
         <translation>Kamerani almashtirish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="673" />
+        <location filename="../src/app/MainWindow.cpp" line="674" />
         <source>Switch sound</source>
         <translation>Ovozni almashtirish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="675" />
+        <location filename="../src/app/MainWindow.cpp" line="676" />
         <source>Camera %1</source>
         <translation>%1-kamera</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="676" />
+        <location filename="../src/app/MainWindow.cpp" line="677" />
         <source>Sound of camera %1</source>
         <translation>%1-kamera ovozi</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="681" />
+        <location filename="../src/app/MainWindow.cpp" line="682" />
         <source>Clip</source>
         <translation>Klip</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="687" />
-        <source>Phase 13, part 4: video decoding on the video card (File &gt; Settings shows what was found).</source>
-        <translation>13-bosqich, 4-qism: videoni videokartada dekodlash (nima topilgani «Fayl &gt; Sozlamalar»da).</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="723" />
+        <location filename="../src/app/MainWindow.cpp" line="724" />
         <source>Insert</source>
         <translation>Qo‘yish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="724" />
+        <location filename="../src/app/MainWindow.cpp" line="725" />
         <source>Overwrite</source>
         <translation>Ustidan yozish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1044" />
+        <location filename="../src/app/MainWindow.cpp" line="1045" />
         <source>Previous versions</source>
         <translation>Oldingi versiyalar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1047" />
+        <location filename="../src/app/MainWindow.cpp" line="1048" />
         <source>An earlier version is open. Save to make it the current project.</source>
         <translation>Oldingi versiya ochildi. Uni asosiy loyiha qilish uchun saqlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1084" />
+        <location filename="../src/app/MainWindow.cpp" line="1085" />
         <source>Recover unsaved work</source>
         <translation>Saqlanmagan ishni tiklash</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1088" />
+        <location filename="../src/app/MainWindow.cpp" line="1089" />
         <source>Unsaved work recovered. Save the project to keep it.</source>
         <translation>Saqlanmagan ish tiklandi. Yo‘qolmasligi uchun loyihani saqlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1146" />
+        <location filename="../src/app/MainWindow.cpp" line="1147" />
         <source>A preview is being rendered already.</source>
         <translation>Prevyu allaqachon render qilinmoqda.</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="152" />
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <location filename="../src/app/MainWindow.cpp" line="718" />
+        <location filename="../src/app/MainWindow.cpp" line="689" />
+        <location filename="../src/app/MainWindow.cpp" line="719" />
         <source>The video engine (MLT) could not be loaded: playback is off. See the log file.</source>
         <translation>Video dvigateli (MLT) yuklanmadi: ijro o‘chirilgan. Log fayliga qarang.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="1001" />
+        <location filename="../src/app/MainWindow.cpp" line="1002" />
         <source>Redo: %1</source>
         <translation>Qaytarish: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="893" />
+        <location filename="../src/app/MainWindow.cpp" line="894" />
         <source>Unsaved changes</source>
         <translation>Saqlanmagan o‘zgarishlar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="685" />
+        <location filename="../src/app/MainWindow.cpp" line="686" />
         <source>Subtitles</source>
         <translation>Subtitrlar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="807" />
+        <location filename="../src/app/MainWindow.cpp" line="688" />
+        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
+        <translation>14-bosqich, 1-qism: sahna almashishlarini topish (Klip &gt; Sahna almashishlarini topish), shu kompyuterda, internetsiz.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Markerni nomlash</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="807" />
+        <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Marker name:</source>
         <translation>Marker nomi:</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="863" />
+        <location filename="../src/app/MainWindow.cpp" line="864" />
         <source>Export queue</source>
         <translation>Eksport navbati</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="864" />
+        <location filename="../src/app/MainWindow.cpp" line="865" />
         <source>Exports in the queue are not finished. Close anyway? They will be lost.</source>
         <translation>Navbatdagi eksportlar tugamagan. Baribir yopilsinmi? Ular yo‘qoladi.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="894" />
+        <location filename="../src/app/MainWindow.cpp" line="895" />
         <source>Project "%1" has unsaved changes. Save them?</source>
         <translation>«%1» loyihasida saqlanmagan o‘zgarishlar bor. Saqlansinmi?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="898" />
+        <location filename="../src/app/MainWindow.cpp" line="899" />
         <source>Don't save</source>
         <translation>Saqlamaslik</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="899" />
+        <location filename="../src/app/MainWindow.cpp" line="900" />
         <source>Cancel</source>
         <translation>Bekor qilish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="920" />
-        <location filename="../src/app/MainWindow.cpp" line="930" />
+        <location filename="../src/app/MainWindow.cpp" line="921" />
+        <location filename="../src/app/MainWindow.cpp" line="931" />
         <source>Open project</source>
         <translation>Loyihani ochish</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="921" />
-        <location filename="../src/app/MainWindow.cpp" line="966" />
+        <location filename="../src/app/MainWindow.cpp" line="922" />
+        <location filename="../src/app/MainWindow.cpp" line="967" />
         <source>BUKHARA CINEMA projects (*.%1)</source>
         <translation>BUKHARA CINEMA loyihalari (*.%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="930" />
-        <location filename="../src/app/MainWindow.cpp" line="1044" />
-        <location filename="../src/app/MainWindow.cpp" line="1084" />
+        <location filename="../src/app/MainWindow.cpp" line="931" />
+        <location filename="../src/app/MainWindow.cpp" line="1045" />
+        <location filename="../src/app/MainWindow.cpp" line="1085" />
         <source>Cannot open "%1":
 %2</source>
         <translation>«%1» ochilmadi:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="935" />
+        <location filename="../src/app/MainWindow.cpp" line="936" />
         <source>Missing files</source>
         <translation>Yo‘qolgan fayllar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="936" />
+        <location filename="../src/app/MainWindow.cpp" line="937" />
         <source>Media files not found: %1. They may have been moved or renamed.</source>
         <translation>Topilmagan media fayllar: %1. Ular ko‘chirilgan yoki qayta nomlangan bo‘lishi mumkin.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="938" />
+        <location filename="../src/app/MainWindow.cpp" line="939" />
         <source>Search in folder...</source>
         <translation>Papkadan qidirish...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="939" />
+        <location filename="../src/app/MainWindow.cpp" line="940" />
         <source>Later</source>
         <translation>Keyinroq</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="953" />
-        <location filename="../src/app/MainWindow.cpp" line="971" />
+        <location filename="../src/app/MainWindow.cpp" line="954" />
+        <location filename="../src/app/MainWindow.cpp" line="972" />
         <source>Cannot save the project:
 %1</source>
         <translation>Loyiha saqlanmadi:
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="956" />
-        <location filename="../src/app/MainWindow.cpp" line="975" />
+        <location filename="../src/app/MainWindow.cpp" line="957" />
+        <location filename="../src/app/MainWindow.cpp" line="976" />
         <source>Saved: %1</source>
         <translation>Saqlandi: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="965" />
+        <location filename="../src/app/MainWindow.cpp" line="966" />
         <source>Save project as</source>
         <translation>Loyihani boshqa nom bilan saqlash</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="984" />
+        <location filename="../src/app/MainWindow.cpp" line="985" />
         <source>(empty)</source>
         <translation>(bo‘sh)</translation>
     </message>
@@ -3244,102 +3254,102 @@
 <context>
     <name>bc::ProjectController</name>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="141" />
+        <location filename="../src/app/ProjectController.cpp" line="144" />
         <source>Untitled</source>
         <translation>Nomsiz</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="488" />
+        <location filename="../src/app/ProjectController.cpp" line="497" />
         <source>different media type</source>
         <translation>media turi boshqa</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="490" />
+        <location filename="../src/app/ProjectController.cpp" line="499" />
         <source>different duration</source>
         <translation>davomiyligi boshqa</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="711" />
+        <location filename="../src/app/ProjectController.cpp" line="720" />
         <source>Place clips</source>
         <translation>Kliplarni joylash</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="719" />
+        <location filename="../src/app/ProjectController.cpp" line="728" />
         <source>Move clips</source>
         <translation>Kliplarni ko‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="726" />
+        <location filename="../src/app/ProjectController.cpp" line="735" />
         <source>Trim clip</source>
         <translation>Klipni qirqish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="733" />
+        <location filename="../src/app/ProjectController.cpp" line="742" />
         <source>Split</source>
         <translation>Bo‘lish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="738" />
+        <location filename="../src/app/ProjectController.cpp" line="747" />
         <source>Ripple delete</source>
         <translation>Bo‘shliqsiz o‘chirish (ripple)</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="738" />
+        <location filename="../src/app/ProjectController.cpp" line="747" />
         <source>Delete</source>
         <translation>O‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="745" />
+        <location filename="../src/app/ProjectController.cpp" line="754" />
         <source>Add video track</source>
         <translation>Video yo‘lak qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="745" />
+        <location filename="../src/app/ProjectController.cpp" line="754" />
         <source>Add audio track</source>
         <translation>Ovoz yo‘lagi qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="754" />
+        <location filename="../src/app/ProjectController.cpp" line="763" />
         <source>Track setting</source>
         <translation>Yo‘lak sozlamasi</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="776" />
+        <location filename="../src/app/ProjectController.cpp" line="785" />
         <source>Track volume</source>
         <translation>Yo‘lak ovozi</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="789" />
+        <location filename="../src/app/ProjectController.cpp" line="798" />
         <source>Track balance</source>
         <translation>Yo‘lak balansi</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="801" />
+        <location filename="../src/app/ProjectController.cpp" line="810" />
         <source>Master volume</source>
         <translation>Master ovoz</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="820" />
+        <location filename="../src/app/ProjectController.cpp" line="829" />
         <source>Add title</source>
         <translation>Titr qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="838" />
+        <location filename="../src/app/ProjectController.cpp" line="847" />
         <source>Title</source>
         <translation>Titr</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="847" />
+        <location filename="../src/app/ProjectController.cpp" line="856" />
         <source>Edit title</source>
         <translation>Titrni tahrirlash</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="862" />
+        <location filename="../src/app/ProjectController.cpp" line="871" />
         <source>Clip volume</source>
         <translation>Klip ovozi</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectController.cpp" line="901" />
+        <location filename="../src/app/ProjectController.cpp" line="910" />
         <source>Another export is running. Wait for it to finish or cancel it.</source>
         <translation>Boshqa eksport ketmoqda. Tugashini kuting yoki uni bekor qiling.</translation>
     </message>
@@ -3659,6 +3669,16 @@
         <source>Nothing to render here: these parts are rendered already or play without it.</source>
         <translation>Bu yerda render qiladigan narsa yo‘q: bu joylar allaqachon render qilingan yoki usiz ham tekis o‘ynaydi.</translation>
     </message>
+    <message>
+        <location filename="../src/app/ProjectScenes.cpp" line="157" />
+        <source>Split at scene changes</source>
+        <translation>Sahna almashishlarida bo‘lish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectScenes.cpp" line="179" />
+        <source>Mark scene changes</source>
+        <translation>Sahna almashishlariga marker qo‘yish</translation>
+    </message>
 </context>
 <context>
     <name>bc::ProjectInfoPanel</name>
@@ -3734,6 +3754,89 @@
         <location filename="../src/app/RecoveryDialog.cpp" line="81" />
         <source>never saved</source>
         <translation>hali saqlanmagan</translation>
+    </message>
+</context>
+<context>
+    <name>bc::SceneDialog</name>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="28" />
+        <source>Detect scene changes</source>
+        <translation>Sahna almashishlarini topish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="37" />
+        <source>Higher finds softer cuts too; lower finds only clear cuts</source>
+        <translation>Yuqoriroq bo‘lsa yumshoqroq kesimlar ham topiladi; pastroq bo‘lsa faqat aniq kesimlar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="38" />
+        <source>Split the clips at each new shot</source>
+        <translation>Kliplarni har bir yangi kadr boshida bo‘lish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="39" />
+        <source>Put a marker at each new shot</source>
+        <translation>Har bir yangi kadrga marker qo‘yish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="47" />
+        <source>Low</source>
+        <translation>Past</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="48" />
+        <source>High</source>
+        <translation>Yuqori</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="54" />
+        <source>Sensitivity:</source>
+        <translation>Sezgirlik:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="55" />
+        <source>Result:</source>
+        <translation>Natija:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="57" />
+        <source>Finds hard cuts between shots in the selected video clips. It works on this computer, without the internet; each video is read once and remembered. Slow fades between shots are not found.</source>
+        <translation>Tanlangan video kliplardagi kadrlar orasidagi keskin kesimlarni topadi. Shu kompyuterda, internetsiz ishlaydi; har bir video bir marta o‘qiladi va esda saqlanadi. Sekin almashadigan (fade) o‘tishlar topilmaydi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="65" />
+        <source>Close</source>
+        <translation>Yopish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="118" />
+        <source>Add markers</source>
+        <translation>Marker qo‘yish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="118" />
+        <source>Split clips</source>
+        <translation>Kliplarni bo‘lish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="121" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Avval timeline'da video kliplarni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="128" />
+        <source>Reading the video... you can keep working.</source>
+        <translation>Video o‘qilmoqda... ishlashda davom etishingiz mumkin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="133" />
+        <source>Scene changes found: %1.</source>
+        <translation>Topilgan sahna almashishlari: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SceneDialog.cpp" line="134" />
+        <source>No scene changes found in the selected clips.</source>
+        <translation>Tanlangan kliplarda sahna almashishi topilmadi.</translation>
     </message>
 </context>
 <context>
@@ -4280,217 +4383,227 @@
 <context>
     <name>bc::TimelinePanel</name>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1375" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1381" />
         <source>Rename sequence</source>
         <translation>Sekvensiya nomini o‘zgartirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1375" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1381" />
         <source>Sequence name:</source>
         <translation>Sekvensiya nomi:</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1559" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1565" />
         <source>Duration: %1</source>
         <translation>Davomiylik: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1581" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1588" />
         <source>Unlink audio and video</source>
         <translation>Video va ovozni ajratish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1581" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1588" />
         <source>Link audio and video</source>
         <translation>Video va ovozni bog‘lash</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1593" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1600" />
         <source>Split at playhead</source>
         <translation>Kursor joyida bo‘lish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1594" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1601" />
         <source>Delete</source>
         <translation>O‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1595" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1602" />
         <source>Ripple delete</source>
         <translation>Bo‘shliqsiz o‘chirish (ripple)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1596" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1603" />
         <source>Snapping</source>
         <translation>Yopishish (snapping)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1597" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1604" />
         <source>Clips stick to edges and the playhead (S)</source>
         <translation>Kliplar chetlarga va kursorga yopishadi (S)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1598" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1605" />
         <source>Add video track</source>
         <translation>Video yo‘lak qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1599" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1606" />
         <source>Add audio track</source>
         <translation>Ovoz yo‘lagi qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1600" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1607" />
         <source>Select all clips</source>
         <translation>Barcha kliplarni tanlash</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1601" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1608" />
         <source>Fit</source>
         <translation>Sig‘dirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1602" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1609" />
         <source>Show the whole sequence (\)</source>
         <translation>Butun sekvensiyani ko‘rsatish (\)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1603" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1610" />
         <source>Zoom (Ctrl + mouse wheel)</source>
         <translation>Masshtab (Ctrl + sichqoncha g‘ildiragi)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1604" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1611" />
         <source>Split at playhead (Ctrl+K)</source>
         <translation>Kursor joyida bo‘lish (Ctrl+K)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1605" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1612" />
         <source>Copy</source>
         <translation>Nusxa olish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1606" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1613" />
         <source>Nest</source>
         <translation>Nest (ichki sekvensiya)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1607" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1614" />
         <source>Speed / duration...</source>
         <translation>Tezlik / davomiylik...</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1608" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1615" />
         <source>Add transition</source>
         <translation>O‘tish qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1609" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1616" />
         <source>A 1-second dissolve at the edit of the selected clips nearest the playhead (Ctrl+D)</source>
         <translation>Tanlangan kliplarning playhead'ga eng yaqin kesimiga 1 soniyalik dissolve (Ctrl+D)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1610" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1617" />
         <source>Play the clip faster or slower (Ctrl+R)</source>
         <translation>Klipni tezroq yoki sekinroq ijro qilish (Ctrl+R)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1611" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1618" />
         <source>Normalize loudness...</source>
         <translation>Ovoz balandligini tekislash...</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1612" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1619" />
         <source>Measure the selected audio clips (LUFS) and set their volume to a target loudness</source>
         <translation>Tanlangan audio kliplarni o‘lchash (LUFS) va ovozini maqsad balandlikka keltirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1613" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1620" />
+        <source>Detect scene changes...</source>
+        <translation>Sahna almashishlarini topish...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1621" />
+        <source>Find the cuts between shots in the selected video clips and split them there or add markers</source>
+        <translation>Tanlangan video kliplardagi kadrlar orasidagi kesimlarni topish va shu yerda bo‘lish yoki marker qo‘yish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1622" />
         <source>Put the selected clips into a new nested sequence that works as one clip</source>
         <translation>Tanlangan kliplarni bitta klip kabi ishlaydigan yangi ichki sekvensiyaga joylash</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1614" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1623" />
         <source>Rename...</source>
         <translation>Nomini o‘zgartirish...</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1615" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1624" />
         <source>Rename the nested sequence shown on the timeline</source>
         <translation>Timeline'da ko‘rsatilgan ichki sekvensiya nomini o‘zgartirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1617" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1626" />
         <source>Cut</source>
         <translation>Qirqib olish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1618" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1627" />
         <source>Paste</source>
         <translation>Qo‘yish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1619" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1628" />
         <source>Paste at the playhead over what is there (Ctrl+V)</source>
         <translation>Kursor joyiga, borining ustidan qo‘yish (Ctrl+V)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1620" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1629" />
         <source>Paste insert</source>
         <translation>Surib qo‘yish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1621" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1630" />
         <source>Paste at the playhead; later clips move right (Ctrl+Shift+V)</source>
         <translation>Kursor joyiga qo‘yish; keyingi kliplar o‘ngga suriladi (Ctrl+Shift+V)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1622" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1631" />
         <source>Selection</source>
         <translation>Tanlash</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1622" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1631" />
         <source>Razor</source>
         <translation>Pichoq</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1622" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1631" />
         <source>Rolling edit</source>
         <translation>Roll (kesimni surish)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1623" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1632" />
         <source>Slip</source>
         <translation>Slip</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1623" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1632" />
         <source>Slide</source>
         <translation>Slide</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1625" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1634" />
         <source>Select, move and trim clips (V)</source>
         <translation>Kliplarni tanlash, ko‘chirish va qisqartirish (V)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1626" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1635" />
         <source>Click a clip to split it there (C)</source>
         <translation>Klipni bosilgan joydan bo‘lish (C)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1627" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1636" />
         <source>Drag the cut between two clips: one gets longer, the other shorter (N)</source>
         <translation>Ikki klip orasidagi kesimni surish: biri uzayadi, boshqasi qisqaradi (N)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1628" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1637" />
         <source>Drag inside a clip to use another part of its source in the same place (Y)</source>
         <translation>Klip ichida surish: shu joyda manbaning boshqa qismi (Y)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1629" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1638" />
         <source>Drag a clip between its neighbours; they get longer or shorter (U)</source>
         <translation>Klipni qo‘shnilarining orasida surish; ular uzayadi yoki qisqaradi (U)</translation>
     </message>
@@ -4506,62 +4619,62 @@
 <context>
     <name>bc::TimelineView</name>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="410" />
+        <location filename="../src/app/TimelinePanel.cpp" line="411" />
         <source>Drag media from the bin here</source>
         <translation>Mediani kutubxonadan shu yerga sudrab tashlang</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="479" />
+        <location filename="../src/app/TimelinePanel.cpp" line="480" />
         <source>Subtitles</source>
         <translation>Subtitrlar</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="492" />
+        <location filename="../src/app/TimelinePanel.cpp" line="493" />
         <source>(empty)</source>
         <translation>(bo‘sh)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1191" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1192" />
         <source>Subtitles: drag to move, drag an edge to change the time, double-click a free place to add one</source>
         <translation>Subtitrlar: surib joyini, chetini surib vaqtini o‘zgartiring; bo‘sh joyni ikki marta bosib yangisini qo‘shing</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1195" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1196" />
         <source>Unlock track</source>
         <translation>Yo‘lak qulfini ochish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1195" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1196" />
         <source>Lock track</source>
         <translation>Yo‘lakni qulflash</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1197" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1198" />
         <source>Show track in the Program monitor</source>
         <translation>Yo‘lakni Natija monitorida ko‘rsatish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1197" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1198" />
         <source>Hide track in the Program monitor</source>
         <translation>Yo‘lakni Natija monitorida yashirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1199" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1200" />
         <source>Turn the track sound on</source>
         <translation>Yo‘lak ovozini yoqish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1199" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1200" />
         <source>Mute track</source>
         <translation>Yo‘lak ovozini o‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1201" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1202" />
         <source>Solo off</source>
         <translation>Solo’ni o‘chirish</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1201" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1202" />
         <source>Solo: hear only this track (and other solo tracks)</source>
         <translation>Solo: faqat shu yo‘lakni (va boshqa solo yo‘laklarni) eshitish</translation>
     </message>

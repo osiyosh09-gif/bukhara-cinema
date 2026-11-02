@@ -6,6 +6,7 @@
 #include "app/MediaBinPanel.h"
 #include "app/ProjectController.h"
 #include "app/LoudnessDialog.h"
+#include "app/SceneDialog.h"
 #include "app/SpeedDialog.h"
 
 #include <QAction>
@@ -1356,6 +1357,11 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         LoudnessDialog dlg(m_ctl, m_view->selection(), this);
         dlg.exec();
     });
+    m_scenes = makeAction(QStringLiteral("actDetectScenes"), {});
+    connect(m_scenes, &QAction::triggered, this, [this] {
+        SceneDialog dlg(m_ctl, m_view->selection(), this);
+        dlg.exec();
+    });
     m_renameSeq = makeAction(QStringLiteral("actRenameSequence"), {});
     connect(m_nest, &QAction::triggered, this, [this] {
         const QUuid id = m_ctl->nestClips(m_view->selection());
@@ -1417,7 +1423,7 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         m_view->setSelection(all);
     });
 
-    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_loudness, m_transition, m_delete, m_rippleDelete},
+    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_loudness, m_scenes, m_transition, m_delete, m_rippleDelete},
                               {m_addVideo, m_addAudio});
 
     m_snapBtn->setDefaultAction(m_snapAct);
@@ -1577,6 +1583,7 @@ void TimelinePanel::updateState()
     m_nest->setEnabled(hasSel);
     m_speed->setEnabled(!speedClip().isNull());
     m_loudness->setEnabled(!m_ctl->loudnessClips(sel).isEmpty());
+    m_scenes->setEnabled(!m_ctl->sceneClips(sel).isEmpty());
     m_transition->setEnabled(hasSel);
     m_link->setText(linked ? tr("Unlink audio and video") : tr("Link audio and video"));
 }
@@ -1610,6 +1617,8 @@ void TimelinePanel::retranslate()
     m_speed->setToolTip(tr("Play the clip faster or slower (Ctrl+R)"));
     m_loudness->setText(tr("Normalize loudness..."));
     m_loudness->setToolTip(tr("Measure the selected audio clips (LUFS) and set their volume to a target loudness"));
+    m_scenes->setText(tr("Detect scene changes..."));
+    m_scenes->setToolTip(tr("Find the cuts between shots in the selected video clips and split them there or add markers"));
     m_nest->setToolTip(tr("Put the selected clips into a new nested sequence that works as one clip"));
     m_renameSeq->setText(tr("Rename..."));
     m_renameSeq->setToolTip(tr("Rename the nested sequence shown on the timeline"));
