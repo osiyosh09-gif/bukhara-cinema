@@ -904,6 +904,10 @@ QJsonArray Timeline::toJson() const
         to[QStringLiteral("hidden")] = t.hidden;
         if (t.solo)
             to[QStringLiteral("solo")] = true;
+        if (t.gainDb != 0)
+            to[QStringLiteral("gain_db")] = t.gainDb;
+        if (t.pan != 0)
+            to[QStringLiteral("pan")] = t.pan;
         QJsonArray ca;
         for (const auto &c : t.clips) {
             QJsonObject co;
@@ -972,6 +976,11 @@ Timeline Timeline::fromJson(const QJsonArray &a)
         t.muted = to.value(QStringLiteral("muted")).toBool();
         t.hidden = to.value(QStringLiteral("hidden")).toBool();
         t.solo = t.kind == Kind::Audio && to.value(QStringLiteral("solo")).toBool();
+        if (t.kind == Kind::Audio) {
+            t.gainDb = std::clamp(to.value(QStringLiteral("gain_db")).toDouble(), TimelineTrack::kMinGainDb,
+                                  TimelineTrack::kMaxGainDb);
+            t.pan = std::clamp(to.value(QStringLiteral("pan")).toDouble(), -1.0, 1.0);
+        }
         for (const auto &cv : to.value(QStringLiteral("clips")).toArray()) {
             const QJsonObject co = cv.toObject();
             TimelineClip c;
