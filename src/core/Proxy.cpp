@@ -62,7 +62,7 @@ bool make(const QString &source, const QString &target, QString *error,
     AVFormatContext *raw = nullptr;
     int rc = avformat_open_input(&raw, QFileInfo(source).absoluteFilePath().toUtf8().constData(), nullptr, nullptr);
     if (rc < 0)
-        return fail(averr(rc));
+        return fail(QStringLiteral("cannot open %1: %2").arg(QDir::toNativeSeparators(source), averr(rc)));
     std::unique_ptr<AVFormatContext, InputCloser> in(raw);
     if ((rc = avformat_find_stream_info(in.get(), nullptr)) < 0)
         return fail(averr(rc));
@@ -151,8 +151,14 @@ bool make(const QString &source, const QString &target, QString *error,
         if (map[i] < 0)
             in->streams[i]->discard = AVDISCARD_ALL;
 
-    if ((rc = avio_open(&out->pb, QFileInfo(temp).absoluteFilePath().toUtf8().constData(), AVIO_FLAG_WRITE)) < 0)
-        return fail(averr(rc));
+    const QByteArray tempPath = QFileInfo(temp).absoluteFilePath().toUtf8();
+    if ((rc = avio_open(&out->pb, tempPath.constData(), AVIO_FLAG_WRITE)) < 0) {
+        // The cache folder may have been removed meanwhile (cache cleared,
+        // another program): make it again and try once more.
+        QDir().mkpath(QFileInfo(target).absolutePath());
+        if ((rc = avio_open(&out->pb, tempPath.constData(), AVIO_FLAG_WRITE)) < 0)
+            return fail(QStringLiteral("cannot write %1: %2").arg(QDir::toNativeSeparators(temp), averr(rc)));
+    }
     if ((rc = avformat_write_header(out.get(), nullptr)) < 0) {
         out.reset();
         QFile::remove(temp);

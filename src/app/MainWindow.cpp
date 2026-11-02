@@ -564,7 +564,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 10, part 1: the audio mixer works (Audio panel on the right).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 10, part 2: audio mixer, equalizer and compressor work (Audio and Effects panels).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

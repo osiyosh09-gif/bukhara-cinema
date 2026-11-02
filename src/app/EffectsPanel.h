@@ -18,7 +18,8 @@ class ProjectController;
 class TimelineView;
 
 // "Effects" tab of the right panel (phase 8b): the picture effects of the
-// video clip selected on the timeline. Add, switch on/off, reorder, remove
+// video clip selected on the timeline, or the sound effects (phase 10b) of an
+// audio clip; for linked clips a Picture / Sound switch picks the part. Add, switch on/off, reorder, remove
 // and change values; every change goes through the controller (undoable).
 class EffectsPanel : public QWidget
 {
@@ -40,10 +41,14 @@ private:
     void refresh();        // follows the selection and the timeline
     void refreshParams();  // the form of the current effect
     void addEffect();
+    void fillKinds(); // the kinds for the current clip (picture or sound)
 
     ProjectController *m_ctl;
     TimelineView *m_view;
     QUuid m_clip;
+    bool m_audio = false;       // m_clip is a sound clip
+    bool m_wantAudio = false;   // linked picture + sound selected: show the sound
+    int m_kindsFor = -1;        // what the kind list holds: 0 picture, 1 sound
     bool m_updating = false;
     // What the parameter form was built for (rebuilt only when it changes,
     // so a spin box being edited is not replaced).
@@ -52,6 +57,9 @@ private:
     int m_formKind = -1;
 
     QLabel *m_header;
+    QWidget *m_target;          // Picture / Sound switch for linked clips
+    QToolButton *m_targetVideo;
+    QToolButton *m_targetAudio;
     QLabel *m_empty;
     QWidget *m_body;
     QComboBox *m_kind;

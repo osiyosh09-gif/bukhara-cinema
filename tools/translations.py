@@ -1028,6 +1028,40 @@ T.update({
     "Master volume": ("Мастер овоз", "Мастер-громкость"),
 })
 
+T.update({
+    "Sound effects: equalizer and compressor": ("Овоз эффектлари: эквалайзер ва компрессор", "Звуковые эффекты: эквалайзер и компрессор"),
+    "Select an audio clip (or press Sound for a linked clip) in the Effects tab: low cut, bass, middle and treble; compressor with threshold, ratio, attack, release and make-up gain. They work before the clip volume.": (
+        "«Эффектлар» панелида аудио клипни танланг (боғланган клипда «Овоз» тугмасини босинг): low cut, бас, ўрта ва юқори; компрессор: чегара, нисбат, attack, release ва make-up. Клип овозидан олдин ишлайди.",
+        "Выберите аудиоклип (для связанного клипа нажмите «Звук») на вкладке «Эффекты»: срез низких, басы, середина и верха; компрессор с порогом, степенью, атакой, восстановлением и компенсацией. Работают до громкости клипа."),
+    "Noise reduction and loudness": ("Шовқинни камайтириш ва loudness", "Шумоподавление и громкость (loudness)"),
+    "Phase 10, part 2: audio mixer, equalizer and compressor work (Audio and Effects panels).": (
+        "10-босқич, 2-қисм: аудио микшер, эквалайзер ва компрессор ишлайди («Аудио» ва «Эффектлар» панеллари).",
+        "Этап 10, часть 2: аудиомикшер, эквалайзер и компрессор работают (панели «Аудио» и «Эффекты»)."),
+    "Equalizer (EQ)": ("Эквалайзер (EQ)", "Эквалайзер (EQ)"),
+    "Compressor": ("Компрессор", "Компрессор"),
+    "Low cut, Hz (0 = off)": ("Low cut, Hz (0 = ўчиқ)", "Срез низких, Гц (0 = выкл.)"),
+    "Bass, dB": ("Бас, dB", "Басы, дБ"),
+    "Bass frequency, Hz": ("Бас частотаси, Hz", "Частота басов, Гц"),
+    "Middle, dB": ("Ўрта, dB", "Середина, дБ"),
+    "Middle frequency, Hz": ("Ўрта частота, Hz", "Частота середины, Гц"),
+    "Middle width (Q)": ("Ўрта кенглиги (Q)", "Ширина середины (Q)"),
+    "Treble, dB": ("Юқори, dB", "Верха, дБ"),
+    "Treble frequency, Hz": ("Юқори частота, Hz", "Частота верхов, Гц"),
+    "Threshold, dB": ("Чегара, dB", "Порог, дБ"),
+    "Ratio (x:1)": ("Нисбат (x:1)", "Степень (x:1)"),
+    "Attack, ms": ("Attack, мс", "Атака, мс"),
+    "Release, ms": ("Release, мс", "Восстановление, мс"),
+    "Make-up gain, dB": ("Make-up, dB", "Компенсация, дБ"),
+    "Picture": ("Расм", "Изображение"),
+    "Sound": ("Овоз", "Звук"),
+    "Sound effects work before the clip volume and the track fader. Untick an effect to compare without it.": (
+        "Овоз эффектлари клип овозидан ва йўлак фейдеридан олдин ишлайди. Эффектсиз солиштириш учун белгини олинг.",
+        "Звуковые эффекты действуют до громкости клипа и фейдера дорожки. Снимите флажок, чтобы сравнить без эффекта."),
+    "Select a clip on the timeline to add effects.": (
+        "Эффект қўшиш учун timeline'да клипни танланг.",
+        "Выберите клип на таймлайне, чтобы добавить эффекты."),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

@@ -397,6 +397,14 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             }
             const qint64 fadeIn = std::max(c.fadeIn, std::min(headFade.length, c.length));
             const qint64 fadeOut = std::max(c.fadeOut, std::min(tailFade.length, c.length));
+            // Sound effects (equalizer, compressor) come before the clip volume.
+            if (audio && effectsActive(c.effects)) {
+                Mlt::Filter fx(*m_profile, "bc_audiofx");
+                if (fx.is_valid()) {
+                    fx.set("effects", effectsToEngineString(c.effects).constData());
+                    cut->attach(fx);
+                }
+            }
             if (audio && (c.gainDb != 0 || fadeIn > 0 || fadeOut > 0)) {
                 Mlt::Filter gain(*m_profile, "bc_gain");
                 if (gain.is_valid()) {

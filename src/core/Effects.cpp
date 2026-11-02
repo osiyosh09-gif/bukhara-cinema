@@ -28,16 +28,24 @@ constexpr KindName kNames[] = {
     {ClipEffect::Kind::Mirror, "mirror"},
     {ClipEffect::Kind::ChromaKey, "chroma_key"},
     {ClipEffect::Kind::Mask, "mask"},
+    {ClipEffect::Kind::Equalizer, "equalizer"},
+    {ClipEffect::Kind::Compressor, "compressor"},
 };
 
 } // namespace
 
-QList<ClipEffect::Kind> ClipEffect::kinds()
+QList<ClipEffect::Kind> ClipEffect::kinds(bool audio)
 {
     QList<Kind> out;
     for (const auto &k : kNames)
-        out << k.kind;
+        if (isAudio(k.kind) == audio)
+            out << k.kind;
     return out;
+}
+
+bool ClipEffect::isAudio(Kind kind)
+{
+    return kind == Kind::Equalizer || kind == Kind::Compressor;
 }
 
 QString ClipEffect::kindToString(Kind k)
@@ -95,6 +103,23 @@ QList<EffectParamSpec> ClipEffect::specs(Kind kind)
                 {QStringLiteral("height"), 0, 200, 60, 1, 0},
                 {QStringLiteral("feather"), 0, 200, 10, 1, 0},
                 {QStringLiteral("invert"), 0, 1, 0, 1, 0}};
+    case Kind::Equalizer:
+        // Low cut (high-pass, 0 = off), bass shelf, middle bell, treble shelf.
+        return {{QStringLiteral("low_cut"), 0, 500, 0, 10, 0},
+                {QStringLiteral("low_gain"), -15, 15, 0, 0.5, 1},
+                {QStringLiteral("low_freq"), 40, 500, 120, 10, 0},
+                {QStringLiteral("mid_gain"), -15, 15, 0, 0.5, 1},
+                {QStringLiteral("mid_freq"), 200, 8000, 1000, 50, 0},
+                {QStringLiteral("mid_q"), 0.3, 5, 1, 0.1, 1},
+                {QStringLiteral("high_gain"), -15, 15, 0, 0.5, 1},
+                {QStringLiteral("high_freq"), 2000, 16000, 8000, 250, 0}};
+    case Kind::Compressor:
+        // Above the threshold the level grows `ratio` times slower; make-up gain afterwards.
+        return {{QStringLiteral("threshold"), -60, 0, -18, 1, 0},
+                {QStringLiteral("ratio"), 1, 20, 4, 0.5, 1},
+                {QStringLiteral("attack"), 0.1, 200, 10, 1, 1},
+                {QStringLiteral("release"), 10, 2000, 150, 10, 0},
+                {QStringLiteral("makeup"), 0, 24, 0, 0.5, 1}};
     }
     return {};
 }
@@ -154,6 +179,11 @@ bool ClipEffect::isNeutral() const
         return value(QStringLiteral("tolerance")) == 0 && value(QStringLiteral("softness")) == 0;
     case Kind::Mask:
         return false; // even a full-frame mask hides the letterbox bars
+    case Kind::Equalizer:
+        return value(QStringLiteral("low_cut")) <= 0 && value(QStringLiteral("low_gain")) == 0
+               && value(QStringLiteral("mid_gain")) == 0 && value(QStringLiteral("high_gain")) == 0;
+    case Kind::Compressor:
+        return value(QStringLiteral("ratio")) <= 1 && value(QStringLiteral("makeup")) == 0;
     }
     return true;
 }
@@ -510,6 +540,9 @@ void applyEffects(uint8_t *rgba, int w, int h, const ClipEffects &effects, const
                  e.value(QStringLiteral("y")), e.value(QStringLiteral("width")), e.value(QStringLiteral("height")),
                  e.value(QStringLiteral("feather")) * scale, e.value(QStringLiteral("invert")) >= 0.5);
             break;
+        case ClipEffect::Kind::Equalizer:
+        case ClipEffect::Kind::Compressor:
+            break; // sound: core/AudioFx
         }
     }
 }
