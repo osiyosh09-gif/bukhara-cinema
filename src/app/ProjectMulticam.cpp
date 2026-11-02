@@ -6,6 +6,11 @@
 // engine builds only that angle's track.
 
 #include "app/ProjectController.h"
+#include "core/Multicam.h"
+#include "engine/TimelinePlayer.h"
+
+#include <QPointer>
+#include <QtConcurrent>
 
 #include <algorithm>
 
@@ -133,6 +138,106 @@ bool ProjectController::setClipAngle(const QUuid &clipId, int angle)
             return false;
         clip.angle = angle;
         return true;
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Multicamera monitor and live switching (phase 12, part 2)
+
+QUuid ProjectController::multicamClipAt(qint64 frame, Timeline::Kind kind) const
+{
+    const Timeline &tl = timeline();
+    auto lowest = [&](Timeline::Kind k) -> const TimelineClip * {
+        for (const TimelineTrack &t : tl.tracks)
+            if (t.kind == k)
+                for (const TimelineClip &c : t.clips)
+                    if (c.covers(frame) && c.isNested() && isMulticam(c.nestId))
+                        return &c;
+        return nullptr;
+    };
+    const TimelineClip *video = lowest(Timeline::Kind::Video);
+    if (kind == Timeline::Kind::Video)
+        return video ? video->id : QUuid();
+    if (video && !video->linkId.isNull())
+        for (const TimelineTrack &t : tl.tracks)
+            if (t.kind == Timeline::Kind::Audio)
+                for (const TimelineClip &c : t.clips)
+                    if (c.linkId == video->linkId && c.covers(frame) && c.nestId == video->nestId)
+                        return c.id;
+    const TimelineClip *audio = lowest(Timeline::Kind::Audio);
+    return audio ? audio->id : QUuid();
+}
+
+bool ProjectController::switchMulticamAngle(int angle, Timeline::Kind kind)
+{
+    const qint64 at = m_playhead;
+    const QUuid id = multicamClipAt(at, kind);
+    const TimelineClip *c = timeline().clip(id);
+    if (!c || angle < 0 || angle >= multicamAngles(c->nestId, kind).size() || c->angle == angle)
+        return false;
+    return editTimeline(kind == Timeline::Kind::Video ? tr("Switch camera") : tr("Switch sound"), [&](Timeline &t) {
+        const Timeline::ClipRef r = t.find(id);
+        if (r.track < 0 || t.tracks[r.track].locked)
+            return false;
+        QUuid target = id;
+        if (at > t.tracks[r.track].clips[r.index].start) {
+            t.splitAt(at, {id}); // with its linked clip, so the pairs stay together
+            for (const TimelineClip &part : t.tracks[r.track].clips)
+                if (part.start == at)
+                    target = part.id;
+        }
+        const Timeline::ClipRef tr2 = t.find(target);
+        t.tracks[tr2.track].clips[tr2.index].angle = angle;
+        return true;
+    });
+}
+
+void ProjectController::requestMulticamGrid()
+{
+    if (m_gridBusy) {
+        m_gridPending = true;
+        return;
+    }
+    m_gridPending = false;
+    const TimelineClip *c = timeline().clip(multicamClipAt(m_playhead));
+    if (!c || !m_player) {
+        if (m_gridLastKey != QLatin1String("none")) {
+            m_gridLastKey = QStringLiteral("none");
+            emit multicamGridReady({}, {});
+        }
+        return;
+    }
+    const QUuid clipId = c->id;
+    const qint64 frame = c->in + (m_playhead - c->start);
+    const QString graphKey = c->nestId.toString() + QLatin1Char('#') + QString::number(m_graphRev);
+    const QString key = graphKey + QLatin1Char('@') + QString::number(frame) + clipId.toString();
+    if (key == m_gridLastKey)
+        return;
+    m_gridLastKey = key;
+    if (!m_gridPlayer) {
+        m_gridPlayer = std::make_shared<TimelinePlayer>();
+        m_gridPlayer->setPreviewLimit(QSize(960, 540));
+    }
+    if (graphKey != m_gridGraphKey) {
+        // Built on this thread (setProject stops the player's timers);
+        // nothing renders now, so the worker is not using it.
+        m_gridGraphKey = graphKey;
+        m_gridPlayer->setProxies(m_useProxies ? m_proxies : QHash<QUuid, QString>());
+        m_gridPlayer->setProject(Multicam::gridProject(m_project, c->nestId));
+    }
+    m_gridBusy = true;
+    QPointer<ProjectController> self(this);
+    const std::shared_ptr<TimelinePlayer> player = m_gridPlayer;
+    (void)QtConcurrent::run(&m_gridPool, [self, player, frame, clipId] {
+        const QImage img = player->renderFrame(frame);
+        QMetaObject::invokeMethod(QCoreApplication::instance(), [self, img, clipId] {
+            if (!self)
+                return;
+            self->m_gridBusy = false;
+            emit self->multicamGridReady(img, clipId);
+            if (self->m_gridPending)
+                self->requestMulticamGrid();
+        }, Qt::QueuedConnection);
     });
 }
 

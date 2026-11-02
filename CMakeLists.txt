@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.27.0
+    VERSION 0.28.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -27,6 +27,7 @@ add_library(bc_core STATIC
     src/core/Waveform.h         src/core/Waveform.cpp
     src/core/Loudness.h         src/core/Loudness.cpp
     src/core/AudioSync.h        src/core/AudioSync.cpp
+    src/core/Multicam.h         src/core/Multicam.cpp
     src/core/Subtitles.h        src/core/Subtitles.cpp
     src/core/Backups.h          src/core/Backups.cpp
     src/core/MediaCache.h       src/core/MediaCache.cpp
@@ -81,6 +82,7 @@ add_library(bc_ui STATIC
     src/app/SpeedDialog.h  src/app/SpeedDialog.cpp
     src/app/LoudnessDialog.h src/app/LoudnessDialog.cpp
     src/app/MulticamDialog.h src/app/MulticamDialog.cpp
+    src/app/MulticamMonitor.h src/app/MulticamMonitor.cpp
     src/app/SubtitlesPanel.h src/app/SubtitlesPanel.cpp
     src/app/AboutDialog.h       src/app/AboutDialog.cpp
     src/app/StatusDialog.h      src/app/StatusDialog.cpp

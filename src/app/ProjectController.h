@@ -225,6 +225,18 @@ public:
     QStringList multicamAngles(const QUuid &nestId, Timeline::Kind kind) const;
     // Shows (video clip) or plays (audio clip) another angle of its multicamera sequence.
     bool setClipAngle(const QUuid &clipId, int angle);
+    // --- multicamera monitor and live switching (phase 12b)
+    // The multicamera clip under `frame` in the open sequence (picture: the
+    // lowest video track that has one; sound: the audio clip linked to that
+    // one, else the lowest audio track that has one). Null when none.
+    QUuid multicamClipAt(qint64 frame, Timeline::Kind kind = Timeline::Kind::Video) const;
+    // Shows (or plays) `angle` from the playhead on: the clip is cut at the
+    // playhead (with its linked clip) and the part after it gets the angle.
+    // One undo step; works while playing. False when nothing changes.
+    bool switchMulticamAngle(int angle, Timeline::Kind kind = Timeline::Kind::Video);
+    // Renders every angle of the multicamera clip at the playhead in a grid
+    // (in the background, the newest request wins); emits multicamGridReady.
+    void requestMulticamGrid();
 
     // Length of a media item in sequence frames, -1 = unlimited (images).
     qint64 mediaFrames(const QUuid &mediaId) const;
@@ -346,6 +358,8 @@ signals:
     void clipboardChanged();
     void openSequenceChanged(); // another sequence is shown on the timeline
     void loudnessAnalyzed(const QUuid &mediaId, bool ok);
+    // Grid of all angles (null image when no multicamera clip is at the playhead).
+    void multicamGridReady(const QImage &image, const QUuid &clipId);
 
 private:
     void setModified(bool m);
@@ -439,6 +453,14 @@ private:
     quint64 m_sourceGen = 0;  // changes with every source graph
     bool m_sourceBusy = false;
     bool m_sourcePending = false;
+
+    // Multicamera monitor (ProjectMulticam.cpp)
+    std::shared_ptr<TimelinePlayer> m_gridPlayer; // created on first use
+    QString m_gridGraphKey;  // what the grid player's graph was built from
+    QString m_gridLastKey;   // last frame asked for
+    bool m_gridBusy = false;
+    bool m_gridPending = false;
+    QThreadPool m_gridPool;  // one grid frame at a time; declared last, so it is destroyed (and waited for) first
 };
 
 } // namespace bc

@@ -17,6 +17,7 @@
 #include "app/SubtitlesPanel.h"
 #include "app/ColorPanel.h"
 #include "app/ScopesPanel.h"
+#include "app/MulticamMonitor.h"
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
@@ -217,6 +218,13 @@ void MainWindow::buildDocks()
     addDockWidget(Qt::RightDockWidgetArea, m_scopesDock);
     m_scopesDock->hide();
     connect(m_ctl, &ProjectController::programFrameReady, m_scopes, &ScopesPanel::setFrame);
+    // Multicamera monitor: also off until opened (it decodes every camera).
+    m_multicam = new MulticamMonitor(m_ctl);
+    m_multicamDock = new QDockWidget(this);
+    m_multicamDock->setObjectName(QStringLiteral("multicamDock"));
+    m_multicamDock->setWidget(m_multicam);
+    addDockWidget(Qt::RightDockWidgetArea, m_multicamDock);
+    m_multicamDock->hide();
 
     // Bottom: timeline
     m_timelineDock = new QDockWidget(this);
@@ -362,6 +370,24 @@ void MainWindow::buildMenus()
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
     m_sequenceMenu->addSeparator();
     m_sequenceMenu->addAction(m_bin->multicamAction());
+    // Live switching: 1-9 picture, Alt+1-9 sound, from the playhead on.
+    m_cameraMenu = m_sequenceMenu->addMenu(QString());
+    m_soundMenu = m_sequenceMenu->addMenu(QString());
+    for (int i = 0; i < 9; ++i) {
+        QAction *cam = m_cameraMenu->addAction(QString(), this, [this, i] { m_ctl->switchMulticamAngle(i); });
+        cam->setObjectName(QStringLiteral("actMulticamCamera%1").arg(i + 1));
+        cam->setShortcut(QKeySequence(QString::number(i + 1)));
+        m_cameraActs << cam;
+        QAction *snd = m_soundMenu->addAction(QString(), this,
+                                              [this, i] { m_ctl->switchMulticamAngle(i, Timeline::Kind::Audio); });
+        snd->setObjectName(QStringLiteral("actMulticamSound%1").arg(i + 1));
+        snd->setShortcut(QKeySequence(QStringLiteral("Alt+%1").arg(i + 1)));
+        m_soundActs << snd;
+    }
+    connect(m_ctl, &ProjectController::playheadChanged, this, &MainWindow::updateMulticamActions);
+    connect(m_ctl, &ProjectController::timelineChanged, this, &MainWindow::updateMulticamActions);
+    connect(m_ctl, &ProjectController::openSequenceChanged, this, &MainWindow::updateMulticamActions);
+    updateMulticamActions();
 
     // J / K / L act on the active monitor (the one clicked last).
     m_sequenceMenu->addSeparator();
@@ -463,6 +489,9 @@ void MainWindow::buildMenus()
     m_scopesAct = m_scopesDock->toggleViewAction();
     m_scopesAct->setObjectName(QStringLiteral("actScopes"));
     m_windowMenu->addAction(m_scopesAct);
+    m_multicamAct = m_multicamDock->toggleViewAction();
+    m_multicamAct->setObjectName(QStringLiteral("actMulticamMonitor"));
+    m_windowMenu->addAction(m_multicamAct);
     m_windowMenu->addSeparator();
     m_resetLayoutAct = m_windowMenu->addAction(QString(), this, &MainWindow::resetLayout);
     m_resetLayoutAct->setObjectName(QStringLiteral("actResetLayout"));
@@ -578,6 +607,13 @@ void MainWindow::retranslate()
     m_inspectorDock->setWindowTitle(tr("Properties"));
     m_timelineDock->setWindowTitle(tr("Timeline"));
     m_scopesDock->setWindowTitle(tr("Scopes"));
+    m_multicamDock->setWindowTitle(tr("Multicamera monitor"));
+    m_cameraMenu->setTitle(tr("Switch camera"));
+    m_soundMenu->setTitle(tr("Switch sound"));
+    for (int i = 0; i < m_cameraActs.size(); ++i) {
+        m_cameraActs[i]->setText(tr("Camera %1").arg(i + 1));
+        m_soundActs[i]->setText(tr("Sound of camera %1").arg(i + 1));
+    }
 
     m_leftTabs->setTabText(0, tr("Media bin"));
     m_leftTabs->setTabText(1, tr("Project files"));
@@ -587,7 +623,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 12, part 1: multicamera sequences lined up by sound (Sequence menu); pick the camera in the Clip tab.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 12, part 2: multicamera monitor (Window menu); press 1-9 to switch cameras while playing.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -753,6 +789,7 @@ void MainWindow::resetLayout()
     m_inspectorDock->show();
     m_timelineDock->show();
     m_scopesDock->hide();
+    m_multicamDock->hide();
     resizeDocks({m_mediaDock, m_inspectorDock}, {300, 320}, Qt::Horizontal);
     resizeDocks({m_timelineDock}, {300}, Qt::Vertical);
     const int half = m_monitorSplit->width() / 2;
@@ -1012,6 +1049,16 @@ void MainWindow::openLogFolder()
 {
     QDir().mkpath(Logging::logDirectory());
     QDesktopServices::openUrl(QUrl::fromLocalFile(Logging::logDirectory()));
+}
+
+void MainWindow::updateMulticamActions()
+{
+    for (auto [acts, kind] : {std::pair{&m_cameraActs, Timeline::Kind::Video}, std::pair{&m_soundActs, Timeline::Kind::Audio}}) {
+        const TimelineClip *c = m_ctl->timeline().clip(m_ctl->multicamClipAt(m_ctl->playhead(), kind));
+        const int n = c ? int(m_ctl->multicamAngles(c->nestId, kind).size()) : 0;
+        for (int i = 0; i < acts->size(); ++i)
+            (*acts)[i]->setEnabled(i < n);
+    }
 }
 
 } // namespace bc
