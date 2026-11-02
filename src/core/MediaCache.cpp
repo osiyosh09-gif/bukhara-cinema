@@ -16,6 +16,7 @@ QString subfolder(Kind kind)
     case Kind::Thumbnail: return QStringLiteral("thumbs");
     case Kind::Waveform: return QStringLiteral("waveforms");
     case Kind::Proxy: return QStringLiteral("proxies");
+    case Kind::Loudness: return QStringLiteral("waveforms");
     }
     return {};
 }
@@ -25,6 +26,7 @@ QString extension(Kind kind)
     case Kind::Thumbnail: return QStringLiteral(".jpg");
     case Kind::Waveform: return QStringLiteral(".bcwf");
     case Kind::Proxy: return QStringLiteral(".mkv");
+    case Kind::Loudness: return QStringLiteral(".bcld");
     }
     return {};
 }

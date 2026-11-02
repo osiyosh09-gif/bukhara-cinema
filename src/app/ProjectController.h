@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/Loudness.h"
 #include "core/Project.h"
 #include "engine/EngineServices.h"
 #include "engine/Exporter.h"
@@ -82,6 +83,26 @@ public:
     QByteArray waveform(const QUuid &id) const { return m_waves.value(id); }
 
     void setSequence(const SequenceSettings &s);
+
+    // --- loudness (phase 10d, ProjectLoudness.cpp)
+    // The audio clips among `clipIds` and the audio linked to the video clips among them.
+    QList<QUuid> loudnessClips(const QList<QUuid> &clipIds) const;
+    // Measures the media of these clips in the background (results are cached);
+    // loudnessAnalyzed is emitted for each media item when it is done.
+    void analyzeLoudness(const QList<QUuid> &clipIds);
+    bool loudnessKnown(const QUuid &clipId) const;
+    // Loudness of the clip's source range, before its volume and effects;
+    // valid = false while not measured, or for silence.
+    Loudness::Result clipLoudness(const QUuid &clipId) const;
+    // All clips measured as one recording.
+    Loudness::Result clipsLoudness(const QList<QUuid> &clipIds) const;
+    // The clip volume (dB) that brings each clip to `targetLufs` with no sample
+    // above `ceilingDb`; `together` gives every clip the same change (keeps their
+    // balance). Clips not measured or silent are left out.
+    QHash<QUuid, double> loudnessGains(const QList<QUuid> &clipIds, double targetLufs, double ceilingDb,
+                                       bool together) const;
+    // Sets those volumes in one undo step; returns the number of clips changed.
+    int normalizeLoudness(const QList<QUuid> &clipIds, double targetLufs, double ceilingDb, bool together);
 
     // --- timeline (every edit is undoable)
     // The timeline being edited: the main sequence or an open nested one.
@@ -299,6 +320,7 @@ signals:
     void sourcePlayingChanged(bool playing);
     void clipboardChanged();
     void openSequenceChanged(); // another sequence is shown on the timeline
+    void loudnessAnalyzed(const QUuid &mediaId, bool ok);
 
 private:
     void setModified(bool m);
@@ -350,6 +372,8 @@ private:
     QSet<QUuid> m_pendingProbe;
     QHash<QUuid, QImage> m_thumbs;
     QHash<QUuid, QByteArray> m_waves;
+    QHash<QUuid, std::shared_ptr<const Loudness::Profile>> m_loudness; // by media id
+    QSet<QUuid> m_loudnessPending;
     quint64 m_changeSerial = 0;
     QHash<QUuid, QString> m_proxies;  // media id -> ready proxy file
     QList<QUuid> m_proxyQueue;

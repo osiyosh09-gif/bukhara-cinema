@@ -181,6 +181,7 @@ public:
     QAction *linkAction() const { return m_link; }
     QAction *nestAction() const { return m_nest; }
     QAction *speedAction() const { return m_speed; }
+    QAction *loudnessAction() const { return m_loudness; }
     QAction *transitionAction() const { return m_transition; }
     // The selected clip whose speed can change (null when none or several).
     QUuid speedClip() const;
@@ -221,6 +222,7 @@ private:
     QAction *m_link;
     QAction *m_nest;
     QAction *m_speed;
+    QAction *m_loudness;
     QAction *m_transition;
     QAction *m_renameSeq;
     QComboBox *m_sequences;
