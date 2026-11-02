@@ -40,13 +40,13 @@
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="28" />
-        <source>Interface languages: Uzbek (Cyrillic, Latin) and Russian</source>
-        <translation>Интерфейс тиллари: ўзбекча (кирилл, лотин) ва русча</translation>
+        <source>Switch in File &gt; Settings; applies immediately.</source>
+        <translation>Файл &gt; Созламалар орқали алмаштирилади; дарҳол қўлланади.</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="28" />
-        <source>Switch in File &gt; Settings; applies immediately.</source>
-        <translation>Файл &gt; Созламалар орқали алмаштирилади; дарҳол қўлланади.</translation>
+        <source>Interface languages: Uzbek (Cyrillic, Latin), Russian and English</source>
+        <translation>Интерфейс тиллари: ўзбекча (кирилл, лотин), русча ва инглизча</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="29" />

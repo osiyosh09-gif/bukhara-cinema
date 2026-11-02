@@ -1,6 +1,7 @@
 """Interface translations for BUKHARA CINEMA.
 
-Source texts are English (in the C++ code). Uzbek Cyrillic and Russian are
+Source texts are English (in the C++ code); the English catalogue repeats
+them (a QTranslator needs a .qm to load). Uzbek Cyrillic and Russian are
 written by hand here; Uzbek Latin is produced from Uzbek Cyrillic by the
 official transliteration rules (with a few manual overrides).
 
@@ -23,7 +24,7 @@ T = {
         "Панелларнинг ўлчамини ўзгартириш, кўчириш, яшириш ва асл ҳолатига қайтариш мумкин; жойлашув эсда сақланади.",
         "Панели можно менять по размеру, перемещать, скрывать и сбрасывать; расположение запоминается."),
     "Dark grey theme": ("Тўқ кулранг мавзу", "Тёмно-серая тема"),
-    "Interface languages: Uzbek (Cyrillic, Latin) and Russian": ("Интерфейс тиллари: ўзбекча (кирилл, лотин) ва русча", "Языки интерфейса: узбекский (кириллица, латиница) и русский"),
+    "Interface languages: Uzbek (Cyrillic, Latin), Russian and English": ("Интерфейс тиллари: ўзбекча (кирилл, лотин), русча ва инглизча", "Языки интерфейса: узбекский (кириллица, латиница), русский и английский"),
     "Switch in File > Settings; applies immediately.": ("Файл > Созламалар орқали алмаштирилади; дарҳол қўлланади.", "Переключается в Файл > Настройки; применяется сразу."),
     "About window and third-party licenses": ("«Дастур ҳақида» ойнаси ва учинчи томон лицензиялари", "Окно «О программе» и лицензии сторонних компонентов"),
     "Log file for problem reports": ("Муаммолар ҳисоботи учун журнал файли", "Файл журнала для отчётов о проблемах"),
@@ -1492,6 +1493,10 @@ def fill(ts_path: Path, lang: str) -> int:
             tr = ET.SubElement(msg, "translation")
         if tr.get("type") in ("obsolete", "vanished"):
             continue
+        if lang == "en":
+            tr.text = src
+            tr.attrib.pop("type", None)
+            continue
         if src not in T:
             print(f"MISSING translation for: {src!r}", file=sys.stderr)
             missing += 1
@@ -1517,7 +1522,7 @@ def fill(ts_path: Path, lang: str) -> int:
 def main() -> int:
     i18n = Path(__file__).resolve().parent.parent / "i18n"
     missing = 0
-    for lang in ("uz_Cyrl", "uz_Latn", "ru"):
+    for lang in ("uz_Cyrl", "uz_Latn", "ru", "en"):
         missing += fill(i18n / f"bukhara_{lang}.ts", lang)
     return 1 if missing else 0
 

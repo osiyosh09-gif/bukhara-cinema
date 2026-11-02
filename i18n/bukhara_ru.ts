@@ -40,13 +40,13 @@
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="28" />
-        <source>Interface languages: Uzbek (Cyrillic, Latin) and Russian</source>
-        <translation>Языки интерфейса: узбекский (кириллица, латиница) и русский</translation>
+        <source>Switch in File &gt; Settings; applies immediately.</source>
+        <translation>Переключается в Файл &gt; Настройки; применяется сразу.</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="28" />
-        <source>Switch in File &gt; Settings; applies immediately.</source>
-        <translation>Переключается в Файл &gt; Настройки; применяется сразу.</translation>
+        <source>Interface languages: Uzbek (Cyrillic, Latin), Russian and English</source>
+        <translation>Языки интерфейса: узбекский (кириллица, латиница), русский и английский</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="29" />

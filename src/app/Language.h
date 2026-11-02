@@ -8,7 +8,8 @@
 namespace bc {
 
 // Interface language manager.
-// Supported codes: "uz_Cyrl" (Uzbek, Cyrillic), "uz_Latn" (Uzbek, Latin), "ru" (Russian).
+// Supported codes: "uz_Cyrl" (Uzbek, Cyrillic), "uz_Latn" (Uzbek, Latin), "ru" (Russian), "en" (English;
+// the source texts are English, so its catalogue repeats them).
 // The chosen language is stored in QSettings and applied live: every widget
 // that shows text re-reads it on QEvent::LanguageChange.
 class Language : public QObject

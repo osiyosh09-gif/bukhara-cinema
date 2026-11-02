@@ -25,7 +25,7 @@ QList<FeatureEntry> entries()
     return {
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Main window with five resizable zones"), QCoreApplication::translate("FeatureStatus", "Panels can be resized, moved, hidden and reset; the layout is remembered.")},
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Dark grey theme"), {}},
-        {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Interface languages: Uzbek (Cyrillic, Latin) and Russian"), QCoreApplication::translate("FeatureStatus", "Switch in File > Settings; applies immediately.")},
+        {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Interface languages: Uzbek (Cyrillic, Latin), Russian and English"), QCoreApplication::translate("FeatureStatus", "Switch in File > Settings; applies immediately.")},
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "About window and third-party licenses"), {}},
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Log file for problem reports"), QCoreApplication::translate("FeatureStatus", "Help > Open log folder.")},
         {S::Partial, 0, QCoreApplication::translate("FeatureStatus", "Windows installer"), QCoreApplication::translate("FeatureStatus", "Installer wizard is in Russian or English; Uzbek wizard texts are planned.")},
