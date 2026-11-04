@@ -163,6 +163,11 @@ public:
     bool setClipEffectEnabled(const QUuid &clipId, int index, bool on);
     // Quick successive changes of one value form one undo step.
     bool setClipEffectValue(const QUuid &clipId, int index, const QString &key, double value);
+    // --- colour correction of video clips (phase 9a)
+    ClipColor clipColor(const QUuid &clipId) const;
+    // Quick successive changes of one value form one undo step.
+    bool setClipColorValue(const QUuid &clipId, const QString &key, double value);
+    bool resetClipColor(const QUuid &clipId);
     // --- nested sequences (phase 6c)
     // Moves the clips (and their linked clips) into a new nested sequence and
     // puts one clip of it in their place (picture and sound, linked).

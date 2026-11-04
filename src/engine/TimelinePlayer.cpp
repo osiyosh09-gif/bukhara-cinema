@@ -349,9 +349,10 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             const double sourceAspect = media && media->info.kind == MediaInfo::Kind::Video && media->info.hasVideo()
                                             ? double(media->info.width) / media->info.height
                                             : 0.0;
-            if (!audio && effectsActive(c.effects)) {
+            if (!audio && (effectsActive(c.effects) || !c.color.isNeutral())) {
                 Mlt::Filter effects(*m_profile, "bc_effects");
                 if (effects.is_valid()) {
+                    effects.set("color", c.color.toEngineString().constData());
                     effects.set("effects", effectsToEngineString(c.effects).constData());
                     if (sourceAspect > 0)
                         effects.set("source_aspect", sourceAspect);

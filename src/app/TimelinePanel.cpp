@@ -613,7 +613,7 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
         label = QStringLiteral("\u29c9  ") + m_ctl->sequenceName(c.nestId);
     if (c.speed != 1.0)
         label += QStringLiteral("  [%1%]").arg(c.speed * 100, 0, 'f', c.speed * 100 == std::round(c.speed * 100) ? 0 : 1);
-    if (video && effectsActive(c.effects))
+    if (video && (effectsActive(c.effects) || !c.color.isNeutral()))
         label = QStringLiteral("fx  ") + label;
     if (!video && c.gainDb != 0)
         label += QStringLiteral("  %1%2 dB").arg(c.gainDb > 0 ? QStringLiteral("+") : QString()).arg(c.gainDb, 0, 'f', 1);
