@@ -89,7 +89,7 @@ void ProjectController::startNextProxy()
     emit proxyProgress(id, 0, proxyJobsLeft());
     (void)QtConcurrent::run(&m_proxyPool, [self, id, source, target, gen, cancel] {
         int lastPercent = -1;
-        QString err;
+        QString err, decoder;
         const bool ok = Proxy::make(source, target, &err, [&](double f) {
             const int percent = int(f * 100);
             if (percent == lastPercent || !self)
@@ -99,11 +99,11 @@ void ProjectController::startNextProxy()
                 if (self && self->m_proxyRunning == id)
                     emit self->proxyProgress(id, f, self->proxyJobsLeft());
             }, Qt::QueuedConnection);
-        }, cancel.get());
+        }, cancel.get(), &decoder);
         if (!ok)
             qWarning("proxy of %s: %s", qPrintable(source), qPrintable(err));
         else
-            qInfo("proxy ready: %s", qPrintable(target));
+            qInfo("proxy ready (%s): %s", decoder.isEmpty() ? "processor" : qPrintable(decoder), qPrintable(target));
         if (!self)
             return;
         QMetaObject::invokeMethod(self.data(), [self, id, source, target, gen, ok, err, cancel] {

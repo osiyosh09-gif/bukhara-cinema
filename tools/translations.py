@@ -1373,6 +1373,33 @@ T.update({
     "Normalize mix loudness": ("Аралашма овоз баландлигини текислаш", "Нормализовать громкость микса"),
 })
 
+# Phase 13d: GPU decoding
+T.update({
+    "GPU acceleration: video decoding on the video card": ("GPU тезлатиш: видеони видеокартада декодлаш", "Ускорение GPU: декодирование видео на видеокарте"),
+    "The video card decodes H.264, HEVC and other videos for playback, render preview, export and proxy making (Windows: D3D11VA, DXVA2 or NVIDIA CUDA; Linux: VAAPI or CUDA); when it cannot decode a file, the processor does. Export encodes on the card too (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). File > Settings shows what was found and can switch decoding off. Effects, colour and titles are still computed on the processor.": (
+        "Видеокарта H.264, HEVC ва бошқа видеоларни ўйнатиш, превью рендер, экспорт ва proxy тайёрлаш учун декодлайди (Windows: D3D11VA, DXVA2 ёки NVIDIA CUDA; Linux: VAAPI ёки CUDA); видеокарта файлни декодлай олмаса, процессор декодлайди. Экспортда кодлаш ҳам видеокартада (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). «Файл > Созламалар» нима топилганини кўрсатади ва декодлашни ўчириш мумкин. Эффектлар, ранг ва матнлар ҳали процессорда ҳисобланади.",
+        "Видеокарта декодирует H.264, HEVC и другие видео для воспроизведения, просчёта превью, экспорта и создания прокси (Windows: D3D11VA, DXVA2 или NVIDIA CUDA; Linux: VAAPI или CUDA); если она не может декодировать файл, это делает процессор. Экспорт тоже кодирует на видеокарте (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). «Файл > Настройки» показывает, что найдено, и позволяет отключить декодирование. Эффекты, цвет и титры пока считаются на процессоре."),
+    "Phase 13, part 4: video decoding on the video card (File > Settings shows what was found).":
+        ("13-босқич, 4-қисм: видеони видеокартада декодлаш (нима топилгани «Файл > Созламалар»да).",
+         "Этап 13, часть 4: декодирование видео на видеокарте (что найдено — в «Файл > Настройки»)."),
+    "Video card decoding:": ("Видеокартада декодлаш:", "Декодирование на видеокарте:"),
+    "Automatic": ("Автоматик", "Автоматически"),
+    "Off (processor only)": ("Ўчирилган (фақат процессор)", "Выключено (только процессор)"),
+    "The video card decodes H.264, HEVC and other videos for playback, export and proxies. If it cannot decode a file, the processor does it.":
+        ("Видеокарта H.264, HEVC ва бошқа видеоларни ўйнатиш, экспорт ва proxy учун декодлайди. Бирор файлни декодлай олмаса, уни процессор декодлайди.",
+         "Видеокарта декодирует H.264, HEVC и другие видео для воспроизведения, экспорта и прокси. Если она не может декодировать файл, это делает процессор."),
+    "No video card decoder was found on this computer: the processor decodes.":
+        ("Бу компьютерда видеокарта декодери топилмади: процессор декодлайди.",
+         "На этом компьютере декодер видеокарты не найден: декодирует процессор."),
+    "Found: %1.": ("Топилди: %1.", "Найдено: %1."),
+    "Export: no hardware H.264 encoder, MPEG-4 is used.":
+        ("Экспорт: H.264 аппарат кодери йўқ, MPEG-4 ишлатилади.", "Экспорт: аппаратного кодера H.264 нет, используется MPEG-4."),
+    "Export can use: %1.": ("Экспорт ишлата олади: %1.", "Экспорт может использовать: %1."),
+    "Effects and colour are computed on the processor. A change applies to videos opened after it; restart to apply it everywhere.":
+        ("Эффектлар ва ранг процессорда ҳисобланади. Ўзгартириш ундан кейин очилган видеоларга таъсир қилади; ҳаммасига таъсир қилиши учун дастурни қайта ишга туширинг.",
+         "Эффекты и цвет считаются на процессоре. Изменение действует на видео, открытые после него; чтобы применить везде, перезапустите программу."),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

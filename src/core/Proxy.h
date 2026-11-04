@@ -20,7 +20,11 @@ bool recommended(const MediaInfo &info);
 
 // Writes the proxy of `source` to `target` (via a temporary file, so a
 // cancelled or failed run leaves nothing behind). `progress` gets 0..1.
+// The video card decodes when HwAccel allows it; if that fails, the file is
+// made again on the processor. `decoder` gets the device type that really
+// decoded ("d3d11va", ...) or empty for the processor.
 bool make(const QString &source, const QString &target, QString *error = nullptr,
-          const std::function<void(double)> &progress = {}, const std::atomic_bool *cancel = nullptr);
+          const std::function<void(double)> &progress = {}, const std::atomic_bool *cancel = nullptr,
+          QString *decoder = nullptr);
 
 } // namespace bc::Proxy

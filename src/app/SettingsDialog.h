@@ -19,8 +19,8 @@ public:
     QString selectedLanguage() const;
     void setSelectedLanguage(const QString &code);
 
-    // Applies the selected language and stores the autosave and backup
-    // settings (called on OK).
+    // Applies the selected language and stores the autosave, backup, proxy
+    // and video card settings (called on OK).
     void apply();
 
 protected:
@@ -36,6 +36,9 @@ private:
     QLabel *m_backupLabel;
     QSpinBox *m_backupSpin;
     QCheckBox *m_autoProxy;
+    QLabel *m_gpuLabel;
+    QComboBox *m_gpuCombo;
+    QLabel *m_gpuInfo;
     QDialogButtonBox *m_buttons;
 };
 

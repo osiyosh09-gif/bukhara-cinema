@@ -279,6 +279,16 @@
         <translation>Полоса на линейке времени показывает красным тяжёлые места (эффекты, цвет, движение, скорость, переходы, вложенные секвенции, несколько слоёв). «Секвенция &gt; Просчитать превью» (Enter на таймлайне) один раз просчитывает в фоне эти места выбранных клипов (или всей секвенции): они становятся зелёными и играют из файла. Правка снова делает место красным, отмена возвращает его файл. Звук не просчитывается. Экспорт всегда в полном качестве.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="71" />
+        <source>GPU acceleration: video decoding on the video card</source>
+        <translation>Ускорение GPU: декодирование видео на видеокарте</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="71" />
+        <source>The video card decodes H.264, HEVC and other videos for playback, render preview, export and proxy making (Windows: D3D11VA, DXVA2 or NVIDIA CUDA; Linux: VAAPI or CUDA); when it cannot decode a file, the processor does. Export encodes on the card too (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). File &gt; Settings shows what was found and can switch decoding off. Effects, colour and titles are still computed on the processor.</source>
+        <translation>Видеокарта декодирует H.264, HEVC и другие видео для воспроизведения, просчёта превью, экспорта и создания прокси (Windows: D3D11VA, DXVA2 или NVIDIA CUDA; Linux: VAAPI или CUDA); если она не может декодировать файл, это делает процессор. Экспорт тоже кодирует на видеокарте (Intel Quick Sync, NVIDIA, AMD, Windows Media Foundation). «Файл &gt; Настройки» показывает, что найдено, и позволяет отключить декодирование. Эффекты, цвет и титры пока считаются на процессоре.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Настройки эпизода: размер, частота кадров, звук</translation>
@@ -442,11 +452,6 @@
         <location filename="../src/app/FeatureStatus.cpp" line="70" />
         <source>Sequence &gt; Mix loudness measures the whole mixed sound as it will be exported (every track with its volume, effects and fader, and the master) in LUFS, with its peak. Apply sets the master volume so the mix reaches -14, -16 or -23 LUFS (or your own target) without peaks above the ceiling; the balance between the tracks stays.</source>
         <translation>«Эпизод &gt; Громкость микса» измеряет весь сведённый звук так, как он будет экспортирован (каждая дорожка со своей громкостью, эффектами и фейдером, и мастер), в LUFS и с пиком. «Применить» ставит громкость мастера так, чтобы микс достиг -14, -16 или -23 LUFS (или своего значения) без пиков выше потолка; баланс между дорожками сохраняется.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="71" />
-        <source>GPU acceleration</source>
-        <translation>Ускорение GPU</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="72" />
@@ -2562,6 +2567,11 @@
         <translation>Клип</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="687" />
+        <source>Phase 13, part 4: video decoding on the video card (File &gt; Settings shows what was found).</source>
+        <translation>Этап 13, часть 4: декодирование видео на видеокарте (что найдено — в «Файл &gt; Настройки»).</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="723" />
         <source>Insert</source>
         <translation>Вставка</translation>
@@ -2617,11 +2627,6 @@
         <location filename="../src/app/MainWindow.cpp" line="685" />
         <source>Subtitles</source>
         <translation>Субтитры</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="687" />
-        <source>Phase 13, part 3: loudness of the whole mix (Sequence &gt; Mix loudness): measure in LUFS and set the master volume.</source>
-        <translation>Этап 13, часть 3: громкость всего микса («Эпизод &gt; Громкость микса»): измерение в LUFS и установка громкости мастера.</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="807" />
@@ -3880,62 +3885,107 @@
 <context>
     <name>bc::SettingsDialog</name>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="99" />
+        <location filename="../src/app/SettingsDialog.cpp" line="119" />
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="100" />
+        <location filename="../src/app/SettingsDialog.cpp" line="120" />
         <source>Interface language:</source>
         <translation>Язык интерфейса:</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="101" />
+        <location filename="../src/app/SettingsDialog.cpp" line="121" />
         <source>Autosave:</source>
         <translation>Автосохранение:</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="104" />
+        <location filename="../src/app/SettingsDialog.cpp" line="124" />
         <source>Off</source>
         <translation>Выключено</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="104" />
+        <location filename="../src/app/SettingsDialog.cpp" line="124" />
         <source>Every %1 min</source>
         <translation>Каждые %1 мин</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="106" />
+        <location filename="../src/app/SettingsDialog.cpp" line="126" />
         <source>Previous versions to keep:</source>
         <translation>Хранить предыдущих версий:</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="107" />
+        <location filename="../src/app/SettingsDialog.cpp" line="127" />
         <source>None</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="108" />
+        <location filename="../src/app/SettingsDialog.cpp" line="128" />
         <source>Make proxies for videos larger than Full HD automatically</source>
         <translation>Автоматически создавать прокси для видео больше Full HD</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="109" />
+        <location filename="../src/app/SettingsDialog.cpp" line="129" />
         <source>4K and other big videos then play smoothly; export still uses the originals.</source>
         <translation>Тогда 4K и другие большие видео воспроизводятся плавно; экспорт всё равно из оригиналов.</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="110" />
+        <location filename="../src/app/SettingsDialog.cpp" line="130" />
         <source>Each save keeps the old project file in the "Backups" folder next to it.</source>
         <translation>При каждом сохранении старый файл проекта остаётся в папке «Backups» рядом с ним.</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="111" />
+        <location filename="../src/app/SettingsDialog.cpp" line="131" />
+        <source>Video card decoding:</source>
+        <translation>Декодирование на видеокарте:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="132" />
+        <source>Automatic</source>
+        <translation>Автоматически</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="133" />
+        <source>Off (processor only)</source>
+        <translation>Выключено (только процессор)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="134" />
+        <source>The video card decodes H.264, HEVC and other videos for playback, export and proxies. If it cannot decode a file, the processor does it.</source>
+        <translation>Видеокарта декодирует H.264, HEVC и другие видео для воспроизведения, экспорта и прокси. Если она не может декодировать файл, это делает процессор.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="139" />
+        <source>No video card decoder was found on this computer: the processor decodes.</source>
+        <translation>На этом компьютере декодер видеокарты не найден: декодирует процессор.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="140" />
+        <source>Found: %1.</source>
+        <translation>Найдено: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="142" />
+        <source>Export: no hardware H.264 encoder, MPEG-4 is used.</source>
+        <translation>Экспорт: аппаратного кодера H.264 нет, используется MPEG-4.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="143" />
+        <source>Export can use: %1.</source>
+        <translation>Экспорт может использовать: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="144" />
+        <source>Effects and colour are computed on the processor. A change applies to videos opened after it; restart to apply it everywhere.</source>
+        <translation>Эффекты и цвет считаются на процессоре. Изменение действует на видео, открытые после него; чтобы применить везде, перезапустите программу.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SettingsDialog.cpp" line="147" />
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../src/app/SettingsDialog.cpp" line="112" />
+        <location filename="../src/app/SettingsDialog.cpp" line="148" />
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>

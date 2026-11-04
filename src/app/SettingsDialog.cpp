@@ -2,6 +2,7 @@
 
 #include "app/Autosave.h"
 #include "app/Language.h"
+#include "core/HwAccel.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -25,6 +26,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     , m_backupLabel(new QLabel(this))
     , m_backupSpin(new QSpinBox(this))
     , m_autoProxy(new QCheckBox(this))
+    , m_gpuLabel(new QLabel(this))
+    , m_gpuCombo(new QComboBox(this))
+    , m_gpuInfo(new QLabel(this))
     , m_buttons(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this))
 {
     setObjectName(QStringLiteral("settingsDialog"));
@@ -45,11 +49,25 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_autoProxy->setObjectName(QStringLiteral("autoProxyCheck"));
     m_autoProxy->setChecked(QSettings().value(QStringLiteral("proxy/auto"), true).toBool());
 
+    // Video card: "auto" and "off"; a forced device type (set by hand in the
+    // settings file) stays selectable so OK does not lose it.
+    m_gpuCombo->setObjectName(QStringLiteral("gpuDecodeCombo"));
+    m_gpuCombo->addItem(QString(), QStringLiteral("auto"));
+    m_gpuCombo->addItem(QString(), QStringLiteral("off"));
+    const QString gpu = HwAccel::setting();
+    if (m_gpuCombo->findData(gpu) < 0)
+        m_gpuCombo->addItem(gpu, gpu);
+    m_gpuCombo->setCurrentIndex(m_gpuCombo->findData(gpu));
+    m_gpuInfo->setObjectName(QStringLiteral("gpuInfo"));
+    m_gpuInfo->setWordWrap(true);
+
     auto *form = new QFormLayout;
     form->addRow(m_langLabel, m_langCombo);
     form->addRow(m_autosaveLabel, m_autosaveCombo);
     form->addRow(m_backupLabel, m_backupSpin);
     form->addRow(QString(), m_autoProxy);
+    form->addRow(m_gpuLabel, m_gpuCombo);
+    form->addRow(QString(), m_gpuInfo);
 
     auto *lay = new QVBoxLayout(this);
     lay->addLayout(form);
@@ -62,7 +80,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    resize(520, 210);
+    resize(560, 300);
     retranslate();
 }
 
@@ -84,6 +102,8 @@ void SettingsDialog::apply()
     s.setValue(QStringLiteral("autosave/minutes"), m_autosaveCombo->currentData().toInt());
     s.setValue(QStringLiteral("backup/keep"), m_backupSpin->value());
     s.setValue(QStringLiteral("proxy/auto"), m_autoProxy->isChecked());
+    HwAccel::setSetting(m_gpuCombo->currentData().toString());
+    HwAccel::applyToEngine();
     Language::instance().setLanguage(selectedLanguage());
 }
 
@@ -108,6 +128,22 @@ void SettingsDialog::retranslate()
     m_autoProxy->setText(tr("Make proxies for videos larger than Full HD automatically"));
     m_autoProxy->setToolTip(tr("4K and other big videos then play smoothly; export still uses the originals."));
     m_backupSpin->setToolTip(tr("Each save keeps the old project file in the \"Backups\" folder next to it."));
+    m_gpuLabel->setText(tr("Video card decoding:"));
+    m_gpuCombo->setItemText(0, tr("Automatic"));
+    m_gpuCombo->setItemText(1, tr("Off (processor only)"));
+    m_gpuCombo->setToolTip(tr("The video card decodes H.264, HEVC and other videos for playback, export and proxies. "
+                              "If it cannot decode a file, the processor does it."));
+    const QStringList devices = HwAccel::available();
+    const QStringList encoders = HwAccel::encoders();
+    QString info = devices.isEmpty()
+        ? tr("No video card decoder was found on this computer: the processor decodes.")
+        : tr("Found: %1.").arg(devices.join(QStringLiteral(", ")).toUpper());
+    info += QLatin1Char(' ')
+        + (encoders.isEmpty() ? tr("Export: no hardware H.264 encoder, MPEG-4 is used.")
+                              : tr("Export can use: %1.").arg(encoders.join(QStringLiteral(", "))));
+    info += QLatin1Char(' ') + tr("Effects and colour are computed on the processor. "
+                                  "A change applies to videos opened after it; restart to apply it everywhere.");
+    m_gpuInfo->setText(info);
     m_buttons->button(QDialogButtonBox::Ok)->setText(tr("OK"));
     m_buttons->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }

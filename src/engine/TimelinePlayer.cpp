@@ -3,6 +3,8 @@
 #include "engine/EngineServices.h"
 #include "engine/TitleRenderer.h"
 
+#include "core/HwAccel.h"
+
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDir>
@@ -63,6 +65,10 @@ bool Engine::init(QString *error)
     // MLT reads numbers in text (like the speed in "timewarp:1.5:...") with the
     // C library's locale; with a Russian or Uzbek locale "1.5" would not parse.
     std::setlocale(LC_NUMERIC, "C");
+    // Hardware video decoding for every file MLT opens (falls back to the
+    // processor by itself).
+    HwAccel::applyToEngine();
+    qInfo("hardware video decoding: %s", HwAccel::decoder().isEmpty() ? "off" : qPrintable(HwAccel::decoder()));
     mlt_repository raw = mlt_factory_init(repo.isEmpty() ? nullptr : repo.constData());
     Mlt::Repository *r = raw ? new Mlt::Repository(raw) : nullptr;
     if (!r) {
