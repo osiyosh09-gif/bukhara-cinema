@@ -236,6 +236,151 @@ QList<QUuid> Timeline::place(const MediaItem &item, const SequenceSettings &seq,
     return ids;
 }
 
+QList<QUuid> Timeline::place(const MediaItem &item, int videoTrack, int audioTrack, qint64 start, qint64 in,
+                             qint64 length)
+{
+    QList<QUuid> ids;
+    if (length <= 0)
+        return ids;
+    start = std::max<qint64>(0, start);
+    in = std::max<qint64>(0, in);
+    const bool wantVideo = item.info.hasVideo() && videoTrack >= 0;
+    const bool wantAudio = item.info.hasAudio() && audioTrack >= 0;
+    const QUuid link = (wantVideo && wantAudio) ? QUuid::createUuid() : QUuid();
+    auto put = [&](Kind kind, int n) {
+        while (count(kind) <= n)
+            addTrack(kind);
+        const int t = indexOf(kind, n);
+        if (tracks[t].locked)
+            return;
+        TimelineClip c;
+        c.id = QUuid::createUuid();
+        c.mediaId = item.id;
+        c.linkId = link;
+        c.start = start;
+        c.in = item.info.kind == MediaInfo::Kind::Image ? 0 : in;
+        c.length = length;
+        clearRange(t, c.start, c.end());
+        insertSorted(t, c);
+        ids << c.id;
+    };
+    if (wantVideo)
+        put(Kind::Video, videoTrack);
+    if (wantAudio)
+        put(Kind::Audio, audioTrack);
+    if (ids.size() == 1 && wantVideo && wantAudio) { // one part hit a locked track: no link to nothing
+        const ClipRef r = find(ids.first());
+        tracks[r.track].clips[r.index].linkId = QUuid();
+    }
+    return ids;
+}
+
+bool Timeline::insertSpace(qint64 at, qint64 length, const QList<int> &onlyTracks)
+{
+    if (length <= 0 || at < 0)
+        return false;
+    bool changed = false;
+    QHash<QUuid, QUuid> newLinks;
+    for (int t = 0; t < tracks.size(); ++t) {
+        if (tracks[t].locked || (!onlyTracks.isEmpty() && !onlyTracks.contains(t)))
+            continue;
+        QList<TimelineClip> out;
+        for (TimelineClip c : tracks[t].clips) {
+            if (c.end() <= at) {
+                out << c;
+            } else if (c.start >= at) {
+                c.start += length;
+                out << c;
+                changed = true;
+            } else {
+                // Split: the right part moves.
+                TimelineClip right = c;
+                right.id = QUuid::createUuid();
+                if (!c.linkId.isNull()) {
+                    if (!newLinks.contains(c.linkId))
+                        newLinks.insert(c.linkId, QUuid::createUuid());
+                    right.linkId = newLinks.value(c.linkId);
+                }
+                right.in += at - c.start;
+                right.length = c.end() - at;
+                right.start = at + length;
+                right.fadeIn = 0;
+                c.length = at - c.start;
+                c.fadeOut = 0;
+                out << c << right;
+                changed = true;
+            }
+        }
+        tracks[t].clips = out;
+    }
+    if (onlyTracks.isEmpty())
+        for (auto &m : markers)
+            if (m.frame >= at) {
+                m.frame += length;
+                changed = true;
+            }
+    return changed;
+}
+
+QUuid Timeline::addMarker(qint64 frame, const QString &name)
+{
+    frame = std::max<qint64>(0, frame);
+    if (const TimelineMarker *m = markerAt(frame))
+        return m->id;
+    TimelineMarker m;
+    m.id = QUuid::createUuid();
+    m.frame = frame;
+    m.name = name;
+    auto it = std::lower_bound(markers.begin(), markers.end(), frame,
+                               [](const TimelineMarker &a, qint64 f) { return a.frame < f; });
+    markers.insert(it, m);
+    return m.id;
+}
+
+bool Timeline::removeMarker(const QUuid &id)
+{
+    const auto before = markers.size();
+    markers.erase(std::remove_if(markers.begin(), markers.end(), [&](const TimelineMarker &m) { return m.id == id; }),
+                  markers.end());
+    return markers.size() != before;
+}
+
+bool Timeline::renameMarker(const QUuid &id, const QString &name)
+{
+    for (auto &m : markers)
+        if (m.id == id) {
+            if (m.name == name)
+                return false;
+            m.name = name;
+            return true;
+        }
+    return false;
+}
+
+const TimelineMarker *Timeline::markerAt(qint64 frame) const
+{
+    for (const auto &m : markers)
+        if (m.frame == frame)
+            return &m;
+    return nullptr;
+}
+
+qint64 Timeline::nextMarker(qint64 frame) const
+{
+    for (const auto &m : markers)
+        if (m.frame > frame)
+            return m.frame;
+    return -1;
+}
+
+qint64 Timeline::prevMarker(qint64 frame) const
+{
+    for (auto it = markers.crbegin(); it != markers.crend(); ++it)
+        if (it->frame < frame)
+            return it->frame;
+    return -1;
+}
+
 bool Timeline::move(const QList<QUuid> &ids, qint64 deltaFrames, Kind trackKind, int deltaTracks)
 {
     if (ids.isEmpty() || (deltaFrames == 0 && deltaTracks == 0))
@@ -482,6 +627,8 @@ void Timeline::rescale(double oldFps, double newFps)
             prevEnd = c.end();
         }
     }
+    for (auto &m : markers)
+        m.frame = qint64(std::llround(m.frame * f));
 }
 
 QList<qint64> Timeline::snapPoints(const QSet<QUuid> &exclude) const
@@ -491,6 +638,8 @@ QList<qint64> Timeline::snapPoints(const QSet<QUuid> &exclude) const
         for (const auto &c : t.clips)
             if (!exclude.contains(c.id))
                 pts << c.start << c.end();
+    for (const auto &m : markers)
+        pts << m.frame;
     std::sort(pts.begin(), pts.end());
     pts.erase(std::unique(pts.begin(), pts.end()), pts.end());
     return pts;
@@ -610,6 +759,37 @@ Timeline Timeline::fromJson(const QJsonArray &a)
     if (tl.count(Kind::Audio) == 0)
         tl.addTrack(Kind::Audio);
     return tl;
+}
+
+QJsonArray Timeline::markersToJson() const
+{
+    QJsonArray a;
+    for (const auto &m : markers) {
+        QJsonObject o;
+        o[QStringLiteral("id")] = idStr(m.id);
+        o[QStringLiteral("frame")] = double(m.frame);
+        if (!m.name.isEmpty())
+            o[QStringLiteral("name")] = m.name;
+        a.append(o);
+    }
+    return a;
+}
+
+void Timeline::markersFromJson(const QJsonArray &a)
+{
+    markers.clear();
+    for (const auto &v : a) {
+        const QJsonObject o = v.toObject();
+        const qint64 frame = std::max<qint64>(0, qint64(o.value(QStringLiteral("frame")).toDouble()));
+        if (markerAt(frame))
+            continue;
+        const QUuid id = addMarker(frame, o.value(QStringLiteral("name")).toString());
+        const QUuid saved(o.value(QStringLiteral("id")).toString());
+        if (!saved.isNull())
+            for (auto &m : markers)
+                if (m.id == id)
+                    m.id = saved;
+    }
 }
 
 } // namespace bc

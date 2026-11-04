@@ -79,10 +79,9 @@ private slots:
                 QVERIFY2(!a->isEnabled(), qPrintable(a->objectName()));
             }
         }
-        QVERIFY(planned >= 10); // phases 2-4 turned editing, titles, audio gain and export into real actions
+        QVERIFY(planned >= 8); // phases 2-6 turned editing, titles, audio, export and markers into real actions
 
-        // Source monitor cannot play yet: its buttons must not pretend to.
-        // (The Program monitor plays the timeline since phase 2.)
+        // With no clip opened, the Source monitor buttons must not pretend to work.
         auto *source = w.findChild<MonitorView *>(QStringLiteral("sourceMonitor"));
         for (auto *b : source->findChildren<QToolButton *>())
             QVERIFY(!b->isEnabled());

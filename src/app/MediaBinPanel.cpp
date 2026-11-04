@@ -126,6 +126,11 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     m_tree->sortByColumn(ColName, Qt::AscendingOrder);
     m_tree->setEditTriggers(QAbstractItemView::EditKeyPressed);
     m_tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    // Double-click a media item: watch it in the Source monitor.
+    connect(m_tree, &QTreeWidget::itemDoubleClicked, this, [this](QTreeWidgetItem *row, int) {
+        if (row && !row->data(ColName, IsFolderRole).toBool())
+            m_ctl->setSourceMedia(row->data(ColName, IdRole).toUuid());
+    });
     m_tree->header()->setStretchLastSection(false);
     m_tree->header()->setSectionResizeMode(ColName, QHeaderView::Interactive);
     m_tree->setColumnWidth(ColName, 220);
@@ -506,6 +511,11 @@ void MediaBinPanel::showContextMenu(const QPoint &pos)
     menu.addAction(tr("Import..."), this, &MediaBinPanel::importDialog);
     menu.addAction(tr("New folder"), this, &MediaBinPanel::newFolder);
     menu.addSeparator();
+    QAction *openSource = menu.addAction(tr("Open in Source monitor"), this,
+                                         [this, items] { m_ctl->setSourceMedia(items.value(0)); });
+    openSource->setObjectName(QStringLiteral("actOpenInSource"));
+    openSource->setEnabled(items.size() == 1 && m_ctl->project().item(items.value(0))
+                           && m_ctl->project().item(items.value(0))->probed && m_ctl->isOnline(items.value(0)));
     QAction *rename = menu.addAction(tr("Rename"), this, &MediaBinPanel::renameSelected);
     rename->setEnabled(m_tree->currentItem() != nullptr);
     QAction *relink = menu.addAction(tr("Relink..."), this, &MediaBinPanel::relinkSelected);

@@ -148,6 +148,46 @@ public:
     void refreshProxies();
     void waitForProxies(); // tests
 
+    // --- Source monitor: one media item, watched before it goes to the
+    // timeline. Positions are in sequence frames from the start of the media.
+    enum class Monitor { Source, Program };
+    QUuid sourceMedia() const { return m_sourceId; }
+    // Opens a probed, online item in the Source monitor (null id closes it).
+    bool setSourceMedia(const QUuid &id);
+    qint64 sourceDuration() const;   // frames; images count as 5 seconds
+    qint64 sourcePosition() const { return m_sourcePos; }
+    void setSourcePosition(qint64 frame);
+    bool isSourcePlaying() const;
+    void toggleSourcePlay();
+    void sourcePause();
+    // In and Out points of the source (Out is the last used frame). They are
+    // kept per media item while the program runs.
+    void setSourceIn(qint64 frame);
+    void setSourceOut(qint64 frame);
+    void clearSourceInOut();
+    bool hasSourceIn() const { return m_inPoints.contains(m_sourceId); }
+    bool hasSourceOut() const { return m_outPoints.contains(m_sourceId); }
+    // Part of a media item that an edit uses: from its In point (or 0) to its
+    // Out point (or the end). False when the item cannot be placed.
+    bool sourceRange(const QUuid &mediaId, qint64 *in, qint64 *length) const;
+    // Insert (pushes later clips right) and Overwrite edits of the source
+    // range at the playhead, on the first unlocked video and audio tracks.
+    // The playhead moves to the end of the new clip.
+    bool insertEdit();
+    bool overwriteEdit();
+
+    // J / K / L: play backwards, stop, play forwards; pressing J or L again
+    // doubles the speed (up to 8x).
+    void shuttle(Monitor monitor, int direction); // -1 J, 0 K, +1 L
+    double speed(Monitor monitor) const;
+
+    // --- markers (undoable)
+    QUuid addMarker(qint64 frame);
+    bool removeMarker(const QUuid &id);
+    bool renameMarker(const QUuid &id, const QString &name);
+    bool goToNextMarker();
+    bool goToPreviousMarker();
+
     // Blocks until background probing/thumbnails are done (tests, closing).
     void waitForBackgroundWork();
 
@@ -168,6 +208,12 @@ signals:
     // Proxy work: progress of the running file (0..1) and when each ends.
     void proxyProgress(const QUuid &id, double fraction, int jobsLeft);
     void proxyFinished(const QUuid &id, bool ok, const QString &error);
+    // Source monitor
+    void sourceChanged();                     // another item opened (or closed)
+    void sourcePositionChanged(qint64 frame);
+    void sourceInOutChanged();
+    void sourceFrameReady(const QImage &image);
+    void sourcePlayingChanged(bool playing);
 
 private:
     void setModified(bool m);
@@ -191,6 +237,10 @@ private:
     friend class TimelineCommand;
     void applyTimeline(const Timeline &t);
     void syncPlayer();
+    void syncSourcePlayer(); // rebuilds the source graph when its media changed
+    void requestSourceFrame();
+    void startSourceFrame();
+    bool sourceEdit(bool insert);
 
     Project m_project;
     QString m_filePath;
@@ -217,6 +267,17 @@ private:
     Exporter *m_exporter = nullptr;
     TimelinePlayer *m_player = nullptr;
     QString m_engineError;
+
+    // Source monitor
+    QUuid m_sourceId;
+    qint64 m_sourcePos = 0;
+    QHash<QUuid, qint64> m_inPoints;
+    QHash<QUuid, qint64> m_outPoints;
+    TimelinePlayer *m_sourcePlayer = nullptr;
+    QString m_sourceKey;      // what the source graph was built from
+    quint64 m_sourceGen = 0;  // changes with every source graph
+    bool m_sourceBusy = false;
+    bool m_sourcePending = false;
 };
 
 } // namespace bc

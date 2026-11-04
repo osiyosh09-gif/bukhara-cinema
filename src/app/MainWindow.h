@@ -84,6 +84,11 @@ private:
     void openCollect();  // File > Collect project
     void openCache();    // File > Media cache
     void updateProxyStatus();
+    void wireMonitors();      // Source and Program monitors, J/K/L, In/Out
+    void setActiveMonitor(bool source);
+    void updateSourceMonitor();
+    void updateEditActions();
+    void renameMarker();      // Markers > Rename marker (at the playhead)
 
     struct PlannedAction
     {
@@ -128,6 +133,19 @@ private:
     QAction *m_licensesAct = nullptr;
     QAction *m_logFolderAct = nullptr;
     QAction *m_aboutAct = nullptr;
+    QAction *m_shuttleBackAct = nullptr;
+    QAction *m_shuttleStopAct = nullptr;
+    QAction *m_shuttleFwdAct = nullptr;
+    QAction *m_markInAct = nullptr;
+    QAction *m_markOutAct = nullptr;
+    QAction *m_clearInOutAct = nullptr;
+    QAction *m_insertAct = nullptr;
+    QAction *m_overwriteAct = nullptr;
+    QAction *m_addMarkerAct = nullptr;
+    QAction *m_nextMarkerAct = nullptr;
+    QAction *m_prevMarkerAct = nullptr;
+    QAction *m_renameMarkerAct = nullptr;
+    QAction *m_deleteMarkerAct = nullptr;
 
     QToolBar *m_toolbar = nullptr;
     QAction *m_tbSave = nullptr;
@@ -150,6 +168,8 @@ private:
     ProjectInfoPanel *m_info = nullptr;
     TimelinePanel *m_timeline = nullptr;
     MonitorView *m_programMonitor = nullptr;
+    MonitorView *m_sourceMonitor = nullptr;
+    bool m_sourceActive = false; // J/K/L and Space act on the Source monitor
 
     QByteArray m_defaultState;
     QByteArray m_defaultSplit;

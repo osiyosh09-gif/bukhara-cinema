@@ -29,6 +29,7 @@
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QLabel>
@@ -130,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent)
         m_playAct->setText(on ? tr("Pause") : tr("Play"));
     });
 
+    wireMonitors();
     retranslate();
 
     resize(1366, 768);
@@ -154,9 +156,16 @@ void MainWindow::buildCentral()
                                            : MainWindow::tr("No video at the playhead.");
     });
     m_programMonitor = program;
+    source->setEmptyText([this] {
+        return m_ctl->sourceMedia().isNull()
+                   ? MainWindow::tr("Double-click a clip in the media bin to watch it here.")
+                   : MainWindow::tr("No picture (sound only).");
+    });
+    m_sourceMonitor = source;
     m_monitorSplit->addWidget(source);
     m_monitorSplit->addWidget(program);
     m_monitorSplit->setChildrenCollapsible(false);
+    m_monitorSplit->setSizes({600, 600}); // both monitors equally wide by default
     setCentralWidget(m_monitorSplit);
 }
 
@@ -310,7 +319,9 @@ void MainWindow::buildMenus()
     m_sequenceMenu->addAction(m_timeline->addAudioTrackAction());
     m_sequenceMenu->addAction(m_timeline->snappingAction());
     m_sequenceMenu->addSeparator();
-    m_playAct = m_sequenceMenu->addAction(QString(), m_ctl, &ProjectController::togglePlay);
+    m_playAct = m_sequenceMenu->addAction(QString(), this, [this] {
+        m_sourceActive ? m_ctl->toggleSourcePlay() : m_ctl->togglePlay();
+    });
     m_playAct->setObjectName(QStringLiteral("actPlayPause"));
     m_playAct->setShortcut(QKeySequence(Qt::Key_Space));
     m_playAct->setEnabled(m_ctl->canPlay());
@@ -321,9 +332,67 @@ void MainWindow::buildMenus()
     connect(m_useProxiesAct, &QAction::toggled, m_ctl, &ProjectController::setUseProxies);
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
 
+    // J / K / L act on the active monitor (the one clicked last).
+    m_sequenceMenu->addSeparator();
+    auto shuttleAct = [this](const char *name, const char *key, int dir) {
+        QAction *a = m_sequenceMenu->addAction(QString(), this, [this, dir] {
+            m_ctl->shuttle(m_sourceActive ? ProjectController::Monitor::Source : ProjectController::Monitor::Program,
+                           dir);
+        });
+        a->setObjectName(QString::fromLatin1(name));
+        a->setShortcut(QKeySequence(QString::fromLatin1(key)));
+        a->setEnabled(m_ctl->canPlay());
+        return a;
+    };
+    m_shuttleBackAct = shuttleAct("actShuttleBack", "J", -1);
+    m_shuttleStopAct = shuttleAct("actShuttleStop", "K", 0);
+    m_shuttleFwdAct = shuttleAct("actShuttleForward", "L", 1);
+
+    // Insert / Overwrite: the source range goes to the timeline at the playhead.
+    m_clipMenu->addSeparator();
+    m_insertAct = m_clipMenu->addAction(QString(), this, [this] {
+        if (!m_ctl->insertEdit())
+            statusBar()->showMessage(tr("Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked."), 6000);
+    });
+    m_insertAct->setObjectName(QStringLiteral("actInsert"));
+    m_insertAct->setShortcut(QKeySequence(Qt::Key_Comma));
+    m_overwriteAct = m_clipMenu->addAction(QString(), this, [this] {
+        if (!m_ctl->overwriteEdit())
+            statusBar()->showMessage(tr("Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked."), 6000);
+    });
+    m_overwriteAct->setObjectName(QStringLiteral("actOverwrite"));
+    m_overwriteAct->setShortcut(QKeySequence(Qt::Key_Period));
+
     m_markersMenu = mb->addMenu(QString());
-    addPlanned(m_markersMenu, QT_TR_NOOP("Add marker"), 6, QStringLiteral("actAddMarker"));
-    addPlanned(m_markersMenu, QT_TR_NOOP("Go to next marker"), 6, QStringLiteral("actNextMarker"));
+    m_markInAct = m_markersMenu->addAction(QString(), this, [this] { m_ctl->setSourceIn(m_ctl->sourcePosition()); });
+    m_markInAct->setObjectName(QStringLiteral("actMarkIn"));
+    m_markInAct->setShortcut(QKeySequence(QStringLiteral("I")));
+    m_markOutAct = m_markersMenu->addAction(QString(), this, [this] { m_ctl->setSourceOut(m_ctl->sourcePosition()); });
+    m_markOutAct->setObjectName(QStringLiteral("actMarkOut"));
+    m_markOutAct->setShortcut(QKeySequence(QStringLiteral("O")));
+    m_clearInOutAct = m_markersMenu->addAction(QString(), m_ctl, &ProjectController::clearSourceInOut);
+    m_clearInOutAct->setObjectName(QStringLiteral("actClearInOut"));
+    m_clearInOutAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+X")));
+    m_markersMenu->addSeparator();
+    m_addMarkerAct = m_markersMenu->addAction(QString(), this, [this] { m_ctl->addMarker(m_ctl->playhead()); });
+    m_addMarkerAct->setObjectName(QStringLiteral("actAddMarker"));
+    m_addMarkerAct->setShortcut(QKeySequence(QStringLiteral("M")));
+    m_nextMarkerAct = m_markersMenu->addAction(QString(), m_ctl, &ProjectController::goToNextMarker);
+    m_nextMarkerAct->setObjectName(QStringLiteral("actNextMarker"));
+    m_nextMarkerAct->setShortcut(QKeySequence(QStringLiteral("Shift+M")));
+    m_prevMarkerAct = m_markersMenu->addAction(QString(), m_ctl, &ProjectController::goToPreviousMarker);
+    m_prevMarkerAct->setObjectName(QStringLiteral("actPrevMarker"));
+    m_prevMarkerAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+M")));
+    m_renameMarkerAct = m_markersMenu->addAction(QString(), this, &MainWindow::renameMarker);
+    m_renameMarkerAct->setObjectName(QStringLiteral("actRenameMarker"));
+    m_deleteMarkerAct = m_markersMenu->addAction(QString(), this, [this] {
+        if (const TimelineMarker *m = m_ctl->timeline().markerAt(m_ctl->playhead()))
+            m_ctl->removeMarker(m->id);
+    });
+    m_deleteMarkerAct->setObjectName(QStringLiteral("actDeleteMarker"));
+    connect(m_ctl, &ProjectController::timelineChanged, this, &MainWindow::updateEditActions);
+    connect(m_ctl, &ProjectController::playheadChanged, this, &MainWindow::updateEditActions);
+    connect(m_ctl, &ProjectController::sourceChanged, this, &MainWindow::updateEditActions);
 
     m_graphicsMenu = mb->addMenu(QString());
     m_newTextAct = m_graphicsMenu->addAction(QString(), this, &MainWindow::addTitle);
@@ -418,6 +487,23 @@ void MainWindow::retranslate()
     m_useProxiesAct->setText(tr("Use proxies for playback"));
     m_useProxiesAct->setToolTip(tr("Play big videos from their light proxy copies. Export always uses the originals."));
     m_proxyCancel->setToolTip(tr("Stop making proxies"));
+    m_shuttleBackAct->setText(tr("Play backwards (J, again: faster)"));
+    m_shuttleStopAct->setText(tr("Stop (K)"));
+    m_shuttleFwdAct->setText(tr("Play forwards (L, again: faster)"));
+    m_insertAct->setText(tr("Insert from Source"));
+    m_insertAct->setToolTip(tr("Insert the source In-Out part at the playhead; later clips move right (,)"));
+    m_overwriteAct->setText(tr("Overwrite from Source"));
+    m_overwriteAct->setToolTip(tr("Put the source In-Out part at the playhead over what is there (.)"));
+    m_markInAct->setText(tr("Mark In (Source)"));
+    m_markInAct->setToolTip(tr("Start of the part to use (I)"));
+    m_markOutAct->setText(tr("Mark Out (Source)"));
+    m_markOutAct->setToolTip(tr("End of the part to use (O)"));
+    m_clearInOutAct->setText(tr("Clear In and Out (Source)"));
+    m_addMarkerAct->setText(tr("Add marker"));
+    m_nextMarkerAct->setText(tr("Go to next marker"));
+    m_prevMarkerAct->setText(tr("Go to previous marker"));
+    m_renameMarkerAct->setText(tr("Rename marker..."));
+    m_deleteMarkerAct->setText(tr("Delete marker"));
     m_importAct->setText(tr("Import media..."));
     m_sequenceAct->setText(tr("Sequence settings..."));
     m_settingsAct->setText(tr("Settings..."));
@@ -447,8 +533,130 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 5: editing, playback, titles, MP4 export, autosave, waveforms and proxies work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 6 (part 1): Source monitor, In/Out, insert/overwrite, J/K/L and markers work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
+}
+
+// ---------------------------------------------------------------------------
+// Monitors
+
+void MainWindow::wireMonitors()
+{
+    // Program monitor position bar: the whole sequence with its markers.
+    auto updateProgramBar = [this] {
+        m_programMonitor->setDuration(m_ctl->timeline().duration());
+        m_programMonitor->setPosition(m_ctl->playhead());
+        QList<qint64> marks;
+        for (const TimelineMarker &m : m_ctl->timeline().markers)
+            marks << m.frame;
+        m_programMonitor->setMarkers(marks);
+    };
+    connect(m_ctl, &ProjectController::timelineChanged, this, updateProgramBar);
+    connect(m_ctl, &ProjectController::projectReset, this, updateProgramBar);
+    connect(m_ctl, &ProjectController::playheadChanged, m_programMonitor, &MonitorView::setPosition);
+    connect(m_programMonitor, &MonitorView::seekRequested, m_ctl, &ProjectController::setPlayhead);
+    connect(m_programMonitor, &MonitorView::activated, this, [this] { setActiveMonitor(false); });
+    // Working in the timeline makes the Program monitor active too.
+    connect(qApp, &QApplication::focusChanged, this, [this](QWidget *, QWidget *now) {
+        if (now && (m_timeline->isAncestorOf(now) || m_timeline == now))
+            setActiveMonitor(false);
+    });
+
+    // Source monitor
+    m_sourceMonitor->setDisabledReason([] {
+        return tr("The video engine (MLT) could not be loaded: playback is off. See the log file.");
+    });
+    m_sourceMonitor->setTransportEnabled(false);
+    m_sourceMonitor->addButton(m_markInAct, [] { return QStringLiteral("{ In"); });
+    m_sourceMonitor->addButton(m_markOutAct, [] { return QStringLiteral("Out }"); });
+    m_sourceMonitor->addButton(m_insertAct, [] { return tr("Insert"); });
+    m_sourceMonitor->addButton(m_overwriteAct, [] { return tr("Overwrite"); });
+    connect(m_ctl, &ProjectController::sourceFrameReady, m_sourceMonitor, &MonitorView::setImage);
+    connect(m_ctl, &ProjectController::sourceChanged, this, [this] {
+        updateSourceMonitor();
+        if (!m_ctl->sourceMedia().isNull())
+            setActiveMonitor(true);
+        else
+            m_sourceMonitor->setImage({});
+    });
+    connect(m_ctl, &ProjectController::sourcePositionChanged, this, [this](qint64 f) {
+        m_sourceMonitor->setPosition(f);
+        m_sourceMonitor->setTimecode(Fmt::frameTimecode(f, m_ctl->project().sequence.fps()));
+    });
+    connect(m_ctl, &ProjectController::sourceInOutChanged, this, &MainWindow::updateSourceMonitor);
+    connect(m_ctl, &ProjectController::sequenceChanged, this, &MainWindow::updateSourceMonitor);
+    connect(m_ctl, &ProjectController::sourcePlayingChanged, m_sourceMonitor, &MonitorView::setPlaying);
+    connect(m_sourceMonitor, &MonitorView::activated, this, [this] { setActiveMonitor(true); });
+    connect(m_sourceMonitor, &MonitorView::seekRequested, m_ctl, &ProjectController::setSourcePosition);
+    connect(m_sourceMonitor, &MonitorView::playPause, m_ctl, &ProjectController::toggleSourcePlay);
+    connect(m_sourceMonitor, &MonitorView::goToStart, this, [this] { m_ctl->setSourcePosition(0); });
+    connect(m_sourceMonitor, &MonitorView::goToEnd, this,
+            [this] { m_ctl->setSourcePosition(m_ctl->sourceDuration() - 1); });
+    connect(m_sourceMonitor, &MonitorView::stepBack, this, [this] {
+        m_ctl->sourcePause();
+        m_ctl->setSourcePosition(m_ctl->sourcePosition() - 1);
+    });
+    connect(m_sourceMonitor, &MonitorView::stepForward, this, [this] {
+        m_ctl->sourcePause();
+        m_ctl->setSourcePosition(m_ctl->sourcePosition() + 1);
+    });
+    setActiveMonitor(false);
+    updateSourceMonitor();
+    updateEditActions();
+}
+
+void MainWindow::setActiveMonitor(bool source)
+{
+    m_sourceActive = source && !m_ctl->sourceMedia().isNull();
+    m_sourceMonitor->setActive(m_sourceActive);
+    m_programMonitor->setActive(!m_sourceActive);
+}
+
+void MainWindow::updateSourceMonitor()
+{
+    const bool open = !m_ctl->sourceMedia().isNull();
+    m_sourceMonitor->setTransportEnabled(open && m_ctl->canPlay());
+    m_sourceMonitor->setDuration(open ? m_ctl->sourceDuration() : 0);
+    m_sourceMonitor->setPosition(m_ctl->sourcePosition());
+    qint64 in = 0, len = 0;
+    if (open && (m_ctl->hasSourceIn() || m_ctl->hasSourceOut()) && m_ctl->sourceRange(m_ctl->sourceMedia(), &in, &len))
+        m_sourceMonitor->setInOut(in, in + len - 1);
+    else
+        m_sourceMonitor->setInOut(-1, -1);
+    m_sourceMonitor->setTimecode(Fmt::frameTimecode(m_ctl->sourcePosition(), m_ctl->project().sequence.fps()));
+    if (!m_ctl->sourceMedia().isNull()) {
+        const MediaItem *m = m_ctl->project().item(m_ctl->sourceMedia());
+        m_sourceMonitor->setToolTip(m ? m->name : QString());
+    } else {
+        m_sourceMonitor->setToolTip(QString());
+    }
+    updateEditActions();
+}
+
+void MainWindow::updateEditActions()
+{
+    const bool open = !m_ctl->sourceMedia().isNull();
+    for (QAction *a : {m_markInAct, m_markOutAct, m_clearInOutAct, m_insertAct, m_overwriteAct})
+        a->setEnabled(open);
+    const bool onMarker = m_ctl->timeline().markerAt(m_ctl->playhead()) != nullptr;
+    m_renameMarkerAct->setEnabled(onMarker);
+    m_deleteMarkerAct->setEnabled(onMarker);
+    const bool any = !m_ctl->timeline().markers.isEmpty();
+    m_nextMarkerAct->setEnabled(any);
+    m_prevMarkerAct->setEnabled(any);
+}
+
+void MainWindow::renameMarker()
+{
+    const TimelineMarker *m = m_ctl->timeline().markerAt(m_ctl->playhead());
+    if (!m)
+        return;
+    const QUuid id = m->id;
+    bool ok = false;
+    const QString name = QInputDialog::getText(this, tr("Rename marker"), tr("Marker name:"), QLineEdit::Normal,
+                                               m->name, &ok);
+    if (ok)
+        m_ctl->renameMarker(id, name.trimmed());
 }
 
 void MainWindow::changeEvent(QEvent *event)

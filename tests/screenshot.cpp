@@ -1,5 +1,6 @@
 // Developer helper: renders the main window to PNG files (one per language)
 // without a display. Usage: bc_screenshot <output-dir>
+#include <QThread>
 #include "app/Language.h"
 #include "app/MainWindow.h"
 #include "app/ProjectController.h"
@@ -42,12 +43,21 @@ int main(int argc, char *argv[])
                 m.info.hasVideo() ? ids.prepend(m.id) : ids.append(m.id);
             ctl->placeMedia(ids, 0, 0);
             ctl->setPlayhead(40);
+            ctl->addMarker(20);
+            // The first video in the Source monitor with an In/Out range.
+            if (!ids.isEmpty() && ctl->setSourceMedia(ids.first())) {
+                ctl->setSourcePosition(10);
+                ctl->setSourceIn(10);
+                ctl->setSourceOut(std::max<qint64>(10, ctl->sourceDuration() / 2));
+            }
             // A title over the picture, selected so the Clip panel shows it.
             if (auto *newText = w.findChild<QAction *>(QStringLiteral("actNewText")))
                 newText->trigger();
             ctl->waitForBackgroundWork();
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 40; ++i) {
                 app.processEvents();
+                QThread::msleep(25);
+            }
         }
         app.processEvents();
         w.grab().save(out + QStringLiteral("/main_%1.png").arg(code));

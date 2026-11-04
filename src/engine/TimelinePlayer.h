@@ -8,7 +8,9 @@
 #include <QImage>
 #include <QMutex>
 #include <QObject>
+#include <QElapsedTimer>
 #include <QSize>
+#include <QThreadPool>
 #include <memory>
 
 namespace Mlt {
@@ -51,8 +53,12 @@ public:
 
     bool isPlaying() const { return m_playing; }
     // Starts playback at `frame`; frames arrive through frameShown().
-    bool play(qint64 frame);
+    // `speed` 1 = normal, 2/4/8 = faster, negative = backwards (J/K/L keys).
+    bool play(qint64 frame, double speed = 1);
     void pause();
+    // Changes the speed while playing.
+    void setSpeed(double speed);
+    double speed() const { return m_playing ? m_speed : 0; }
 
     // Size of the preview images (keeps the sequence aspect ratio).
     void setPreviewLimit(const QSize &limit) { m_previewLimit = limit; }
@@ -69,7 +75,7 @@ signals:
     // Emitted in the GUI thread for each frame shown during playback.
     void frameShown(const QImage &image, qint64 frame);
     void playingChanged(bool playing);
-    void reachedEnd();
+    void reachedEnd(); // or the start, when playing backwards
 
 public:
     // Called from the MLT consumer thread for every displayed frame.
@@ -78,6 +84,9 @@ public:
 private:
     friend class Exporter; // renders the same graph into a file
     void stopConsumer();
+    QImage renderFrameLocked(qint64 frame);
+    bool startReverse(qint64 frame, double speed);
+    void reverseStep();
     Mlt::Producer *producerFor(const MediaItem &item, bool audio);
     Mlt::Producer *titleProducer(const TitleData &title);
 
@@ -104,6 +113,15 @@ private:
     qint64 m_duration = 0;
     QSize m_previewLimit{960, 540};
     bool m_playing = false;
+    double m_speed = 1;
+    qint64 m_lastShown = 0;
+    // Backwards playback (frames rendered one by one, see startReverse).
+    bool m_reverse = false;
+    qint64 m_revOrigin = 0;
+    qint64 m_revShown = 0;
+    QElapsedTimer m_revClock;
+    quint64 m_revGen = 0;
+    QThreadPool m_revPool;
 };
 
 } // namespace bc
