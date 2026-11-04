@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.17.0
+    VERSION 0.18.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -32,6 +32,7 @@ add_library(bc_core STATIC
     src/core/Motion.h           src/core/Motion.cpp
     src/core/Effects.h          src/core/Effects.cpp
     src/core/Color.h            src/core/Color.cpp
+    src/core/Lut.h              src/core/Lut.cpp
 )
 target_include_directories(bc_core PUBLIC src)
 target_link_libraries(bc_core PUBLIC Qt6::Core Qt6::Gui FFmpeg::FFmpeg)

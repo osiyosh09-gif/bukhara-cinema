@@ -549,7 +549,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 9, part 1: basic colour correction works (Colour panel).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 9, part 2: colour correction and LUT looks work (Colour panel).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

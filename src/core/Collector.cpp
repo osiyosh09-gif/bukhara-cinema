@@ -58,6 +58,32 @@ Plan plan(const Project &project, const QString &name, const QString &destinatio
         done.insert(key, to);
         m.path = to;
     }
+    // LUT files of colour corrections (phase 9b) go to Media/ as well.
+    for (Timeline *tl : p.project.allTimelines())
+        for (TimelineTrack &t : tl->tracks)
+            for (TimelineClip &c : t.clips) {
+                if (c.color.lut.isEmpty())
+                    continue;
+                const QFileInfo fi(c.color.lut);
+                if (!fi.exists()) {
+                    const QString shown = QDir::toNativeSeparators(c.color.lut);
+                    if (!p.missing.contains(shown))
+                        p.missing << shown;
+                    continue;
+                }
+                const QString key = fi.absoluteFilePath().toLower();
+                if (!done.contains(key)) {
+                    QString fileName = fi.fileName();
+                    for (int n = 2; taken.contains(fileName.toLower()); ++n)
+                        fileName = QStringLiteral("%1 (%2).%3").arg(fi.completeBaseName()).arg(n).arg(fi.suffix());
+                    taken.insert(fileName.toLower());
+                    const QString to = mediaDir + fileName;
+                    p.copies.append({fi.absoluteFilePath(), to, fi.size()});
+                    p.totalBytes += fi.size();
+                    done.insert(key, to);
+                }
+                c.color.lut = done.value(key);
+            }
     return p;
 }
 
