@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/Project.h"
+#include "engine/Exporter.h"
 
 #include <QHash>
 #include <QImage>
@@ -114,6 +115,11 @@ public:
     void pause();
     void togglePlay();
 
+    // MP4 export of the whole sequence (same picture and sound as playback).
+    bool startExport(const ExportSettings &settings, QString *error);
+    void cancelExport();
+    bool isExporting() const;
+
     // Blocks until background probing/thumbnails are done (tests, closing).
     void waitForBackgroundWork();
 
@@ -129,6 +135,8 @@ signals:
     // Frame of the top visible video clip at the playhead; null image = nothing there.
     void programFrameReady(const QImage &image);
     void playingChanged(bool playing);
+    void exportProgress(qint64 frame, qint64 total, qint64 remainingMs);
+    void exportFinished(bool ok, const QString &error);
 
 private:
     void setModified(bool m);
@@ -162,6 +170,7 @@ private:
     bool m_framePending = false;
     QString m_lastFrameKey;
     quint64 m_graphRev = 0; // changes whenever the engine graph is rebuilt
+    Exporter *m_exporter = nullptr;
     TimelinePlayer *m_player = nullptr;
     QString m_engineError;
 };

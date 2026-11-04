@@ -74,6 +74,7 @@ private:
     void editSequence();
     void updateUndoActions();
     void addTitle(); // Graphics > New text: title at the playhead, ready to type
+    void openExport(); // File > Export
 
     struct PlannedAction
     {
@@ -104,6 +105,7 @@ private:
     QAction *m_redoAct = nullptr;
     QAction *m_playAct = nullptr;
     QAction *m_newTextAct = nullptr;
+    QAction *m_exportAct = nullptr;
     QAction *m_audioGainAct = nullptr;
     QAction *m_settingsAct = nullptr;
     QAction *m_exitAct = nullptr;

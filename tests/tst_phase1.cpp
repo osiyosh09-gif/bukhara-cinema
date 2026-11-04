@@ -357,7 +357,7 @@ private slots:
             QVERIFY2(a->isEnabled(), name);
             QVERIFY2(!a->property("bc_planned").toBool(), name);
         }
-        // Export is still honest about not being ready.
+        // Export is off while the timeline is empty.
         auto *exportAct = w.findChild<QAction *>(QStringLiteral("actExport"));
         QVERIFY(exportAct && !exportAct->isEnabled());
 

@@ -79,7 +79,7 @@ private slots:
                 QVERIFY2(!a->isEnabled(), qPrintable(a->objectName()));
             }
         }
-        QVERIFY(planned >= 12); // phases 2 and 3 turned editing, "New text" and "Audio gain" into real actions
+        QVERIFY(planned >= 10); // phases 2-4 turned editing, titles, audio gain and export into real actions
 
         // Source monitor cannot play yet: its buttons must not pretend to.
         // (The Program monitor plays the timeline since phase 2.)

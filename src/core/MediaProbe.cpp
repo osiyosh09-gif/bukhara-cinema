@@ -8,6 +8,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavutil/avutil.h>
 #include <libavutil/imgutils.h>
+#include <libavutil/pixdesc.h>
 #include <libswscale/swscale.h>
 }
 
@@ -313,6 +314,42 @@ QString ffmpegVersionString()
 QString ffmpegLicense()
 {
     return QString::fromLatin1(avformat_license());
+}
+
+QList<VideoEncoder> usableVideoEncoders()
+{
+    static QList<VideoEncoder> cached;
+    static bool done = false;
+    if (done)
+        return cached;
+    done = true;
+    const QList<VideoEncoder> candidates = {
+        {QStringLiteral("h264_qsv"), QStringLiteral("H.264 (Intel Quick Sync)"), QStringLiteral("nv12"), true},
+        {QStringLiteral("h264_mf"), QStringLiteral("H.264 (Windows Media Foundation)"), QStringLiteral("nv12"), true},
+        {QStringLiteral("h264_nvenc"), QStringLiteral("H.264 (NVIDIA NVENC)"), QStringLiteral("nv12"), true},
+        {QStringLiteral("h264_amf"), QStringLiteral("H.264 (AMD AMF)"), QStringLiteral("nv12"), true},
+        {QStringLiteral("mpeg4"), QStringLiteral("MPEG-4 Part 2"), QStringLiteral("yuv420p"), false},
+    };
+    for (const VideoEncoder &e : candidates) {
+        const AVCodec *codec = avcodec_find_encoder_by_name(e.codec.toLatin1().constData());
+        if (!codec)
+            continue;
+        // Open a tiny encoder to see whether the hardware / Windows part exists.
+        AVCodecContext *ctx = avcodec_alloc_context3(codec);
+        if (!ctx)
+            continue;
+        ctx->width = 320;
+        ctx->height = 240;
+        ctx->time_base = AVRational{1, 25};
+        ctx->framerate = AVRational{25, 1};
+        ctx->pix_fmt = av_get_pix_fmt(e.pixFmt.toLatin1().constData());
+        ctx->bit_rate = 1000000;
+        const bool ok = avcodec_open2(ctx, codec, nullptr) == 0;
+        avcodec_free_context(&ctx);
+        if (ok)
+            cached << e;
+    }
+    return cached;
 }
 
 } // namespace bc::MediaProbe

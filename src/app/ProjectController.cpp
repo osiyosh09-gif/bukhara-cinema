@@ -686,6 +686,28 @@ void ProjectController::setPlayhead(qint64 frame)
     requestProgramFrame();
 }
 
+bool ProjectController::startExport(const ExportSettings &settings, QString *error)
+{
+    if (!m_exporter) {
+        m_exporter = new Exporter(this);
+        connect(m_exporter, &Exporter::progress, this, &ProjectController::exportProgress);
+        connect(m_exporter, &Exporter::finished, this, &ProjectController::exportFinished);
+    }
+    pause();
+    return m_exporter->start(m_project, settings, error);
+}
+
+void ProjectController::cancelExport()
+{
+    if (m_exporter)
+        m_exporter->cancel();
+}
+
+bool ProjectController::isExporting() const
+{
+    return m_exporter && m_exporter->isRunning();
+}
+
 bool ProjectController::canPlay() const
 {
     return m_player != nullptr && Engine::isReady();

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.5.0
+    VERSION 0.6.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -36,6 +36,7 @@ add_library(bc_engine STATIC
     src/engine/TimelinePlayer.h src/engine/TimelinePlayer.cpp
     src/engine/TitleRenderer.h src/engine/TitleRenderer.cpp
     src/engine/EngineServices.h src/engine/EngineServices.cpp
+    src/engine/Exporter.h src/engine/Exporter.cpp
 )
 target_include_directories(bc_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(bc_engine PUBLIC bc_core Qt6::Core Qt6::Gui PRIVATE PkgConfig::MLT)
@@ -51,6 +52,7 @@ add_library(bc_ui STATIC
     src/app/PlaceholderPanel.h  src/app/PlaceholderPanel.cpp
     src/app/MonitorView.h       src/app/MonitorView.cpp
     src/app/ClipInspector.h     src/app/ClipInspector.cpp
+    src/app/ExportDialog.h      src/app/ExportDialog.cpp
     src/app/SettingsDialog.h    src/app/SettingsDialog.cpp
     src/app/AboutDialog.h       src/app/AboutDialog.cpp
     src/app/StatusDialog.h      src/app/StatusDialog.cpp
@@ -74,8 +76,12 @@ set(BC_TS_FILES
     i18n/bukhara_uz_Latn.ts
     i18n/bukhara_ru.ts
 )
+# lupdate reads the UI and the engine (export messages are shown to the user).
+get_target_property(BC_UI_SOURCES bc_ui SOURCES)
+get_target_property(BC_ENGINE_SOURCES bc_engine SOURCES)
 qt_add_translations(bc_ui
     TS_FILES ${BC_TS_FILES}
+    SOURCES ${BC_UI_SOURCES} ${BC_ENGINE_SOURCES}
     RESOURCE_PREFIX "/i18n"
     LUPDATE_OPTIONS -no-obsolete)
 

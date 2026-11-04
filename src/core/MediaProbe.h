@@ -26,6 +26,21 @@ QImage thumbnail(const QString &path, int maxWidth, int maxHeight, QString *erro
 // fit maxWidth x maxHeight. Images return the image; audio-only a null image.
 QImage frameAt(const QString &path, qint64 timeUs, int maxWidth, int maxHeight, QString *error = nullptr);
 
+// A video encoder that can write MP4 on this computer.
+struct VideoEncoder
+{
+    QString codec;      // FFmpeg encoder name, e.g. "h264_qsv"
+    QString label;      // shown to the user, e.g. "H.264 (Intel Quick Sync)"
+    QString pixFmt;     // pixel format the encoder takes
+    bool isH264 = false;
+};
+
+// Encoders that really open on this computer, best first: H.264 through
+// Intel Quick Sync, Windows Media Foundation, NVIDIA or AMD (all licensed
+// with the hardware or Windows, no x264), then MPEG-4 Part 2 as the last
+// resort that always works. The result is cached.
+QList<VideoEncoder> usableVideoEncoders();
+
 // "avformat 61.7.100" etc. for the About / licenses window.
 QString ffmpegVersionString();
 QString ffmpegLicense();
