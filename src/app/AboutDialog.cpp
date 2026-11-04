@@ -1,6 +1,7 @@
 #include "app/AboutDialog.h"
 
 #include "app/AppInfo.h"
+#include "core/MediaProbe.h"
 
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -21,17 +22,21 @@ QString AboutDialog::licensesHtml()
            "(as separate DLL files), so they can be replaced with compatible versions."));
     html += QStringLiteral("<table cellpadding='4'>"
                            "<tr><td><b>Qt %1</b></td><td>GNU LGPL v3</td><td>%2</td></tr>"
+                           "<tr><td><b>%5</b></td><td>%6</td><td>%7</td></tr>"
                            "<tr><td><b>MinGW-w64 runtime</b></td><td>%3</td><td>%4</td></tr>"
                            "</table>")
                 .arg(QString::fromLatin1(qVersion()),
                      tr("User interface"),
                      tr("GCC runtime library exception, MIT/ZPL"),
-                     tr("C++ runtime libraries"));
+                     tr("C++ runtime libraries"),
+                     MediaProbe::ffmpegVersionString().toHtmlEscaped(),
+                     MediaProbe::ffmpegLicense().toHtmlEscaped(),
+                     tr("Reading media files, thumbnails"));
     html += QStringLiteral("<p>%1</p>").arg(
         tr("Full license texts are installed in the \"licenses\" folder next to the program. "
-           "Qt source code: https://download.qt.io/"));
+           "Source code: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html"));
     html += QStringLiteral("<p>%1</p>").arg(
-        tr("The video engine (MLT, FFmpeg) is added in later phases; its licenses will be listed here then."));
+        tr("The MLT video engine is added in phase 2; its license will be listed here then."));
     return html;
 }
 
@@ -51,7 +56,7 @@ AboutDialog::AboutDialog(Page page, QWidget *parent)
                        .arg(appName(),
                             tr("Version %1").arg(appVersion()),
                             tr("Independent video editor for Windows."),
-                            tr("Phase 0: interface shell. Editing features arrive in the next phases; "
+                            tr("Phase 1: projects and media bin. Editing features arrive in the next phases; "
                                "see Help > Feature status.")));
     tabs->addTab(about, tr("About"));
 

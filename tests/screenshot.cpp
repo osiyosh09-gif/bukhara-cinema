@@ -2,6 +2,7 @@
 // without a display. Usage: bc_screenshot <output-dir>
 #include "app/Language.h"
 #include "app/MainWindow.h"
+#include "app/ProjectController.h"
 #include "app/Theme.h"
 
 #include <QApplication>
@@ -22,6 +23,16 @@ int main(int argc, char *argv[])
         bc::MainWindow w;
         w.resize(1366, 768);
         w.show();
+        // Optional media files to import: bc_screenshot <dir> [files...]
+        if (argc > 2) {
+            QStringList files;
+            for (int i = 2; i < argc; ++i)
+                files << QString::fromLocal8Bit(argv[i]);
+            w.controller()->importFiles(files);
+            w.controller()->waitForBackgroundWork();
+            for (int i = 0; i < 20; ++i)
+                app.processEvents();
+        }
         app.processEvents();
         w.grab().save(out + QStringLiteral("/main_%1.png").arg(code));
     }

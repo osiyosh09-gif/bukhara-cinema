@@ -4,7 +4,11 @@
 #include "app/AppInfo.h"
 #include "app/FeatureStatus.h"
 #include "app/Logging.h"
+#include "app/MediaBinPanel.h"
 #include "app/MonitorView.h"
+#include "app/ProjectController.h"
+#include "app/ProjectInfoPanel.h"
+#include "app/SequenceSettingsDialog.h"
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
 #include "app/StatusDialog.h"
@@ -15,6 +19,10 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QDockWidget>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QPushButton>
 #include <QLabel>
 #include <QMenuBar>
 #include <QScreen>
@@ -36,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
+    m_ctl = new ProjectController(this);
+
     buildCentral();
     buildDocks();
     buildMenus();
@@ -43,6 +53,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_statusLabel = new QLabel(this);
     statusBar()->addWidget(m_statusLabel, 1);
+
+    connect(m_ctl, &ProjectController::modifiedChanged, this, &MainWindow::updateTitle);
+    connect(m_ctl, &ProjectController::fileNameChanged, this, &MainWindow::updateTitle);
+    connect(m_info, &ProjectInfoPanel::sequenceSettingsRequested, this, &MainWindow::editSequence);
 
     retranslate();
 
@@ -74,8 +88,10 @@ void MainWindow::buildDocks()
     // Left: media bin + project files
     m_leftTabs = new QTabWidget;
     m_leftTabs->setObjectName(QStringLiteral("leftTabs"));
-    m_leftTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Media bin"); }, 1), QString());
-    m_leftTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Project files"); }, 1), QString());
+    m_bin = new MediaBinPanel(m_ctl);
+    m_info = new ProjectInfoPanel(m_ctl);
+    m_leftTabs->addTab(m_bin, QString());
+    m_leftTabs->addTab(m_info, QString());
     m_mediaDock = new QDockWidget(this);
     m_mediaDock->setObjectName(QStringLiteral("mediaDock"));
     m_mediaDock->setWidget(m_leftTabs);
@@ -101,7 +117,7 @@ void MainWindow::buildDocks()
     m_timelineDock->setWidget(timeline);
     addDockWidget(Qt::BottomDockWidgetArea, m_timelineDock);
 
-    resizeDocks({m_mediaDock, m_inspectorDock}, {300, 320}, Qt::Horizontal);
+    resizeDocks({m_mediaDock, m_inspectorDock}, {380, 300}, Qt::Horizontal);
     resizeDocks({m_timelineDock}, {260}, Qt::Vertical);
 }
 
@@ -122,12 +138,25 @@ void MainWindow::buildMenus()
 
     // NOTE: texts are set in retranslate(); QT_TR_NOOP marks them for lupdate.
     m_fileMenu = mb->addMenu(QString());
-    addPlanned(m_fileMenu, QT_TR_NOOP("New project"), 1, QStringLiteral("actNewProject"));
-    addPlanned(m_fileMenu, QT_TR_NOOP("Open project..."), 1, QStringLiteral("actOpenProject"));
-    addPlanned(m_fileMenu, QT_TR_NOOP("Save"), 1, QStringLiteral("actSave"));
-    addPlanned(m_fileMenu, QT_TR_NOOP("Save as..."), 1, QStringLiteral("actSaveAs"));
+    m_newAct = m_fileMenu->addAction(QString(), this, &MainWindow::newProject);
+    m_newAct->setObjectName(QStringLiteral("actNewProject"));
+    m_newAct->setShortcut(QKeySequence::New);
+    m_openAct = m_fileMenu->addAction(QString(), this, &MainWindow::openProject);
+    m_openAct->setObjectName(QStringLiteral("actOpenProject"));
+    m_openAct->setShortcut(QKeySequence::Open);
+    m_recentMenu = m_fileMenu->addMenu(QString());
+    m_recentMenu->setObjectName(QStringLiteral("menuRecent"));
+    connect(m_recentMenu, &QMenu::aboutToShow, this, &MainWindow::rebuildRecentMenu);
+    m_saveAct = m_fileMenu->addAction(QString(), this, &MainWindow::saveProject);
+    m_saveAct->setObjectName(QStringLiteral("actSave"));
+    m_saveAct->setShortcut(QKeySequence::Save);
+    m_saveAsAct = m_fileMenu->addAction(QString(), this, &MainWindow::saveProjectAs);
+    m_saveAsAct->setObjectName(QStringLiteral("actSaveAs"));
+    m_saveAsAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+S")));
     m_fileMenu->addSeparator();
-    addPlanned(m_fileMenu, QT_TR_NOOP("Import media..."), 1, QStringLiteral("actImport"));
+    m_importAct = m_fileMenu->addAction(QString(), m_bin, &MediaBinPanel::importDialog);
+    m_importAct->setObjectName(QStringLiteral("actImport"));
+    m_importAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+I")));
     addPlanned(m_fileMenu, QT_TR_NOOP("Export..."), 4, QStringLiteral("actExport"));
     m_fileMenu->addSeparator();
     m_settingsAct = m_fileMenu->addAction(QString(), this, &MainWindow::openSettings);
@@ -158,7 +187,8 @@ void MainWindow::buildMenus()
     addPlanned(m_clipMenu, QT_TR_NOOP("Nest..."), 6, QStringLiteral("actNest"));
 
     m_sequenceMenu = mb->addMenu(QString());
-    addPlanned(m_sequenceMenu, QT_TR_NOOP("Sequence settings..."), 1, QStringLiteral("actSequenceSettings"));
+    m_sequenceAct = m_sequenceMenu->addAction(QString(), this, &MainWindow::editSequence);
+    m_sequenceAct->setObjectName(QStringLiteral("actSequenceSettings"));
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Add track"), 2, QStringLiteral("actAddTrack"));
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Snapping"), 2, QStringLiteral("actSnapping"));
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
@@ -207,10 +237,9 @@ void MainWindow::buildToolbar()
     m_toolbar->setMovable(false);
     m_toolbar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    m_tbSave = m_toolbar->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), QString());
+    m_tbSave = m_toolbar->addAction(style()->standardIcon(QStyle::SP_DialogSaveButton), QString(), this,
+                                    &MainWindow::saveProject);
     m_tbSave->setObjectName(QStringLiteral("tbSave"));
-    m_tbSave->setEnabled(false);
-    m_tbSave->setProperty("bc_planned", true);
 
     m_tbExport = m_toolbar->addAction(style()->standardIcon(QStyle::SP_ArrowUp), QString());
     m_tbExport->setObjectName(QStringLiteral("tbExport"));
@@ -225,7 +254,7 @@ void MainWindow::buildToolbar()
 
 void MainWindow::retranslate()
 {
-    setWindowTitle(QStringLiteral("%1 %2").arg(appName(), appVersion()));
+    updateTitle();
 
     m_fileMenu->setTitle(tr("&File"));
     m_editMenu->setTitle(tr("&Edit"));
@@ -243,6 +272,13 @@ void MainWindow::retranslate()
         p.action->setToolTip(tr("Planned for phase %1").arg(p.phase));
     }
 
+    m_newAct->setText(tr("New project"));
+    m_openAct->setText(tr("Open project..."));
+    m_recentMenu->setTitle(tr("Recent projects"));
+    m_saveAct->setText(tr("Save"));
+    m_saveAsAct->setText(tr("Save as..."));
+    m_importAct->setText(tr("Import media..."));
+    m_sequenceAct->setText(tr("Sequence settings..."));
     m_settingsAct->setText(tr("Settings..."));
     m_exitAct->setText(tr("Exit"));
     m_fullScreenAct->setText(tr("Full screen"));
@@ -254,7 +290,7 @@ void MainWindow::retranslate()
 
     m_toolbar->setWindowTitle(tr("Main toolbar"));
     m_tbSave->setText(tr("Save"));
-    m_tbSave->setToolTip(tr("Planned for phase %1").arg(1));
+    m_tbSave->setToolTip(tr("Save project (Ctrl+S)"));
     m_tbExport->setText(tr("Export"));
     m_tbExport->setToolTip(tr("Planned for phase %1").arg(4));
 
@@ -269,7 +305,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(tr("Phase 0: interface only. Editing features are not working yet."));
+    m_statusLabel->setText(tr("Phase 1: projects and media bin work. Timeline editing is not working yet."));
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -319,8 +355,135 @@ void MainWindow::resetLayout()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if (!maybeSave()) {
+        event->ignore();
+        return;
+    }
     saveLayout();
     QMainWindow::closeEvent(event);
+}
+
+// ---------------------------------------------------------------------------
+// Project files
+
+void MainWindow::updateTitle()
+{
+    setWindowTitle(QStringLiteral("%1%2 — %3 %4")
+                       .arg(m_ctl->displayName(), m_ctl->isModified() ? QStringLiteral("*") : QString(),
+                            appName(), appVersion()));
+}
+
+bool MainWindow::maybeSave()
+{
+    if (!m_ctl->isModified())
+        return true;
+    QMessageBox box(QMessageBox::Warning, tr("Unsaved changes"),
+                    tr("Project \"%1\" has unsaved changes. Save them?").arg(m_ctl->displayName()),
+                    QMessageBox::NoButton, this);
+    box.setObjectName(QStringLiteral("unsavedBox"));
+    QPushButton *save = box.addButton(tr("Save"), QMessageBox::AcceptRole);
+    QPushButton *discard = box.addButton(tr("Don't save"), QMessageBox::DestructiveRole);
+    box.addButton(tr("Cancel"), QMessageBox::RejectRole);
+    box.setDefaultButton(save);
+    box.exec();
+    if (box.clickedButton() == save)
+        return saveProject();
+    return box.clickedButton() == discard;
+}
+
+void MainWindow::newProject()
+{
+    if (!maybeSave())
+        return;
+    m_ctl->newProject();
+}
+
+void MainWindow::openProject()
+{
+    if (!maybeSave())
+        return;
+    QSettings s;
+    const QString path = QFileDialog::getOpenFileName(
+        this, tr("Open project"), s.value(QStringLiteral("project/lastDir")).toString(),
+        tr("BUKHARA CINEMA projects (*.%1)").arg(Project::fileExtension()));
+    if (!path.isEmpty())
+        openProjectFile(path);
+}
+
+bool MainWindow::openProjectFile(const QString &path)
+{
+    QString err;
+    if (!m_ctl->open(path, &err)) {
+        QMessageBox::warning(this, tr("Open project"), tr("Cannot open \"%1\":\n%2").arg(path, err));
+        return false;
+    }
+    QSettings().setValue(QStringLiteral("project/lastDir"), QFileInfo(path).absolutePath());
+    if (const int missing = m_ctl->offlineCount(); missing > 0) {
+        QMessageBox box(QMessageBox::Warning, tr("Missing files"),
+                        tr("Media files not found: %1. They may have been moved or renamed.").arg(missing),
+                        QMessageBox::NoButton, this);
+        QPushButton *find = box.addButton(tr("Search in folder..."), QMessageBox::AcceptRole);
+        box.addButton(tr("Later"), QMessageBox::RejectRole);
+        box.exec();
+        if (box.clickedButton() == find)
+            m_bin->findMissingInFolder();
+    }
+    return true;
+}
+
+bool MainWindow::saveProject()
+{
+    if (m_ctl->filePath().isEmpty())
+        return saveProjectAs();
+    QString err;
+    if (!m_ctl->save(&err)) {
+        QMessageBox::warning(this, tr("Save"), tr("Cannot save the project:\n%1").arg(err));
+        return false;
+    }
+    statusBar()->showMessage(tr("Saved: %1").arg(QDir::toNativeSeparators(m_ctl->filePath())), 4000);
+    return true;
+}
+
+bool MainWindow::saveProjectAs()
+{
+    QSettings s;
+    QString dir = s.value(QStringLiteral("project/lastDir")).toString();
+    const QString suggested = QDir(dir).filePath(m_ctl->displayName() + QLatin1Char('.') + Project::fileExtension());
+    const QString path = QFileDialog::getSaveFileName(this, tr("Save project as"), suggested,
+                                                      tr("BUKHARA CINEMA projects (*.%1)").arg(Project::fileExtension()));
+    if (path.isEmpty())
+        return false;
+    QString err;
+    if (!m_ctl->saveAs(path, &err)) {
+        QMessageBox::warning(this, tr("Save"), tr("Cannot save the project:\n%1").arg(err));
+        return false;
+    }
+    s.setValue(QStringLiteral("project/lastDir"), QFileInfo(m_ctl->filePath()).absolutePath());
+    statusBar()->showMessage(tr("Saved: %1").arg(QDir::toNativeSeparators(m_ctl->filePath())), 4000);
+    return true;
+}
+
+void MainWindow::rebuildRecentMenu()
+{
+    m_recentMenu->clear();
+    const QStringList recent = ProjectController::recentProjects();
+    if (recent.isEmpty()) {
+        m_recentMenu->addAction(tr("(empty)"))->setEnabled(false);
+        return;
+    }
+    for (const QString &p : recent) {
+        m_recentMenu->addAction(QDir::toNativeSeparators(p), this, [this, p] {
+            if (maybeSave())
+                openProjectFile(p);
+        });
+    }
+}
+
+void MainWindow::editSequence()
+{
+    SequenceSettingsDialog dlg(m_ctl->project().sequence, this);
+    if (dlg.exec() == QDialog::Accepted)
+        m_ctl->setSequence(dlg.settings());
 }
 
 // ---------------------------------------------------------------------------

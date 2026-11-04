@@ -2,8 +2,10 @@ name: build
 
 on:
   # Branch pushes are covered by their pull request; build main directly.
+  # A tag like v0.2.0 also publishes a GitHub Release with the installer.
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 
@@ -19,7 +21,8 @@ jobs:
       - name: Install Qt 6
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools libgl-dev ninja-build
+          sudo apt-get install -y -qq qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools libgl-dev ninja-build \
+            libavformat-dev libavcodec-dev libavutil-dev libswscale-dev ffmpeg pkg-config
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
@@ -30,6 +33,8 @@ jobs:
   windows:
     name: Windows build, tests and installer
     runs-on: windows-latest
+    permissions:
+      contents: write   # only used when a v* tag publishes a release
     defaults:
       run:
         shell: msys2 {0}
@@ -48,6 +53,29 @@ jobs:
             mingw-w64-ucrt-x86_64-qt6-base
             mingw-w64-ucrt-x86_64-qt6-tools
 
+      - name: Download FFmpeg (LGPL shared build)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # BtbN/FFmpeg-Builds publishes LGPL-only builds (no x264/x265 or other GPL parts).
+          $assets = (gh release view latest -R BtbN/FFmpeg-Builds --json assets | ConvertFrom-Json).assets
+          # Pinned to the FFmpeg 8.1 release branch; BtbN only keeps the two newest branches,
+          # so fall back to the newest numbered release branch (never "master").
+          $asset = $assets | Where-Object { $_.name -match '^ffmpeg-n8\.1-latest-win64-lgpl-shared-8\.1\.zip$' } | Select-Object -First 1
+          if (-not $asset) {
+            $asset = $assets | Where-Object { $_.name -match '^ffmpeg-n\d+\.\d+-latest-win64-lgpl-shared-\d+\.\d+\.zip$' } |
+                     Sort-Object { [version]($_.name -replace '^ffmpeg-n(\d+\.\d+)-.*$','$1') } -Descending | Select-Object -First 1
+          }
+          if (-not $asset) { $assets.name; throw "No LGPL shared win64 FFmpeg build found" }
+          Write-Host "Using $($asset.name)"
+          gh release download latest -R BtbN/FFmpeg-Builds -p $asset.name -D ffdl
+          Expand-Archive "ffdl\$($asset.name)" -DestinationPath ffdl
+          $root = Get-ChildItem ffdl -Directory | Select-Object -First 1
+          Move-Item $root.FullName ffmpeg
+          Get-ChildItem ffmpeg\bin
+          Get-Content ffmpeg\LICENSE.txt -TotalCount 5
+
       - name: Read version
         id: ver
         run: |
@@ -56,18 +84,26 @@ jobs:
           echo "Version: $v"
 
       - name: Configure
-        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DFFMPEG_ROOT="$(cygpath -m "$PWD/ffmpeg")" -DBC_REQUIRE_LGPL_FFMPEG=ON
 
       - name: Build
         run: cmake --build build
 
       - name: Test
-        run: ctest --test-dir build --output-on-failure
+        run: |
+          export PATH="$PWD/ffmpeg/bin:$PATH"
+          ctest --test-dir build --output-on-failure
 
       - name: Deploy (exe + Qt DLLs + runtime DLLs + licenses)
         run: |
           set -e
           cmake --install build --prefix dist
+          # FFmpeg LGPL DLLs (not from MSYS2, so copied explicitly)
+          cp -v ffmpeg/bin/av*.dll ffmpeg/bin/sw*.dll dist/
+          mkdir -p dist/licenses/ffmpeg
+          cp -v ffmpeg/LICENSE.txt dist/licenses/ffmpeg/
           WDQ=$(command -v windeployqt6 || command -v windeployqt-qt6 || command -v windeployqt || true)
           if [ -z "$WDQ" ]; then WDQ=$(find /ucrt64 -iname 'windeployqt*.exe' | head -1); fi
           echo "windeployqt: $WDQ"
@@ -129,6 +165,25 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
           Compress-Archive -Path dist\* -DestinationPath "out\BukharaCinema-portable-${{ steps.ver.outputs.version }}.zip"
           Get-ChildItem out
+
+      - name: Publish release (only for v* tags)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $files = (Get-ChildItem out\*).FullName
+          # The release may already exist when it was created on github.com (which also creates the tag).
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $files --clobber
+          } else {
+            gh release create $tag $files --title "BUKHARA CINEMA $tag" `
+              --notes "Windows 10/11 (64-bit). BukharaCinema-Setup-*.exe — installer; BukharaCinema-portable-*.zip — no installation needed." `
+              --prerelease
+          }
+          if ($LASTEXITCODE -ne 0) { throw "Publishing the release failed" }
 
       - uses: actions/upload-artifact@v4
         with:

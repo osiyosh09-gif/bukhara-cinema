@@ -14,6 +14,9 @@ class QLabel;
 namespace bc {
 
 class MonitorView;
+class ProjectController;
+class MediaBinPanel;
+class ProjectInfoPanel;
 
 // Main window layout:
 //   top     - menus and toolbar (save, export)
@@ -30,6 +33,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     void resetLayout();
+
+    ProjectController *controller() const { return m_ctl; }
+    // Opens a project file (used for the command line / file association).
+    bool openProjectFile(const QString &path);
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -54,6 +61,16 @@ private:
     void openStatus();
     void openLogFolder();
 
+    // Project file handling
+    void newProject();
+    void openProject();
+    bool saveProject();
+    bool saveProjectAs();
+    bool maybeSave(); // false = user cancelled
+    void updateTitle();
+    void rebuildRecentMenu();
+    void editSequence();
+
     struct PlannedAction
     {
         QAction *action;
@@ -72,6 +89,13 @@ private:
     QMenu *m_windowMenu = nullptr;
     QMenu *m_helpMenu = nullptr;
 
+    QAction *m_newAct = nullptr;
+    QAction *m_openAct = nullptr;
+    QMenu *m_recentMenu = nullptr;
+    QAction *m_saveAct = nullptr;
+    QAction *m_saveAsAct = nullptr;
+    QAction *m_importAct = nullptr;
+    QAction *m_sequenceAct = nullptr;
     QAction *m_settingsAct = nullptr;
     QAction *m_exitAct = nullptr;
     QAction *m_fullScreenAct = nullptr;
@@ -92,6 +116,10 @@ private:
     QTabWidget *m_rightTabs = nullptr;
     QSplitter *m_monitorSplit = nullptr;
     QLabel *m_statusLabel = nullptr;
+
+    ProjectController *m_ctl = nullptr;
+    MediaBinPanel *m_bin = nullptr;
+    ProjectInfoPanel *m_info = nullptr;
 
     QByteArray m_defaultState;
     QByteArray m_defaultSplit;

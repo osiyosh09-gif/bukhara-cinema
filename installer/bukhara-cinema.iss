@@ -38,6 +38,7 @@ Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 ShowLanguageDialog=auto
+ChangesAssociations=yes
 
 [Languages]
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
@@ -48,6 +49,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Registry]
+; Double-clicking a .bcproj file opens it in BUKHARA CINEMA.
+Root: HKA; Subkey: "Software\Classes\.bcproj"; ValueType: string; ValueName: ""; ValueData: "BukharaCinema.Project"; Flags: uninsdeletevalue
+Root: HKA; Subkey: "Software\Classes\BukharaCinema.Project"; ValueType: string; ValueName: ""; ValueData: "BUKHARA CINEMA project"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\BukharaCinema.Project\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\BukharaCinema.exe,0"
+Root: HKA; Subkey: "Software\Classes\BukharaCinema.Project\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\BukharaCinema.exe"" ""%1"""
 
 [Icons]
 Name: "{autoprograms}\BUKHARA CINEMA"; Filename: "{app}\BukharaCinema.exe"
