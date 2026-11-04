@@ -103,6 +103,7 @@ private:
     QMenu *m_clipMenu = nullptr;
     QMenu *m_sequenceMenu = nullptr;
     QMenu *m_markersMenu = nullptr;
+    QMenu *m_toolsMenu = nullptr;
     QMenu *m_graphicsMenu = nullptr;
     QMenu *m_viewMenu = nullptr;
     QMenu *m_windowMenu = nullptr;

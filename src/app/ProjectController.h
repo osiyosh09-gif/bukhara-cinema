@@ -96,6 +96,19 @@ public:
                           QList<QUuid> *created = nullptr) const;
     bool moveClips(const QList<QUuid> &clipIds, qint64 deltaFrames, Timeline::Kind kind, int deltaTracks);
     bool trimClip(const QUuid &clipId, bool head, qint64 frame);
+    // Phase 6b tools (see Timeline::roll / slip / slide); undoable.
+    bool rollClip(const QUuid &clipId, bool head, qint64 frame);
+    bool slipClip(const QUuid &clipId, qint64 deltaFrames);
+    bool slideClip(const QUuid &clipId, qint64 deltaFrames);
+    // Links the clips when none of them is linked, otherwise unlinks them.
+    bool toggleLink(const QList<QUuid> &clipIds);
+    // Clipboard of clips (kept while the program runs). Paste puts them at
+    // the playhead on the same tracks; with insert, later clips move right.
+    // The playhead moves to the end of the pasted clips.
+    bool copyClips(const QList<QUuid> &clipIds);
+    bool cutClips(const QList<QUuid> &clipIds);
+    QList<QUuid> pasteClips(bool insert = false);
+    bool canPaste() const { return !m_clipboard.isEmpty(); }
     // Splits the given clips (or every clip on unlocked tracks when empty) at `frame`.
     bool splitClips(qint64 frame, const QList<QUuid> &clipIds);
     bool removeClips(const QList<QUuid> &clipIds, bool ripple);
@@ -214,6 +227,7 @@ signals:
     void sourceInOutChanged();
     void sourceFrameReady(const QImage &image);
     void sourcePlayingChanged(bool playing);
+    void clipboardChanged();
 
 private:
     void setModified(bool m);
@@ -267,6 +281,15 @@ private:
     Exporter *m_exporter = nullptr;
     TimelinePlayer *m_player = nullptr;
     QString m_engineError;
+
+    // Copied clips: the clip, its kind of track and the n-th track of that kind.
+    struct CopiedClip
+    {
+        TimelineClip clip;
+        Timeline::Kind kind;
+        int n;
+    };
+    QList<CopiedClip> m_clipboard; // starts relative to the first copied clip
 
     // Source monitor
     QUuid m_sourceId;

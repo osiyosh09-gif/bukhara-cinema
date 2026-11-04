@@ -322,6 +322,225 @@ bool Timeline::insertSpace(qint64 at, qint64 length, const QList<int> &onlyTrack
     return changed;
 }
 
+// ---------------------------------------------------------------------------
+// Roll, slip, slide
+
+namespace {
+
+// The clip on the same track touching `c` before its head / after its tail.
+int neighbour(const QList<TimelineClip> &clips, int index, bool before)
+{
+    const TimelineClip &c = clips[index];
+    if (before)
+        return index > 0 && clips[index - 1].end() == c.start ? index - 1 : -1;
+    return index + 1 < clips.size() && clips[index + 1].start == c.end() ? index + 1 : -1;
+}
+
+} // namespace
+
+bool Timeline::roll(const QUuid &id, bool head, qint64 frame, const MediaFrames &mediaFrames)
+{
+    const TimelineClip *orig = clip(id);
+    if (!orig)
+        return false;
+    const qint64 edge = head ? orig->start : orig->end();
+
+    struct Pair
+    {
+        int track;
+        int left;  // clip ending at the edge, -1 = gap
+        int right; // clip starting at the edge, -1 = gap
+    };
+    QList<Pair> pairs;
+    for (const QUuid &cid : withLinked({id})) {
+        const ClipRef r = find(cid);
+        const TimelineClip &c = tracks[r.track].clips[r.index];
+        if ((head ? c.start : c.end()) != edge)
+            continue;
+        if (tracks[r.track].locked)
+            return false;
+        const int other = neighbour(tracks[r.track].clips, r.index, head);
+        pairs << (head ? Pair{r.track, other, r.index} : Pair{r.track, r.index, other});
+    }
+    if (pairs.isEmpty())
+        return false;
+
+    qint64 lo = 0, hi = kInf;
+    for (const Pair &p : pairs) {
+        const auto &clips = tracks[p.track].clips;
+        if (p.left >= 0) {
+            const TimelineClip &l = clips[p.left];
+            const qint64 media = l.isTitle() ? -1 : mediaFrames(l.mediaId);
+            lo = std::max(lo, l.start + 1);
+            if (media >= 0)
+                hi = std::min(hi, l.start + (media - l.in));
+        } else {
+            const int r = p.right;
+            lo = std::max(lo, r > 0 ? clips[r - 1].end() : 0);
+        }
+        if (p.right >= 0) {
+            const TimelineClip &rc = clips[p.right];
+            const qint64 media = rc.isTitle() ? -1 : mediaFrames(rc.mediaId);
+            hi = std::min(hi, rc.end() - 1);
+            if (media >= 0)
+                lo = std::max(lo, rc.start - rc.in);
+        } else {
+            const int l = p.left;
+            hi = std::min(hi, l + 1 < clips.size() ? clips[l + 1].start : kInf);
+        }
+    }
+    if (lo > hi)
+        return false;
+    frame = std::clamp(frame, lo, hi);
+    if (frame == edge)
+        return false;
+    const qint64 d = frame - edge;
+    for (const Pair &p : pairs) {
+        auto &clips = tracks[p.track].clips;
+        if (p.left >= 0) {
+            TimelineClip &l = clips[p.left];
+            l.length += d;
+            l.fadeOut = std::min(l.fadeOut, l.length);
+        }
+        if (p.right >= 0) {
+            TimelineClip &r = clips[p.right];
+            r.start += d;
+            r.length -= d;
+            if (!r.isTitle() && mediaFrames(r.mediaId) >= 0)
+                r.in += d;
+            r.fadeIn = std::min(r.fadeIn, r.length);
+        }
+    }
+    return true;
+}
+
+bool Timeline::slip(const QUuid &id, qint64 deltaFrames, const MediaFrames &mediaFrames)
+{
+    if (deltaFrames == 0)
+        return false;
+    QList<ClipRef> refs;
+    qint64 lo = std::numeric_limits<qint64>::min() / 4, hi = kInf;
+    for (const QUuid &cid : withLinked({id})) {
+        const ClipRef r = find(cid);
+        const TimelineClip &c = tracks[r.track].clips[r.index];
+        if (tracks[r.track].locked)
+            return false;
+        const qint64 media = c.isTitle() ? -1 : mediaFrames(c.mediaId);
+        if (media < 0)
+            continue; // a still picture looks the same everywhere
+        lo = std::max(lo, -c.in);
+        hi = std::min(hi, media - c.length - c.in);
+        refs << r;
+    }
+    if (refs.isEmpty() || lo > hi)
+        return false;
+    const qint64 d = std::clamp(deltaFrames, lo, hi);
+    if (d == 0)
+        return false;
+    for (const ClipRef &r : refs)
+        tracks[r.track].clips[r.index].in += d;
+    return true;
+}
+
+bool Timeline::slide(const QUuid &id, qint64 deltaFrames, const MediaFrames &mediaFrames)
+{
+    if (deltaFrames == 0)
+        return false;
+    QList<ClipRef> refs;
+    qint64 lo = std::numeric_limits<qint64>::min() / 4, hi = kInf;
+    for (const QUuid &cid : withLinked({id})) {
+        const ClipRef r = find(cid);
+        if (tracks[r.track].locked)
+            return false;
+        const auto &clips = tracks[r.track].clips;
+        const TimelineClip &c = clips[r.index];
+        const int prev = neighbour(clips, r.index, true);
+        const int next = neighbour(clips, r.index, false);
+        // Left: the previous clip gets shorter (keeps one frame) or the gap closes.
+        if (prev >= 0)
+            lo = std::max(lo, -(clips[prev].length - 1));
+        else
+            lo = std::max(lo, -(c.start - (r.index > 0 ? clips[r.index - 1].end() : 0)));
+        // Moving left the next clip starts earlier in its source.
+        if (next >= 0) {
+            const TimelineClip &n = clips[next];
+            if (!n.isTitle() && mediaFrames(n.mediaId) >= 0)
+                lo = std::max(lo, -n.in);
+            hi = std::min(hi, n.length - 1);
+        } else {
+            hi = std::min(hi, r.index + 1 < clips.size() ? clips[r.index + 1].start - c.end() : kInf);
+        }
+        // Right: the previous clip gets longer, as far as its source goes.
+        if (prev >= 0) {
+            const TimelineClip &p = clips[prev];
+            const qint64 media = p.isTitle() ? -1 : mediaFrames(p.mediaId);
+            if (media >= 0)
+                hi = std::min(hi, media - p.in - p.length);
+        }
+        refs << r;
+    }
+    if (refs.isEmpty() || lo > hi)
+        return false;
+    const qint64 d = std::clamp(deltaFrames, lo, hi);
+    if (d == 0)
+        return false;
+    for (const ClipRef &r : refs) {
+        auto &clips = tracks[r.track].clips;
+        const int prev = neighbour(clips, r.index, true);
+        const int next = neighbour(clips, r.index, false);
+        if (prev >= 0) {
+            clips[prev].length += d;
+            clips[prev].fadeOut = std::min(clips[prev].fadeOut, clips[prev].length);
+        }
+        if (next >= 0) {
+            TimelineClip &n = clips[next];
+            n.start += d;
+            n.length -= d;
+            if (!n.isTitle() && mediaFrames(n.mediaId) >= 0)
+                n.in += d;
+            n.fadeIn = std::min(n.fadeIn, n.length);
+        }
+        clips[r.index].start += d;
+    }
+    return true;
+}
+
+bool Timeline::link(const QList<QUuid> &ids)
+{
+    QList<ClipRef> refs;
+    for (const QUuid &id : ids) {
+        const ClipRef r = find(id);
+        if (r.isValid() && !tracks[r.track].locked)
+            refs << r;
+    }
+    if (refs.size() < 2)
+        return false;
+    const QUuid link = QUuid::createUuid();
+    for (const ClipRef &r : refs)
+        tracks[r.track].clips[r.index].linkId = link;
+    return true;
+}
+
+bool Timeline::unlink(const QList<QUuid> &ids)
+{
+    bool changed = false;
+    for (const QUuid &id : withLinked(ids)) {
+        const ClipRef r = find(id);
+        TimelineClip &c = tracks[r.track].clips[r.index];
+        if (!c.linkId.isNull() && !tracks[r.track].locked) {
+            c.linkId = QUuid();
+            changed = true;
+        }
+    }
+    return changed;
+}
+
+bool Timeline::isLinked(const QUuid &id) const
+{
+    const TimelineClip *c = clip(id);
+    return c && !c->linkId.isNull() && withLinked({id}).size() > 1;
+}
+
 QUuid Timeline::addMarker(qint64 frame, const QString &name)
 {
     frame = std::max<qint64>(0, frame);

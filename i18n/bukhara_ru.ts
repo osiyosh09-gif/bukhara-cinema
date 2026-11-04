@@ -149,11 +149,6 @@
         <translation>Запятая вставляет часть из Source в позицию курсора и сдвигает следующие клипы вправо; точка ставит её поверх. M добавляет маркер, Shift+M и Ctrl+Shift+M переходят между маркерами; маркеры сохраняются в проекте.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="48" />
-        <source>Roll, slip and slide trims, copy and paste, link and unlink, nesting, custom shortcuts</source>
-        <translation>Roll, slip, slide, копирование и вставка, связь и разъединение, вложенные секвенции, свои сочетания клавиш</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Настройки эпизода: размер, частота кадров, звук</translation>
@@ -224,47 +219,62 @@
         <translation>Пока есть несохранённые изменения, копия записывается каждые 2 минуты (Файл &gt; Настройки). После сбоя при следующем запуске предлагается её восстановить. При каждом сохранении старый файл остаётся в папке Backups; Файл &gt; Предыдущие версии открывает его.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="48" />
+        <source>Razor, rolling edit, slip and slide tools; copy, cut and paste; link and unlink</source>
+        <translation>Лезвие, roll, slip и slide; копирование, вырезание и вставка; связь и разъединение</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="48" />
+        <source>Tools above the timeline or keys V, C, N, Y, U. Ctrl+C, Ctrl+X, Ctrl+V paste at the playhead (Ctrl+Shift+V pushes later clips right). Ctrl+L links or unlinks the selected video and sound.</source>
+        <translation>Кнопки над таймлайном или клавиши V, C, N, Y, U. Ctrl+C, Ctrl+X, Ctrl+V вставляют в позицию курсора (Ctrl+Shift+V сдвигает следующие клипы вправо). Ctrl+L связывает или разъединяет выбранные видео и звук.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="49" />
+        <source>Nested sequences and custom keyboard shortcuts</source>
+        <translation>Вложенные секвенции и свои сочетания клавиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="50" />
         <source>Transform, keyframes, speed changes</source>
         <translation>Трансформация, ключевые кадры, изменение скорости</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="50" />
+        <location filename="../src/app/FeatureStatus.cpp" line="51" />
         <source>Transitions, effects, masks, chroma key</source>
         <translation>Переходы, эффекты, маски, хромакей</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="51" />
+        <location filename="../src/app/FeatureStatus.cpp" line="52" />
         <source>Color correction, LUT, scopes</source>
         <translation>Цветокоррекция, LUT, скопы</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="52" />
+        <location filename="../src/app/FeatureStatus.cpp" line="53" />
         <source>Audio mixer, EQ, compressor, noise reduction, loudness</source>
         <translation>Аудиомикшер, эквалайзер, компрессор, шумоподавление, громкость (loudness)</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="53" />
+        <location filename="../src/app/FeatureStatus.cpp" line="54" />
         <source>Subtitles and SRT import/export</source>
         <translation>Субтитры и импорт/экспорт SRT</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="54" />
+        <location filename="../src/app/FeatureStatus.cpp" line="55" />
         <source>Multicamera editing</source>
         <translation>Многокамерный монтаж</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="55" />
+        <location filename="../src/app/FeatureStatus.cpp" line="56" />
         <source>Export queue, render preview, GPU acceleration</source>
         <translation>Очередь экспорта, предпросмотр рендера, ускорение GPU</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="56" />
+        <location filename="../src/app/FeatureStatus.cpp" line="57" />
         <source>AI assistants: transcription, text-based editing, scene detection</source>
         <translation>AI-помощники: транскрипция, монтаж по тексту, определение сцен</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="57" />
+        <location filename="../src/app/FeatureStatus.cpp" line="58" />
         <source>Plugins and project interchange</source>
         <translation>Плагины и обмен проектами</translation>
     </message>
@@ -406,8 +416,8 @@
     </message>
     <message>
         <location filename="../src/app/AboutDialog.cpp" line="66" />
-        <source>Phase 6 (part 1): editing, playback, Source monitor with In/Out, insert/overwrite, markers, titles, clip volume, MP4 export, autosave, waveforms and proxies. See Help &gt; Feature status.</source>
-        <translation>Этап 6 (часть 1): монтаж, воспроизведение, монитор Source с In/Out, вставка/перезапись, маркеры, титры, громкость клипов, экспорт в MP4, автосохранение, формы волны и прокси. См. Справка &gt; Состояние функций.</translation>
+        <source>Phase 6 (part 2): editing with razor, roll, slip and slide, copy and paste, Source monitor with In/Out, insert/overwrite, markers, titles, clip volume, MP4 export, autosave, waveforms and proxies. See Help &gt; Feature status.</source>
+        <translation>Этап 6 (часть 2): монтаж лезвием, roll, slip и slide, копирование и вставка, монитор Source с In/Out, вставка/перезапись, маркеры, титры, громкость клипов, экспорт в MP4, автосохранение, формы волны и прокси. См. Справка &gt; Состояние функций.</translation>
     </message>
     <message>
         <location filename="../src/app/AboutDialog.cpp" line="69" />
@@ -847,12 +857,12 @@
         <translation>Программа</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="528" />
+        <location filename="../src/app/MainWindow.cpp" line="534" />
         <source>Media bin</source>
         <translation>Медиатека</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="529" />
+        <location filename="../src/app/MainWindow.cpp" line="535" />
         <source>Project files</source>
         <translation>Файлы проекта</translation>
     </message>
@@ -867,150 +877,130 @@
         <translation>Под указателем нет видео.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="193" />
-        <location filename="../src/app/MainWindow.cpp" line="531" />
+        <location filename="../src/app/MainWindow.cpp" line="194" />
+        <location filename="../src/app/MainWindow.cpp" line="537" />
         <source>Effects</source>
         <translation>Эффекты</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="194" />
-        <location filename="../src/app/MainWindow.cpp" line="532" />
+        <location filename="../src/app/MainWindow.cpp" line="195" />
+        <location filename="../src/app/MainWindow.cpp" line="538" />
         <source>Color</source>
         <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="533" />
+        <location filename="../src/app/MainWindow.cpp" line="539" />
         <source>Audio</source>
         <translation>Звук</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="477" />
+        <location filename="../src/app/MainWindow.cpp" line="483" />
         <source>New project</source>
         <translation>Новый проект</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="478" />
+        <location filename="../src/app/MainWindow.cpp" line="484" />
         <source>Open project...</source>
         <translation>Открыть проект...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="480" />
-        <location filename="../src/app/MainWindow.cpp" line="518" />
-        <location filename="../src/app/MainWindow.cpp" line="734" />
-        <location filename="../src/app/MainWindow.cpp" line="790" />
-        <location filename="../src/app/MainWindow.cpp" line="808" />
+        <location filename="../src/app/MainWindow.cpp" line="486" />
+        <location filename="../src/app/MainWindow.cpp" line="524" />
+        <location filename="../src/app/MainWindow.cpp" line="740" />
+        <location filename="../src/app/MainWindow.cpp" line="796" />
+        <location filename="../src/app/MainWindow.cpp" line="814" />
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="481" />
+        <location filename="../src/app/MainWindow.cpp" line="487" />
         <source>Save as...</source>
         <translation>Сохранить как...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="506" />
+        <location filename="../src/app/MainWindow.cpp" line="512" />
         <source>Import media...</source>
         <translation>Импорт медиа...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="522" />
+        <location filename="../src/app/MainWindow.cpp" line="528" />
         <source>Export...</source>
         <translation>Экспорт...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="837" />
+        <location filename="../src/app/MainWindow.cpp" line="843" />
         <source>Undo</source>
         <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="837" />
+        <location filename="../src/app/MainWindow.cpp" line="843" />
         <source>Undo: %1</source>
         <translation>Отменить: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="838" />
+        <location filename="../src/app/MainWindow.cpp" line="844" />
         <source>Redo</source>
         <translation>Повторить</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="287" />
-        <source>Cut</source>
-        <translation>Вырезать</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="288" />
-        <source>Copy</source>
-        <translation>Копировать</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="289" />
-        <source>Paste</source>
-        <translation>Вставить</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="294" />
+        <location filename="../src/app/MainWindow.cpp" line="296" />
         <source>Keyboard shortcuts...</source>
         <translation>Сочетания клавиш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="476" />
+        <location filename="../src/app/MainWindow.cpp" line="482" />
         <source>Audio gain...</source>
         <translation>Усиление звука...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="310" />
+        <location filename="../src/app/MainWindow.cpp" line="312" />
         <source>Speed / duration...</source>
         <translation>Скорость / длительность...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="311" />
-        <source>Link / unlink audio and video</source>
-        <translation>Связать / разъединить видео и звук</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="312" />
+        <location filename="../src/app/MainWindow.cpp" line="317" />
         <source>Nest...</source>
         <translation>Вложить...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="507" />
+        <location filename="../src/app/MainWindow.cpp" line="513" />
         <source>Sequence settings...</source>
         <translation>Настройки эпизода...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="332" />
+        <location filename="../src/app/MainWindow.cpp" line="337" />
         <source>Render preview</source>
         <translation>Рендер предпросмотра</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="131" />
-        <location filename="../src/app/MainWindow.cpp" line="474" />
+        <location filename="../src/app/MainWindow.cpp" line="480" />
         <source>Pause</source>
         <translation>Пауза</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="131" />
-        <location filename="../src/app/MainWindow.cpp" line="474" />
+        <location filename="../src/app/MainWindow.cpp" line="480" />
         <source>Play</source>
         <translation>Воспроизвести</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="501" />
+        <location filename="../src/app/MainWindow.cpp" line="507" />
         <source>Add marker</source>
         <translation>Добавить маркер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="502" />
+        <location filename="../src/app/MainWindow.cpp" line="508" />
         <source>Go to next marker</source>
         <translation>К следующему маркеру</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="475" />
+        <location filename="../src/app/MainWindow.cpp" line="481" />
         <source>New text</source>
         <translation>Новый текст</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="400" />
+        <location filename="../src/app/MainWindow.cpp" line="405" />
         <source>Import subtitles (SRT)...</source>
         <translation>Импорт субтитров (SRT)...</translation>
     </message>
@@ -1050,400 +1040,405 @@
         <translation>Нет изображения (только звук).</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="195" />
+        <location filename="../src/app/MainWindow.cpp" line="196" />
         <source>Audio mixer</source>
         <translation>Аудиомикшер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="354" />
-        <location filename="../src/app/MainWindow.cpp" line="360" />
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <location filename="../src/app/MainWindow.cpp" line="365" />
         <source>Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked.</source>
         <translation>Нечего вставлять: откройте клип в мониторе Source и оставьте хотя бы одну видео- и аудиодорожку незаблокированной.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="457" />
+        <location filename="../src/app/MainWindow.cpp" line="462" />
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="458" />
+        <location filename="../src/app/MainWindow.cpp" line="463" />
         <source>&amp;Edit</source>
         <translation>&amp;Правка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="459" />
+        <location filename="../src/app/MainWindow.cpp" line="464" />
         <source>&amp;Clip</source>
         <translation>&amp;Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="460" />
+        <location filename="../src/app/MainWindow.cpp" line="465" />
         <source>&amp;Sequence</source>
         <translation>&amp;Эпизод</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="461" />
+        <location filename="../src/app/MainWindow.cpp" line="466" />
         <source>&amp;Markers</source>
         <translation>&amp;Маркеры</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="462" />
+        <location filename="../src/app/MainWindow.cpp" line="467" />
+        <source>Timeline tools</source>
+        <translation>Инструменты таймлайна</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="468" />
         <source>&amp;Graphics</source>
         <translation>&amp;Графика</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="463" />
+        <location filename="../src/app/MainWindow.cpp" line="469" />
         <source>&amp;View</source>
         <translation>&amp;Вид</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="464" />
+        <location filename="../src/app/MainWindow.cpp" line="470" />
         <source>&amp;Window</source>
         <translation>&amp;Окно</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="465" />
+        <location filename="../src/app/MainWindow.cpp" line="471" />
         <source>&amp;Help</source>
         <translation>&amp;Справка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="470" />
+        <location filename="../src/app/MainWindow.cpp" line="476" />
         <source>Planned for phase %1</source>
         <translation>Запланировано на этап %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="479" />
+        <location filename="../src/app/MainWindow.cpp" line="485" />
         <source>Recent projects</source>
         <translation>Последние проекты</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="482" />
+        <location filename="../src/app/MainWindow.cpp" line="488" />
         <source>Previous versions...</source>
         <translation>Предыдущие версии...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="483" />
+        <location filename="../src/app/MainWindow.cpp" line="489" />
         <source>Collect project...</source>
         <translation>Собрать проект...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="484" />
+        <location filename="../src/app/MainWindow.cpp" line="490" />
         <source>Copy the project and its media into one folder</source>
         <translation>Скопировать проект и медиа в одну папку</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="485" />
+        <location filename="../src/app/MainWindow.cpp" line="491" />
         <source>Media cache...</source>
         <translation>Кэш медиа...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="486" />
+        <location filename="../src/app/MainWindow.cpp" line="492" />
         <source>Use proxies for playback</source>
         <translation>Использовать прокси при воспроизведении</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="487" />
+        <location filename="../src/app/MainWindow.cpp" line="493" />
         <source>Play big videos from their light proxy copies. Export always uses the originals.</source>
         <translation>Воспроизводить большие видео из лёгких прокси-копий. Экспорт всегда из оригиналов.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="488" />
+        <location filename="../src/app/MainWindow.cpp" line="494" />
         <source>Stop making proxies</source>
         <translation>Остановить создание прокси</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="489" />
+        <location filename="../src/app/MainWindow.cpp" line="495" />
         <source>Play backwards (J, again: faster)</source>
         <translation>Назад (J, ещё раз: быстрее)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="490" />
+        <location filename="../src/app/MainWindow.cpp" line="496" />
         <source>Stop (K)</source>
         <translation>Стоп (K)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="491" />
+        <location filename="../src/app/MainWindow.cpp" line="497" />
         <source>Play forwards (L, again: faster)</source>
         <translation>Вперёд (L, ещё раз: быстрее)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="492" />
+        <location filename="../src/app/MainWindow.cpp" line="498" />
         <source>Insert from Source</source>
         <translation>Вставка из Source</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="493" />
+        <location filename="../src/app/MainWindow.cpp" line="499" />
         <source>Insert the source In-Out part at the playhead; later clips move right (,)</source>
         <translation>Вставить часть In-Out из Source в позицию курсора; следующие клипы сдвигаются вправо (,)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="494" />
+        <location filename="../src/app/MainWindow.cpp" line="500" />
         <source>Overwrite from Source</source>
         <translation>Перезапись из Source</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="495" />
+        <location filename="../src/app/MainWindow.cpp" line="501" />
         <source>Put the source In-Out part at the playhead over what is there (.)</source>
         <translation>Поставить часть In-Out из Source в позицию курсора поверх того, что там есть (.)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="496" />
+        <location filename="../src/app/MainWindow.cpp" line="502" />
         <source>Mark In (Source)</source>
         <translation>Отметить In (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="497" />
+        <location filename="../src/app/MainWindow.cpp" line="503" />
         <source>Start of the part to use (I)</source>
         <translation>Начало используемой части (I)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="498" />
+        <location filename="../src/app/MainWindow.cpp" line="504" />
         <source>Mark Out (Source)</source>
         <translation>Отметить Out (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="499" />
+        <location filename="../src/app/MainWindow.cpp" line="505" />
         <source>End of the part to use (O)</source>
         <translation>Конец используемой части (O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="500" />
+        <location filename="../src/app/MainWindow.cpp" line="506" />
         <source>Clear In and Out (Source)</source>
         <translation>Снять In и Out (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="503" />
+        <location filename="../src/app/MainWindow.cpp" line="509" />
         <source>Go to previous marker</source>
         <translation>К предыдущему маркеру</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="504" />
+        <location filename="../src/app/MainWindow.cpp" line="510" />
         <source>Rename marker...</source>
         <translation>Переименовать маркер...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="505" />
+        <location filename="../src/app/MainWindow.cpp" line="511" />
         <source>Delete marker</source>
         <translation>Удалить маркер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="508" />
+        <location filename="../src/app/MainWindow.cpp" line="514" />
         <source>Settings...</source>
         <translation>Настройки...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="509" />
+        <location filename="../src/app/MainWindow.cpp" line="515" />
         <source>Exit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="510" />
+        <location filename="../src/app/MainWindow.cpp" line="516" />
         <source>Full screen</source>
         <translation>Полный экран</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="511" />
+        <location filename="../src/app/MainWindow.cpp" line="517" />
         <source>Reset layout</source>
         <translation>Сбросить расположение панелей</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="512" />
+        <location filename="../src/app/MainWindow.cpp" line="518" />
         <source>Feature status...</source>
         <translation>Состояние функций...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="513" />
+        <location filename="../src/app/MainWindow.cpp" line="519" />
         <source>Licenses...</source>
         <translation>Лицензии...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="514" />
+        <location filename="../src/app/MainWindow.cpp" line="520" />
         <source>Open log folder</source>
         <translation>Открыть папку журнала</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="515" />
+        <location filename="../src/app/MainWindow.cpp" line="521" />
         <source>About BUKHARA CINEMA...</source>
         <translation>О программе BUKHARA CINEMA...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="517" />
+        <location filename="../src/app/MainWindow.cpp" line="523" />
         <source>Main toolbar</source>
         <translation>Главная панель инструментов</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="519" />
+        <location filename="../src/app/MainWindow.cpp" line="525" />
         <source>Save project (Ctrl+S)</source>
         <translation>Сохранить проект (Ctrl+S)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="520" />
+        <location filename="../src/app/MainWindow.cpp" line="526" />
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="521" />
+        <location filename="../src/app/MainWindow.cpp" line="527" />
         <source>Export to MP4 (Ctrl+M)</source>
         <translation>Экспорт в MP4 (Ctrl+M)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="524" />
+        <location filename="../src/app/MainWindow.cpp" line="530" />
         <source>Project</source>
         <translation>Проект</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="525" />
+        <location filename="../src/app/MainWindow.cpp" line="531" />
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="526" />
+        <location filename="../src/app/MainWindow.cpp" line="532" />
         <source>Timeline</source>
         <translation>Таймлайн</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="530" />
+        <location filename="../src/app/MainWindow.cpp" line="536" />
         <source>Clip</source>
         <translation>Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="571" />
+        <location filename="../src/app/MainWindow.cpp" line="541" />
+        <source>Phase 6 (part 2): roll, slip, slide, razor, copy and paste, link and unlink work.</source>
+        <translation>Этап 6 (часть 2): roll, slip, slide, лезвие, копирование и вставка, связь и разъединение работают.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="577" />
         <source>Insert</source>
         <translation>Вставка</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="572" />
+        <location filename="../src/app/MainWindow.cpp" line="578" />
         <source>Overwrite</source>
         <translation>Перезапись</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="872" />
+        <location filename="../src/app/MainWindow.cpp" line="878" />
         <source>Previous versions</source>
         <translation>Предыдущие версии</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="875" />
+        <location filename="../src/app/MainWindow.cpp" line="881" />
         <source>An earlier version is open. Save to make it the current project.</source>
         <translation>Открыта предыдущая версия. Сохраните, чтобы сделать её текущим проектом.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="912" />
+        <location filename="../src/app/MainWindow.cpp" line="918" />
         <source>Recover unsaved work</source>
         <translation>Восстановление несохранённой работы</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="916" />
+        <location filename="../src/app/MainWindow.cpp" line="922" />
         <source>Unsaved work recovered. Save the project to keep it.</source>
         <translation>Несохранённая работа восстановлена. Сохраните проект, чтобы её не потерять.</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="115" />
-        <location filename="../src/app/MainWindow.cpp" line="536" />
-        <location filename="../src/app/MainWindow.cpp" line="566" />
+        <location filename="../src/app/MainWindow.cpp" line="542" />
+        <location filename="../src/app/MainWindow.cpp" line="572" />
         <source>The video engine (MLT) could not be loaded: playback is off. See the log file.</source>
         <translation>Не удалось загрузить видеодвижок (MLT): воспроизведение отключено. См. файл журнала.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="838" />
+        <location filename="../src/app/MainWindow.cpp" line="844" />
         <source>Redo: %1</source>
         <translation>Повторить: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="730" />
+        <location filename="../src/app/MainWindow.cpp" line="736" />
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="535" />
-        <source>Phase 6 (part 1): Source monitor, In/Out, insert/overwrite, J/K/L and markers work.</source>
-        <translation>Этап 6 (часть 1): монитор Source, In/Out, вставка/перезапись, J/K/L и маркеры работают.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="655" />
+        <location filename="../src/app/MainWindow.cpp" line="661" />
         <source>Rename marker</source>
         <translation>Переименовать маркер</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="655" />
+        <location filename="../src/app/MainWindow.cpp" line="661" />
         <source>Marker name:</source>
         <translation>Имя маркера:</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="731" />
+        <location filename="../src/app/MainWindow.cpp" line="737" />
         <source>Project "%1" has unsaved changes. Save them?</source>
         <translation>В проекте «%1» есть несохранённые изменения. Сохранить?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="735" />
+        <location filename="../src/app/MainWindow.cpp" line="741" />
         <source>Don't save</source>
         <translation>Не сохранять</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="736" />
+        <location filename="../src/app/MainWindow.cpp" line="742" />
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="757" />
-        <location filename="../src/app/MainWindow.cpp" line="767" />
+        <location filename="../src/app/MainWindow.cpp" line="763" />
+        <location filename="../src/app/MainWindow.cpp" line="773" />
         <source>Open project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="758" />
-        <location filename="../src/app/MainWindow.cpp" line="803" />
+        <location filename="../src/app/MainWindow.cpp" line="764" />
+        <location filename="../src/app/MainWindow.cpp" line="809" />
         <source>BUKHARA CINEMA projects (*.%1)</source>
         <translation>Проекты BUKHARA CINEMA (*.%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="767" />
-        <location filename="../src/app/MainWindow.cpp" line="872" />
-        <location filename="../src/app/MainWindow.cpp" line="912" />
+        <location filename="../src/app/MainWindow.cpp" line="773" />
+        <location filename="../src/app/MainWindow.cpp" line="878" />
+        <location filename="../src/app/MainWindow.cpp" line="918" />
         <source>Cannot open "%1":
 %2</source>
         <translation>Не удалось открыть «%1»:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="772" />
+        <location filename="../src/app/MainWindow.cpp" line="778" />
         <source>Missing files</source>
         <translation>Потерянные файлы</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="773" />
+        <location filename="../src/app/MainWindow.cpp" line="779" />
         <source>Media files not found: %1. They may have been moved or renamed.</source>
         <translation>Не найдено медиафайлов: %1. Возможно, они перемещены или переименованы.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="775" />
+        <location filename="../src/app/MainWindow.cpp" line="781" />
         <source>Search in folder...</source>
         <translation>Искать в папке...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="776" />
+        <location filename="../src/app/MainWindow.cpp" line="782" />
         <source>Later</source>
         <translation>Позже</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="790" />
-        <location filename="../src/app/MainWindow.cpp" line="808" />
+        <location filename="../src/app/MainWindow.cpp" line="796" />
+        <location filename="../src/app/MainWindow.cpp" line="814" />
         <source>Cannot save the project:
 %1</source>
         <translation>Не удалось сохранить проект:
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="793" />
-        <location filename="../src/app/MainWindow.cpp" line="812" />
+        <location filename="../src/app/MainWindow.cpp" line="799" />
+        <location filename="../src/app/MainWindow.cpp" line="818" />
         <source>Saved: %1</source>
         <translation>Сохранено: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="802" />
+        <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Save project as</source>
         <translation>Сохранить проект как</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="821" />
+        <location filename="../src/app/MainWindow.cpp" line="827" />
         <source>(empty)</source>
         <translation>(пусто)</translation>
     </message>
@@ -1842,6 +1837,46 @@
         <source>Rename marker</source>
         <translation>Переименовать маркер</translation>
     </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="15" />
+        <source>Rolling edit</source>
+        <translation>Roll (сдвиг стыка)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="22" />
+        <source>Slip clip</source>
+        <translation>Сдвиг содержимого (slip)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="29" />
+        <source>Slide clip</source>
+        <translation>Сдвиг клипа (slide)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="39" />
+        <source>Unlink</source>
+        <translation>Разъединить</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="40" />
+        <source>Link</source>
+        <translation>Связать</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="73" />
+        <source>Cut</source>
+        <translation>Вырезать</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="85" />
+        <source>Paste insert</source>
+        <translation>Вставить со сдвигом</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="85" />
+        <source>Paste</source>
+        <translation>Вставить</translation>
+    </message>
 </context>
 <context>
     <name>bc::ProjectInfoPanel</name>
@@ -2136,69 +2171,159 @@
 <context>
     <name>bc::TimelinePanel</name>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1105" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1231" />
         <source>Duration: %1</source>
         <translation>Длительность: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1125" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1249" />
+        <source>Unlink audio and video</source>
+        <translation>Разъединить видео и звук</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1249" />
+        <source>Link audio and video</source>
+        <translation>Связать видео и звук</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1261" />
         <source>Split at playhead</source>
         <translation>Разрезать по указателю</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1126" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1262" />
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1127" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1263" />
         <source>Ripple delete</source>
         <translation>Удалить со сдвигом (ripple)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1128" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1264" />
         <source>Snapping</source>
         <translation>Привязка</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1129" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1265" />
         <source>Clips stick to edges and the playhead (S)</source>
         <translation>Клипы прилипают к краям и указателю (S)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1130" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1266" />
         <source>Add video track</source>
         <translation>Добавить видеодорожку</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1131" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1267" />
         <source>Add audio track</source>
         <translation>Добавить аудиодорожку</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1132" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1268" />
         <source>Select all clips</source>
         <translation>Выделить все клипы</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1133" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1269" />
         <source>Fit</source>
         <translation>Вместить</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1134" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1270" />
         <source>Show the whole sequence (\)</source>
         <translation>Показать всю секвенцию (\)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1135" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1271" />
         <source>Zoom (Ctrl + mouse wheel)</source>
         <translation>Масштаб (Ctrl + колесо мыши)</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="1136" />
+        <location filename="../src/app/TimelinePanel.cpp" line="1272" />
         <source>Split at playhead (Ctrl+K)</source>
         <translation>Разрезать по указателю (Ctrl+K)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1273" />
+        <source>Copy</source>
+        <translation>Копировать</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1274" />
+        <source>Cut</source>
+        <translation>Вырезать</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1275" />
+        <source>Paste</source>
+        <translation>Вставить</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1276" />
+        <source>Paste at the playhead over what is there (Ctrl+V)</source>
+        <translation>Вставить в позицию курсора поверх (Ctrl+V)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1277" />
+        <source>Paste insert</source>
+        <translation>Вставить со сдвигом</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1278" />
+        <source>Paste at the playhead; later clips move right (Ctrl+Shift+V)</source>
+        <translation>Вставить в позицию курсора; следующие клипы сдвигаются вправо (Ctrl+Shift+V)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1279" />
+        <source>Selection</source>
+        <translation>Выделение</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1279" />
+        <source>Razor</source>
+        <translation>Лезвие</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1279" />
+        <source>Rolling edit</source>
+        <translation>Roll (сдвиг стыка)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1280" />
+        <source>Slip</source>
+        <translation>Slip</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1280" />
+        <source>Slide</source>
+        <translation>Slide</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1282" />
+        <source>Select, move and trim clips (V)</source>
+        <translation>Выделение, перемещение и подрезка клипов (V)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1283" />
+        <source>Click a clip to split it there (C)</source>
+        <translation>Щёлкните клип, чтобы разрезать его там (C)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1284" />
+        <source>Drag the cut between two clips: one gets longer, the other shorter (N)</source>
+        <translation>Сдвиг стыка двух клипов: один удлиняется, другой укорачивается (N)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1285" />
+        <source>Drag inside a clip to use another part of its source in the same place (Y)</source>
+        <translation>Тяните внутри клипа: другая часть источника на том же месте (Y)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/TimelinePanel.cpp" line="1286" />
+        <source>Drag a clip between its neighbours; they get longer or shorter (U)</source>
+        <translation>Сдвиг клипа между соседями; они удлиняются или укорачиваются (U)</translation>
     </message>
 </context>
 <context>
@@ -2212,47 +2337,47 @@
 <context>
     <name>bc::TimelineView</name>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="402" />
+        <location filename="../src/app/TimelinePanel.cpp" line="403" />
         <source>Drag media from the bin here</source>
         <translation>Перетащите сюда медиа из медиатеки</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="871" />
+        <location filename="../src/app/TimelinePanel.cpp" line="955" />
         <source>Unlock track</source>
         <translation>Разблокировать дорожку</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="871" />
+        <location filename="../src/app/TimelinePanel.cpp" line="955" />
         <source>Lock track</source>
         <translation>Заблокировать дорожку</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="873" />
+        <location filename="../src/app/TimelinePanel.cpp" line="957" />
         <source>Show track in the Program monitor</source>
         <translation>Показывать дорожку в мониторе программы</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="873" />
+        <location filename="../src/app/TimelinePanel.cpp" line="957" />
         <source>Hide track in the Program monitor</source>
         <translation>Скрыть дорожку в мониторе программы</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="875" />
+        <location filename="../src/app/TimelinePanel.cpp" line="959" />
         <source>Turn the track sound on</source>
         <translation>Включить звук дорожки</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="875" />
+        <location filename="../src/app/TimelinePanel.cpp" line="959" />
         <source>Mute track</source>
         <translation>Выключить звук дорожки</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="877" />
+        <location filename="../src/app/TimelinePanel.cpp" line="961" />
         <source>Solo off</source>
         <translation>Выключить соло</translation>
     </message>
     <message>
-        <location filename="../src/app/TimelinePanel.cpp" line="877" />
+        <location filename="../src/app/TimelinePanel.cpp" line="961" />
         <source>Solo: hear only this track (and other solo tracks)</source>
         <translation>Соло: слышать только эту дорожку (и другие соло-дорожки)</translation>
     </message>
