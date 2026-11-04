@@ -1,6 +1,9 @@
 #pragma once
 
 #include "core/MediaProbe.h"
+#include "engine/Exporter.h"
+
+#include <optional>
 
 #include <QDialog>
 
@@ -13,6 +16,7 @@ class QPushButton;
 
 namespace bc {
 
+class ExportQueue;
 class ProjectController;
 
 // File > Export: writes the whole sequence to an MP4 file (H.264 or
@@ -21,12 +25,15 @@ class ExportDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ExportDialog(ProjectController *controller, QWidget *parent = nullptr);
+    // With a queue the dialog also offers "Add to queue" (phase 13a).
+    explicit ExportDialog(ProjectController *controller, QWidget *parent = nullptr, ExportQueue *queue = nullptr);
 
     QString path() const;
     void setPath(const QString &path);
     // Starts the export; false (and a message in the dialog) when it cannot.
     bool startExport();
+    // Puts the export in the queue with a copy of the project as it is now.
+    bool addToQueue();
 
 protected:
     void reject() override;
@@ -38,6 +45,8 @@ private:
     void onFinished(bool ok, const QString &error);
     void setRunning(bool running);
     QString defaultPath() const;
+    // Settings from the widgets; nothing (and a message) when the file name is not usable.
+    std::optional<ExportSettings> settings(bool askReplace);
 
     ProjectController *m_ctl;
     QList<MediaProbe::VideoEncoder> m_encoders;
@@ -54,6 +63,9 @@ private:
     QPushButton *m_start;
     QPushButton *m_close;
     QPushButton *m_openFolder;
+    QPushButton *m_addQueue;
+    ExportQueue *m_queue;
+    bool m_mine = false; // the running export was started here (not by the queue)
 };
 
 } // namespace bc

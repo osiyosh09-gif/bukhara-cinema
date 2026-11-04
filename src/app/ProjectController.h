@@ -255,6 +255,8 @@ public:
 
     // MP4 export of the whole sequence (same picture and sound as playback).
     bool startExport(const ExportSettings &settings, QString *error);
+    // The same for a copy of a project (the export queue keeps one per job).
+    bool startExport(const Project &project, const ExportSettings &settings, QString *error);
     void cancelExport();
     bool isExporting() const;
 

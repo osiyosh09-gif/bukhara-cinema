@@ -23,6 +23,8 @@ class ClipInspector;
 class EffectsPanel;
 class SubtitlesPanel;
 class ScopesPanel;
+class ExportQueue;
+class ExportQueueDialog;
 class MulticamMonitor;
 class Autosave;
 
@@ -84,6 +86,7 @@ private:
     void updateUndoActions();
     void addTitle(); // Graphics > New text: title at the playhead, ready to type
     void openExport(); // File > Export
+    void openExportQueue(); // File > Export queue (phase 13a)
     void openVersions(); // File > Previous versions
     void openCollect();  // File > Collect project
     void openCache();    // File > Media cache
@@ -129,6 +132,12 @@ private:
     QAction *m_playAct = nullptr;
     QAction *m_newTextAct = nullptr;
     QAction *m_exportAct = nullptr;
+    QAction *m_exportQueueAct = nullptr;
+    ExportQueue *m_exportQueue = nullptr;
+    ExportQueueDialog *m_exportQueueDialog = nullptr;
+public:
+    ExportQueue *exportQueue() const { return m_exportQueue; }
+private:
     QAction *m_audioGainAct = nullptr;
     QAction *m_settingsAct = nullptr;
     QAction *m_exitAct = nullptr;
