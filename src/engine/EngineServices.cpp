@@ -219,7 +219,11 @@ int transformGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format
 {
     auto filter = static_cast<mlt_filter>(mlt_frame_pop_service(frame));
     mlt_properties props = MLT_FILTER_PROPERTIES(filter);
-    const qint64 pos = mlt_filter_get_position(filter, frame);
+    // Keys are in source frames; a speed-changed clip uses `speed` of them per frame.
+    double speed = mlt_properties_get_double(props, "speed");
+    if (speed <= 0)
+        speed = 1.0;
+    const qint64 pos = qint64(std::llround(double(mlt_filter_get_position(filter, frame)) * speed));
     *format = mlt_image_rgba;
     const int err = mlt_frame_get_image(frame, image, format, width, height, 1);
     if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)

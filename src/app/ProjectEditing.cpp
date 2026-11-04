@@ -6,6 +6,7 @@
 #include <QHash>
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 namespace bc {
@@ -242,7 +243,7 @@ namespace {
 // Source frame of a timeline frame inside the clip (clamped to the clip).
 qint64 sourceFrame(const TimelineClip &c, qint64 frame)
 {
-    return c.in + std::clamp<qint64>(frame - c.start, 0, std::max<qint64>(0, c.length - 1));
+    return c.in + c.src(std::clamp<qint64>(frame - c.start, 0, std::max<qint64>(0, c.length - 1)));
 }
 
 TimelineClip *videoClip(Timeline &t, const QUuid &id)
@@ -323,12 +324,85 @@ qint64 ProjectController::clipKeyNear(const QUuid &clipId, qint64 frame, bool ne
     const TimelineClip *c = timeline().clip(clipId);
     if (!c)
         return -1;
-    const qint64 f = c->in + (frame - c->start); // may lie outside the clip
+    const qint64 f = c->in + c->src(frame - c->start); // may lie outside the clip
     const qint64 k = next ? c->motion.nextKey(f) : c->motion.prevKey(f);
     if (k < 0)
         return -1;
-    const qint64 tf = c->start + (k - c->in);
+    const qint64 tf = c->start + qint64(std::llround((k - c->in) / c->speed));
     return c->covers(tf) ? tf : -1;
+}
+
+// ---------------------------------------------------------------------------
+// Speed (phase 7b)
+
+bool ProjectController::canChangeSpeed(const QUuid &clipId) const
+{
+    const TimelineClip *c = timeline().clip(clipId);
+    if (!c || c->mediaId.isNull())
+        return false;
+    const MediaItem *m = m_project.item(c->mediaId);
+    return m && m->info.kind != MediaInfo::Kind::Image && mediaFrames(c->mediaId) > 0;
+}
+
+bool ProjectController::setClipSpeed(const QUuid &clipId, double speed, qint64 length, bool ripple)
+{
+    if (!canChangeSpeed(clipId))
+        return false;
+    speed = std::clamp(speed, 0.1, 10.0);
+    speed = std::round(speed * 1000) / 1000; // the engine keeps thousandths
+    return editTimeline(tr("Speed"), [&](Timeline &t) {
+        const QList<QUuid> group = t.withLinked({clipId});
+        QList<Timeline::ClipRef> refs;
+        qint64 newLen = length;
+        qint64 room = std::numeric_limits<qint64>::max();
+        qint64 oldEnd = -1;
+        for (const QUuid &id : group) {
+            const Timeline::ClipRef r = t.find(id);
+            if (!r.isValid() || t.tracks[r.track].locked)
+                return false;
+            const TimelineClip &c = t.tracks[r.track].clips[r.index];
+            if (c.mediaId.isNull())
+                return false;
+            if (newLen <= 0) // keep the same part of the source
+                newLen = std::max<qint64>(1, qint64(std::llround(c.src(c.length) / speed)));
+            // The source must last: in + length * speed <= media length.
+            const qint64 media = mediaFrames(c.mediaId);
+            if (media > 0)
+                newLen = std::min<qint64>(newLen, qint64(std::floor((media - c.in) / speed + 1e-9)));
+            const auto &clips = t.tracks[r.track].clips;
+            const qint64 next = r.index + 1 < clips.size() ? clips[r.index + 1].start : std::numeric_limits<qint64>::max();
+            room = std::min(room, next - c.start);
+            oldEnd = std::max(oldEnd, c.end());
+            refs << r;
+        }
+        if (refs.isEmpty() || newLen < 1)
+            return false;
+        const TimelineClip &first = t.tracks[refs.first().track].clips[refs.first().index];
+        const qint64 oldLen = first.length;
+        const qint64 delta = newLen - oldLen;
+        if (!ripple && delta > 0)
+            newLen = std::min(newLen, room); // later clips stay; the clip stops at the next one
+        if (newLen == oldLen && first.speed == speed)
+            return false;
+        QList<int> members;
+        for (const Timeline::ClipRef &r : refs)
+            members << r.track;
+        if (ripple && delta != 0) {
+            // Later clips on the same tracks move with the new end.
+            for (int tr : members)
+                for (TimelineClip &c : t.tracks[tr].clips)
+                    if (c.start >= oldEnd)
+                        c.start += newLen - oldLen;
+        }
+        for (const Timeline::ClipRef &r : refs) {
+            TimelineClip &c = t.tracks[r.track].clips[r.index];
+            c.speed = speed;
+            c.length = newLen;
+            c.fadeIn = std::min(c.fadeIn, c.length);
+            c.fadeOut = std::min(c.fadeOut, c.length - c.fadeIn);
+        }
+        return true;
+    });
 }
 
 } // namespace bc

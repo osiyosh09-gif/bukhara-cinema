@@ -137,6 +137,13 @@ public:
     bool resetClipMotion(const QUuid &clipId);
     // Timeline frame of the next (or previous) key of the clip, or -1.
     qint64 clipKeyNear(const QUuid &clipId, qint64 frame, bool next) const;
+    // --- speed (phase 7b): video and audio file clips only.
+    bool canChangeSpeed(const QUuid &clipId) const;
+    // Sets the speed of the clip and its linked clips (0.1 .. 10). With
+    // `length` <= 0 the clip keeps the same part of its source (its length
+    // changes); otherwise it gets that length. Without ripple a longer clip
+    // stops at the next clip; with ripple later clips on its tracks move.
+    bool setClipSpeed(const QUuid &clipId, double speed, qint64 length = 0, bool ripple = false);
     // --- nested sequences (phase 6c)
     // Moves the clips (and their linked clips) into a new nested sequence and
     // puts one clip of it in their place (picture and sound, linked).

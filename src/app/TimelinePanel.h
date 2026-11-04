@@ -180,6 +180,9 @@ public:
     QAction *pasteInsertAction() const { return m_pasteInsert; }
     QAction *linkAction() const { return m_link; }
     QAction *nestAction() const { return m_nest; }
+    QAction *speedAction() const { return m_speed; }
+    // The selected clip whose speed can change (null when none or several).
+    QUuid speedClip() const;
     QAction *renameSequenceAction() const { return m_renameSeq; }
     // Select, Razor, Roll, Slip, Slide (checkable, one at a time).
     QList<QAction *> toolActions() const { return m_tools; }
@@ -216,6 +219,7 @@ private:
     QAction *m_pasteInsert;
     QAction *m_link;
     QAction *m_nest;
+    QAction *m_speed;
     QAction *m_renameSeq;
     QComboBox *m_sequences;
     void rebuildSequences();

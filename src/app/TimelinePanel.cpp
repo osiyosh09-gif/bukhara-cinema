@@ -5,6 +5,7 @@
 #include "app/Formatting.h"
 #include "app/MediaBinPanel.h"
 #include "app/ProjectController.h"
+#include "app/SpeedDialog.h"
 
 #include <QAction>
 #include <QLineEdit>
@@ -610,6 +611,8 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
         label = QStringLiteral("T  ") + c.title.text.simplified();
     else if (c.isNested())
         label = QStringLiteral("\u29c9  ") + m_ctl->sequenceName(c.nestId);
+    if (c.speed != 1.0)
+        label += QStringLiteral("  [%1%]").arg(c.speed * 100, 0, 'f', c.speed * 100 == std::round(c.speed * 100) ? 0 : 1);
     if (!video && c.gainDb != 0)
         label += QStringLiteral("  %1%2 dB").arg(c.gainDb > 0 ? QStringLiteral("+") : QString()).arg(c.gainDb, 0, 'f', 1);
     if (r.width() > 30 && !label.isEmpty()) {
@@ -636,7 +639,7 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
         p.setBrush(kGold);
         const double y = r.bottom() - 5;
         for (const TransformKey &k : c.motion.keys) {
-            const qint64 off = k.frame - c.in;
+            const qint64 off = qint64(std::llround((k.frame - c.in) / c.speed));
             if (off < 0 || off >= c.length)
                 continue;
             const double x = r.left() + (off + 0.5) * m_ppf;
@@ -1134,6 +1137,14 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     m_pasteInsert = makeAction(QStringLiteral("actPasteInsert"), QKeySequence(QStringLiteral("Ctrl+Shift+V")));
     m_link = makeAction(QStringLiteral("actLink"), QKeySequence(QStringLiteral("Ctrl+L")));
     m_nest = makeAction(QStringLiteral("actNest"), {});
+    m_speed = makeAction(QStringLiteral("actSpeed"), QKeySequence(QStringLiteral("Ctrl+R")));
+    connect(m_speed, &QAction::triggered, this, [this] {
+        const QUuid id = speedClip();
+        if (id.isNull())
+            return;
+        SpeedDialog dlg(m_ctl, id, this);
+        dlg.exec();
+    });
     m_renameSeq = makeAction(QStringLiteral("actRenameSequence"), {});
     connect(m_nest, &QAction::triggered, this, [this] {
         const QUuid id = m_ctl->nestClips(m_view->selection());
@@ -1195,7 +1206,7 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         m_view->setSelection(all);
     });
 
-    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_delete, m_rippleDelete},
+    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_delete, m_rippleDelete},
                               {m_addVideo, m_addAudio});
 
     m_snapBtn->setDefaultAction(m_snapAct);
@@ -1313,6 +1324,22 @@ void TimelinePanel::deleteSelection(bool ripple)
         m_ctl->removeClips(sel, ripple);
 }
 
+QUuid TimelinePanel::speedClip() const
+{
+    const Timeline &tl = m_ctl->timeline();
+    QSet<QUuid> groups;
+    QUuid found;
+    for (const QUuid &id : m_view->selection()) {
+        const TimelineClip *c = tl.clip(id);
+        if (!c)
+            continue;
+        groups.insert(c->linkId.isNull() ? c->id : c->linkId);
+        if (found.isNull() && m_ctl->canChangeSpeed(id))
+            found = id;
+    }
+    return groups.size() == 1 ? found : QUuid();
+}
+
 void TimelinePanel::updateState()
 {
     const Timeline &tl = m_ctl->timeline();
@@ -1337,6 +1364,7 @@ void TimelinePanel::updateState()
         linked |= tl.isLinked(id);
     m_link->setEnabled(linked || sel.size() >= 2);
     m_nest->setEnabled(hasSel);
+    m_speed->setEnabled(!speedClip().isNull());
     m_link->setText(linked ? tr("Unlink audio and video") : tr("Link audio and video"));
 }
 
@@ -1363,6 +1391,8 @@ void TimelinePanel::retranslate()
     m_split->setToolTip(tr("Split at playhead (Ctrl+K)"));
     m_copy->setText(tr("Copy"));
     m_nest->setText(tr("Nest"));
+    m_speed->setText(tr("Speed / duration..."));
+    m_speed->setToolTip(tr("Play the clip faster or slower (Ctrl+R)"));
     m_nest->setToolTip(tr("Put the selected clips into a new nested sequence that works as one clip"));
     m_renameSeq->setText(tr("Rename..."));
     m_renameSeq->setToolTip(tr("Rename the nested sequence shown on the timeline"));
