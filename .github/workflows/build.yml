@@ -32,6 +32,20 @@ jobs:
         run: cmake --build build
       - name: Test
         run: ctest --test-dir build --output-on-failure
+      # The committed i18n/*.ts must hold exactly the texts lupdate finds in the code.
+      - name: Translation files match the code
+        run: |
+          cp -r i18n /tmp/i18n_committed
+          cmake --build build --target update_translations
+          python3 tools/check_ts_sync.py /tmp/i18n_committed i18n
+      # Phase 15a: the exported XML, OTIO and EDL read by the OpenTimelineIO reference library.
+      - name: Interchange files read by OpenTimelineIO
+        run: |
+          BC_INTERCHANGE_OUT=/tmp/interchange QT_QPA_PLATFORM=offscreen SDL_AUDIODRIVER=dummy \
+            build/tests/tst_phase15a writeSamplesForReferenceCheck
+          python3 -m venv /tmp/otio
+          /tmp/otio/bin/pip install -q opentimelineio otio-fcp-adapter otio-cmx3600-adapter
+          /tmp/otio/bin/python tests/check_interchange.py /tmp/interchange
 
   windows:
     name: Windows build, tests and installer

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/Interchange.h"
 #include "core/Loudness.h"
 #include "core/Project.h"
 #include "core/SceneDetect.h"
@@ -381,6 +382,12 @@ public:
     // undo step); `replace` removes the subtitles there were. Returns the count.
     int importSrt(const QString &path, qint64 offset, bool replace, QString *error, int *skipped = nullptr);
     bool exportSrt(const QString &path, QString *error) const;
+
+    // --- export for other editors (phase 15a, ProjectInterchange.cpp); always the main sequence
+    // What would be written, and what the format cannot carry.
+    Interchange::Result interchangeResult(Interchange::Format format) const;
+    bool exportInterchange(Interchange::Format format, const QString &path, QString *error,
+                           Interchange::Result *result = nullptr) const;
 
     // --- markers (undoable)
     QUuid addMarker(qint64 frame);

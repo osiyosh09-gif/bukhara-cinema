@@ -470,8 +470,23 @@
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="74" />
-        <source>Plugins and project interchange</source>
-        <translation>Плагины и обмен проектами</translation>
+        <source>Export for other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
+        <translation>Экспорт для других программ: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="74" />
+        <source>File &gt; Export for other editors writes the main sequence for Premiere Pro, DaVinci Resolve and other editors: which part of which file lies where on which track, cross dissolves, markers and (XML) clip volume. Nested and multicamera clips become the clips inside them. Before saving, the window lists what will not be transferred: titles, effects, colour, motion, speed changes, subtitles and more. The EDL holds video track V1 only. Opening the files in Premiere Pro and DaVinci Resolve has not been tested by us.</source>
+        <translation>Файл &gt; Экспорт для других монтажных программ записывает основной эпизод для Premiere Pro, DaVinci Resolve и других программ: какая часть какого файла где лежит на какой дорожке, растворения, маркеры и (в XML) громкость клипа. Вложенные и мультикамерные клипы становятся клипами внутри них. Перед сохранением окно показывает, что не будет перенесено: титры, эффекты, цвет, движение, изменение скорости, субтитры и другое. EDL содержит только видеодорожку V1. Открытие файлов в Premiere Pro и DaVinci Resolve нами не проверялось.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>Import from other editors (XML, OpenTimelineIO, EDL)</source>
+        <translation>Импорт из других программ (XML, OpenTimelineIO, EDL)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>Audio plugins (VST3)</source>
+        <translation>Аудиоплагины (VST3)</translation>
     </message>
 </context>
 <context>
@@ -1930,6 +1945,164 @@
     </message>
 </context>
 <context>
+    <name>bc::InterchangeDialog</name>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="35" />
+        <source>Export for other editors</source>
+        <translation>Экспорт для других монтажных программ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="40" />
+        <source>Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)</source>
+        <translation>Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="41" />
+        <source>OpenTimelineIO (.otio)</source>
+        <translation>OpenTimelineIO (.otio)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="42" />
+        <source>EDL (CMX 3600): video track V1 only</source>
+        <translation>EDL (CMX 3600): только видеодорожка V1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="46" />
+        <source>Writes the main sequence for Premiere Pro, DaVinci Resolve and other editors. Only the edit travels: which part of which file lies where. The media files are not copied; keep them where they are.</source>
+        <translation>Записывает основной эпизод для Premiere Pro, DaVinci Resolve и других программ. Переносится только сам монтаж: какая часть какого файла где стоит. Медиафайлы не копируются; оставьте их на месте.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="58" />
+        <source>Format:</source>
+        <translation>Формат:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="61" />
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="62" />
+        <source>Export...</source>
+        <translation>Экспорт...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="97" />
+        <source>Text titles: %1</source>
+        <translation>Текстовые титры: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="98" />
+        <source>Picture effects, chroma key and masks: %1 clips</source>
+        <translation>Эффекты изображения, хромакей и маски: клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="99" />
+        <source>Colour correction and LUTs: %1 clips</source>
+        <translation>Цветокоррекция и LUT: клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="100" />
+        <source>Position, scale, rotation and opacity: %1 clips</source>
+        <translation>Положение, масштаб, поворот и непрозрачность: клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="101" />
+        <source>Speed changes: %1 clips (they play at normal speed from the same first frame)</source>
+        <translation>Изменение скорости: клипов — %1 (они играют с обычной скоростью с того же первого кадра)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="102" />
+        <source>Dips to black or white and wipes: %1 (they become cross dissolves)</source>
+        <translation>Переходы через чёрный или белый и шторки: %1 (станут обычным растворением)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="103" />
+        <source>Transitions: %1</source>
+        <translation>Переходы: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="104" />
+        <source>Fades at free clip ends: %1</source>
+        <translation>Затухания на свободных краях клипов: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="105" />
+        <source>Sound fades in and out: %1 clips</source>
+        <translation>Нарастание и затухание звука: клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="106" />
+        <source>Clip volume: %1 clips</source>
+        <translation>Громкость клипа: клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="107" />
+        <source>Sound effects (equalizer, compressor, noise, hum): %1 clips</source>
+        <translation>Звуковые эффекты (эквалайзер, компрессор, шум, гул): клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="108" />
+        <source>Track volume and balance, master volume</source>
+        <translation>Громкость и баланс дорожек, мастер-громкость</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="109" />
+        <source>Subtitles: %1 (save them with Export SRT in the Subtitles tab)</source>
+        <translation>Субтитры: %1 (сохраните их кнопкой «Экспорт SRT» на вкладке «Субтитры»)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="110" />
+        <source>Markers: %1</source>
+        <translation>Маркеры: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="111" />
+        <source>Clips on tracks other than V1, and all sound: %1</source>
+        <translation>Клипы на дорожках кроме V1 и весь звук: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="123" />
+        <source>Everything in this sequence will be transferred.</source>
+        <translation>Всё в этом эпизоде будет перенесено.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="125" />
+        <source>Will not be transferred:</source>
+        <translation>Не будет перенесено:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="131" />
+        <source>Clips to write: %1</source>
+        <translation>Клипов к записи: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="133" />
+        <source>Nested and multicamera clips: %1. They are written as the clips inside them.</source>
+        <translation>Вложенные и мультикамерные клипы: %1. Они записываются как клипы внутри них.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="135" />
+        <source>Missing media files: %1. The other editor will ask for them.</source>
+        <translation>Отсутствующие медиафайлы: %1. Другая программа запросит их.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="162" />
+        <source>Final Cut Pro XML (*.xml)</source>
+        <translation>Final Cut Pro XML (*.xml)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="163" />
+        <source>OpenTimelineIO (*.otio)</source>
+        <translation>OpenTimelineIO (*.otio)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="164" />
+        <source>EDL (*.edl)</source>
+        <translation>EDL (*.edl)</translation>
+    </message>
+</context>
+<context>
     <name>bc::LoudnessDialog</name>
     <message>
         <location filename="../src/app/LoudnessDialog.cpp" line="43" />
@@ -2737,6 +2910,21 @@
         <location filename="../src/app/MainWindow.cpp" line="985" />
         <source>(empty)</source>
         <translation>(пусто)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="626" />
+        <source>Export for other editors...</source>
+        <translation>Экспорт для других монтажных программ...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="627" />
+        <source>Save the main sequence as XML, OpenTimelineIO or EDL for Premiere Pro, DaVinci Resolve and other editors</source>
+        <translation>Сохранить основной эпизод как XML, OpenTimelineIO или EDL для Premiere Pro, DaVinci Resolve и других программ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1036" />
+        <source>Saved for other editors: %1</source>
+        <translation>Сохранено для других программ: %1</translation>
     </message>
 </context>
 <context>
@@ -3678,6 +3866,11 @@
         <location filename="../src/app/ProjectScenes.cpp" line="179" />
         <source>Mark scene changes</source>
         <translation>Отметить смену сцен</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="23" />
+        <source>Could not write the file %1: %2</source>
+        <translation>Не удалось записать файл %1: %2</translation>
     </message>
 </context>
 <context>
