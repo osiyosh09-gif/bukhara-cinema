@@ -209,6 +209,21 @@
         <translation>O‘ngdagi «Audio» paneli: har bir audio yo‘lak uchun polosa (balans, dB feyder, M va S) va master polosasi; indikatorlar Program monitori ijro etayotganda harakatlanadi. Feyderlar eksportga ham ta’sir qiladi.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="61" />
+        <source>Noise reduction and hum removal</source>
+        <translation>Shovqinni kamaytirish va elektr guvillashini olib tashlash</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="61" />
+        <source>Effects tab, audio clip: noise reduction learns the steady background noise and lowers it (speech; about 21 ms delay); hum removal cuts 50 or 60 Hz mains hum and its harmonics.</source>
+        <translation>«Effektlar» paneli, audio klip: shovqinni kamaytirish doimiy fon shovqinini o‘rganib pasaytiradi (nutq uchun; taxminan 21 ms kechikish); guvillashni olib tashlash 50 yoki 60 Hz elektr guvillashini va uning garmonikalarini kesadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="62" />
+        <source>Loudness (LUFS) normalisation</source>
+        <translation>Ovoz balandligini (LUFS) tekislash</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sekvensiya sozlamalari: o‘lcham, kadrlar chastotasi, audio</translation>
@@ -349,32 +364,27 @@
         <translation>«Effektlar» panelida audio klipni tanlang (bog‘langan klipda «Ovoz» tugmasini bosing): low cut, bas, o‘rta va yuqori; kompressor: chegara, nisbat, attack, release va make-up. Klip ovozidan oldin ishlaydi.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="61" />
-        <source>Noise reduction and loudness</source>
-        <translation>Shovqinni kamaytirish va loudness</translation>
-    </message>
-    <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="62" />
+        <location filename="../src/app/FeatureStatus.cpp" line="63" />
         <source>Subtitles and SRT import/export</source>
         <translation>Subtitrlar va SRT import/eksport</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="63" />
+        <location filename="../src/app/FeatureStatus.cpp" line="64" />
         <source>Multicamera editing</source>
         <translation>Ko‘p kamerali montaj</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="64" />
+        <location filename="../src/app/FeatureStatus.cpp" line="65" />
         <source>Export queue, render preview, GPU acceleration</source>
         <translation>Eksport navbati, render preview, GPU tezlashtirish</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="65" />
+        <location filename="../src/app/FeatureStatus.cpp" line="66" />
         <source>AI assistants: transcription, text-based editing, scene detection</source>
         <translation>AI yordamchilar: transkripsiya, matn asosida montaj, sahnalarni aniqlash</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="66" />
+        <location filename="../src/app/FeatureStatus.cpp" line="67" />
         <source>Plugins and project interchange</source>
         <translation>Plaginlar va loyiha almashinuvi</translation>
     </message>
@@ -1225,247 +1235,282 @@
         <translation>Kompressor</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="66" />
+        <location filename="../src/app/EffectsPanel.cpp" line="60" />
+        <source>Noise reduction</source>
+        <translation>Shovqinni kamaytirish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="62" />
+        <source>Hum removal (50/60 Hz)</source>
+        <translation>Elektr guvillashini olib tashlash (50/60 Hz)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="70" />
         <source>Brightness</source>
         <translation>Yorqinlik</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="68" />
+        <location filename="../src/app/EffectsPanel.cpp" line="72" />
         <source>Contrast</source>
         <translation>Kontrast</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="70" />
+        <location filename="../src/app/EffectsPanel.cpp" line="74" />
         <source>Saturation, %</source>
         <translation>To‘yinganlik, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="72" />
+        <location filename="../src/app/EffectsPanel.cpp" line="76" />
         <source>Radius, px</source>
         <translation>Radius, px</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="74" />
+        <location filename="../src/app/EffectsPanel.cpp" line="78" />
         <source>Amount, %</source>
         <translation>Kuchi, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="76" />
+        <location filename="../src/app/EffectsPanel.cpp" line="80" />
         <source>Left, %</source>
         <translation>Chapdan, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="78" />
+        <location filename="../src/app/EffectsPanel.cpp" line="82" />
         <source>Right, %</source>
         <translation>O‘ngdan, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="80" />
+        <location filename="../src/app/EffectsPanel.cpp" line="84" />
         <source>Top, %</source>
         <translation>Yuqoridan, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="82" />
+        <location filename="../src/app/EffectsPanel.cpp" line="86" />
         <source>Bottom, %</source>
         <translation>Pastdan, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="84" />
+        <location filename="../src/app/EffectsPanel.cpp" line="88" />
         <source>Flip left and right</source>
         <translation>Chap va o‘ngni almashtirish</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="86" />
+        <location filename="../src/app/EffectsPanel.cpp" line="90" />
         <source>Flip upside down</source>
         <translation>Tepa va pastni almashtirish</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="88" />
+        <location filename="../src/app/EffectsPanel.cpp" line="92" />
         <source>Key colour (hue), °</source>
         <translation>Rang (hue), °</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="90" />
+        <location filename="../src/app/EffectsPanel.cpp" line="94" />
         <source>Tolerance, °</source>
         <translation>Chegara, °</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="92" />
+        <location filename="../src/app/EffectsPanel.cpp" line="96" />
         <source>Softness, °</source>
         <translation>Yumshoqlik, °</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="94" />
+        <location filename="../src/app/EffectsPanel.cpp" line="98" />
         <source>Keep greys below, %</source>
         <translation>Kulrang himoyasi, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="96" />
+        <location filename="../src/app/EffectsPanel.cpp" line="100" />
         <source>Spill removal, %</source>
         <translation>Spill tozalash, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="98" />
+        <location filename="../src/app/EffectsPanel.cpp" line="102" />
         <source>Ellipse</source>
         <translation>Ellips</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="100" />
+        <location filename="../src/app/EffectsPanel.cpp" line="104" />
         <source>Centre X, %</source>
         <translation>Markaz X, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="102" />
+        <location filename="../src/app/EffectsPanel.cpp" line="106" />
         <source>Centre Y, %</source>
         <translation>Markaz Y, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="104" />
+        <location filename="../src/app/EffectsPanel.cpp" line="108" />
         <source>Width, %</source>
         <translation>Kenglik, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="106" />
+        <location filename="../src/app/EffectsPanel.cpp" line="110" />
         <source>Height, %</source>
         <translation>Balandlik, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="108" />
+        <location filename="../src/app/EffectsPanel.cpp" line="112" />
         <source>Soft edge, px</source>
         <translation>Yumshoq chet, px</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="110" />
+        <location filename="../src/app/EffectsPanel.cpp" line="114" />
         <source>Invert (hide the inside)</source>
         <translation>Teskari (ichini yashirish)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="112" />
+        <location filename="../src/app/EffectsPanel.cpp" line="116" />
         <source>Low cut, Hz (0 = off)</source>
         <translation>Low cut, Hz (0 = o‘chiq)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="114" />
+        <location filename="../src/app/EffectsPanel.cpp" line="118" />
         <source>Bass, dB</source>
         <translation>Bas, dB</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="116" />
+        <location filename="../src/app/EffectsPanel.cpp" line="120" />
         <source>Bass frequency, Hz</source>
         <translation>Bas chastotasi, Hz</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="118" />
+        <location filename="../src/app/EffectsPanel.cpp" line="122" />
         <source>Middle, dB</source>
         <translation>O‘rta, dB</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="120" />
+        <location filename="../src/app/EffectsPanel.cpp" line="124" />
         <source>Middle frequency, Hz</source>
         <translation>O‘rta chastota, Hz</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="122" />
+        <location filename="../src/app/EffectsPanel.cpp" line="126" />
         <source>Middle width (Q)</source>
         <translation>O‘rta kengligi (Q)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="124" />
+        <location filename="../src/app/EffectsPanel.cpp" line="128" />
         <source>Treble, dB</source>
         <translation>Yuqori, dB</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="126" />
+        <location filename="../src/app/EffectsPanel.cpp" line="130" />
         <source>Treble frequency, Hz</source>
         <translation>Yuqori chastota, Hz</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="128" />
+        <location filename="../src/app/EffectsPanel.cpp" line="132" />
         <source>Threshold, dB</source>
         <translation>Chegara, dB</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="130" />
+        <location filename="../src/app/EffectsPanel.cpp" line="134" />
         <source>Ratio (x:1)</source>
         <translation>Nisbat (x:1)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="132" />
+        <location filename="../src/app/EffectsPanel.cpp" line="136" />
         <source>Attack, ms</source>
         <translation>Attack, ms</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="134" />
+        <location filename="../src/app/EffectsPanel.cpp" line="138" />
         <source>Release, ms</source>
         <translation>Release, ms</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="136" />
+        <location filename="../src/app/EffectsPanel.cpp" line="140" />
         <source>Make-up gain, dB</source>
         <translation>Make-up, dB</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="277" />
+        <location filename="../src/app/EffectsPanel.cpp" line="142" />
+        <source>Reduction, dB</source>
+        <translation>Pasaytirish, dB</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="144" />
+        <source>Sensitivity, %</source>
+        <translation>Sezgirlik, %</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="146" />
+        <source>Mains frequency, Hz</source>
+        <translation>Tarmoq chastotasi, Hz</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="148" />
+        <source>Harmonics</source>
+        <translation>Garmonikalar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="150" />
+        <source>Notch width, Hz</source>
+        <translation>Kesim kengligi, Hz</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="291" />
         <source>Picture</source>
         <translation>Rasm</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="278" />
+        <location filename="../src/app/EffectsPanel.cpp" line="292" />
         <source>Sound</source>
         <translation>Ovoz</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="279" />
+        <location filename="../src/app/EffectsPanel.cpp" line="293" />
         <source>Add</source>
         <translation>Qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="280" />
+        <location filename="../src/app/EffectsPanel.cpp" line="294" />
         <source>Add the chosen effect to the clip</source>
         <translation>Tanlangan effektni klipga qo‘shish</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="281" />
+        <location filename="../src/app/EffectsPanel.cpp" line="295" />
         <source>Move up (effects work from top to bottom)</source>
         <translation>Yuqoriga (effektlar yuqoridan pastga ishlaydi)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="282" />
+        <location filename="../src/app/EffectsPanel.cpp" line="296" />
         <source>Move down</source>
         <translation>Pastga</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="283" />
+        <location filename="../src/app/EffectsPanel.cpp" line="297" />
         <source>Remove</source>
         <translation>Olib tashlash</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="284" />
+        <location filename="../src/app/EffectsPanel.cpp" line="298" />
         <source>Values</source>
         <translation>Qiymatlar</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="316" />
+        <location filename="../src/app/EffectsPanel.cpp" line="330" />
         <source>Sound effects work before the clip volume and the track fader. Untick an effect to compare without it.</source>
         <translation>Ovoz effektlari klip ovozidan va yo‘lak feyderidan oldin ishlaydi. Effektsiz solishtirish uchun belgini oling.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="318" />
+        <location filename="../src/app/EffectsPanel.cpp" line="332" />
         <source>Effects are drawn before the motion settings. Untick an effect to compare without it.</source>
         <translation>Effektlar harakat sozlamalaridan oldin chiziladi. Effektsiz solishtirish uchun uning belgisini oling.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="323" />
+        <location filename="../src/app/EffectsPanel.cpp" line="337" />
         <source>Select a clip on the timeline to add effects.</source>
         <translation>Effekt qo‘shish uchun timeline'da klipni tanlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="324" />
+        <location filename="../src/app/EffectsPanel.cpp" line="338" />
         <source>Several clips are selected. Select one clip.</source>
         <translation>Bir nechta klip tanlangan. Bitta klipni tanlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="328" />
+        <location filename="../src/app/EffectsPanel.cpp" line="342" />
         <source>Title</source>
         <translation>Titr</translation>
     </message>
@@ -2078,11 +2123,6 @@
         <translation>Klip</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="567" />
-        <source>Phase 10, part 2: audio mixer, equalizer and compressor work (Audio and Effects panels).</source>
-        <translation>10-bosqich, 2-qism: audio miksher, ekvalayzer va kompressor ishlaydi («Audio» va «Effektlar» panellari).</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="603" />
         <source>Insert</source>
         <translation>Qo‘yish</translation>
@@ -2128,6 +2168,11 @@
         <location filename="../src/app/MainWindow.cpp" line="763" />
         <source>Unsaved changes</source>
         <translation>Saqlanmagan o‘zgarishlar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="567" />
+        <source>Phase 10, part 3: noise reduction and hum removal work (Effects panel, audio clips).</source>
+        <translation>10-bosqich, 3-qism: shovqinni kamaytirish va elektr guvillashini olib tashlash ishlaydi («Effektlar» paneli, audio kliplar).</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="687" />

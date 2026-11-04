@@ -29,7 +29,9 @@ struct ClipEffect
 {
     enum class Kind { BrightnessContrast, Saturation, Blur, Sharpen, Crop, Mirror, ChromaKey, Mask,
                       // Sound (phase 10b), on audio clips; see core/AudioFx.
-                      Equalizer, Compressor };
+                      Equalizer, Compressor,
+                      // Phase 10c.
+                      NoiseReduction, HumRemoval };
 
     Kind kind = Kind::BrightnessContrast;
     bool enabled = true;
