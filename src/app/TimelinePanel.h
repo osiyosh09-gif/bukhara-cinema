@@ -13,6 +13,7 @@ class QLabel;
 class QMimeData;
 class QSlider;
 class QToolButton;
+class QComboBox;
 
 namespace bc {
 
@@ -178,6 +179,8 @@ public:
     QAction *pasteAction() const { return m_paste; }
     QAction *pasteInsertAction() const { return m_pasteInsert; }
     QAction *linkAction() const { return m_link; }
+    QAction *nestAction() const { return m_nest; }
+    QAction *renameSequenceAction() const { return m_renameSeq; }
     // Select, Razor, Roll, Slip, Slide (checkable, one at a time).
     QList<QAction *> toolActions() const { return m_tools; }
 
@@ -212,6 +215,10 @@ private:
     QAction *m_paste;
     QAction *m_pasteInsert;
     QAction *m_link;
+    QAction *m_nest;
+    QAction *m_renameSeq;
+    QComboBox *m_sequences;
+    void rebuildSequences();
     QList<QAction *> m_tools;
     QList<QToolButton *> m_toolButtons;
 };

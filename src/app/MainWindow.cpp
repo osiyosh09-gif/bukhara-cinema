@@ -17,6 +17,7 @@
 #include "app/ExportDialog.h"
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
+#include "app/Shortcuts.h"
 #include "app/StatusDialog.h"
 #include "app/Formatting.h"
 #include "app/TimelinePanel.h"
@@ -133,6 +134,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     wireMonitors();
     retranslate();
+    Shortcuts::init(this); // the user's own keys (Edit > Keyboard shortcuts)
 
     resize(1366, 768);
     m_defaultState = saveState();
@@ -293,7 +295,11 @@ void MainWindow::buildMenus()
     m_editMenu->addAction(m_timeline->rippleDeleteAction());
     m_editMenu->addAction(m_timeline->selectAllAction());
     m_editMenu->addSeparator();
-    addPlanned(m_editMenu, QT_TR_NOOP("Keyboard shortcuts..."), 6, QStringLiteral("actShortcuts"));
+    m_shortcutsAct = m_editMenu->addAction(QString(), this, [this] {
+        ShortcutsDialog dlg(this, this);
+        dlg.exec();
+    });
+    m_shortcutsAct->setObjectName(QStringLiteral("actShortcuts"));
 
     m_clipMenu = mb->addMenu(QString());
     m_clipMenu->addAction(m_timeline->splitAction());
@@ -314,7 +320,7 @@ void MainWindow::buildMenus()
     m_toolsMenu = m_clipMenu->addMenu(QString());
     m_toolsMenu->setObjectName(QStringLiteral("menuTools"));
     m_toolsMenu->addActions(m_timeline->toolActions());
-    addPlanned(m_clipMenu, QT_TR_NOOP("Nest..."), 6, QStringLiteral("actNest"));
+    m_clipMenu->addAction(m_timeline->nestAction());
 
     m_sequenceMenu = mb->addMenu(QString());
     m_sequenceAct = m_sequenceMenu->addAction(QString(), this, &MainWindow::editSequence);
@@ -492,6 +498,7 @@ void MainWindow::retranslate()
     m_useProxiesAct->setText(tr("Use proxies for playback"));
     m_useProxiesAct->setToolTip(tr("Play big videos from their light proxy copies. Export always uses the originals."));
     m_proxyCancel->setToolTip(tr("Stop making proxies"));
+    m_shortcutsAct->setText(tr("Keyboard shortcuts..."));
     m_shuttleBackAct->setText(tr("Play backwards (J, again: faster)"));
     m_shuttleStopAct->setText(tr("Stop (K)"));
     m_shuttleFwdAct->setText(tr("Play forwards (L, again: faster)"));
@@ -538,7 +545,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 6 (part 2): roll, slip, slide, razor, copy and paste, link and unlink work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 6 done: Source monitor, insert/overwrite, trim tools, nested sequences and custom shortcuts work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

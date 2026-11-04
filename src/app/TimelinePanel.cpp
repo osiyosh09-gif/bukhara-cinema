@@ -7,6 +7,9 @@
 #include "app/ProjectController.h"
 
 #include <QAction>
+#include <QLineEdit>
+#include <QInputDialog>
+#include <QComboBox>
 #include <QActionGroup>
 #include <QContextMenuEvent>
 #include <QDragEnterEvent>
@@ -561,14 +564,17 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
     const Timeline &tl = shown();
     const bool video = tl.tracks[track].kind == Timeline::Kind::Video;
     const MediaItem *m = m_ctl->project().item(c.mediaId);
-    const bool online = c.isTitle() || (m && m_ctl->isOnline(c.mediaId));
-    QColor fill = !online ? kOfflineClip : c.isTitle() ? QColor(0x7a, 0x55, 0x9c) : (video ? kVideoClip : kAudioClip);
+    const bool online = c.isTitle() || c.isNested() || (m && m_ctl->isOnline(c.mediaId));
+    QColor fill = !online      ? kOfflineClip
+                  : c.isTitle()  ? QColor(0x7a, 0x55, 0x9c)
+                  : c.isNested() ? QColor(0x2f, 0x7f, 0x7a)
+                                 : (video ? kVideoClip : kAudioClip);
     if (tl.tracks[track].locked || (video && tl.tracks[track].hidden))
         fill = fill.darker(150);
     p.fillRect(r, fill);
 
     int textX = r.left() + 4;
-    if (video && online && !c.isTitle()) {
+    if (video && online && m) {
         const QImage thumb = m_ctl->thumbnail(c.mediaId);
         if (!thumb.isNull() && r.width() > 80) {
             const QImage s = thumb.scaledToHeight(r.height() - 4, Qt::SmoothTransformation);
@@ -602,6 +608,8 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
     QString label = m ? m->name : QString();
     if (c.isTitle())
         label = QStringLiteral("T  ") + c.title.text.simplified();
+    else if (c.isNested())
+        label = QStringLiteral("\u29c9  ") + m_ctl->sequenceName(c.nestId);
     if (!video && c.gainDb != 0)
         label += QStringLiteral("  %1%2 dB").arg(c.gainDb > 0 ? QStringLiteral("+") : QString()).arg(c.gainDb, 0, 'f', 1);
     if (r.width() > 30 && !label.isEmpty()) {
@@ -856,10 +864,19 @@ void TimelineView::mouseReleaseEvent(QMouseEvent *e)
 
 void TimelineView::mouseDoubleClickEvent(QMouseEvent *e)
 {
-    // Double click on a clip moves the playhead to its start.
+    // Double click on a nested clip opens its sequence; on another clip it
+    // moves the playhead to the clip start.
     const Hit h = hitTest(e->position().toPoint());
-    if (const TimelineClip *c = m_ctl->timeline().clip(h.clip))
-        m_ctl->setPlayhead(c->start);
+    if (const TimelineClip *c = m_ctl->timeline().clip(h.clip)) {
+        if (c->isNested()) {
+            const QUuid nest = c->nestId;
+            m_selection.clear();
+            emit selectionChanged();
+            m_ctl->openSequence(nest);
+        } else {
+            m_ctl->setPlayhead(c->start);
+        }
+    }
 }
 
 void TimelineView::wheelEvent(QWheelEvent *e)
@@ -965,7 +982,10 @@ bool TimelineView::viewportEvent(QEvent *e)
                 const double fps = m_ctl->project().sequence.fps();
                 const MediaItem *m = m_ctl->project().item(c->mediaId);
                 tip = QStringLiteral("%1\n%2 – %3 (%4)")
-                          .arg(c->isTitle() ? c->title.text.simplified() : m ? m->name : QString(), Fmt::frameTimecode(c->start, fps),
+                          .arg(c->isTitle()    ? c->title.text.simplified()
+                               : c->isNested() ? m_ctl->sequenceName(c->nestId)
+                               : m             ? m->name
+                                               : QString(), Fmt::frameTimecode(c->start, fps),
                                Fmt::frameTimecode(c->end(), fps), Fmt::frameTimecode(c->length, fps));
             }
         }
@@ -1096,6 +1116,28 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     m_paste = makeAction(QStringLiteral("actPaste"), QKeySequence(QKeySequence::Paste));
     m_pasteInsert = makeAction(QStringLiteral("actPasteInsert"), QKeySequence(QStringLiteral("Ctrl+Shift+V")));
     m_link = makeAction(QStringLiteral("actLink"), QKeySequence(QStringLiteral("Ctrl+L")));
+    m_nest = makeAction(QStringLiteral("actNest"), {});
+    m_renameSeq = makeAction(QStringLiteral("actRenameSequence"), {});
+    connect(m_nest, &QAction::triggered, this, [this] {
+        const QUuid id = m_ctl->nestClips(m_view->selection());
+        if (!id.isNull()) {
+            // Select the new nested clip(s).
+            QList<QUuid> made;
+            for (const auto &t : m_ctl->timeline().tracks)
+                for (const auto &c : t.clips)
+                    if (c.nestId == id)
+                        made << c.id;
+            m_view->setSelection(made);
+        }
+    });
+    connect(m_renameSeq, &QAction::triggered, this, [this] {
+        const QUuid id = m_ctl->openNest();
+        bool ok = false;
+        const QString name = QInputDialog::getText(this, tr("Rename sequence"), tr("Sequence name:"),
+                                                   QLineEdit::Normal, m_ctl->sequenceName(id), &ok);
+        if (ok)
+            m_ctl->renameSequence(id, name);
+    });
     connect(m_copy, &QAction::triggered, this, [this] { m_ctl->copyClips(m_view->selection()); updateState(); });
     connect(m_cut, &QAction::triggered, this, [this] { m_ctl->cutClips(m_view->selection()); });
     connect(m_paste, &QAction::triggered, this, [this] { m_view->setSelection(m_ctl->pasteClips(false)); });
@@ -1136,7 +1178,7 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         m_view->setSelection(all);
     });
 
-    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_delete, m_rippleDelete},
+    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_delete, m_rippleDelete},
                               {m_addVideo, m_addAudio});
 
     m_snapBtn->setDefaultAction(m_snapAct);
@@ -1167,9 +1209,27 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
     m_timecode->setStyleSheet(QStringLiteral("color:#d1a54a; font-family:Consolas,monospace; font-size:14px; padding:0 6px;"));
     m_duration->setStyleSheet(QStringLiteral("color:#8a8a8a; padding:0 6px;"));
 
+    // Which sequence the timeline shows: the main one or a nested one.
+    m_sequences = new QComboBox(this);
+    m_sequences->setObjectName(QStringLiteral("timelineSequence"));
+    m_sequences->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    connect(m_sequences, &QComboBox::activated, this,
+            [this](int i) { m_ctl->openSequence(m_sequences->itemData(i).toUuid()); });
+    auto *renameBtn = new QToolButton(this);
+    renameBtn->setDefaultAction(m_renameSeq);
+    renameBtn->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    renameBtn->setAutoRaise(true);
+    renameBtn->setObjectName(QStringLiteral("timelineRenameSequence"));
+    connect(m_ctl, &ProjectController::openSequenceChanged, this, &TimelinePanel::rebuildSequences);
+    connect(m_ctl, &ProjectController::timelineChanged, this, &TimelinePanel::rebuildSequences);
+    connect(m_ctl, &ProjectController::projectReset, this, &TimelinePanel::rebuildSequences);
+    connect(m_ctl, &ProjectController::openSequenceChanged, m_view, [this] { m_view->setSelection({}); });
+
     auto *bar = new QHBoxLayout;
     bar->setContentsMargins(4, 2, 4, 2);
     bar->setSpacing(4);
+    bar->addWidget(m_sequences);
+    bar->addWidget(renameBtn);
     bar->addWidget(m_timecode);
     bar->addWidget(m_snapBtn);
     bar->addWidget(m_splitBtn);
@@ -1204,6 +1264,18 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
 
     retranslate();
     updateState();
+}
+
+void TimelinePanel::rebuildSequences()
+{
+    const QSignalBlocker b(m_sequences);
+    m_sequences->clear();
+    m_sequences->addItem(m_ctl->sequenceName({}), QUuid());
+    for (const NestedSequence &n : m_ctl->project().nested)
+        m_sequences->addItem(QStringLiteral("\u29c9 ") + n.name, n.id);
+    m_sequences->setCurrentIndex(std::max(0, m_sequences->findData(m_ctl->openNest())));
+    m_sequences->setVisible(m_sequences->count() > 1 || !m_ctl->openNest().isNull());
+    m_renameSeq->setEnabled(!m_ctl->openNest().isNull());
 }
 
 void TimelinePanel::split()
@@ -1247,6 +1319,7 @@ void TimelinePanel::updateState()
     for (const QUuid &id : sel)
         linked |= tl.isLinked(id);
     m_link->setEnabled(linked || sel.size() >= 2);
+    m_nest->setEnabled(hasSel);
     m_link->setText(linked ? tr("Unlink audio and video") : tr("Link audio and video"));
 }
 
@@ -1272,6 +1345,11 @@ void TimelinePanel::retranslate()
     m_zoom->setToolTip(tr("Zoom (Ctrl + mouse wheel)"));
     m_split->setToolTip(tr("Split at playhead (Ctrl+K)"));
     m_copy->setText(tr("Copy"));
+    m_nest->setText(tr("Nest"));
+    m_nest->setToolTip(tr("Put the selected clips into a new nested sequence that works as one clip"));
+    m_renameSeq->setText(tr("Rename..."));
+    m_renameSeq->setToolTip(tr("Rename the nested sequence shown on the timeline"));
+    rebuildSequences();
     m_cut->setText(tr("Cut"));
     m_paste->setText(tr("Paste"));
     m_paste->setToolTip(tr("Paste at the playhead over what is there (Ctrl+V)"));

@@ -830,6 +830,19 @@ bool Timeline::removeClipsOfMedia(const QUuid &mediaId)
     return changed;
 }
 
+bool Timeline::removeClipsOfNest(const QUuid &nestId)
+{
+    bool changed = false;
+    for (auto &t : tracks) {
+        const auto before = t.clips.size();
+        t.clips.erase(std::remove_if(t.clips.begin(), t.clips.end(),
+                                     [&](const TimelineClip &c) { return c.nestId == nestId; }),
+                      t.clips.end());
+        changed |= t.clips.size() != before;
+    }
+    return changed;
+}
+
 void Timeline::rescale(double oldFps, double newFps)
 {
     if (oldFps <= 0 || newFps <= 0 || oldFps == newFps)
@@ -884,6 +897,8 @@ QJsonArray Timeline::toJson() const
             QJsonObject co;
             co[QStringLiteral("id")] = idStr(c.id);
             co[QStringLiteral("media")] = idStr(c.mediaId);
+            if (c.isNested())
+                co[QStringLiteral("nest")] = idStr(c.nestId);
             co[QStringLiteral("link")] = idStr(c.linkId);
             co[QStringLiteral("start")] = double(c.start);
             co[QStringLiteral("in")] = double(c.in);
@@ -935,6 +950,8 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             if (c.id.isNull())
                 c.id = QUuid::createUuid();
             c.mediaId = QUuid(co.value(QStringLiteral("media")).toString());
+            if (c.mediaId.isNull())
+                c.nestId = QUuid(co.value(QStringLiteral("nest")).toString());
             c.linkId = QUuid(co.value(QStringLiteral("link")).toString());
             c.start = std::max<qint64>(0, qint64(co.value(QStringLiteral("start")).toDouble()));
             c.in = std::max<qint64>(0, qint64(co.value(QStringLiteral("in")).toDouble()));

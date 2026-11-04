@@ -89,6 +89,9 @@ private:
     void reverseStep();
     Mlt::Producer *producerFor(const MediaItem &item, bool audio);
     Mlt::Producer *titleProducer(const TitleData &title);
+    static constexpr int kMaxNestDepth = 8;
+    std::unique_ptr<Mlt::Tractor> buildTractor(const Project &project, const Timeline &tl, qint64 length, int depth);
+    Mlt::Producer *nestProducer(const Project &project, const QUuid &nestId, bool audio, int depth);
 
     mutable QMutex m_mutex; // guards the graph
     std::unique_ptr<Mlt::Profile> m_profile;
@@ -109,6 +112,7 @@ private:
     // Rendered titles by content, so unchanged titles are not drawn again.
     QHash<QByteArray, std::shared_ptr<Mlt::Producer>> m_titles;
     QSet<QByteArray> m_usedTitles;
+    QHash<QString, std::shared_ptr<Mlt::Producer>> m_nestCache; // graphs of nested sequences
     SequenceSettings m_seq;
     qint64 m_duration = 0;
     QSize m_previewLimit{960, 540};

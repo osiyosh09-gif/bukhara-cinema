@@ -33,7 +33,7 @@ bool ProjectController::slideClip(const QUuid &clipId, qint64 deltaFrames)
 
 bool ProjectController::toggleLink(const QList<QUuid> &clipIds)
 {
-    const Timeline &tl = m_project.timeline;
+    const Timeline &tl = timeline();
     const bool anyLinked = std::any_of(clipIds.begin(), clipIds.end(), [&](const QUuid &id) { return tl.isLinked(id); });
     if (anyLinked)
         return editTimeline(tr("Unlink"), [&](Timeline &t) { return t.unlink(clipIds); });
@@ -42,7 +42,7 @@ bool ProjectController::toggleLink(const QList<QUuid> &clipIds)
 
 bool ProjectController::copyClips(const QList<QUuid> &clipIds)
 {
-    const Timeline &tl = m_project.timeline;
+    const Timeline &tl = timeline();
     QList<CopiedClip> copied;
     qint64 first = std::numeric_limits<qint64>::max();
     for (const QUuid &id : clipIds) {
@@ -111,6 +111,127 @@ QList<QUuid> ProjectController::pasteClips(bool insert)
     if (ok)
         setPlayhead(at + span);
     return ok ? created : QList<QUuid>();
+}
+
+} // namespace bc
+
+// ---------------------------------------------------------------------------
+// Nested sequences (phase 6, part 3)
+
+namespace bc {
+
+QUuid ProjectController::nestClips(const QList<QUuid> &clipIds)
+{
+    const Timeline &tl = timeline();
+    const QList<QUuid> sel = tl.withLinked(clipIds);
+    if (sel.isEmpty())
+        return {};
+    qint64 first = std::numeric_limits<qint64>::max(), last = 0;
+    int videoN = -1, audioN = -1;
+    for (const QUuid &id : sel) {
+        const Timeline::ClipRef r = tl.find(id);
+        const TimelineTrack &track = tl.tracks[r.track];
+        if (track.locked)
+            return {};
+        const TimelineClip &c = track.clips[r.index];
+        first = std::min(first, c.start);
+        last = std::max(last, c.end());
+        int n = 0;
+        for (int i = 0; i < r.track; ++i)
+            if (tl.tracks[i].kind == track.kind)
+                ++n;
+        int &lowest = track.kind == Timeline::Kind::Video ? videoN : audioN;
+        lowest = lowest < 0 ? n : std::min(lowest, n);
+    }
+
+    NestedSequence nest;
+    nest.id = QUuid::createUuid();
+    const bool ok = editProject(tr("Nest"), [&](EditState &s) {
+        Timeline *cur = &s.main;
+        for (NestedSequence &n : s.nested)
+            if (n.id == s.open)
+                cur = &n.timeline;
+        nest.name = tr("Nested sequence %1").arg(s.nested.size() + 1);
+        // Same tracks as here, so every clip keeps its track.
+        for (const TimelineTrack &t : cur->tracks) {
+            TimelineTrack copy;
+            copy.id = QUuid::createUuid();
+            copy.kind = t.kind;
+            nest.timeline.tracks << copy;
+        }
+        for (const QUuid &id : sel) {
+            const Timeline::ClipRef r = cur->find(id);
+            TimelineClip c = cur->tracks[r.track].clips[r.index];
+            c.start -= first;
+            nest.timeline.insertSorted(r.track, c);
+        }
+        cur->remove(sel, false);
+        const QUuid link = (videoN >= 0 && audioN >= 0) ? QUuid::createUuid() : QUuid();
+        auto put = [&](Timeline::Kind kind, int n) {
+            const int track = cur->indexOf(kind, n);
+            TimelineClip c;
+            c.id = QUuid::createUuid();
+            c.nestId = nest.id;
+            c.linkId = link;
+            c.start = first;
+            c.length = last - first;
+            cur->clearRange(track, c.start, c.end());
+            cur->insertSorted(track, c);
+        };
+        if (videoN >= 0)
+            put(Timeline::Kind::Video, videoN);
+        if (audioN >= 0)
+            put(Timeline::Kind::Audio, audioN);
+        s.nested << nest;
+        return true;
+    });
+    return ok ? nest.id : QUuid();
+}
+
+void ProjectController::switchSequence(const QUuid &nestId)
+{
+    m_nestPlayheads.insert(m_openNest, m_playhead);
+    m_openNest = nestId;
+    m_playhead = m_nestPlayheads.value(nestId, 0);
+    emit playheadChanged(m_playhead);
+    emit openSequenceChanged();
+}
+
+bool ProjectController::openSequence(const QUuid &nestId)
+{
+    if (!nestId.isNull() && !m_project.nest(nestId))
+        return false;
+    if (nestId == m_openNest)
+        return true;
+    pause();
+    switchSequence(nestId);
+    syncPlayer();
+    m_lastFrameKey.clear();
+    emit timelineChanged();
+    requestProgramFrame();
+    return true;
+}
+
+QString ProjectController::sequenceName(const QUuid &nestId) const
+{
+    if (const NestedSequence *n = m_project.nest(nestId))
+        return n->name;
+    return tr("Main sequence");
+}
+
+bool ProjectController::renameSequence(const QUuid &nestId, const QString &name)
+{
+    const QString clean = name.trimmed();
+    if (clean.isEmpty() || !m_project.nest(nestId))
+        return false;
+    return editProject(tr("Rename sequence"), [&](EditState &s) {
+        for (NestedSequence &n : s.nested)
+            if (n.id == nestId && n.name != clean) {
+                n.name = clean;
+                return true;
+            }
+        return false;
+    });
 }
 
 } // namespace bc

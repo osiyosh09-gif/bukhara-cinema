@@ -28,19 +28,20 @@ constexpr int kProgramW = 960; // preview size: enough for the monitor, light fo
 constexpr int kProgramH = 540;
 }
 
-// Undo step that swaps whole timeline states. The timeline is small (a few
-// hundred clips at most), so snapshots are simpler and safer than diffs.
+// Undo step that swaps whole edit states: the main timeline, the nested
+// sequences and which one is open. They are small (a few hundred clips at
+// most), so snapshots are simpler and safer than diffs.
 class TimelineCommand : public QUndoCommand
 {
 public:
-    TimelineCommand(ProjectController *c, const QString &text, Timeline before, Timeline after,
-                    QString mergeKey = QString())
+    TimelineCommand(ProjectController *c, const QString &text, ProjectController::EditState before,
+                    ProjectController::EditState after, QString mergeKey = QString())
         : QUndoCommand(text), m_c(c), m_before(std::move(before)), m_after(std::move(after)),
           m_mergeKey(std::move(mergeKey))
     {
     }
-    void undo() override { m_c->applyTimeline(m_before); }
-    void redo() override { m_c->applyTimeline(m_after); }
+    void undo() override { m_c->applyState(m_before); }
+    void redo() override { m_c->applyState(m_after); }
     // Commands with a merge key (typing in a title, dragging a volume
     // slider) join the previous command with the same key.
     int id() const override { return m_mergeKey.isEmpty() ? -1 : 1; }
@@ -55,8 +56,8 @@ public:
 
 private:
     ProjectController *m_c;
-    Timeline m_before;
-    Timeline m_after;
+    ProjectController::EditState m_before;
+    ProjectController::EditState m_after;
     QString m_mergeKey;
 };
 
@@ -145,6 +146,8 @@ void ProjectController::newProject()
     m_pendingProbe.clear();
     m_inPoints.clear();
     m_outPoints.clear();
+    m_openNest = QUuid();
+    m_nestPlayheads.clear();
     m_online.clear();
     m_playhead = 0;
     m_lastFrameKey.clear();
@@ -196,6 +199,8 @@ void ProjectController::adopt(Project &&p, const QString &filePath, bool modifie
     m_pendingProbe.clear();
     m_inPoints.clear();
     m_outPoints.clear();
+    m_openNest = QUuid();
+    m_nestPlayheads.clear();
     setFilePath(filePath);
     refreshOnlineState();
     // Proxies made earlier: known before the first graph is built.
@@ -367,11 +372,11 @@ void ProjectController::renameItem(const QUuid &id, const QString &name)
 
 void ProjectController::removeFolder(const QUuid &id)
 {
-    const Timeline before = m_project.timeline;
+    const EditState before = editState();
     m_project.removeFolder(id);
     setModified(true);
     emit binChanged();
-    if (m_project.timeline != before) {
+    if (!(editState() == before)) {
         resetUndo(); // undo steps could bring back clips of removed media
         syncPlayer();
         emit timelineChanged();
@@ -381,7 +386,7 @@ void ProjectController::removeFolder(const QUuid &id)
 
 void ProjectController::removeItems(const QList<QUuid> &ids)
 {
-    const Timeline before = m_project.timeline;
+    const EditState before = editState();
     bool any = false;
     for (const QUuid &id : ids) {
         any |= m_project.removeItem(id);
@@ -393,7 +398,7 @@ void ProjectController::removeItems(const QList<QUuid> &ids)
         emit binChanged();
         syncSourcePlayer(); // closes the Source monitor if its item is gone
     }
-    if (m_project.timeline != before) {
+    if (!(editState() == before)) {
         resetUndo(); // undo steps could bring back clips of removed media
         syncPlayer();
         emit timelineChanged();
@@ -547,9 +552,13 @@ void ProjectController::setSequence(const SequenceSettings &s)
                 *it = qint64(std::llround(*it * s.fps() / oldFps));
         m_sourcePos = qint64(std::llround(m_sourcePos * s.fps() / oldFps));
     }
-    if (oldFps != s.fps() && (!m_project.timeline.isEmpty() || !m_project.timeline.markers.isEmpty())) {
+    bool anyContent = false;
+    for (Timeline *t : m_project.allTimelines())
+        anyContent |= !t->isEmpty() || !t->markers.isEmpty();
+    if (oldFps != s.fps() && anyContent) {
         // Clip positions are stored in frames: convert them to the new rate.
-        m_project.timeline.rescale(oldFps, s.fps());
+        for (Timeline *t : m_project.allTimelines())
+            t->rescale(oldFps, s.fps());
         m_playhead = qint64(std::llround(m_playhead * s.fps() / oldFps));
 
         resetUndo();
@@ -576,27 +585,70 @@ void ProjectController::syncPlayer()
     ++m_graphRev;
     if (m_player) {
         m_player->setProxies(m_useProxies ? m_proxies : QHash<QUuid, QString>());
-        m_player->setProject(m_project);
+        if (m_openNest.isNull()) {
+            m_player->setProject(m_project);
+        } else {
+            Project view = m_project; // the Program monitor shows the open sequence
+            view.timeline = timeline();
+            m_player->setProject(view);
+        }
     } // stops playback; the graph follows the edit
     syncSourcePlayer();
 }
 
-void ProjectController::applyTimeline(const Timeline &t)
+ProjectController::EditState ProjectController::editState() const
 {
-    m_project.timeline = t;
+    return {m_project.timeline, m_project.nested, m_openNest};
+}
+
+Timeline &ProjectController::current()
+{
+    if (NestedSequence *n = m_project.nest(m_openNest))
+        return n->timeline;
+    return m_project.timeline;
+}
+
+const Timeline &ProjectController::timeline() const
+{
+    if (const NestedSequence *n = m_project.nest(m_openNest))
+        return n->timeline;
+    return m_project.timeline;
+}
+
+void ProjectController::applyState(const EditState &s)
+{
+    m_project.timeline = s.main;
+    m_project.nested = s.nested;
+    const bool switched = s.open != m_openNest;
+    if (switched)
+        switchSequence(s.open);
     syncPlayer();
     setModified(true);
     emit timelineChanged();
+    m_lastFrameKey.clear();
     requestProgramFrame();
 }
 
 bool ProjectController::editTimeline(const QString &text, const std::function<bool(Timeline &)> &fn,
                                      const QString &mergeKey)
 {
-    Timeline after = m_project.timeline;
-    if (!fn(after) || after == m_project.timeline)
+    return editProject(text, [&](EditState &s) {
+        Timeline *t = &s.main;
+        for (NestedSequence &n : s.nested)
+            if (n.id == s.open)
+                t = &n.timeline;
+        return fn(*t);
+    }, mergeKey);
+}
+
+bool ProjectController::editProject(const QString &text, const std::function<bool(EditState &)> &fn,
+                                    const QString &mergeKey)
+{
+    const EditState before = editState();
+    EditState after = before;
+    if (!fn(after) || after == before)
         return false;
-    m_undo->push(new TimelineCommand(this, text, m_project.timeline, after, mergeKey));
+    m_undo->push(new TimelineCommand(this, text, before, after, mergeKey));
     return true;
 }
 
@@ -788,7 +840,7 @@ bool ProjectController::startExport(const ExportSettings &settings, QString *err
         connect(m_exporter, &Exporter::finished, this, &ProjectController::exportFinished);
     }
     pause();
-    return m_exporter->start(m_project, settings, error);
+    return m_exporter->start(m_project, settings, error); // always the main sequence
 }
 
 void ProjectController::cancelExport()
@@ -814,10 +866,10 @@ bool ProjectController::isPlaying() const
 
 bool ProjectController::play()
 {
-    if (!m_player || m_project.timeline.isEmpty())
+    if (!m_player || timeline().isEmpty())
         return false;
     sourcePause(); // one monitor plays at a time (one sound device)
-    if (m_playhead >= m_project.timeline.duration() - 1) {
+    if (m_playhead >= timeline().duration() - 1) {
         m_playhead = 0; // at the end: start again from the beginning
         emit playheadChanged(0);
     }
@@ -852,7 +904,7 @@ void ProjectController::requestProgramFrame()
 void ProjectController::startProgramFrame()
 {
     m_framePending = false;
-    const Timeline &tl = m_project.timeline;
+    const Timeline &tl = timeline();
     QString path;          // top media clip, for decoding without the engine
     qint64 timeUs = 0;
     bool visible = false;  // anything to show at all
@@ -862,8 +914,8 @@ void ProjectController::startProgramFrame()
         if (track.kind != Timeline::Kind::Video || track.hidden)
             continue;
         const TimelineClip &c = track.clips[r.index];
-        if (c.isTitle()) {
-            visible = true;
+        if (c.isTitle() || c.isNested()) {
+            visible = true; // drawn by the engine
             continue;
         }
         const MediaItem *m = m_project.item(c.mediaId);
