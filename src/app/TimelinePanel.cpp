@@ -699,6 +699,10 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
         label = QStringLiteral("T  ") + c.title.text.simplified();
     else if (c.isNested())
         label = QStringLiteral("\u29c9  ") + m_ctl->sequenceName(c.nestId);
+    if (c.isNested() && m_ctl->isMulticam(c.nestId)) {
+        const QStringList angles = m_ctl->multicamAngles(c.nestId, video ? Timeline::Kind::Video : Timeline::Kind::Audio);
+        label += QStringLiteral("  \u25b8 %1. %2").arg(c.angle + 1).arg(angles.value(c.angle));
+    }
     if (c.speed != 1.0)
         label += QStringLiteral("  [%1%]").arg(c.speed * 100, 0, 'f', c.speed * 100 == std::round(c.speed * 100) ? 0 : 1);
     if (effectsActive(c.effects) || (video && !c.color.isNeutral()))

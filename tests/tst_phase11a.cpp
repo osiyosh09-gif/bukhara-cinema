@@ -169,7 +169,7 @@ private slots:
         QCOMPARE(back.timeline.subtitleStyle, t.subtitleStyle);
         QFile f(file);
         QVERIFY(f.open(QIODevice::ReadOnly));
-        QCOMPARE(QJsonDocument::fromJson(f.readAll()).object().value(QStringLiteral("version")).toInt(), 12);
+        QVERIFY(QJsonDocument::fromJson(f.readAll()).object().value(QStringLiteral("version")).toInt() >= 12);
     }
 
     void controller()

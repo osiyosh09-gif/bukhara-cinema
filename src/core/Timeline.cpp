@@ -975,6 +975,8 @@ QJsonArray Timeline::toJson() const
                 co[QStringLiteral("fadeOut")] = double(c.fadeOut);
             if (c.speed != 1.0)
                 co[QStringLiteral("speed")] = c.speed;
+            if (c.angle > 0)
+                co[QStringLiteral("angle")] = c.angle;
             for (const auto &[key, tr] : {std::pair{QStringLiteral("head"), c.head}, std::pair{QStringLiteral("tail"), c.tail}}) {
                 if (tr.isNone())
                     continue;
@@ -1062,6 +1064,8 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             }
             if (!c.mediaId.isNull())
                 c.speed = std::clamp(co.value(QStringLiteral("speed")).toDouble(1.0), 0.1, 10.0);
+            if (!c.nestId.isNull())
+                c.angle = std::clamp(co.value(QStringLiteral("angle")).toInt(0), 0, 63);
             // Effects of the kind that fits the track (picture or sound).
             for (const ClipEffect &e : effectsFromJson(co.value(QStringLiteral("effects")).toArray()))
                 if (ClipEffect::isAudio(e.kind) == (t.kind == Kind::Audio))

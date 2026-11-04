@@ -97,7 +97,8 @@ private:
     Mlt::Producer *titleProducer(const TitleData &title);
     static constexpr int kMaxNestDepth = 8;
     std::unique_ptr<Mlt::Tractor> buildTractor(const Project &project, const Timeline &tl, qint64 length, int depth);
-    Mlt::Producer *nestProducer(const Project &project, const QUuid &nestId, bool audio, int depth);
+    // `angle`: for a multicamera sequence, the one video (or audio) track used.
+    Mlt::Producer *nestProducer(const Project &project, const QUuid &nestId, bool audio, int depth, int angle = 0);
 
     mutable QMutex m_mutex; // guards the graph
     std::unique_ptr<Mlt::Profile> m_profile;

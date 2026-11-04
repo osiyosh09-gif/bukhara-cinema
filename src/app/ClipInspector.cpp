@@ -20,6 +20,7 @@
 #include <QVBoxLayout>
 
 #include <cmath>
+#include <tuple>
 
 namespace bc {
 
@@ -73,6 +74,11 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     , m_tailKind(new QComboBox)
     , m_tailLen(new QDoubleSpinBox)
     , m_transNote(new QLabel)
+    , m_angleBox(new QGroupBox(this))
+    , m_videoAngleLabel(new QLabel)
+    , m_videoAngle(new QComboBox)
+    , m_audioAngleLabel(new QLabel)
+    , m_audioAngle(new QComboBox)
 {
     setObjectName(QStringLiteral("clipInspector"));
     m_empty->setObjectName(QStringLiteral("inspectorEmpty"));
@@ -111,6 +117,19 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     m_videoNote->setWordWrap(true);
     m_videoNote->setStyleSheet(QStringLiteral("color:#8a8a8a;"));
     lay->addWidget(m_videoNote);
+    m_angleBox->setObjectName(QStringLiteral("clipAngleBox"));
+    m_videoAngle->setObjectName(QStringLiteral("clipVideoAngle"));
+    m_audioAngle->setObjectName(QStringLiteral("clipAudioAngle"));
+    auto *af2 = new QFormLayout(m_angleBox);
+    af2->addRow(m_videoAngleLabel, m_videoAngle);
+    af2->addRow(m_audioAngleLabel, m_audioAngle);
+    lay->addWidget(m_angleBox);
+    for (auto [box, isVideo] : {std::pair{m_videoAngle, true}, std::pair{m_audioAngle, false}})
+        connect(box, &QComboBox::activated, this, [this, isVideo](int index) {
+            const QUuid id = isVideo ? m_video : m_audio;
+            if (!m_updating && !id.isNull())
+                m_ctl->setClipAngle(id, index);
+        });
 
     // Title
     auto *tf = new QFormLayout(m_titleBox);
@@ -289,6 +308,10 @@ void ClipInspector::retranslate()
     m_key->setToolTip(tr("Add or remove a keyframe at the playhead"));
     m_nextKey->setToolTip(tr("Next keyframe"));
     m_transBox->setTitle(tr("Transitions"));
+    m_angleBox->setTitle(tr("Multicamera"));
+    m_videoAngleLabel->setText(tr("Picture:"));
+    m_audioAngleLabel->setText(tr("Sound:"));
+    m_videoAngle->setToolTip(tr("Which camera this part of the clip shows. Split the clip (Ctrl+K) to switch cameras."));
     m_headLabel->setText(tr("Start:"));
     m_tailLabel->setText(tr("End:"));
     m_headLen->setSuffix(tr(" s"));
@@ -372,6 +395,33 @@ void ClipInspector::refresh()
     m_header->setVisible(!header.isEmpty());
     refreshMotion();
     refreshTransitions();
+    refreshAngles();
+}
+
+void ClipInspector::refreshAngles()
+{
+    const Timeline &tl = m_ctl->timeline();
+    bool any = false;
+    m_updating = true;
+    for (auto [box, label, id, kind] :
+         {std::tuple{m_videoAngle, m_videoAngleLabel, m_video, Timeline::Kind::Video},
+          std::tuple{m_audioAngle, m_audioAngleLabel, m_audio, Timeline::Kind::Audio}}) {
+        const TimelineClip *c = tl.clip(id);
+        const bool show = c && m_ctl->isMulticam(c->nestId);
+        box->setVisible(show);
+        label->setVisible(show);
+        if (!show)
+            continue;
+        any = true;
+        const QStringList names = m_ctl->multicamAngles(c->nestId, kind);
+        box->clear();
+        for (int i = 0; i < names.size(); ++i)
+            box->addItem(QStringLiteral("%1. %2").arg(i + 1).arg(names[i]));
+        box->setCurrentIndex(c->angle);
+        box->setEnabled(!tl.tracks[tl.find(id).track].locked);
+    }
+    m_updating = false;
+    m_angleBox->setVisible(any);
 }
 
 void ClipInspector::refreshTransitions()

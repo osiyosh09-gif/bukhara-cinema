@@ -213,6 +213,18 @@ public:
     QUuid openNest() const { return m_openNest; }
     QString sequenceName(const QUuid &nestId) const; // null = main sequence
     bool renameSequence(const QUuid &nestId, const QString &name);
+    // --- multicamera (phase 12a, ProjectMulticam.cpp)
+    // Makes a multicamera sequence of the media (angle n = video track n and
+    // audio track n, angle n starting at starts[n] frames; the smallest start
+    // becomes 0) and places one clip of it at the playhead of the open
+    // sequence (V1 + A1, overwriting). `audioAngle` is the sound the clip
+    // uses. Images are not allowed. One undo step; returns the sequence id.
+    QUuid createMulticam(const QList<QUuid> &mediaIds, const QList<qint64> &starts, int audioAngle = 0);
+    bool isMulticam(const QUuid &nestId) const;
+    // Names of the angles of that kind (the media on each track, or "Angle n").
+    QStringList multicamAngles(const QUuid &nestId, Timeline::Kind kind) const;
+    // Shows (video clip) or plays (audio clip) another angle of its multicamera sequence.
+    bool setClipAngle(const QUuid &clipId, int angle);
 
     // Length of a media item in sequence frames, -1 = unlimited (images).
     qint64 mediaFrames(const QUuid &mediaId) const;

@@ -4,6 +4,7 @@
 #include <QUuid>
 #include <QWidget>
 
+class QAction;
 class QLineEdit;
 class QToolButton;
 class QLabel;
@@ -51,6 +52,11 @@ public:
     // Folder that new imports go to: the selected folder (or the folder of
     // the selected item), otherwise the root.
     QUuid currentFolder() const;
+    // Sequence > Create multicamera sequence (phase 12a): the selected video
+    // and audio files (two or more) become the angles.
+    QAction *multicamAction() const { return m_multicam; }
+    QList<QUuid> multicamMedia() const;
+    void openMulticamDialog();
 
 public slots:
     void importDialog();
@@ -81,6 +87,7 @@ private:
     QToolButton *m_importBtn;
     QToolButton *m_folderBtn;
     QLabel *m_summary;
+    QAction *m_multicam;
     QHash<QUuid, QTreeWidgetItem *> m_rows;
     bool m_rebuilding = false;
 };

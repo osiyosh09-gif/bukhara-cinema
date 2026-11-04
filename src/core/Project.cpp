@@ -266,6 +266,8 @@ QByteArray Project::toJson(const QString &projectFilePath) const
             QJsonObject no;
             no[QStringLiteral("id")] = idStr(n.id);
             no[QStringLiteral("name")] = n.name;
+            if (n.multicam)
+                no[QStringLiteral("multicam")] = true;
             no[QStringLiteral("tracks")] = n.timeline.toJson();
             if (!n.timeline.markers.isEmpty())
                 no[QStringLiteral("markers")] = n.timeline.markersToJson();
@@ -352,6 +354,7 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
         if (n.id.isNull() || p.nest(n.id))
             continue;
         n.name = o.value(QStringLiteral("name")).toString();
+        n.multicam = o.value(QStringLiteral("multicam")).toBool();
         n.timeline = Timeline::fromJson(o.value(QStringLiteral("tracks")).toArray());
         n.timeline.markersFromJson(o.value(QStringLiteral("markers")).toArray());
         n.timeline.masterGainDb = masterGain(o);
