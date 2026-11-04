@@ -1,6 +1,7 @@
 #include "app/ProjectController.h"
 
 #include "core/MediaProbe.h"
+#include "engine/TimelinePlayer.h"
 
 #include <QCryptographicHash>
 #include <QDir>
@@ -47,6 +48,31 @@ ProjectController::ProjectController(QObject *parent)
     m_pool.setMaxThreadCount(2);
     m_undo = new QUndoStack(this);
     m_undo->setUndoLimit(200);
+
+    if (!Engine::init(&m_engineError))
+        qWarning("Video engine not available: %s", qPrintable(m_engineError));
+    if (Engine::isReady()) {
+        m_engineError.clear();
+        m_player = new TimelinePlayer(this);
+        m_player->setPreviewLimit(QSize(kProgramW, kProgramH));
+        connect(m_player, &TimelinePlayer::playingChanged, this, &ProjectController::playingChanged);
+        connect(m_player, &TimelinePlayer::frameShown, this, [this](const QImage &img, qint64 frame) {
+            m_playhead = frame;
+            emit playheadChanged(frame);
+            emit programFrameReady(img);
+        });
+        connect(m_player, &TimelinePlayer::reachedEnd, this, [this] {
+            m_lastFrameKey.clear();
+            requestProgramFrame();
+        });
+        connect(m_player, &TimelinePlayer::playingChanged, this, [this](bool on) {
+            if (!on) {
+                m_lastFrameKey.clear(); // show the exact still frame where playback stopped
+                requestProgramFrame();
+            }
+        });
+        m_player->setProject(m_project);
+    }
 }
 
 ProjectController::~ProjectController()
@@ -80,6 +106,7 @@ void ProjectController::newProject()
     m_playhead = 0;
     m_lastFrameKey.clear();
     resetUndo();
+    syncPlayer();
     setFilePath({});
     setModified(false);
     emit projectReset();
@@ -103,6 +130,7 @@ bool ProjectController::open(const QString &path, QString *error)
     m_playhead = 0;
     m_lastFrameKey.clear();
     resetUndo();
+    syncPlayer();
     setModified(false);
     addRecent(m_filePath);
     emit projectReset();
@@ -252,6 +280,7 @@ void ProjectController::removeFolder(const QUuid &id)
     emit binChanged();
     if (m_project.timeline != before) {
         resetUndo(); // undo steps could bring back clips of removed media
+        syncPlayer();
         emit timelineChanged();
         requestProgramFrame();
     }
@@ -272,6 +301,7 @@ void ProjectController::removeItems(const QList<QUuid> &ids)
     }
     if (m_project.timeline != before) {
         resetUndo(); // undo steps could bring back clips of removed media
+        syncPlayer();
         emit timelineChanged();
         requestProgramFrame();
     }
@@ -371,6 +401,10 @@ bool ProjectController::relink(const QUuid &id, const QString &newPath, int *als
     if (alsoRelinked)
         *alsoRelinked = others;
     setModified(true);
+    syncPlayer();
+    m_lastFrameKey.clear();
+    requestProgramFrame();
+    emit timelineChanged(); // clips of this media are no longer shown as missing
     return true;
 }
 
@@ -395,8 +429,13 @@ int ProjectController::relinkFromFolder(const QString &folder)
         emit itemUpdated(m.id);
         ++count;
     }
-    if (count)
+    if (count) {
         setModified(true);
+        syncPlayer();
+        m_lastFrameKey.clear();
+        requestProgramFrame();
+        emit timelineChanged();
+    }
     return count;
 }
 
@@ -414,6 +453,8 @@ void ProjectController::setSequence(const SequenceSettings &s)
         emit timelineChanged();
         emit playheadChanged(m_playhead);
     }
+    syncPlayer();
+    m_lastFrameKey.clear();
     setModified(true);
     emit sequenceChanged();
     requestProgramFrame();
@@ -427,9 +468,16 @@ void ProjectController::resetUndo()
     m_undo->clear();
 }
 
+void ProjectController::syncPlayer()
+{
+    if (m_player)
+        m_player->setProject(m_project); // stops playback; the graph follows the edit
+}
+
 void ProjectController::applyTimeline(const Timeline &t)
 {
     m_project.timeline = t;
+    syncPlayer();
     setModified(true);
     emit timelineChanged();
     requestProgramFrame();
@@ -546,9 +594,49 @@ void ProjectController::setPlayhead(qint64 frame)
     frame = std::max<qint64>(0, frame);
     if (frame == m_playhead)
         return;
+    if (isPlaying()) {
+        // Jumping while playing continues playback from the new place.
+        m_player->pause();
+        m_playhead = frame;
+        emit playheadChanged(frame);
+        m_player->play(frame);
+        return;
+    }
     m_playhead = frame;
     emit playheadChanged(frame);
     requestProgramFrame();
+}
+
+bool ProjectController::canPlay() const
+{
+    return m_player != nullptr && Engine::isReady();
+}
+
+bool ProjectController::isPlaying() const
+{
+    return m_player && m_player->isPlaying();
+}
+
+bool ProjectController::play()
+{
+    if (!m_player || m_project.timeline.isEmpty())
+        return false;
+    if (m_playhead >= m_project.timeline.duration() - 1) {
+        m_playhead = 0; // at the end: start again from the beginning
+        emit playheadChanged(0);
+    }
+    return m_player->play(m_playhead);
+}
+
+void ProjectController::pause()
+{
+    if (m_player)
+        m_player->pause();
+}
+
+void ProjectController::togglePlay()
+{
+    isPlaying() ? pause() : (void)play();
 }
 
 // The Program monitor shows the frame of the top visible video clip at the
@@ -556,6 +644,8 @@ void ProjectController::setPlayhead(qint64 frame)
 // decoded, newer requests collapse into one.
 void ProjectController::requestProgramFrame()
 {
+    if (isPlaying())
+        return; // playback delivers its own frames
     if (m_frameBusy) {
         m_framePending = true;
         return;
@@ -593,15 +683,22 @@ void ProjectController::startProgramFrame()
     }
     m_frameBusy = true;
     QPointer<ProjectController> self(this);
-    (void)QtConcurrent::run(&m_pool, [self, path, timeUs] {
-        const QImage img = MediaProbe::frameAt(path, timeUs, kProgramW, kProgramH);
+    TimelinePlayer *player = m_player;
+    const qint64 frame = m_playhead;
+    (void)QtConcurrent::run(&m_pool, [self, player, path, timeUs, frame] {
+        // The engine composes all tracks exactly like playback (and later
+        // export); without it, decode the single top clip directly.
+        QImage img = player ? player->renderFrame(frame) : QImage();
+        if (img.isNull())
+            img = MediaProbe::frameAt(path, timeUs, kProgramW, kProgramH);
         if (!self)
             return;
         QMetaObject::invokeMethod(self.data(), [self, img] {
             if (!self)
                 return;
             self->m_frameBusy = false;
-            emit self->programFrameReady(img);
+            if (!self->isPlaying())
+                emit self->programFrameReady(img);
             if (self->m_framePending)
                 self->startProgramFrame();
         }, Qt::QueuedConnection);

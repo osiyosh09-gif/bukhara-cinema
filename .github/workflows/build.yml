@@ -22,7 +22,10 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools libgl-dev ninja-build \
-            libavformat-dev libavcodec-dev libavutil-dev libswscale-dev ffmpeg pkg-config
+            libavformat-dev libavcodec-dev libavutil-dev libswscale-dev ffmpeg pkg-config \
+            libmlt-dev libmlt++-dev libmlt-data
+      # Ubuntu's MLT is only used to run the tests here; the Windows package
+      # ships its own MLT built from source with the LGPL parts only.
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
@@ -52,6 +55,11 @@ jobs:
             mingw-w64-ucrt-x86_64-python
             mingw-w64-ucrt-x86_64-qt6-base
             mingw-w64-ucrt-x86_64-qt6-tools
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-SDL2
+            mingw-w64-ucrt-x86_64-dlfcn
+            mingw-w64-ucrt-x86_64-libiconv
+            git
 
       - name: Download FFmpeg (LGPL shared build)
         shell: pwsh
@@ -76,6 +84,26 @@ jobs:
           Get-ChildItem ffmpeg\bin
           Get-Content ffmpeg\LICENSE.txt -TotalCount 5
 
+      - name: Build MLT video engine (LGPL parts only)
+        run: |
+          set -e
+          git clone --depth 1 --branch v7.42.0 https://github.com/mltframework/mlt.git mlt-src
+          # GPL modules are switched off; only core, avformat (FFmpeg) and sdl2 (sound) are built.
+          cmake -S mlt-src -B mlt-build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$(cygpath -m "$PWD/mlt")" \
+            -DCMAKE_PREFIX_PATH="$(cygpath -m "$PWD/ffmpeg")" \
+            -DGPL=OFF -DGPL3=OFF -DBUILD_TESTING=OFF -DCLANG_FORMAT=OFF -DBUILD_TESTS_WITH_QT6=OFF \
+            -DUSE_AVDEVICE=OFF -DMOD_DECKLINK=OFF -DMOD_FREI0R=OFF -DMOD_GDK=OFF -DMOD_JACKRACK=OFF \
+            -DUSE_LADSPA=OFF -DUSE_LV2=OFF -DUSE_VST2=OFF -DMOD_KDENLIVE=OFF -DMOD_MOVIT=OFF \
+            -DMOD_OLDFILM=OFF -DMOD_PLACEBO=OFF -DMOD_PLUS=OFF -DMOD_RTAUDIO=OFF -DMOD_RNNOISE=OFF \
+            -DMOD_SOX=OFF -DMOD_VORBIS=OFF -DMOD_XML=OFF -DMOD_NORMALIZE=OFF -DMOD_OPENFX=OFF \
+            -DMOD_PLUSGPL=OFF -DMOD_QT6=OFF -DMOD_GLAXNIMATE_QT6=OFF -DMOD_RESAMPLE=OFF \
+            -DMOD_RUBBERBAND=OFF -DMOD_VIDSTAB=OFF -DMOD_XINE=OFF -DMOD_SDL2=ON -DMOD_AVFORMAT=ON
+          cmake --build mlt-build
+          cmake --install mlt-build
+          # WINDOWS_DEPLOY layout: DLLs in mlt/, modules in mlt/lib/mlt, data in mlt/share/mlt
+          find mlt -maxdepth 3 | sort | head -60
+
       - name: Read version
         id: ver
         run: |
@@ -85,6 +113,7 @@ jobs:
 
       - name: Configure
         run: |
+          export PKG_CONFIG_PATH="$(cygpath -m "$PWD/mlt/lib/pkgconfig")"
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
             -DFFMPEG_ROOT="$(cygpath -m "$PWD/ffmpeg")" -DBC_REQUIRE_LGPL_FFMPEG=ON
 
@@ -93,7 +122,9 @@ jobs:
 
       - name: Test
         run: |
-          export PATH="$PWD/ffmpeg/bin:$PATH"
+          export PATH="$PWD/ffmpeg/bin:$PWD/mlt:$PATH"
+          export BC_MLT_PREFIX="$(cygpath -m "$PWD/mlt")"
+          export SDL_AUDIODRIVER=dummy
           ctest --test-dir build --output-on-failure
 
       - name: Deploy (exe + Qt DLLs + runtime DLLs + licenses)
@@ -104,11 +135,26 @@ jobs:
           cp -v ffmpeg/bin/av*.dll ffmpeg/bin/sw*.dll dist/
           mkdir -p dist/licenses/ffmpeg
           cp -v ffmpeg/LICENSE.txt dist/licenses/ffmpeg/
+          # MLT (LGPL): libraries next to the exe, modules in lib/mlt, data in share/mlt
+          cp -v mlt/*.dll dist/
+          mkdir -p dist/lib dist/share
+          cp -r mlt/lib/mlt dist/lib/mlt
+          cp -r mlt/share/mlt dist/share/mlt
+          mkdir -p dist/licenses/mlt
+          cp -v mlt-src/COPYING dist/licenses/mlt/
+          # Only these LGPL modules may be shipped.
+          for m in dist/lib/mlt/*.dll; do
+            case "$(basename "$m")" in
+              libmltcore.dll|libmltavformat.dll|libmltsdl2.dll) ;;
+              *) echo "Unexpected MLT module: $m"; exit 1 ;;
+            esac
+          done
           WDQ=$(command -v windeployqt6 || command -v windeployqt-qt6 || command -v windeployqt || true)
           if [ -z "$WDQ" ]; then WDQ=$(find /ucrt64 -iname 'windeployqt*.exe' | head -1); fi
           echo "windeployqt: $WDQ"
           "$WDQ" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --compiler-runtime dist/BukharaCinema.exe
-          # Copy every remaining MSYS2 DLL the exe and the Qt plugins need.
+          # Copy every remaining MSYS2 DLL the exe, the Qt plugins and the MLT modules need.
+          export PATH="$PWD/dist:$PATH"
           for pass in 1 2 3; do
             find dist -iname '*.exe' -o -iname '*.dll' | while read -r f; do
               ldd "$f" | awk '{print $3}' | grep -i '^/ucrt64/' || true
@@ -136,6 +182,13 @@ jobs:
             printf '%-40s %-45s %-20s %s\n' "$b" "$pkg" "$ver" "$lic" >> dist/licenses/components.txt
           done
           cat dist/licenses/components.txt
+          # FFmpeg must be the LGPL build, never MSYS2's (GPL) one.
+          if grep -i 'ffmpeg' dist/licenses/components.txt | grep -v ' - '; then
+            echo "An MSYS2 FFmpeg DLL was packaged"; exit 1
+          fi
+          for f in dist/av*.dll dist/sw*.dll; do
+            [ "$(sha256sum < "$f")" = "$(sha256sum < "ffmpeg/bin/$(basename "$f")")" ] || { echo "$f is not from the LGPL FFmpeg build"; exit 1; }
+          done
           ls -R dist | head -80
 
       - name: Smoke test (start packaged app with a clean PATH)

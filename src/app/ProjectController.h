@@ -12,6 +12,8 @@
 
 class QUndoStack;
 
+namespace bc { class TimelinePlayer; }
+
 namespace bc {
 
 // Owns the open project and every change to it. Widgets never modify the
@@ -95,6 +97,14 @@ public:
     qint64 playhead() const { return m_playhead; }
     void setPlayhead(qint64 frame);
 
+    // Real-time playback of the timeline with sound (MLT engine).
+    bool canPlay() const;
+    QString engineError() const { return m_engineError; }
+    bool isPlaying() const;
+    bool play();
+    void pause();
+    void togglePlay();
+
     // Blocks until background probing/thumbnails are done (tests, closing).
     void waitForBackgroundWork();
 
@@ -109,6 +119,7 @@ signals:
     void playheadChanged(qint64 frame);
     // Frame of the top visible video clip at the playhead; null image = nothing there.
     void programFrameReady(const QImage &image);
+    void playingChanged(bool playing);
 
 private:
     void setModified(bool m);
@@ -125,6 +136,7 @@ private:
 
     friend class TimelineCommand;
     void applyTimeline(const Timeline &t);
+    void syncPlayer();
 
     Project m_project;
     QString m_filePath;
@@ -139,6 +151,8 @@ private:
     bool m_frameBusy = false;
     bool m_framePending = false;
     QString m_lastFrameKey;
+    TimelinePlayer *m_player = nullptr;
+    QString m_engineError;
 };
 
 } // namespace bc

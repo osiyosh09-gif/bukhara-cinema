@@ -70,6 +70,27 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ctl, &ProjectController::sequenceChanged, this, updateProgramTimecode);
     connect(m_ctl, &ProjectController::projectReset, this, updateProgramTimecode);
 
+    // Program monitor transport (real-time playback through MLT).
+    m_programMonitor->setDisabledReason(
+        [] { return tr("The video engine (MLT) could not be loaded: playback is off. See the log file."); });
+    m_programMonitor->setTransportEnabled(m_ctl->canPlay());
+    connect(m_programMonitor, &MonitorView::playPause, m_ctl, &ProjectController::togglePlay);
+    connect(m_programMonitor, &MonitorView::goToStart, this, [this] { m_ctl->setPlayhead(0); });
+    connect(m_programMonitor, &MonitorView::goToEnd, this,
+            [this] { m_ctl->setPlayhead(std::max<qint64>(0, m_ctl->timeline().duration() - 1)); });
+    connect(m_programMonitor, &MonitorView::stepBack, this, [this] {
+        m_ctl->pause();
+        m_ctl->setPlayhead(m_ctl->playhead() - 1);
+    });
+    connect(m_programMonitor, &MonitorView::stepForward, this, [this] {
+        m_ctl->pause();
+        m_ctl->setPlayhead(m_ctl->playhead() + 1);
+    });
+    connect(m_ctl, &ProjectController::playingChanged, this, [this](bool on) {
+        m_programMonitor->setPlaying(on);
+        m_playAct->setText(on ? tr("Pause") : tr("Play"));
+    });
+
     retranslate();
 
     resize(1366, 768);
@@ -215,6 +236,11 @@ void MainWindow::buildMenus()
     m_sequenceMenu->addAction(m_timeline->addVideoTrackAction());
     m_sequenceMenu->addAction(m_timeline->addAudioTrackAction());
     m_sequenceMenu->addAction(m_timeline->snappingAction());
+    m_sequenceMenu->addSeparator();
+    m_playAct = m_sequenceMenu->addAction(QString(), m_ctl, &ProjectController::togglePlay);
+    m_playAct->setObjectName(QStringLiteral("actPlayPause"));
+    m_playAct->setShortcut(QKeySequence(Qt::Key_Space));
+    m_playAct->setEnabled(m_ctl->canPlay());
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
 
     m_markersMenu = mb->addMenu(QString());
@@ -297,6 +323,7 @@ void MainWindow::retranslate()
     }
 
     updateUndoActions();
+    m_playAct->setText(m_ctl->isPlaying() ? tr("Pause") : tr("Play"));
     m_newAct->setText(tr("New project"));
     m_openAct->setText(tr("Open project..."));
     m_recentMenu->setTitle(tr("Recent projects"));
@@ -330,7 +357,8 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(tr("Phase 2: timeline editing works; the Program monitor shows the frame at the playhead. Playback comes next."));
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 2: timeline editing and playback with sound work. Text, audio levels and export come next.")
+                                     : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
 void MainWindow::changeEvent(QEvent *event)

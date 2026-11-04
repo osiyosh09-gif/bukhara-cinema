@@ -1,0 +1,93 @@
+#pragma once
+
+#include "core/Project.h"
+
+#include <QHash>
+#include <QImage>
+#include <QMutex>
+#include <QObject>
+#include <QSize>
+#include <memory>
+
+namespace Mlt {
+class Consumer;
+class Event;
+class Producer;
+class Profile;
+class Tractor;
+} // namespace Mlt
+
+namespace bc {
+
+// MLT (LGPL) is the video engine. It turns the project's timeline into an
+// MLT graph; the same graph will be used for export in phase 4, so preview
+// and export always agree.
+namespace Engine {
+// Loads MLT modules (next to the program on Windows). Safe to call twice.
+bool init(QString *error = nullptr);
+bool isReady();
+// Names of required MLT services that are not available ("" when all are).
+QString missingServices();
+QString versionString(); // "MLT 7.22.0"
+} // namespace Engine
+
+// Plays the timeline in real time with sound, and renders single frames
+// while paused.
+class TimelinePlayer : public QObject
+{
+    Q_OBJECT
+public:
+    explicit TimelinePlayer(QObject *parent = nullptr);
+    ~TimelinePlayer() override;
+
+    // Rebuilds the graph from the project (stops playback first).
+    void setProject(const Project &project);
+
+    bool isPlaying() const { return m_playing; }
+    // Starts playback at `frame`; frames arrive through frameShown().
+    bool play(qint64 frame);
+    void pause();
+
+    // Size of the preview images (keeps the sequence aspect ratio).
+    void setPreviewLimit(const QSize &limit) { m_previewLimit = limit; }
+    QSize previewSize() const;
+
+    // Renders the composed frame at `frame`. Thread-safe, but returns a null
+    // image while playing. Used for the paused Program monitor.
+    QImage renderFrame(qint64 frame);
+
+signals:
+    // Emitted in the GUI thread for each frame shown during playback.
+    void frameShown(const QImage &image, qint64 frame);
+    void playingChanged(bool playing);
+    void reachedEnd();
+
+public:
+    // Called from the MLT consumer thread for every displayed frame.
+    void handleShownFrame(const QImage &image, qint64 frame);
+
+private:
+    void stopConsumer();
+    Mlt::Producer *producerFor(const MediaItem &item, bool audio);
+
+    mutable QMutex m_mutex; // guards the graph
+    std::unique_ptr<Mlt::Profile> m_profile;
+    std::unique_ptr<Mlt::Tractor> m_tractor;
+    std::unique_ptr<Mlt::Consumer> m_consumer;
+    std::unique_ptr<Mlt::Event> m_showEvent;
+    // Separate producers for picture and sound, so the two tracks never fight
+    // over one decoder position.
+    struct Cached
+    {
+        QString path;
+        std::shared_ptr<Mlt::Producer> video;
+        std::shared_ptr<Mlt::Producer> audio;
+    };
+    QHash<QUuid, Cached> m_producers;
+    SequenceSettings m_seq;
+    qint64 m_duration = 0;
+    QSize m_previewLimit{960, 540};
+    bool m_playing = false;
+};
+
+} // namespace bc

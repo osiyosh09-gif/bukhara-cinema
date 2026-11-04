@@ -2,6 +2,7 @@
 
 #include "app/AppInfo.h"
 #include "core/MediaProbe.h"
+#include "engine/TimelinePlayer.h"
 
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -23,6 +24,8 @@ QString AboutDialog::licensesHtml()
     html += QStringLiteral("<table cellpadding='4'>"
                            "<tr><td><b>Qt %1</b></td><td>GNU LGPL v3</td><td>%2</td></tr>"
                            "<tr><td><b>%5</b></td><td>%6</td><td>%7</td></tr>"
+                           "<tr><td><b>%8</b></td><td>GNU LGPL v2.1</td><td>%9</td></tr>"
+                           "<tr><td><b>SDL 2</b></td><td>zlib</td><td>%10</td></tr>"
                            "<tr><td><b>MinGW-w64 runtime</b></td><td>%3</td><td>%4</td></tr>"
                            "</table>")
                 .arg(QString::fromLatin1(qVersion()),
@@ -31,12 +34,16 @@ QString AboutDialog::licensesHtml()
                      tr("C++ runtime libraries"),
                      MediaProbe::ffmpegVersionString().toHtmlEscaped(),
                      MediaProbe::ffmpegLicense().toHtmlEscaped(),
-                     tr("Reading media files, thumbnails"));
+                     tr("Reading media files, thumbnails"),
+                     Engine::versionString().toHtmlEscaped(),
+                     tr("Video engine: timeline playback"),
+                     tr("Sound output"));
     html += QStringLiteral("<p>%1</p>").arg(
         tr("Full license texts are installed in the \"licenses\" folder next to the program. "
-           "Source code: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html"));
+           "Source code: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html, "
+           "MLT https://github.com/mltframework/mlt, SDL https://libsdl.org/"));
     html += QStringLiteral("<p>%1</p>").arg(
-        tr("The MLT video engine is added in phase 2; its license will be listed here then."));
+        tr("Only the LGPL parts of MLT are shipped; its GPL modules are left out."));
     return html;
 }
 
@@ -56,8 +63,8 @@ AboutDialog::AboutDialog(Page page, QWidget *parent)
                        .arg(appName(),
                             tr("Version %1").arg(appVersion()),
                             tr("Independent video editor for Windows."),
-                            tr("Phase 1: projects and media bin. Editing features arrive in the next phases; "
-                               "see Help > Feature status.")));
+                            tr("Phase 2: timeline editing and playback with sound. Text, audio levels and export "
+                               "arrive in the next phases; see Help > Feature status.")));
     tabs->addTab(about, tr("About"));
 
     auto *lic = new QTextBrowser(this);
