@@ -432,6 +432,13 @@ void MainWindow::buildMenus()
     m_graphicsMenu->addAction(m_subtitlesPanel->importAction());
     m_graphicsMenu->addAction(m_subtitlesPanel->exportAction());
     addPlanned(m_graphicsMenu, QT_TR_NOOP("Subtitles from speech (automatic)..."), 14, QStringLiteral("actAutoCaptions"));
+    // The subtitle strip on the timeline and the Subtitles panel show the same subtitle.
+    connect(m_timeline->view(), &TimelineView::subtitleClicked, this, [this](const QUuid &id) {
+        m_inspectorDock->show();
+        m_rightTabs->setCurrentWidget(m_subtitlesPanel);
+        m_subtitlesPanel->select(id);
+    });
+    connect(m_subtitlesPanel, &SubtitlesPanel::currentChanged, m_timeline->view(), &TimelineView::setSelectedSubtitle);
     for (QAction *a : {m_subtitlesPanel->addAction_(), m_subtitlesPanel->importAction()})
         connect(a, &QAction::triggered, this, [this] {
             m_inspectorDock->show();
@@ -578,7 +585,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 11, part 1: subtitles and .srt files work (Subtitles tab, Graphics menu).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 11, part 2: subtitles have their own strip on the timeline (drag to move, drag an edge to retime).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

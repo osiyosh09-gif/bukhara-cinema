@@ -155,3 +155,8 @@ target_link_libraries(tst_phase11a PRIVATE bc_ui Qt6::Test)
 target_compile_definitions(tst_phase11a PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
 add_test(NAME phase11a_subtitles COMMAND tst_phase11a)
 set_tests_properties(phase11a_subtitles PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
+
+add_executable(tst_phase11b tst_phase11b.cpp)
+target_link_libraries(tst_phase11b PRIVATE bc_ui Qt6::Test)
+add_test(NAME phase11b_subtitle_track COMMAND tst_phase11b)
+set_tests_properties(phase11b_subtitle_track PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)

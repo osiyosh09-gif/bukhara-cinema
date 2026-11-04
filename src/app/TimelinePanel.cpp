@@ -139,7 +139,7 @@ int TimelineView::rowHeight(int track) const
 int TimelineView::rowTop(int row) const
 {
     const QList<int> r = rows();
-    int y = kRulerH - verticalScrollBar()->value();
+    int y = tracksTop() - verticalScrollBar()->value();
     for (int i = 0; i < row && i < r.size(); ++i)
         y += rowHeight(r[i]);
     return y;
@@ -164,10 +164,10 @@ QRect TimelineView::trackRect(int track) const
 
 int TimelineView::trackAtY(int y) const
 {
-    if (y < kRulerH)
+    if (y < tracksTop())
         return -1;
     const QList<int> r = rows();
-    int top = kRulerH - verticalScrollBar()->value();
+    int top = tracksTop() - verticalScrollBar()->value();
     for (int t : r) {
         const int h = rowHeight(t);
         if (y >= top && y < top + h)
@@ -342,7 +342,7 @@ void TimelineView::updateScrollBars()
     horizontalScrollBar()->setPageStep(visibleW);
     horizontalScrollBar()->setSingleStep(std::max(1, visibleW / 20));
 
-    const int visibleH = std::max(1, viewport()->height() - kRulerH);
+    const int visibleH = std::max(1, viewport()->height() - tracksTop());
     verticalScrollBar()->setRange(0, std::max(0, contentHeight() - visibleH));
     verticalScrollBar()->setPageStep(visibleH);
     verticalScrollBar()->setSingleStep(20);
@@ -377,6 +377,7 @@ void TimelineView::paintEvent(QPaintEvent *)
     QPainter p(viewport());
     p.fillRect(viewport()->rect(), kBg);
     drawTracks(p);
+    drawSubtitles(p);
     drawRuler(p);
 
     // Playhead
@@ -407,6 +408,92 @@ void TimelineView::paintEvent(QPaintEvent *)
         p.drawText(QRect(kHeaderW, kRulerH, viewport()->width() - kHeaderW, viewport()->height() - kRulerH),
                    Qt::AlignCenter, tr("Drag media from the bin here"));
     }
+}
+
+int TimelineView::subtitleStripHeight() const
+{
+    return m_ctl->timeline().subtitles.isEmpty() ? 0 : kSubsH;
+}
+
+QRect TimelineView::subtitleRect(const Subtitle &s) const
+{
+    qint64 start = s.start, length = s.length;
+    if (m_drag != Drag::None && m_dragStarted && s.id == m_dragSub) {
+        start = m_subStart;
+        length = m_subLength;
+    }
+    const int x1 = xForFrame(start);
+    const int x2 = xForFrame(start + length);
+    return QRect(x1, kRulerH + 2, std::max(3, x2 - x1), kSubsH - 4);
+}
+
+QUuid TimelineView::subtitleAt(const QPoint &pos, bool *headEdge, bool *tailEdge) const
+{
+    if (headEdge)
+        *headEdge = false;
+    if (tailEdge)
+        *tailEdge = false;
+    if (pos.y() < kRulerH || pos.y() >= tracksTop() || pos.x() < kHeaderW)
+        return {};
+    const auto &subs = m_ctl->timeline().subtitles;
+    // Later subtitles are drawn on top: search from the end.
+    for (auto it = subs.crbegin(); it != subs.crend(); ++it) {
+        const QRect r = subtitleRect(*it);
+        if (pos.x() < r.left() - 2 || pos.x() > r.right() + 2)
+            continue;
+        const int edge = std::min(kEdgePx, r.width() / 3);
+        if (headEdge)
+            *headEdge = pos.x() <= r.left() + edge;
+        if (tailEdge)
+            *tailEdge = !(headEdge && *headEdge) && pos.x() >= r.right() - edge;
+        return it->id;
+    }
+    return {};
+}
+
+void TimelineView::setSelectedSubtitle(const QUuid &id)
+{
+    if (m_subSel == id)
+        return;
+    m_subSel = id;
+    viewport()->update();
+}
+
+void TimelineView::drawSubtitles(QPainter &p)
+{
+    const int h = subtitleStripHeight();
+    if (h == 0)
+        return;
+    const int w = viewport()->width();
+    const QRect strip(0, kRulerH, w, h);
+    p.save();
+    p.fillRect(strip, QColor(0x20, 0x20, 0x26));
+    p.fillRect(QRect(0, kRulerH, kHeaderW, h), kHeaderBg);
+    p.setPen(kLine);
+    p.drawLine(0, strip.bottom(), w, strip.bottom());
+    QFont f = p.font();
+    f.setPointSizeF(std::max(7.0, f.pointSizeF() - 1));
+    p.setFont(f);
+    p.setPen(kDim);
+    p.drawText(QRect(8, kRulerH, kHeaderW - 10, h), Qt::AlignVCenter | Qt::AlignLeft, tr("Subtitles"));
+    p.setClipRect(QRect(kHeaderW, kRulerH, w - kHeaderW, h));
+    const QColor fill(0x8a, 0x5a, 0x2c), fillSel(0xc0, 0x84, 0x3c);
+    for (const Subtitle &s : m_ctl->timeline().subtitles) {
+        const QRect r = subtitleRect(s);
+        if (r.right() < kHeaderW || r.left() > w)
+            continue;
+        const bool sel = s.id == m_subSel;
+        p.setPen(QPen(sel ? kGold : QColor(0x2a, 0x1a, 0x0c), 1));
+        p.setBrush(sel ? fillSel : fill);
+        p.drawRoundedRect(r, 3, 3);
+        if (r.width() > 14) {
+            p.setPen(QColor(0xf4, 0xec, 0xe0));
+            const QString text = s.text.simplified().isEmpty() ? tr("(empty)") : s.text.simplified();
+            p.drawText(r.adjusted(4, 0, -3, 0), Qt::AlignVCenter | Qt::AlignLeft,
+                       p.fontMetrics().elidedText(text, Qt::ElideRight, r.width() - 7));
+        }
+    }
+    p.restore();
 }
 
 void TimelineView::drawRuler(QPainter &p)
@@ -477,7 +564,7 @@ void TimelineView::drawTracks(QPainter &p)
     const int w = viewport()->width();
 
     p.save();
-    p.setClipRect(QRect(0, kRulerH, w, viewport()->height() - kRulerH));
+    p.setClipRect(QRect(0, tracksTop(), w, viewport()->height() - tracksTop()));
     for (int row = 0; row < r.size(); ++row) {
         const int t = r[row];
         const QRect rr(0, rowTop(row), w, rowHeight(t));
@@ -495,7 +582,7 @@ void TimelineView::drawTracks(QPainter &p)
 
     // Clips
     p.save();
-    p.setClipRect(QRect(kHeaderW, kRulerH, w - kHeaderW, viewport()->height() - kRulerH));
+    p.setClipRect(QRect(kHeaderW, tracksTop(), w - kHeaderW, viewport()->height() - tracksTop()));
     for (int t : r)
         for (const TimelineClip &c : tl.tracks[t].clips)
             drawClip(p, t, c);
@@ -701,6 +788,21 @@ void TimelineView::mousePressEvent(QMouseEvent *e)
         }
         return;
     }
+    if (pos.y() < tracksTop()) { // subtitle strip
+        bool head = false, tail = false;
+        const QUuid id = pos.x() >= kHeaderW ? subtitleAt(pos, &head, &tail) : QUuid();
+        setSelectedSubtitle(id);
+        m_drag = Drag::None;
+        if (const Subtitle *s = m_ctl->timeline().subtitle(id)) {
+            emit subtitleClicked(id);
+            m_dragSub = id;
+            m_subStart = s->start;
+            m_subLength = s->length;
+            m_trimHead = head;
+            m_drag = (head || tail) ? Drag::SubTrim : Drag::SubMove;
+        }
+        return;
+    }
     if (pos.x() < kHeaderW) {
         const int t = trackAtY(pos.y());
         if (t < 0)
@@ -792,6 +894,39 @@ void TimelineView::mouseMoveEvent(QMouseEvent *e)
     m_dragStarted = true;
     const Timeline &tl = m_ctl->timeline();
 
+    if (m_drag == Drag::SubMove || m_drag == Drag::SubTrim) {
+        const Subtitle *s = tl.subtitle(m_dragSub);
+        if (!s)
+            return;
+        const qint64 delta = qint64(std::llround((pos.x() - m_pressPos.x()) / m_ppf));
+        if (m_drag == Drag::SubMove) {
+            // Snap the start, else the end, to clip edges, markers and the playhead.
+            qint64 start = std::max<qint64>(0, s->start + delta);
+            const qint64 snapped = snap(start, {}, &m_snapLine);
+            if (m_snapLine >= 0) {
+                start = snapped;
+            } else {
+                const qint64 end = snap(start + s->length, {}, &m_snapLine);
+                if (m_snapLine >= 0)
+                    start = std::max<qint64>(0, end - s->length);
+            }
+            m_subStart = start;
+            m_subLength = s->length;
+        } else {
+            const qint64 frame = snap(std::max<qint64>(0, frameUnderMouse(pos.x())), {}, &m_snapLine);
+            if (m_trimHead) {
+                const qint64 start = std::clamp<qint64>(frame, 0, s->end() - 1);
+                m_subStart = start;
+                m_subLength = s->end() - start;
+            } else {
+                m_subStart = s->start;
+                m_subLength = std::max<qint64>(1, frame - s->start);
+            }
+        }
+        viewport()->update();
+        return;
+    }
+
     if (m_drag == Drag::Move) {
         const QList<QUuid> sel = selection();
         qint64 delta = qint64(std::llround((pos.x() - m_pressPos.x()) / m_ppf));
@@ -852,6 +987,12 @@ qint64 TimelineView::frameUnderMouse(int x) const
 
 void TimelineView::updateCursor(const QPoint &pos)
 {
+    if (pos.y() >= kRulerH && pos.y() < tracksTop()) {
+        bool head = false, tail = false;
+        const QUuid id = subtitleAt(pos, &head, &tail);
+        viewport()->setCursor(id.isNull() ? Qt::ArrowCursor : (head || tail) ? Qt::SizeHorCursor : Qt::OpenHandCursor);
+        return;
+    }
     const Hit h = hitTest(pos);
     Qt::CursorShape shape = Qt::ArrowCursor;
     switch (m_tool) {
@@ -901,6 +1042,8 @@ void TimelineView::mouseReleaseEvent(QMouseEvent *e)
             m_ctl->slipClip(m_dragClip, m_moveDelta);
         else if (d == Drag::Slide)
             m_ctl->slideClip(m_dragClip, m_moveDelta);
+        else if (d == Drag::SubMove || d == Drag::SubTrim)
+            m_ctl->setSubtitleTiming(m_dragSub, m_subStart, m_subLength, false);
     }
     m_dragStarted = false;
     viewport()->update();
@@ -909,8 +1052,21 @@ void TimelineView::mouseReleaseEvent(QMouseEvent *e)
 void TimelineView::mouseDoubleClickEvent(QMouseEvent *e)
 {
     // Double click on a nested clip opens its sequence; on another clip it
-    // moves the playhead to the clip start.
-    const Hit h = hitTest(e->position().toPoint());
+    // moves the playhead to the clip start. On the subtitle strip: a free
+    // place gets a new subtitle, a subtitle opens for editing.
+    const QPoint pos = e->position().toPoint();
+    if (pos.y() >= kRulerH && pos.y() < tracksTop() && pos.x() >= kHeaderW) {
+        QUuid id = subtitleAt(pos);
+        if (id.isNull())
+            id = m_ctl->addSubtitle(frameAtX(pos.x()));
+        else if (const Subtitle *s = m_ctl->timeline().subtitle(id))
+            m_ctl->setPlayhead(s->start);
+        setSelectedSubtitle(id);
+        if (!id.isNull())
+            emit subtitleClicked(id);
+        return;
+    }
+    const Hit h = hitTest(pos);
     if (const TimelineClip *c = m_ctl->timeline().clip(h.clip)) {
         if (c->isNested()) {
             const QUuid nest = c->nestId;
@@ -1010,7 +1166,13 @@ bool TimelineView::viewportEvent(QEvent *e)
         const QPoint pos = he->pos();
         const int t = trackAtY(pos.y());
         QString tip;
-        if (t >= 0 && pos.x() < kHeaderW) {
+        if (const Subtitle *st = m_ctl->timeline().subtitle(subtitleAt(pos))) {
+            const double fps = m_ctl->project().sequence.fps();
+            tip = QStringLiteral("%1\n%2 – %3").arg(st->text, Fmt::frameTimecode(st->start, fps),
+                                                   Fmt::frameTimecode(st->end(), fps));
+        } else if (pos.y() >= kRulerH && pos.y() < tracksTop()) {
+            tip = tr("Subtitles: drag to move, drag an edge to change the time, double-click a free place to add one");
+        } else if (t >= 0 && pos.x() < kHeaderW) {
             const TimelineTrack &trk = m_ctl->timeline().tracks[t];
             if (headerButton(t, 0).contains(pos))
                 tip = trk.locked ? tr("Unlock track") : tr("Lock track");

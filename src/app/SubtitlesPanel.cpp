@@ -230,7 +230,10 @@ void SubtitlesPanel::select(const QUuid &id)
     for (int i = 0; i < m_list->topLevelItemCount(); ++i) {
         QTreeWidgetItem *it = m_list->topLevelItem(i);
         if (QUuid(it->data(0, kIdRole).toString()) == id) {
+            const bool was = m_updating;
+            m_updating = true; // picked elsewhere: the playhead stays
             m_list->setCurrentItem(it);
+            m_updating = was;
             m_current = id;
             showCurrent();
             return;
@@ -277,6 +280,10 @@ void SubtitlesPanel::rebuild()
 void SubtitlesPanel::showCurrent()
 {
     const Subtitle *s = m_ctl->timeline().subtitle(m_current);
+    if (m_current != m_shown) {
+        m_shown = m_current;
+        emit currentChanged(m_current);
+    }
     m_editBox->setEnabled(s != nullptr);
     const bool was = m_updating;
     m_updating = true;
