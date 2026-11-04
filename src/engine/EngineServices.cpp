@@ -1,5 +1,6 @@
 #include "engine/EngineServices.h"
 
+#include "core/AudioFx.h"
 #include "core/Color.h"
 #include "core/Effects.h"
 #include "core/Motion.h"
@@ -220,6 +221,65 @@ void *gainInit(mlt_profile, mlt_service_type, const char *, const void *)
         return nullptr;
     filter->process = gainProcess;
     mlt_properties_set_double(MLT_FILTER_PROPERTIES(filter), "gain_db", 0.0);
+    return filter;
+}
+
+// ---------------------------------------------------------------------------
+// bc_audiofx filter: sound effects of an audio clip (equalizer, compressor).
+// The filter keeps the effect state between frames; a jump resets it.
+
+struct AudioFxState
+{
+    AudioChain chain;
+    QByteArray json;
+    ClipEffects effects;    // parsed `json`
+    mlt_position next = -1; // position expected next
+};
+
+int audioFxGetAudio(mlt_frame frame, void **buffer, mlt_audio_format *format, int *frequency, int *channels,
+                    int *samples)
+{
+    auto filter = static_cast<mlt_filter>(mlt_frame_pop_audio(frame));
+    *format = mlt_audio_f32le;
+    const int err = mlt_frame_get_audio(frame, buffer, format, frequency, channels, samples);
+    if (err || !*buffer || *samples <= 0 || *channels <= 0 || *format != mlt_audio_f32le)
+        return err;
+    mlt_properties props = MLT_FILTER_PROPERTIES(filter);
+    auto *state = static_cast<AudioFxState *>(mlt_properties_get_data(props, "_state", nullptr));
+    if (!state)
+        return 0;
+    mlt_service_lock(MLT_FILTER_SERVICE(filter));
+    const char *json = mlt_properties_get(props, "effects");
+    const QByteArray text = json ? QByteArray(json) : QByteArray();
+    if (text != state->json) {
+        state->json = text;
+        state->effects = effectsFromEngineString(text);
+    }
+    state->chain.configure(state->effects, *frequency, *channels);
+    const mlt_position at = mlt_frame_get_position(frame);
+    if (at != state->next)
+        state->chain.reset();
+    state->next = at + 1;
+    state->chain.process(static_cast<float *>(*buffer), *samples);
+    mlt_service_unlock(MLT_FILTER_SERVICE(filter));
+    return 0;
+}
+
+mlt_frame audioFxProcess(mlt_filter filter, mlt_frame frame)
+{
+    mlt_frame_push_audio(frame, filter);
+    mlt_frame_push_audio(frame, reinterpret_cast<void *>(audioFxGetAudio));
+    return frame;
+}
+
+void *audioFxInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_filter filter = mlt_filter_new();
+    if (!filter)
+        return nullptr;
+    filter->process = audioFxProcess;
+    mlt_properties_set_data(MLT_FILTER_PROPERTIES(filter), "_state", new AudioFxState, 0,
+                            [](void *p) { delete static_cast<AudioFxState *>(p); }, nullptr);
     return filter;
 }
 
@@ -586,6 +646,7 @@ void registerAll(mlt_repository_s *repository)
     mlt_repository_register(repository, mlt_service_producer_type, "bc_still", stillInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_gain", gainInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_meter", meterInit);
+    mlt_repository_register(repository, mlt_service_filter_type, "bc_audiofx", audioFxInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_transform", transformInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_fade", fadeInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_effects", effectsInit);

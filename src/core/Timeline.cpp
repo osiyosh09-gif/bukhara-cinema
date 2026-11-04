@@ -1025,9 +1025,12 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             }
             if (!c.mediaId.isNull())
                 c.speed = std::clamp(co.value(QStringLiteral("speed")).toDouble(1.0), 0.1, 10.0);
+            // Effects of the kind that fits the track (picture or sound).
+            for (const ClipEffect &e : effectsFromJson(co.value(QStringLiteral("effects")).toArray()))
+                if (ClipEffect::isAudio(e.kind) == (t.kind == Kind::Audio))
+                    c.effects << e;
             if (t.kind == Kind::Video) {
                 c.motion = ClipMotion::fromJson(co.value(QStringLiteral("motion")).toObject());
-                c.effects = effectsFromJson(co.value(QStringLiteral("effects")).toArray());
                 c.color = ClipColor::fromJson(co.value(QStringLiteral("color")).toObject());
             }
             if (c.length > 0)

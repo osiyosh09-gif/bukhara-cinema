@@ -182,7 +182,8 @@ private slots:
         const QUuid big = ctl.project().items[0].path.endsWith(QStringLiteral("big.mp4"))
                               ? ctl.project().items[0].id : ctl.project().items[1].id;
         const QUuid small = big == ctl.project().items[0].id ? ctl.project().items[1].id : ctl.project().items[0].id;
-        QVERIFY(ctl.hasProxy(big));
+        QVERIFY2(ctl.hasProxy(big), qPrintable(finished.isEmpty() ? QStringLiteral("no proxy job finished")
+                                                                   : finished.first().at(2).toString()));
         QVERIFY(!ctl.hasProxy(small)); // Full HD or less: no proxy unless asked
         QCOMPARE(finished.count(), 1);
         QVERIFY(finished.first().at(1).toBool());

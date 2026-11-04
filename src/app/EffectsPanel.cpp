@@ -52,6 +52,10 @@ QString EffectsPanel::kindName(ClipEffect::Kind kind)
         return tr("Chroma key (remove a colour)");
     case ClipEffect::Kind::Mask:
         return tr("Mask (rectangle or ellipse)");
+    case ClipEffect::Kind::Equalizer:
+        return tr("Equalizer (EQ)");
+    case ClipEffect::Kind::Compressor:
+        return tr("Compressor");
     }
     return {};
 }
@@ -104,6 +108,32 @@ QString EffectsPanel::paramName(const QString &key)
         return tr("Soft edge, px");
     if (key == QLatin1String("invert"))
         return tr("Invert (hide the inside)");
+    if (key == QLatin1String("low_cut"))
+        return tr("Low cut, Hz (0 = off)");
+    if (key == QLatin1String("low_gain"))
+        return tr("Bass, dB");
+    if (key == QLatin1String("low_freq"))
+        return tr("Bass frequency, Hz");
+    if (key == QLatin1String("mid_gain"))
+        return tr("Middle, dB");
+    if (key == QLatin1String("mid_freq"))
+        return tr("Middle frequency, Hz");
+    if (key == QLatin1String("mid_q"))
+        return tr("Middle width (Q)");
+    if (key == QLatin1String("high_gain"))
+        return tr("Treble, dB");
+    if (key == QLatin1String("high_freq"))
+        return tr("Treble frequency, Hz");
+    if (key == QLatin1String("threshold"))
+        return tr("Threshold, dB");
+    if (key == QLatin1String("ratio"))
+        return tr("Ratio (x:1)");
+    if (key == QLatin1String("attack"))
+        return tr("Attack, ms");
+    if (key == QLatin1String("release"))
+        return tr("Release, ms");
+    if (key == QLatin1String("makeup"))
+        return tr("Make-up gain, dB");
     return key;
 }
 
@@ -112,6 +142,9 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     , m_ctl(controller)
     , m_view(view)
     , m_header(new QLabel)
+    , m_target(new QWidget)
+    , m_targetVideo(new QToolButton)
+    , m_targetAudio(new QToolButton)
     , m_empty(new QLabel)
     , m_body(new QWidget)
     , m_kind(new QComboBox)
@@ -138,6 +171,26 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     m_header->setStyleSheet(QStringLiteral("color:#d1a54a; font-weight:600;"));
     m_header->setWordWrap(true);
     lay->addWidget(m_header);
+    {
+        auto *row = new QHBoxLayout(m_target);
+        row->setContentsMargins(0, 0, 0, 0);
+        m_targetVideo->setObjectName(QStringLiteral("effectTargetVideo"));
+        m_targetAudio->setObjectName(QStringLiteral("effectTargetAudio"));
+        for (QToolButton *b : {m_targetVideo, m_targetAudio}) {
+            b->setCheckable(true);
+            b->setAutoExclusive(true);
+            b->setToolButtonStyle(Qt::ToolButtonTextOnly);
+            row->addWidget(b);
+        }
+        row->addStretch(1);
+        lay->addWidget(m_target);
+        connect(m_targetAudio, &QToolButton::toggled, this, [this](bool on) {
+            if (m_updating || m_wantAudio == on)
+                return;
+            m_wantAudio = on;
+            refresh();
+        });
+    }
     m_empty->setAlignment(Qt::AlignCenter);
     m_empty->setWordWrap(true);
     m_empty->setStyleSheet(QStringLiteral("color:#8a8a8a;"));
@@ -207,23 +260,28 @@ void EffectsPanel::changeEvent(QEvent *e)
     QWidget::changeEvent(e);
 }
 
+void EffectsPanel::fillKinds()
+{
+    const QSignalBlocker b(m_kind);
+    const int cur = m_kindsFor == int(m_audio) ? m_kind->currentIndex() : 0;
+    m_kind->clear();
+    for (const ClipEffect::Kind k : ClipEffect::kinds(m_audio))
+        m_kind->addItem(kindName(k), int(k));
+    m_kind->setCurrentIndex(std::clamp(cur, 0, m_kind->count() - 1));
+    m_kindsFor = int(m_audio);
+}
+
 void EffectsPanel::retranslate()
 {
-    {
-        const QSignalBlocker b(m_kind);
-        const int cur = m_kind->currentIndex();
-        m_kind->clear();
-        for (const ClipEffect::Kind k : ClipEffect::kinds())
-            m_kind->addItem(kindName(k), int(k));
-        m_kind->setCurrentIndex(std::max(0, cur));
-    }
+    fillKinds();
+    m_targetVideo->setText(tr("Picture"));
+    m_targetAudio->setText(tr("Sound"));
     m_add->setText(tr("Add"));
     m_add->setToolTip(tr("Add the chosen effect to the clip"));
     m_up->setToolTip(tr("Move up (effects work from top to bottom)"));
     m_down->setToolTip(tr("Move down"));
     m_remove->setText(tr("Remove"));
     m_paramsBox->setTitle(tr("Values"));
-    m_note->setText(tr("Effects are drawn before the motion settings. Untick an effect to compare without it."));
     m_formKind = -1; // rebuild the labels
     refresh();
 }
@@ -231,9 +289,9 @@ void EffectsPanel::retranslate()
 void EffectsPanel::refresh()
 {
     const Timeline &tl = m_ctl->timeline();
-    // One video clip (a linked sound part may be selected with it).
+    // One clip, or one linked picture + sound pair (the switch picks the part).
     QSet<QUuid> groups;
-    QUuid video;
+    QUuid video, audio;
     for (const QUuid &id : m_view->selection()) {
         const TimelineClip *c = tl.clip(id);
         if (!c)
@@ -241,15 +299,29 @@ void EffectsPanel::refresh()
         groups.insert(c->linkId.isNull() ? c->id : c->linkId);
         if (tl.kindOf(id) == Timeline::Kind::Video)
             video = id;
+        else
+            audio = id;
     }
-    m_clip = groups.size() == 1 ? video : QUuid();
+    const bool one = groups.size() == 1;
+    const bool both = one && !video.isNull() && !audio.isNull();
+    m_audio = one && (video.isNull() || (both && m_wantAudio));
+    m_clip = !one ? QUuid() : m_audio ? audio : video;
+    if (m_kindsFor != int(m_audio))
+        fillKinds();
+    m_target->setVisible(both);
+    {
+        const QSignalBlocker b1(m_targetVideo), b2(m_targetAudio);
+        (m_audio ? m_targetAudio : m_targetVideo)->setChecked(true);
+    }
+    m_note->setText(m_audio ? tr("Sound effects work before the clip volume and the track fader. Untick an effect "
+                                 "to compare without it.")
+                            : tr("Effects are drawn before the motion settings. Untick an effect to compare without it."));
 
     const TimelineClip *c = tl.clip(m_clip);
     m_empty->setVisible(!c);
     m_body->setVisible(c);
-    m_empty->setText(groups.isEmpty()     ? tr("Select a video clip on the timeline to add effects.")
-                     : groups.size() > 1 ? tr("Several clips are selected. Select one clip.")
-                                         : tr("Effects work on pictures. Select a video clip."));
+    m_empty->setText(groups.isEmpty() ? tr("Select a clip on the timeline to add effects.")
+                                      : tr("Several clips are selected. Select one clip."));
     QString header;
     if (c) {
         if (c->isTitle())

@@ -209,11 +209,6 @@
         <translation>Вкладка «Аудио» справа: полоса для каждой аудиодорожки (баланс, фейдер в дБ, M и S) и мастер-полоса; индикаторы движутся во время воспроизведения монитора программы. Фейдеры действуют и при экспорте.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="60" />
-        <source>EQ, compressor, noise reduction, loudness</source>
-        <translation>Эквалайзер, компрессор, шумоподавление, громкость (loudness)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Настройки эпизода: размер, частота кадров, звук</translation>
@@ -344,27 +339,42 @@
         <translation>Панель «Цвет» &gt; «Цветовые круги»: перетащите точку к цвету, чтобы окрасить тени, средние тона или света; ползунок под кругом делает их темнее или светлее. Двойной щелчок возвращает круг.</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="60" />
+        <source>Sound effects: equalizer and compressor</source>
+        <translation>Звуковые эффекты: эквалайзер и компрессор</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="60" />
+        <source>Select an audio clip (or press Sound for a linked clip) in the Effects tab: low cut, bass, middle and treble; compressor with threshold, ratio, attack, release and make-up gain. They work before the clip volume.</source>
+        <translation>Выберите аудиоклип (для связанного клипа нажмите «Звук») на вкладке «Эффекты»: срез низких, басы, середина и верха; компрессор с порогом, степенью, атакой, восстановлением и компенсацией. Работают до громкости клипа.</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="61" />
+        <source>Noise reduction and loudness</source>
+        <translation>Шумоподавление и громкость (loudness)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="62" />
         <source>Subtitles and SRT import/export</source>
         <translation>Субтитры и импорт/экспорт SRT</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="62" />
+        <location filename="../src/app/FeatureStatus.cpp" line="63" />
         <source>Multicamera editing</source>
         <translation>Многокамерный монтаж</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="63" />
+        <location filename="../src/app/FeatureStatus.cpp" line="64" />
         <source>Export queue, render preview, GPU acceleration</source>
         <translation>Очередь экспорта, предпросмотр рендера, ускорение GPU</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="64" />
+        <location filename="../src/app/FeatureStatus.cpp" line="65" />
         <source>AI assistants: transcription, text-based editing, scene detection</source>
         <translation>AI-помощники: транскрипция, монтаж по тексту, определение сцен</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="65" />
+        <location filename="../src/app/FeatureStatus.cpp" line="66" />
         <source>Plugins and project interchange</source>
         <translation>Плагины и обмен проектами</translation>
     </message>
@@ -1205,172 +1215,257 @@
         <translation>Маска (прямоугольник или эллипс)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="62" />
+        <location filename="../src/app/EffectsPanel.cpp" line="56" />
+        <source>Equalizer (EQ)</source>
+        <translation>Эквалайзер (EQ)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="58" />
+        <source>Compressor</source>
+        <translation>Компрессор</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="66" />
         <source>Brightness</source>
         <translation>Яркость</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="64" />
+        <location filename="../src/app/EffectsPanel.cpp" line="68" />
         <source>Contrast</source>
         <translation>Контраст</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="66" />
+        <location filename="../src/app/EffectsPanel.cpp" line="70" />
         <source>Saturation, %</source>
         <translation>Насыщенность, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="68" />
+        <location filename="../src/app/EffectsPanel.cpp" line="72" />
         <source>Radius, px</source>
         <translation>Радиус, пикс.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="70" />
+        <location filename="../src/app/EffectsPanel.cpp" line="74" />
         <source>Amount, %</source>
         <translation>Сила, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="72" />
+        <location filename="../src/app/EffectsPanel.cpp" line="76" />
         <source>Left, %</source>
         <translation>Слева, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="74" />
+        <location filename="../src/app/EffectsPanel.cpp" line="78" />
         <source>Right, %</source>
         <translation>Справа, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="76" />
+        <location filename="../src/app/EffectsPanel.cpp" line="80" />
         <source>Top, %</source>
         <translation>Сверху, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="78" />
+        <location filename="../src/app/EffectsPanel.cpp" line="82" />
         <source>Bottom, %</source>
         <translation>Снизу, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="80" />
+        <location filename="../src/app/EffectsPanel.cpp" line="84" />
         <source>Flip left and right</source>
         <translation>Отразить слева направо</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="82" />
+        <location filename="../src/app/EffectsPanel.cpp" line="86" />
         <source>Flip upside down</source>
         <translation>Отразить сверху вниз</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="84" />
+        <location filename="../src/app/EffectsPanel.cpp" line="88" />
         <source>Key colour (hue), °</source>
         <translation>Цвет ключа (тон), °</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="86" />
+        <location filename="../src/app/EffectsPanel.cpp" line="90" />
         <source>Tolerance, °</source>
         <translation>Допуск, °</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="88" />
+        <location filename="../src/app/EffectsPanel.cpp" line="92" />
         <source>Softness, °</source>
         <translation>Мягкость, °</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="90" />
+        <location filename="../src/app/EffectsPanel.cpp" line="94" />
         <source>Keep greys below, %</source>
         <translation>Защита серого, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="92" />
+        <location filename="../src/app/EffectsPanel.cpp" line="96" />
         <source>Spill removal, %</source>
         <translation>Подавление ореола, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="94" />
+        <location filename="../src/app/EffectsPanel.cpp" line="98" />
         <source>Ellipse</source>
         <translation>Эллипс</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="96" />
+        <location filename="../src/app/EffectsPanel.cpp" line="100" />
         <source>Centre X, %</source>
         <translation>Центр X, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="98" />
+        <location filename="../src/app/EffectsPanel.cpp" line="102" />
         <source>Centre Y, %</source>
         <translation>Центр Y, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="100" />
+        <location filename="../src/app/EffectsPanel.cpp" line="104" />
         <source>Width, %</source>
         <translation>Ширина, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="102" />
+        <location filename="../src/app/EffectsPanel.cpp" line="106" />
         <source>Height, %</source>
         <translation>Высота, %</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="104" />
+        <location filename="../src/app/EffectsPanel.cpp" line="108" />
         <source>Soft edge, px</source>
         <translation>Мягкий край, пикс.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="106" />
+        <location filename="../src/app/EffectsPanel.cpp" line="110" />
         <source>Invert (hide the inside)</source>
         <translation>Инвертировать (скрыть внутри)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="220" />
+        <location filename="../src/app/EffectsPanel.cpp" line="112" />
+        <source>Low cut, Hz (0 = off)</source>
+        <translation>Срез низких, Гц (0 = выкл.)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="114" />
+        <source>Bass, dB</source>
+        <translation>Басы, дБ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="116" />
+        <source>Bass frequency, Hz</source>
+        <translation>Частота басов, Гц</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="118" />
+        <source>Middle, dB</source>
+        <translation>Середина, дБ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="120" />
+        <source>Middle frequency, Hz</source>
+        <translation>Частота середины, Гц</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="122" />
+        <source>Middle width (Q)</source>
+        <translation>Ширина середины (Q)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="124" />
+        <source>Treble, dB</source>
+        <translation>Верха, дБ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="126" />
+        <source>Treble frequency, Hz</source>
+        <translation>Частота верхов, Гц</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="128" />
+        <source>Threshold, dB</source>
+        <translation>Порог, дБ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="130" />
+        <source>Ratio (x:1)</source>
+        <translation>Степень (x:1)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="132" />
+        <source>Attack, ms</source>
+        <translation>Атака, мс</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="134" />
+        <source>Release, ms</source>
+        <translation>Восстановление, мс</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="136" />
+        <source>Make-up gain, dB</source>
+        <translation>Компенсация, дБ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="277" />
+        <source>Picture</source>
+        <translation>Изображение</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="278" />
+        <source>Sound</source>
+        <translation>Звук</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="279" />
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="221" />
+        <location filename="../src/app/EffectsPanel.cpp" line="280" />
         <source>Add the chosen effect to the clip</source>
         <translation>Добавить выбранный эффект к клипу</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="222" />
+        <location filename="../src/app/EffectsPanel.cpp" line="281" />
         <source>Move up (effects work from top to bottom)</source>
         <translation>Вверх (эффекты работают сверху вниз)</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="223" />
+        <location filename="../src/app/EffectsPanel.cpp" line="282" />
         <source>Move down</source>
         <translation>Вниз</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="224" />
+        <location filename="../src/app/EffectsPanel.cpp" line="283" />
         <source>Remove</source>
         <translation>Убрать</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="225" />
+        <location filename="../src/app/EffectsPanel.cpp" line="284" />
         <source>Values</source>
         <translation>Значения</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="226" />
+        <location filename="../src/app/EffectsPanel.cpp" line="316" />
+        <source>Sound effects work before the clip volume and the track fader. Untick an effect to compare without it.</source>
+        <translation>Звуковые эффекты действуют до громкости клипа и фейдера дорожки. Снимите флажок, чтобы сравнить без эффекта.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="318" />
         <source>Effects are drawn before the motion settings. Untick an effect to compare without it.</source>
         <translation>Эффекты рисуются до настроек движения. Снимите отметку, чтобы сравнить без эффекта.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="250" />
-        <source>Select a video clip on the timeline to add effects.</source>
-        <translation>Выберите видеоклип на таймлайне, чтобы добавить эффекты.</translation>
+        <location filename="../src/app/EffectsPanel.cpp" line="323" />
+        <source>Select a clip on the timeline to add effects.</source>
+        <translation>Выберите клип на таймлайне, чтобы добавить эффекты.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="251" />
+        <location filename="../src/app/EffectsPanel.cpp" line="324" />
         <source>Several clips are selected. Select one clip.</source>
         <translation>Выбрано несколько клипов. Выберите один клип.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="252" />
-        <source>Effects work on pictures. Select a video clip.</source>
-        <translation>Эффекты работают с изображением. Выберите видеоклип.</translation>
-    </message>
-    <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="256" />
+        <location filename="../src/app/EffectsPanel.cpp" line="328" />
         <source>Title</source>
         <translation>Титр</translation>
     </message>
@@ -1983,6 +2078,11 @@
         <translation>Клип</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="567" />
+        <source>Phase 10, part 2: audio mixer, equalizer and compressor work (Audio and Effects panels).</source>
+        <translation>Этап 10, часть 2: аудиомикшер, эквалайзер и компрессор работают (панели «Аудио» и «Эффекты»).</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="603" />
         <source>Insert</source>
         <translation>Вставка</translation>
@@ -2028,11 +2128,6 @@
         <location filename="../src/app/MainWindow.cpp" line="763" />
         <source>Unsaved changes</source>
         <translation>Несохранённые изменения</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="567" />
-        <source>Phase 10, part 1: the audio mixer works (Audio panel on the right).</source>
-        <translation>Этап 10, часть 1: аудиомикшер работает (панель «Аудио» справа).</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="687" />
@@ -2595,102 +2690,102 @@
         <translation>Переименовать секвенцию</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="267" />
+        <location filename="../src/app/ProjectEditing.cpp" line="276" />
         <source>Motion</source>
         <translation>Движение</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="278" />
+        <location filename="../src/app/ProjectEditing.cpp" line="287" />
         <source>Animate motion</source>
         <translation>Анимировать движение</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="278" />
+        <location filename="../src/app/ProjectEditing.cpp" line="287" />
         <source>Stop animating motion</source>
         <translation>Отключить анимацию движения</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="295" />
+        <location filename="../src/app/ProjectEditing.cpp" line="304" />
         <source>Keyframe</source>
         <translation>Ключевой кадр</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="313" />
+        <location filename="../src/app/ProjectEditing.cpp" line="322" />
         <source>Reset motion</source>
         <translation>Сброс движения</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="353" />
+        <location filename="../src/app/ProjectEditing.cpp" line="362" />
         <source>Speed</source>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="418" />
+        <location filename="../src/app/ProjectEditing.cpp" line="427" />
         <source>Transition</source>
         <translation>Переход</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="427" />
+        <location filename="../src/app/ProjectEditing.cpp" line="436" />
         <source>Add transition</source>
         <translation>Добавить переход</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="452" />
+        <location filename="../src/app/ProjectEditing.cpp" line="461" />
         <source>Add effect</source>
         <translation>Добавить эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="465" />
+        <location filename="../src/app/ProjectEditing.cpp" line="475" />
         <source>Remove effect</source>
         <translation>Удалить эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="476" />
+        <location filename="../src/app/ProjectEditing.cpp" line="486" />
         <source>Move effect</source>
         <translation>Переместить эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="488" />
+        <location filename="../src/app/ProjectEditing.cpp" line="498" />
         <source>Turn effect on</source>
         <translation>Включить эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="488" />
+        <location filename="../src/app/ProjectEditing.cpp" line="498" />
         <source>Turn effect off</source>
         <translation>Выключить эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="499" />
+        <location filename="../src/app/ProjectEditing.cpp" line="509" />
         <source>Effect</source>
         <translation>Эффект</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="515" />
+        <location filename="../src/app/ProjectEditing.cpp" line="525" />
         <source>Colour correction</source>
         <translation>Цветокоррекция</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="525" />
+        <location filename="../src/app/ProjectEditing.cpp" line="535" />
         <source>Colour wheel</source>
         <translation>Цветовой круг</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="537" />
+        <location filename="../src/app/ProjectEditing.cpp" line="547" />
         <source>Reset colour wheels</source>
         <translation>Сброс цветовых кругов</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="551" />
+        <location filename="../src/app/ProjectEditing.cpp" line="561" />
         <source>Reset colour</source>
         <translation>Сбросить цвет</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="562" />
+        <location filename="../src/app/ProjectEditing.cpp" line="572" />
         <source>Remove LUT</source>
         <translation>Убрать LUT</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="562" />
+        <location filename="../src/app/ProjectEditing.cpp" line="572" />
         <source>Apply LUT</source>
         <translation>Применить LUT</translation>
     </message>

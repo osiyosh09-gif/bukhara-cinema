@@ -22,18 +22,22 @@ struct EffectParamSpec
     int decimals = 0;
 };
 
-// One picture effect of a video clip (phase 8b). A clip has a list of them,
-// applied in order before its motion. Values are not animated.
+// One effect of a clip: picture effects on video clips (phase 8b), applied in
+// order before the motion; sound effects on audio clips (phase 10b), applied
+// in order before the clip volume. Values are not animated.
 struct ClipEffect
 {
-    enum class Kind { BrightnessContrast, Saturation, Blur, Sharpen, Crop, Mirror, ChromaKey, Mask };
+    enum class Kind { BrightnessContrast, Saturation, Blur, Sharpen, Crop, Mirror, ChromaKey, Mask,
+                      // Sound (phase 10b), on audio clips; see core/AudioFx.
+                      Equalizer, Compressor };
 
     Kind kind = Kind::BrightnessContrast;
     bool enabled = true;
     QMap<QString, double> params; // missing keys use the default
 
     static ClipEffect make(Kind kind); // with default values
-    static QList<Kind> kinds();
+    static QList<Kind> kinds(bool audio = false); // picture kinds, or sound kinds
+    static bool isAudio(Kind kind);
     static QList<EffectParamSpec> specs(Kind kind);
     static QString kindToString(Kind k);
     static bool kindFromString(const QString &s, Kind *k);
