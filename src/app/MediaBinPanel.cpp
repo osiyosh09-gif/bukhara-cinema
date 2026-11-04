@@ -287,6 +287,10 @@ void MediaBinPanel::fillItemRow(QTreeWidgetItem *row, const QUuid &id)
         status = tr("Cannot read file");
     else
         status = Fmt::kindName(i.kind);
+    if (online && m_ctl->hasProxy(id))
+        status += QStringLiteral(" · ") + tr("proxy");
+    else if (online && m_ctl->isMakingProxy(id))
+        status += QStringLiteral(" · ") + tr("making proxy...");
     row->setText(ColStatus, status);
 
     const QColor fg = !online || (!m->probed && !m_ctl->isProbing(id)) ? QColor(0xe0, 0x60, 0x60) : QColor();
@@ -510,6 +514,21 @@ void MediaBinPanel::showContextMenu(const QPoint &pos)
     find->setEnabled(m_ctl->offlineCount() > 0);
     QAction *explorer = menu.addAction(tr("Show in Explorer"), this, &MediaBinPanel::showInExplorer);
     explorer->setEnabled(items.size() == 1 && m_ctl->isOnline(items.first()));
+    menu.addSeparator();
+    bool canMake = false, canDelete = false;
+    for (const QUuid &id : items) {
+        const MediaItem *m = m_ctl->project().item(id);
+        if (!m || m->info.kind != MediaInfo::Kind::Video || !m_ctl->isOnline(id))
+            continue;
+        canMake |= !m_ctl->hasProxy(id) && !m_ctl->isMakingProxy(id);
+        canDelete |= m_ctl->hasProxy(id);
+    }
+    QAction *makeProxy = menu.addAction(tr("Create proxy"), this, [this, items] { m_ctl->createProxies(items); });
+    makeProxy->setObjectName(QStringLiteral("actCreateProxy"));
+    makeProxy->setEnabled(canMake);
+    makeProxy->setToolTip(tr("A light copy for smooth playback; export still uses the original file."));
+    QAction *dropProxy = menu.addAction(tr("Delete proxy"), this, [this, items] { m_ctl->deleteProxies(items); });
+    dropProxy->setEnabled(canDelete);
     menu.addSeparator();
     QAction *remove = menu.addAction(tr("Remove from project"), this, &MediaBinPanel::removeSelected);
     remove->setEnabled(anySelected);

@@ -3,6 +3,7 @@
 #include "app/Autosave.h"
 #include "app/Language.h"
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDialogButtonBox>
 #include <QEvent>
@@ -23,6 +24,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     , m_autosaveCombo(new QComboBox(this))
     , m_backupLabel(new QLabel(this))
     , m_backupSpin(new QSpinBox(this))
+    , m_autoProxy(new QCheckBox(this))
     , m_buttons(new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this))
 {
     setObjectName(QStringLiteral("settingsDialog"));
@@ -40,10 +42,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     m_backupSpin->setRange(0, 100);
     m_backupSpin->setValue(QSettings().value(QStringLiteral("backup/keep"), 20).toInt());
 
+    m_autoProxy->setObjectName(QStringLiteral("autoProxyCheck"));
+    m_autoProxy->setChecked(QSettings().value(QStringLiteral("proxy/auto"), true).toBool());
+
     auto *form = new QFormLayout;
     form->addRow(m_langLabel, m_langCombo);
     form->addRow(m_autosaveLabel, m_autosaveCombo);
     form->addRow(m_backupLabel, m_backupSpin);
+    form->addRow(QString(), m_autoProxy);
 
     auto *lay = new QVBoxLayout(this);
     lay->addLayout(form);
@@ -56,7 +62,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    resize(460, 180);
+    resize(520, 210);
     retranslate();
 }
 
@@ -77,6 +83,7 @@ void SettingsDialog::apply()
     QSettings s;
     s.setValue(QStringLiteral("autosave/minutes"), m_autosaveCombo->currentData().toInt());
     s.setValue(QStringLiteral("backup/keep"), m_backupSpin->value());
+    s.setValue(QStringLiteral("proxy/auto"), m_autoProxy->isChecked());
     Language::instance().setLanguage(selectedLanguage());
 }
 
@@ -98,6 +105,8 @@ void SettingsDialog::retranslate()
     }
     m_backupLabel->setText(tr("Previous versions to keep:"));
     m_backupSpin->setSpecialValueText(tr("None"));
+    m_autoProxy->setText(tr("Make proxies for videos larger than Full HD automatically"));
+    m_autoProxy->setToolTip(tr("4K and other big videos then play smoothly; export still uses the originals."));
     m_backupSpin->setToolTip(tr("Each save keeps the old project file in the \"Backups\" folder next to it."));
     m_buttons->button(QDialogButtonBox::Ok)->setText(tr("OK"));
     m_buttons->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));

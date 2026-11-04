@@ -44,6 +44,10 @@ public:
 
     // Rebuilds the graph from the project (stops playback first).
     void setProject(const Project &project);
+    // Light copies of media used for the picture (media id -> proxy file).
+    // Takes effect at the next setProject(). Sound always comes from the
+    // original. The exporter never sets any.
+    void setProxies(const QHash<QUuid, QString> &proxies);
 
     bool isPlaying() const { return m_playing; }
     // Starts playback at `frame`; frames arrive through frameShown().
@@ -87,10 +91,12 @@ private:
     struct Cached
     {
         QString path;
+        QString videoSource; // path or its proxy
         std::shared_ptr<Mlt::Producer> video;
         std::shared_ptr<Mlt::Producer> audio;
     };
     QHash<QUuid, Cached> m_producers;
+    QHash<QUuid, QString> m_proxies;
     // Rendered titles by content, so unchanged titles are not drawn again.
     QHash<QByteArray, std::shared_ptr<Mlt::Producer>> m_titles;
     QSet<QByteArray> m_usedTitles;
