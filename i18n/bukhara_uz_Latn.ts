@@ -199,11 +199,6 @@
         <translation>«Oyna &gt; Scope'lar» ochadi; Program monitoridagi kadrni ko‘rsatadi va faqat ochiq turganda ishlaydi (ijro paytida sekundiga 12 martagacha).</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="58" />
-        <source>Colour wheels</source>
-        <translation>Rang g‘ildiraklari</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sekvensiya sozlamalari: o‘lcham, kadrlar chastotasi, audio</translation>
@@ -322,6 +317,16 @@
         <location filename="../src/app/FeatureStatus.cpp" line="56" />
         <source>Colour panel &gt; Look (LUT): choose a .cube file (3D or 1D) and its strength. Applied after the basic correction. Collect project copies the LUT files too. A missing file leaves the picture unchanged and is shown in red.</source>
         <translation>«Rang» paneli &gt; «Ko‘rinish (LUT)»: .cube faylni (3D yoki 1D) va kuchini tanlang. Asosiy rang tuzatishdan keyin qo‘yiladi. «Loyihani yig‘ish» LUT fayllarini ham nusxalaydi. Fayl topilmasa, rasm o‘zgarmaydi va nomi qizil ko‘rinadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="58" />
+        <source>Colour wheels: lift, gamma, gain</source>
+        <translation>Rang g‘ildiraklari: lift, gamma, gain</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="58" />
+        <source>Colour panel &gt; Colour wheels: drag the point towards a colour to tint the dark, middle or bright tones; the slider under a wheel makes them darker or brighter. Double-click puts a wheel back.</source>
+        <translation>«Rang» paneli &gt; «Rang g‘ildiraklari»: nuqtani rangga tomon suring, qorong‘i, o‘rta yoki yorug‘ joylar shu rangga kiradi; g‘ildirak ostidagi slayder ularni qorong‘iroq yoki yorug‘roq qiladi. Ikki marta bosish g‘ildirakni qaytaradi.</translation>
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="59" />
@@ -891,148 +896,193 @@
 <context>
     <name>bc::ColorPanel</name>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="33" />
+        <location filename="../src/app/ColorPanel.cpp" line="34" />
         <source>Temperature</source>
         <translation>Harorat</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="35" />
+        <location filename="../src/app/ColorPanel.cpp" line="36" />
         <source>Tint</source>
         <translation>Tus</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="37" />
+        <location filename="../src/app/ColorPanel.cpp" line="38" />
         <source>Exposure</source>
         <translation>Ekspozitsiya</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="39" />
+        <location filename="../src/app/ColorPanel.cpp" line="40" />
         <source>Contrast</source>
         <translation>Kontrast</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="41" />
+        <location filename="../src/app/ColorPanel.cpp" line="42" />
         <source>Highlights</source>
         <translation>Yorug‘ joylar</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="43" />
+        <location filename="../src/app/ColorPanel.cpp" line="44" />
         <source>Shadows</source>
         <translation>Qorong‘i joylar</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="45" />
+        <location filename="../src/app/ColorPanel.cpp" line="46" />
         <source>Saturation, %</source>
         <translation>To‘yinganlik, %</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="47" />
+        <location filename="../src/app/ColorPanel.cpp" line="48" />
         <source>Vibrance</source>
         <translation>Vibrance (jonlilik)</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="49" />
+        <location filename="../src/app/ColorPanel.cpp" line="50" />
+        <source>Lift</source>
+        <translation>Lift</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="52" />
+        <source>Gamma</source>
+        <translation>Gamma</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="54" />
+        <source>Gain</source>
+        <translation>Gain</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="56" />
         <source>Strength, %</source>
         <translation>Kuchi, %</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="177" />
+        <location filename="../src/app/ColorPanel.cpp" line="226" />
         <source>White balance</source>
         <translation>Oq balans</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="178" />
+        <location filename="../src/app/ColorPanel.cpp" line="227" />
         <source>Light</source>
         <translation>Yorug‘lik</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="179" />
+        <location filename="../src/app/ColorPanel.cpp" line="228" />
+        <source>Colour wheels</source>
+        <translation>Rang g‘ildiraklari</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="229" />
+        <source>Reset wheels</source>
+        <translation>G‘ildiraklarni tiklash</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="231" />
+        <source>Drag the point towards the colour to add; double-click puts it back</source>
+        <translation>Nuqtani qo‘shiladigan rangga tomon suring; ikki marta bosish uni qaytaradi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="232" />
+        <source>Lift: the dark tones (black level)</source>
+        <translation>Lift: qorong‘i joylar (qora daraja)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="233" />
+        <source>Gamma: the middle tones</source>
+        <translation>Gamma: o‘rta tonlar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="234" />
+        <source>Gain: the bright tones (white level)</source>
+        <translation>Gain: yorug‘ joylar (oq daraja)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ColorPanel.cpp" line="235" />
         <source>Colour</source>
         <translation>Rang</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="180" />
+        <location filename="../src/app/ColorPanel.cpp" line="236" />
         <source>Look (LUT)</source>
         <translation>Ko‘rinish (LUT)</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="181" />
+        <location filename="../src/app/ColorPanel.cpp" line="237" />
         <source>Choose .cube file...</source>
         <translation>.cube faylni tanlash...</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="182" />
+        <location filename="../src/app/ColorPanel.cpp" line="238" />
         <source>Remove</source>
         <translation>Olib tashlash</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="185" />
+        <location filename="../src/app/ColorPanel.cpp" line="241" />
         <source>Left: cooler (blue), right: warmer (yellow)</source>
         <translation>Chapga: sovuqroq (ko‘k), o‘ngga: issiqroq (sariq)</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="186" />
+        <location filename="../src/app/ColorPanel.cpp" line="242" />
         <source>Left: greener, right: more magenta</source>
         <translation>Chapga: yashilroq, o‘ngga: pushtiroq</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="187" />
+        <location filename="../src/app/ColorPanel.cpp" line="243" />
         <source>In stops: +1 is twice as bright</source>
         <translation>Stupenlarda: +1 ikki baravar yorug‘</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="188" />
+        <location filename="../src/app/ColorPanel.cpp" line="244" />
         <source>Reset colour</source>
         <translation>Rangni asl holiga</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="189" />
+        <location filename="../src/app/ColorPanel.cpp" line="245" />
         <source>Colour correction is applied before the effects. Values do not change over time yet.</source>
         <translation>Rang tuzatish effektlardan oldin qo‘yiladi. Qiymatlar hozircha vaqt bo‘yicha o‘zgarmaydi.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="210" />
+        <location filename="../src/app/ColorPanel.cpp" line="266" />
         <source>Select a video clip on the timeline to correct its colour.</source>
         <translation>Rangini tuzatish uchun timeline'da video klipni tanlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="211" />
+        <location filename="../src/app/ColorPanel.cpp" line="267" />
         <source>Several clips are selected. Select one clip.</source>
         <translation>Bir nechta klip tanlangan. Bitta klipni tanlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="212" />
+        <location filename="../src/app/ColorPanel.cpp" line="268" />
         <source>Colour correction works on pictures. Select a video clip.</source>
         <translation>Rang tuzatish rasmga qo‘yiladi. Video klipni tanlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="216" />
+        <location filename="../src/app/ColorPanel.cpp" line="272" />
         <source>Title</source>
         <translation>Titr</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="236" />
+        <location filename="../src/app/ColorPanel.cpp" line="300" />
         <source>No LUT</source>
         <translation>LUT yo‘q</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="239" />
+        <location filename="../src/app/ColorPanel.cpp" line="303" />
         <source>%1 (not found or not a valid .cube file: the picture is left as it is)</source>
         <translation>%1 (topilmadi yoki to‘g‘ri .cube fayl emas: rasm o‘zgarmaydi)</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="261" />
-        <location filename="../src/app/ColorPanel.cpp" line="269" />
+        <location filename="../src/app/ColorPanel.cpp" line="325" />
+        <location filename="../src/app/ColorPanel.cpp" line="333" />
         <source>Choose a LUT</source>
         <translation>LUT tanlash</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="263" />
+        <location filename="../src/app/ColorPanel.cpp" line="327" />
         <source>LUT files (*.cube)</source>
         <translation>LUT fayllari (*.cube)</translation>
     </message>
     <message>
-        <location filename="../src/app/ColorPanel.cpp" line="270" />
+        <location filename="../src/app/ColorPanel.cpp" line="334" />
         <source>This file could not be read as a .cube LUT:
 %1</source>
         <translation>Bu faylni .cube LUT sifatida o‘qib bo‘lmadi:
@@ -1865,6 +1915,11 @@
         <translation>Klip</translation>
     </message>
     <message>
+        <location filename="../src/app/MainWindow.cpp" line="566" />
+        <source>Phase 9 is done: colour correction, colour wheels, LUTs and scopes work (Colour panel, Window &gt; Scopes).</source>
+        <translation>9-bosqich tugadi: rang tuzatish, rang g‘ildiraklari, LUT va scope'lar ishlaydi («Rang» paneli, «Oyna &gt; Scope'lar»).</translation>
+    </message>
+    <message>
         <location filename="../src/app/MainWindow.cpp" line="602" />
         <source>Insert</source>
         <translation>Qo‘yish</translation>
@@ -1910,11 +1965,6 @@
         <location filename="../src/app/MainWindow.cpp" line="762" />
         <source>Unsaved changes</source>
         <translation>Saqlanmagan o‘zgarishlar</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="566" />
-        <source>Phase 9, part 3: colour correction, LUTs and scopes work (Colour panel, Window &gt; Scopes).</source>
-        <translation>9-bosqich, 3-qism: rang tuzatish, LUT va scope'lar ishlaydi («Rang» paneli, «Oyna &gt; Scope'lar»).</translation>
     </message>
     <message>
         <location filename="../src/app/MainWindow.cpp" line="686" />
@@ -2537,17 +2587,27 @@
         <translation>Rang tuzatish</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="523" />
+        <location filename="../src/app/ProjectEditing.cpp" line="525" />
+        <source>Colour wheel</source>
+        <translation>Rang g‘ildiragi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="537" />
+        <source>Reset colour wheels</source>
+        <translation>Rang g‘ildiraklarini tiklash</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="551" />
         <source>Reset colour</source>
         <translation>Rangni asl holiga</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="534" />
+        <location filename="../src/app/ProjectEditing.cpp" line="562" />
         <source>Remove LUT</source>
         <translation>LUT'ni olib tashlash</translation>
     </message>
     <message>
-        <location filename="../src/app/ProjectEditing.cpp" line="534" />
+        <location filename="../src/app/ProjectEditing.cpp" line="562" />
         <source>Apply LUT</source>
         <translation>LUT qo‘yish</translation>
     </message>
