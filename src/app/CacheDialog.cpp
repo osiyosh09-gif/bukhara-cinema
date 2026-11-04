@@ -17,8 +17,9 @@
 namespace bc {
 
 namespace {
-constexpr MediaCache::Kind kKinds[3] = {MediaCache::Kind::Thumbnail, MediaCache::Kind::Waveform,
-                                        MediaCache::Kind::Proxy};
+constexpr int kRows = 4;
+constexpr MediaCache::Kind kKinds[kRows] = {MediaCache::Kind::Thumbnail, MediaCache::Kind::Waveform,
+                                            MediaCache::Kind::Proxy, MediaCache::Kind::Preview};
 }
 
 CacheDialog::CacheDialog(ProjectController *ctl, QWidget *parent)
@@ -28,16 +29,16 @@ CacheDialog::CacheDialog(ProjectController *ctl, QWidget *parent)
 {
     setObjectName(QStringLiteral("cacheDialog"));
     setWindowTitle(tr("Media cache"));
-    auto *intro = new QLabel(tr("The program keeps thumbnails, audio waveforms and proxy videos made from your media "
-                                "in a cache folder. Deleting them is safe: they are made again when needed. Your "
-                                "media files and projects are not touched."),
+    auto *intro = new QLabel(tr("The program keeps thumbnails, audio waveforms, proxy videos and rendered previews made "
+                                "from your media in a cache folder. Deleting them is safe: they are made again when "
+                                "needed. Your media files and projects are not touched."),
                              this);
     intro->setWordWrap(true);
 
-    const QString names[3] = {tr("Thumbnails"), tr("Audio waveforms"), tr("Proxy videos")};
-    const char *objectNames[3] = {"clearThumbs", "clearWaves", "clearProxies"};
+    const QString names[kRows] = {tr("Thumbnails"), tr("Audio waveforms"), tr("Proxy videos"), tr("Rendered previews")};
+    const char *objectNames[kRows] = {"clearThumbs", "clearWaves", "clearProxies", "clearPreviews"};
     auto *grid = new QGridLayout;
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < kRows; ++i) {
         m_sizes[i] = new QLabel(this);
         m_clear[i] = new QPushButton(tr("Delete"), this);
         m_clear[i]->setObjectName(QString::fromLatin1(objectNames[i]));
@@ -45,7 +46,8 @@ CacheDialog::CacheDialog(ProjectController *ctl, QWidget *parent)
         grid->addWidget(m_sizes[i], i, 1, Qt::AlignRight);
         grid->addWidget(m_clear[i], i, 2);
     }
-    grid->addWidget(m_total, 3, 0, 1, 2);
+    grid->addWidget(m_total, kRows, 0, 1, 2);
+    connect(m_clear[3], &QPushButton::clicked, this, &CacheDialog::clearPreviews);
     connect(m_clear[0], &QPushButton::clicked, this, &CacheDialog::clearThumbnails);
     connect(m_clear[1], &QPushButton::clicked, this, &CacheDialog::clearWaveforms);
     connect(m_clear[2], &QPushButton::clicked, this, [this] {
@@ -77,7 +79,7 @@ CacheDialog::CacheDialog(ProjectController *ctl, QWidget *parent)
 void CacheDialog::refresh()
 {
     qint64 total = 0;
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < kRows; ++i) {
         const qint64 n = MediaCache::size(kKinds[i]);
         total += n;
         m_sizes[i]->setText(Fmt::fileSize(n));
@@ -109,6 +111,12 @@ void CacheDialog::clearProxies()
     m_ctl->deleteProxies(ids);
     MediaCache::clear(MediaCache::Kind::Proxy);
     m_ctl->refreshProxies();
+    refresh();
+}
+
+void CacheDialog::clearPreviews()
+{
+    m_ctl->deletePreviews(); // closes the files the Program monitor plays first
     refresh();
 }
 

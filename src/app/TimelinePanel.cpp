@@ -87,6 +87,7 @@ TimelineView::TimelineView(ProjectController *controller, QWidget *parent)
         updateScrollBars();
         viewport()->update();
     });
+    connect(m_ctl, &ProjectController::previewsChanged, viewport(), qOverload<>(&QWidget::update));
     connect(m_ctl, &ProjectController::projectReset, this, [this] {
         m_selection.clear();
         horizontalScrollBar()->setValue(0);
@@ -535,6 +536,18 @@ void TimelineView::drawRuler(QPainter &p)
             p.setPen(kDim);
             p.drawText(x + 3, 12, Fmt::frameTimecode(fr, fps));
         }
+    }
+    // Render bar (phase 13b): red = heavy, may not play smoothly, worth
+    // rendering; green = a rendered preview plays there.
+    for (const ProjectController::PreviewPart &part : m_ctl->previewParts()) {
+        if (!part.heavy && !part.rendered)
+            continue;
+        const int x1 = std::max(kHeaderW, xForFrame(part.start));
+        const int x2 = std::min(viewport()->width(), xForFrame(part.end()));
+        if (x2 <= x1)
+            continue;
+        p.fillRect(QRect(x1, kRulerH - 4, x2 - x1, 3),
+                   part.rendered ? QColor(0x4f, 0xb8, 0x5c) : QColor(0xc8, 0x3c, 0x3c));
     }
     // Markers: a small green flag with the name (M adds one at the playhead).
     for (const TimelineMarker &m : m_ctl->timeline().markers) {

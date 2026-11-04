@@ -86,6 +86,7 @@ private:
     void updateUndoActions();
     void addTitle(); // Graphics > New text: title at the playhead, ready to type
     void openExport(); // File > Export
+    void renderPreview();
     void openExportQueue(); // File > Export queue (phase 13a)
     void openVersions(); // File > Previous versions
     void openCollect();  // File > Collect project
@@ -125,6 +126,8 @@ private:
     QAction *m_collectAct = nullptr;
     QAction *m_cacheAct = nullptr;
     QAction *m_useProxiesAct = nullptr;
+    QAction *m_renderPreviewAct = nullptr;
+    QAction *m_deletePreviewsAct = nullptr;
     QAction *m_importAct = nullptr;
     QAction *m_sequenceAct = nullptr;
     QAction *m_undoAct = nullptr;
@@ -189,6 +192,8 @@ private:
     QLabel *m_statusLabel = nullptr;
     QLabel *m_proxyLabel = nullptr;
     QToolButton *m_proxyCancel = nullptr;
+    QLabel *m_previewLabel = nullptr;
+    QToolButton *m_previewCancel = nullptr;
 
     ProjectController *m_ctl = nullptr;
     Autosave *m_autosave = nullptr;

@@ -125,6 +125,9 @@ ProjectController::~ProjectController()
     m_pool.clear();
     m_pool.waitForDone();
     m_proxyPool.waitForDone();
+    if (m_previewCancel)
+        m_previewCancel->store(true);
+    m_previewPool.waitForDone();
     m_gridPool.waitForDone();
 }
 
@@ -593,6 +596,7 @@ void ProjectController::syncPlayer()
     ++m_graphRev;
     if (m_player) {
         m_player->setProxies(m_useProxies ? m_proxies : QHash<QUuid, QString>());
+        applyPreviews();
         if (m_openNest.isNull()) {
             m_player->setProject(m_project);
         } else {

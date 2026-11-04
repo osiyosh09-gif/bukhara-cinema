@@ -113,7 +113,7 @@ T = {
     "Sequence settings...": ("Секвенция созламалари...", "Настройки эпизода..."),
     "Add track": ("Йўлак қўшиш", "Добавить дорожку"),
     "Snapping": ("Ёпишиш (snapping)", "Привязка"),
-    "Render preview": ("Preview рендери", "Рендер предпросмотра"),
+    "Render preview": ("Превью рендер", "Просчитать превью"),
     "Add marker": ("Маркер қўшиш", "Добавить маркер"),
     "Go to next marker": ("Кейинги маркерга ўтиш", "К следующему маркеру"),
     "New text": ("Янги матн", "Новый текст"),
@@ -1296,6 +1296,34 @@ T.update({
     "Another export is running. Wait for it to finish or cancel it.":
         ("Бошқа экспорт кетмоқда. Тугашини кутинг ёки уни бекор қилинг.",
          "Идёт другой экспорт. Дождитесь его завершения или отмените его."),
+})
+
+# Phase 13b: render preview
+T.update({
+    "A line on the time ruler shows red where the picture is heavy (effects, colour, motion, speed, transitions, nested sequences, several layers). Sequence > Render preview (Enter on the timeline) renders those parts of the selected clips, or of the whole sequence, once in the background; they turn green and play from the file. An edit makes a part red again; undo brings its file back. Sound is not rendered. Export always uses the full quality.":
+        ("Вақт чизғичидаги чизиқ тасвир оғир жойларни (эффект, ранг, ҳаракат, тезлик, ўтишлар, ички секвенция, бир неча қатлам) қизил қилиб кўрсатади. «Секвенция > Превью рендер» (timeline'да Enter) танланган клипларнинг (ёки бутун секвенциянинг) шу жойларини фонда бир марта рендер қилади: улар яшил бўлади ва файлдан ўйнатилади. Таҳрирдан кейин жой яна қизил бўлади, бекор қилсангиз файл яна ишлатилади. Овоз рендер қилинмайди. Экспорт доим тўлиқ сифатда.",
+         "Полоса на линейке времени показывает красным тяжёлые места (эффекты, цвет, движение, скорость, переходы, вложенные секвенции, несколько слоёв). «Секвенция > Просчитать превью» (Enter на таймлайне) один раз просчитывает в фоне эти места выбранных клипов (или всей секвенции): они становятся зелёными и играют из файла. Правка снова делает место красным, отмена возвращает его файл. Звук не просчитывается. Экспорт всегда в полном качестве."),
+    "GPU acceleration, loudness of the whole mix": ("GPU тезлатиш, бутун аралашманинг овоз баландлиги", "Ускорение GPU, громкость всего микса"),
+    "The program keeps thumbnails, audio waveforms, proxy videos and rendered previews made from your media in a cache folder. Deleting them is safe: they are made again when needed. Your media files and projects are not touched.":
+        ("Дастур медиангиздан ясалган кичик расмлар, овоз тўлқинлари, прокси видеолар ва рендер қилинган превьюларни кеш папкасида сақлайди. Уларни ўчириш хавфсиз: керак бўлганда қайта ясалади. Медиа файлларингиз ва лойиҳаларингизга тегилмайди.",
+         "Программа хранит миниатюры, волны звука, прокси-видео и просчитанные превью из ваших медиа в папке кеша. Удалять их безопасно: при необходимости они создаются заново. Ваши медиафайлы и проекты не затрагиваются."),
+    "Rendered previews": ("Рендер қилинган превьюлар", "Просчитанные превью"),
+    "Rendering preview: %1%": ("Превью рендер: %1%", "Просчёт превью: %1%"),
+    "Preview rendered: the green parts play from the rendered files.":
+        ("Превью тайёр: яшил жойлар рендер қилинган файлдан ўйнайди.", "Превью готово: зелёные места играют из просчитанных файлов."),
+    "Could not render the preview: %1": ("Превьюни рендер қилиб бўлмади: %1", "Не удалось просчитать превью: %1"),
+    "Preview files deleted: %1.": ("Превью файллари ўчирилди: %1.", "Файлы превью удалены: %1."),
+    "Render the red parts of the selected clips (or of the whole sequence) once, so they play smoothly (Enter on the timeline)":
+        ("Танланган клипларнинг (ёки бутун секвенциянинг) қизил жойларини бир марта рендер қилиш, улар текис ўйнаши учун (timeline'да Enter)",
+         "Один раз просчитать красные места выбранных клипов (или всей секвенции), чтобы они играли плавно (Enter на таймлайне)"),
+    "Delete preview files": ("Превью файлларини ўчириш", "Удалить файлы превью"),
+    "Phase 13, part 2: render preview (Sequence menu, Enter): red parts on the ruler play smoothly once rendered.":
+        ("13-босқич, 2-қисм: превью рендер (Секвенция менюси, Enter): чизғичдаги қизил жойлар рендердан кейин текис ўйнайди.",
+         "Этап 13, часть 2: просчёт превью (меню «Секвенция», Enter): красные места на линейке после просчёта играют плавно."),
+    "A preview is being rendered already.": ("Превью аллақачон рендер қилинмоқда.", "Превью уже просчитывается."),
+    "Nothing to render here: these parts are rendered already or play without it.":
+        ("Бу ерда рендер қиладиган нарса йўқ: бу жойлар аллақачон рендер қилинган ёки усиз ҳам текис ўйнайди.",
+         "Здесь нечего просчитывать: эти места уже просчитаны или играют и так."),
 })
 
 LATIN_OVERRIDES = {

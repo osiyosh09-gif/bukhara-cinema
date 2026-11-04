@@ -11,6 +11,7 @@ namespace bc::EngineServices {
 // so no GPL MLT module is needed):
 //  - producer "bc_still": a still picture with transparency (photos, titles),
 //    shown for the whole clip and fitted into the frame;
+//  - producer "bc_preview": a rendered preview file (phase 13b) as RGBA;
 //  - filter "bc_gain": clip volume in dB with linear fade in / fade out and
 //    balance ("pan", -1 .. 1; also used for the mixer's track and master faders);
 //  - filter "bc_meter": stores the peak of each channel under its "meter" key.

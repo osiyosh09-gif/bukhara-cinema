@@ -177,3 +177,8 @@ add_executable(tst_phase13a tst_phase13a.cpp)
 target_link_libraries(tst_phase13a PRIVATE bc_ui Qt6::Test)
 add_test(NAME phase13a_export_queue COMMAND tst_phase13a)
 set_tests_properties(phase13a_export_queue PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 600)
+
+add_executable(tst_phase13b tst_phase13b.cpp)
+target_link_libraries(tst_phase13b PRIVATE bc_ui Qt6::Test)
+add_test(NAME phase13b_render_preview COMMAND tst_phase13b)
+set_tests_properties(phase13b_render_preview PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 600)

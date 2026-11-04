@@ -187,6 +187,20 @@ void TimelinePlayer::setProxies(const QHash<QUuid, QString> &proxies)
             it->video.reset();
 }
 
+void TimelinePlayer::setPreviews(const QList<PreviewSegment> &previews)
+{
+    pause();
+    QMutexLocker lock(&m_mutex);
+    m_previews = previews;
+    std::sort(m_previews.begin(), m_previews.end(),
+              [](const PreviewSegment &a, const PreviewSegment &b) { return a.start < b.start; });
+    QSet<QString> wanted;
+    for (const PreviewSegment &p : m_previews)
+        wanted.insert(p.path);
+    for (auto it = m_previewProducers.begin(); it != m_previewProducers.end();)
+        it = wanted.contains(it.key()) ? std::next(it) : m_previewProducers.erase(it);
+}
+
 Mlt::Producer *TimelinePlayer::producerFor(const MediaItem &item, bool audio, double speed)
 {
     Cached &c = m_producers[item.id];
@@ -278,6 +292,17 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
 {
     const int bgLength = int(std::max<qint64>(1, length));
     auto tractor = std::make_unique<Mlt::Tractor>(*m_profile);
+    // Rendered previews (main graph only, phase 13b): the video tracks are
+    // blank there and track 0 plays the preview file instead of black. On
+    // track 0 the picture is not composited again, so it looks exactly like
+    // the computed one (each composite converts the colours once).
+    QList<PreviewSegment> previews;
+    if (depth == 0)
+        for (const PreviewSegment &p : m_previews)
+            if (p.length > 0 && p.start >= 0 && p.start + p.length <= bgLength
+                && (previews.isEmpty() || p.start >= previews.last().start + previews.last().length))
+                previews << p;
+    auto lay = [](qint64 count) { return int(std::max<qint64>(0, count) - 1); };
     // Track 0: black picture and silence under everything. Inside a nested
     // sequence it is transparent, so tracks below the nested clip show.
     Mlt::Playlist bgList(*m_profile);
@@ -286,7 +311,30 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
         return nullptr;
     bg.set("length", bgLength);
     bg.set("out", bgLength - 1);
-    bgList.append(bg, 0, bgLength - 1);
+    {
+        qint64 pos = 0;
+        for (const PreviewSegment &p : previews) {
+            std::shared_ptr<Mlt::Producer> &prod = m_previewProducers[p.path];
+            if (!prod) {
+                // Through MLT's loader, which adds the format converters.
+                prod = std::make_shared<Mlt::Producer>(*m_profile, nullptr,
+                                                       ("bc_preview:" + p.path.toUtf8()).constData());
+                if (!prod->is_valid()) {
+                    prod.reset();
+                    continue;
+                }
+            }
+            if (p.start > pos)
+                bgList.append(bg, 0, lay(p.start - pos));
+            const qint64 len = std::min<qint64>(p.length, prod->get_length());
+            bgList.append(*prod, 0, lay(len));
+            if (p.length > len)
+                bgList.append(bg, 0, lay(p.length - len));
+            pos = p.start + p.length;
+        }
+        if (bgLength > pos)
+            bgList.append(bg, 0, lay(bgLength - pos));
+    }
     tractor->set_track(bgList, 0);
 
     auto fill = [&](Mlt::Playlist &pl, const TimelineTrack &track, bool audio) {
@@ -487,10 +535,40 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
     for (const TimelineTrack &t : tl.tracks) {
         if (t.kind != Timeline::Kind::Video)
             continue;
-        Mlt::Playlist pl(*m_profile);
-        fill(pl, t, false);
-        pl.set("hide", t.hidden ? 3 : 2); // 2 = no sound (it lives on the A tracks)
-        tractor->set_track(pl, index);
+        Mlt::Playlist inner(*m_profile);
+        fill(inner, t, false);
+        Mlt::Playlist outer(*m_profile);
+        Mlt::Playlist *pl = &inner;
+        if (!previews.isEmpty() && !t.hidden) {
+            // The track as one producer, cut around the previews (keeps its
+            // filters and transitions intact).
+            const qint64 have = inner.get_playtime();
+            qint64 pos = 0;
+            auto take = [&](qint64 to) {
+                const qint64 upTo = std::min(to, have);
+                if (upTo > pos) {
+                    std::unique_ptr<Mlt::Producer> cut(inner.cut(int(pos), int(upTo - 1)));
+                    outer.append(*cut);
+                    pos = upTo;
+                }
+                if (to > pos) {
+                    outer.blank(lay(to - pos));
+                    pos = to;
+                }
+            };
+            for (const PreviewSegment &p : previews) {
+                take(p.start);
+                if (p.start + p.length > pos) {
+                    outer.blank(lay(p.start + p.length - pos));
+                    pos = p.start + p.length;
+                }
+            }
+            if (have > pos)
+                take(have);
+            pl = &outer;
+        }
+        pl->set("hide", t.hidden ? 3 : 2); // 2 = no sound (it lives on the A tracks)
+        tractor->set_track(*pl, index);
         if (!t.hidden) {
             Mlt::Transition over(*m_profile, "composite");
             over.set("always_active", 1);
