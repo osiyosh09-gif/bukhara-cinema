@@ -1,0 +1,137 @@
+name: build
+
+on:
+  # Branch pushes are covered by their pull request; build main directly.
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-tests:
+    name: Linux build and tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt 6
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools libgl-dev ninja-build
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  windows:
+    name: Windows build, tests and installer
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-qt6-tools
+
+      - name: Read version
+        id: ver
+        run: |
+          v=$(sed -n 's/^ *VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt | head -1)
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Version: $v"
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Deploy (exe + Qt DLLs + runtime DLLs + licenses)
+        run: |
+          set -e
+          cmake --install build --prefix dist
+          WDQ=$(command -v windeployqt6 || command -v windeployqt-qt6 || command -v windeployqt || true)
+          if [ -z "$WDQ" ]; then WDQ=$(find /ucrt64 -iname 'windeployqt*.exe' | head -1); fi
+          echo "windeployqt: $WDQ"
+          "$WDQ" --release --no-translations --no-system-d3d-compiler --no-opengl-sw --compiler-runtime dist/BukharaCinema.exe
+          # Copy every remaining MSYS2 DLL the exe and the Qt plugins need.
+          for pass in 1 2 3; do
+            find dist -iname '*.exe' -o -iname '*.dll' | while read -r f; do
+              ldd "$f" | awk '{print $3}' | grep -i '^/ucrt64/' || true
+            done | sort -u | while read -r dll; do
+              [ -f "dist/$(basename "$dll")" ] || cp -v "$dll" dist/
+            done
+          done
+          # License list for every packaged DLL that comes from MSYS2.
+          mkdir -p dist/licenses
+          : > dist/licenses/components.txt
+          for f in dist/*.dll; do
+            b=$(basename "$f")
+            pkg=$(pacman -Qqo "/ucrt64/bin/$b" 2>/dev/null || echo "?")
+            if [ "$pkg" != "?" ]; then
+              ver=$(pacman -Q "$pkg" | awk '{print $2}')
+              lic=$(pacman -Qi "$pkg" | sed -n 's/^Licenses *: //p')
+              short=${pkg#mingw-w64-ucrt-x86_64-}
+              if [ -d "/ucrt64/share/licenses/$short" ]; then
+                mkdir -p "dist/licenses/$short"
+                cp -r "/ucrt64/share/licenses/$short/." "dist/licenses/$short/"
+              fi
+            else
+              ver="-"; lic="see THIRD_PARTY.md"
+            fi
+            printf '%-40s %-45s %-20s %s\n' "$b" "$pkg" "$ver" "$lic" >> dist/licenses/components.txt
+          done
+          cat dist/licenses/components.txt
+          ls -R dist | head -80
+
+      - name: Smoke test (start packaged app with a clean PATH)
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\Windows\System32;C:\Windows"
+          $p = Start-Process -FilePath "dist\BukharaCinema.exe" -ArgumentList "--smoke-test" -PassThru
+          if (-not $p.WaitForExit(60000)) { $p.Kill(); throw "App did not exit within 60 s" }
+          if ($p.ExitCode -ne 0) { throw "App exited with code $($p.ExitCode) (missing DLL?)" }
+          Write-Host "Smoke test passed"
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup -y --no-progress
+          }
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" `
+            "/DAppVersion=${{ steps.ver.outputs.version }}" `
+            "/DSourceDir=${{ github.workspace }}\dist" `
+            "/DOutDir=${{ github.workspace }}\out" `
+            installer\bukhara-cinema.iss
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed" }
+          Compress-Archive -Path dist\* -DestinationPath "out\BukharaCinema-portable-${{ steps.ver.outputs.version }}.zip"
+          Get-ChildItem out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BukharaCinema-${{ steps.ver.outputs.version }}-windows
+          path: out/*
+          if-no-files-found: error
