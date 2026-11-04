@@ -345,15 +345,28 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             const bool nextTouches = i + 1 < n && clips[i + 1].start == c.end();
             const ClipTransition headFade = mixLen[i] == 0 && !c.head.isNone() ? c.head : ClipTransition();
             const ClipTransition tailFade = !nextTouches && !c.tail.isNone() ? c.tail : ClipTransition();
+            const MediaItem *media = c.mediaId.isNull() ? nullptr : project.item(c.mediaId);
+            const double sourceAspect = media && media->info.kind == MediaInfo::Kind::Video && media->info.hasVideo()
+                                            ? double(media->info.width) / media->info.height
+                                            : 0.0;
+            if (!audio && effectsActive(c.effects)) {
+                Mlt::Filter effects(*m_profile, "bc_effects");
+                if (effects.is_valid()) {
+                    effects.set("effects", effectsToEngineString(c.effects).constData());
+                    if (sourceAspect > 0)
+                        effects.set("source_aspect", sourceAspect);
+                    effects.set_in_and_out(in, int(in + total - 1));
+                    cut->attach(effects);
+                }
+            }
             if (!audio && (c.motion.animated() || !c.motion.isIdentity())) {
                 Mlt::Filter motion(*m_profile, "bc_transform");
                 if (motion.is_valid()) {
                     // Keys are in source frames; the filter counts from the cut's first frame.
                     motion.set("motion", c.motion.toEngineString(c.in - c.src(a)).constData());
                     motion.set("speed", c.speed);
-                    const MediaItem *m = c.mediaId.isNull() ? nullptr : project.item(c.mediaId);
-                    if (m && m->info.kind == MediaInfo::Kind::Video && m->info.hasVideo())
-                        motion.set("source_aspect", double(m->info.width) / m->info.height);
+                    if (sourceAspect > 0)
+                        motion.set("source_aspect", sourceAspect);
                     motion.set_in_and_out(in, int(in + total - 1));
                     cut->attach(motion);
                 }

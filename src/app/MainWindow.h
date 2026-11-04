@@ -20,6 +20,7 @@ class MediaBinPanel;
 class ProjectInfoPanel;
 class TimelinePanel;
 class ClipInspector;
+class EffectsPanel;
 class Autosave;
 
 // Main window layout:
@@ -158,6 +159,7 @@ private:
     QDockWidget *m_timelineDock = nullptr;
     QTabWidget *m_leftTabs = nullptr;
     QTabWidget *m_rightTabs = nullptr;
+    EffectsPanel *m_effectsPanel = nullptr;
     ClipInspector *m_clipInspector = nullptr;
     QSplitter *m_monitorSplit = nullptr;
     QLabel *m_statusLabel = nullptr;

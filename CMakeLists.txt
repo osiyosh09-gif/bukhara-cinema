@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.14.0
+    VERSION 0.15.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -30,6 +30,7 @@ add_library(bc_core STATIC
     src/core/Proxy.h            src/core/Proxy.cpp
     src/core/Collector.h        src/core/Collector.cpp
     src/core/Motion.h           src/core/Motion.cpp
+    src/core/Effects.h          src/core/Effects.cpp
 )
 target_include_directories(bc_core PUBLIC src)
 target_link_libraries(bc_core PUBLIC Qt6::Core Qt6::Gui FFmpeg::FFmpeg)
@@ -58,6 +59,7 @@ add_library(bc_ui STATIC
     src/app/PlaceholderPanel.h  src/app/PlaceholderPanel.cpp
     src/app/MonitorView.h       src/app/MonitorView.cpp
     src/app/ClipInspector.h     src/app/ClipInspector.cpp
+    src/app/EffectsPanel.h      src/app/EffectsPanel.cpp
     src/app/ExportDialog.h      src/app/ExportDialog.cpp
     src/app/Autosave.h          src/app/Autosave.cpp
     src/app/RecoveryDialog.h    src/app/RecoveryDialog.cpp
