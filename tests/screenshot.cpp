@@ -53,6 +53,16 @@ int main(int argc, char *argv[])
             // A title over the picture, selected so the Clip panel shows it.
             if (auto *newText = w.findChild<QAction *>(QStringLiteral("actNewText")))
                 newText->trigger();
+            // BC_SHOT_SUBTITLES=1: a subtitle under the playhead, Subtitles tab open.
+            if (qEnvironmentVariableIsSet("BC_SHOT_SUBTITLES"))
+                if (auto *add = w.findChild<QAction *>(QStringLiteral("actAddSubtitle"))) {
+                    ctl->setPlayhead(30);
+                    add->trigger();
+                    const auto &subs = ctl->timeline().subtitles;
+                    if (!subs.isEmpty())
+                        ctl->setSubtitleText(subs.first().id, QStringLiteral("Бухоро — қадимий шаҳар\nBuxoro — qadimiy shahar"));
+                    ctl->setPlayhead(40);
+                }
             ctl->waitForBackgroundWork();
             for (int i = 0; i < 40; ++i) {
                 app.processEvents();

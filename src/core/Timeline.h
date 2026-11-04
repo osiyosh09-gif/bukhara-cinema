@@ -10,6 +10,7 @@
 #include "core/Color.h"
 #include "core/Effects.h"
 #include "core/Motion.h"
+#include "core/Subtitles.h"
 
 #include <cmath>
 #include <functional>
@@ -157,12 +158,15 @@ public:
     QList<TimelineTrack> tracks;
     QList<TimelineMarker> markers; // sorted by frame
     double masterGainDb = 0;       // mixer master fader (phase 10a)
+    QList<Subtitle> subtitles;     // sorted by start (phase 11)
+    SubtitleStyle subtitleStyle;
 
     static Timeline makeDefault(); // V1-V3, A1-A3
 
     bool operator==(const Timeline &o) const
     {
-        return tracks == o.tracks && markers == o.markers && masterGainDb == o.masterGainDb;
+        return tracks == o.tracks && markers == o.markers && masterGainDb == o.masterGainDb
+               && subtitles == o.subtitles && subtitleStyle == o.subtitleStyle;
     }
     bool operator!=(const Timeline &o) const { return !(*this == o); }
 
@@ -231,6 +235,12 @@ public:
     // Sets it (None removes it). The length is limited to the clip (and to
     // the touching clip). Locked tracks do not change.
     bool setTransition(const QUuid &id, bool head, const ClipTransition &t);
+
+    // --- subtitles (phase 11)
+    // The subtitle shown at `frame` (the latest starting one), or null.
+    const Subtitle *subtitleAt(qint64 frame) const;
+    const Subtitle *subtitle(const QUuid &id) const;
+    void sortSubtitles();
 
     // --- markers
     QUuid addMarker(qint64 frame, const QString &name = {}); // one marker per frame: returns the existing one

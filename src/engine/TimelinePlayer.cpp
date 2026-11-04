@@ -7,6 +7,9 @@
 #include <QCryptographicHash>
 #include <QDir>
 #include <QImageReader>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMetaObject>
 #include <QMutexLocker>
 #include <QStringList>
@@ -499,6 +502,20 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             tractor->plant_transition(over, 0, index);
         }
         ++index;
+    }
+    // Subtitles drawn into the picture (phase 11).
+    if (tl.subtitleStyle.show && !tl.subtitles.isEmpty()) {
+        QJsonArray cues;
+        for (const Subtitle &st : tl.subtitles)
+            if (!st.text.trimmed().isEmpty() && st.length > 0)
+                cues.append(QJsonArray{double(st.start), double(st.end()), st.text});
+        Mlt::Filter subs(*m_profile, "bc_subtitles");
+        if (subs.is_valid() && !cues.isEmpty()) {
+            const QJsonObject root{{QStringLiteral("style"), tl.subtitleStyle.toJson()},
+                                   {QStringLiteral("cues"), cues}};
+            subs.set("subtitles", QJsonDocument(root).toJson(QJsonDocument::Compact).constData());
+            tractor->attach(subs);
+        }
     }
     // Master fader and meter on the mixed result.
     if (tl.masterGainDb != 0) {

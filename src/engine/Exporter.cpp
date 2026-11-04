@@ -2,6 +2,8 @@
 
 #include "engine/TimelinePlayer.h"
 
+#include "core/Subtitles.h"
+
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -54,8 +56,22 @@ bool Exporter::start(const Project &project, const ExportSettings &settings, QSt
     if (settings.path.isEmpty())
         return fail(tr("Choose a file name."));
 
+    if (settings.writeSrt && !project.timeline.subtitles.isEmpty()) {
+        const QFileInfo fi(settings.path);
+        QFile srt(fi.absolutePath() + QLatin1Char('/') + fi.completeBaseName() + QStringLiteral(".srt"));
+        if (!srt.open(QIODevice::WriteOnly | QIODevice::Truncate)
+            || srt.write(Srt::write(Srt::fromSubtitles(project.timeline.subtitles, project.sequence.fps()))) < 0)
+            return fail(tr("Could not write the subtitle file %1.").arg(QDir::toNativeSeparators(srt.fileName())));
+    }
+
     m_graph = std::make_unique<TimelinePlayer>();
-    m_graph->setProject(project);
+    if (settings.burnSubtitles) {
+        m_graph->setProject(project);
+    } else {
+        Project copy = project;
+        copy.timeline.subtitleStyle.show = false;
+        m_graph->setProject(copy);
+    }
     if (!m_graph->m_tractor || !m_graph->m_profile)
         return fail(tr("The sequence could not be prepared for export."));
 

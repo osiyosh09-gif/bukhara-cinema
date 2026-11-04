@@ -224,7 +224,22 @@
         <translation>Овоз баландлигини (LUFS) текислаш</translation>
     </message>
     <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="63" />
+        <source>Subtitles tab on the right: add at the playhead, edit time and text, size, colour, box and height for all; drawn in the Program monitor and burned in on export (optional). Graphics menu: import and export .srt (UTF-8 or Windows-1251); export can also write an .srt next to the video.</source>
+        <translation>Ўнгдаги «Субтитрлар» панели: курсор жойига қўшиш, вақти ва матнини таҳрирлаш; ҳаммаси учун ўлчам, ранг, фон ва баландлик. Program мониторида кўринади ва экспортда видеога ёзилади (хоҳишга кўра). Графика менюси: .srt очиш ва сақлаш (UTF-8 ёки Windows-1251); экспорт видео ёнига .srt ҳам ёзиши мумкин.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="64" />
+        <source>Subtitle track on the timeline (drag and trim)</source>
+        <translation>Timeline'да субтитр йўлаги (суриш ва қисқартириш)</translation>
+    </message>
+    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="65" />
+        <source>Subtitles from speech (automatic)</source>
+        <translation>Нутқдан автоматик субтитр</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="67" />
         <source>Export queue, render preview, GPU acceleration, loudness of the whole mix</source>
         <translation>Экспорт навбати, render preview, GPU тезлаштириш, бутун аралашма баландлиги</translation>
     </message>
@@ -379,17 +394,17 @@
         <translation>Субтитрлар ва SRT импорт/экспорт</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="64" />
+        <location filename="../src/app/FeatureStatus.cpp" line="66" />
         <source>Multicamera editing</source>
         <translation>Кўп камерали монтаж</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="66" />
+        <location filename="../src/app/FeatureStatus.cpp" line="68" />
         <source>AI assistants: transcription, text-based editing, scene detection</source>
         <translation>AI ёрдамчилар: транскрипция, матн асосида монтаж, саҳналарни аниқлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="67" />
+        <location filename="../src/app/FeatureStatus.cpp" line="69" />
         <source>Plugins and project interchange</source>
         <translation>Плагинлар ва лойиҳа алмашинуви</translation>
     </message>
@@ -1523,119 +1538,134 @@
 <context>
     <name>bc::ExportDialog</name>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="54" />
-        <location filename="../src/app/ExportDialog.cpp" line="144" />
+        <location filename="../src/app/ExportDialog.cpp" line="57" />
+        <location filename="../src/app/ExportDialog.cpp" line="161" />
         <source>Export to MP4</source>
         <translation>MP4’га экспорт</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="70" />
+        <location filename="../src/app/ExportDialog.cpp" line="73" />
         <source>Browse...</source>
         <translation>Танлаш...</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="71" />
+        <location filename="../src/app/ExportDialog.cpp" line="74" />
         <source>File:</source>
         <translation>Файл:</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="72" />
+        <location filename="../src/app/ExportDialog.cpp" line="75" />
         <source>High (large file)</source>
         <translation>Юқори (катта файл)</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="72" />
+        <location filename="../src/app/ExportDialog.cpp" line="75" />
         <source>Medium</source>
         <translation>Ўрта</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="72" />
+        <location filename="../src/app/ExportDialog.cpp" line="75" />
         <source>Small file</source>
         <translation>Кичик файл</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="74" />
+        <location filename="../src/app/ExportDialog.cpp" line="77" />
         <source>Quality:</source>
         <translation>Сифат:</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="77" />
+        <location filename="../src/app/ExportDialog.cpp" line="80" />
         <source>Video codec:</source>
         <translation>Видео кодек:</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="90" />
+        <location filename="../src/app/ExportDialog.cpp" line="84" />
+        <source>Burn the subtitles into the picture</source>
+        <translation>Субтитрларни расмга ёзиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ExportDialog.cpp" line="85" />
+        <source>Also save the subtitles as an .srt file next to the video</source>
+        <translation>Субтитрларни видео ёнига .srt файл қилиб ҳам сақлаш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ExportDialog.cpp" line="89" />
+        <source>Subtitles:</source>
+        <translation>Субтитрлар:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ExportDialog.cpp" line="107" />
         <source>Open folder</source>
         <translation>Папкани очиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="94" />
+        <location filename="../src/app/ExportDialog.cpp" line="111" />
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="97" />
-        <location filename="../src/app/ExportDialog.cpp" line="215" />
+        <location filename="../src/app/ExportDialog.cpp" line="114" />
+        <location filename="../src/app/ExportDialog.cpp" line="238" />
         <source>Close</source>
         <translation>Ёпиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="145" />
+        <location filename="../src/app/ExportDialog.cpp" line="162" />
         <source>MP4 video (*.mp4)</source>
         <translation>MP4 видео (*.mp4)</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="158" />
+        <location filename="../src/app/ExportDialog.cpp" line="175" />
         <source>Picture: %1, %2 fps (sequence settings), %3 Mbit/s. Sound: AAC 192 kbit/s, %4 Hz. Length %5, file about %6 MB.</source>
         <translation>Тасвир: %1, %2 кадр/с (секвенция созламалари), %3 Мбит/с. Овоз: AAC 192 кбит/с, %4 Гц. Давомийлик %5, файл тахминан %6 МБ.</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="166" />
+        <location filename="../src/app/ExportDialog.cpp" line="183" />
         <source>H.264 is not available on this computer (no Intel Quick Sync or Windows Media Foundation encoder was found). The file will use MPEG-4 Part 2: it plays in most players, but some websites may not accept it.</source>
         <translation>Бу компьютерда H.264 мавжуд эмас (Intel Quick Sync ёки Windows Media Foundation кодловчиси топилмади). Файл MPEG-4 Part 2 форматида бўлади: кўп плеерларда очилади, лекин баъзи сайтлар қабул қилмаслиги мумкин.</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="176" />
+        <location filename="../src/app/ExportDialog.cpp" line="193" />
         <source>Choose a file name.</source>
         <translation>Файл номини танланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="184" />
+        <location filename="../src/app/ExportDialog.cpp" line="201" />
         <source>The file already exists. Replace it?</source>
         <translation>Бундай файл бор. Алмаштирилсинми?</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="202" />
+        <location filename="../src/app/ExportDialog.cpp" line="223" />
         <source>Exporting...</source>
         <translation>Экспорт қилинмоқда...</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="215" />
+        <location filename="../src/app/ExportDialog.cpp" line="238" />
         <source>Cancel export</source>
         <translation>Экспортни бекор қилиш</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="223" />
+        <location filename="../src/app/ExportDialog.cpp" line="246" />
         <source>Frame %1 of %2</source>
         <translation>%2 кадрдан %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="225" />
+        <location filename="../src/app/ExportDialog.cpp" line="248" />
         <source>about %1 left</source>
         <translation>тахминан %1 қолди</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="234" />
+        <location filename="../src/app/ExportDialog.cpp" line="257" />
         <source>Done: %1</source>
         <translation>Тайёр: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="238" />
+        <location filename="../src/app/ExportDialog.cpp" line="261" />
         <source>Export cancelled. The unfinished file was deleted.</source>
         <translation>Экспорт бекор қилинди. Тугалланмаган файл ўчирилди.</translation>
     </message>
     <message>
-        <location filename="../src/app/ExportDialog.cpp" line="240" />
+        <location filename="../src/app/ExportDialog.cpp" line="263" />
         <source>Export failed: %1</source>
         <translation>Экспорт бажарилмади: %1</translation>
     </message>
@@ -1643,42 +1673,47 @@
 <context>
     <name>bc::Exporter</name>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="48" />
+        <location filename="../src/engine/Exporter.cpp" line="50" />
         <source>An export is already running.</source>
         <translation>Экспорт аллақачон бораяпти.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="50" />
+        <location filename="../src/engine/Exporter.cpp" line="52" />
         <source>The video engine (MLT) is not loaded.</source>
         <translation>Видео двигатели (MLT) юкланмаган.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="53" />
+        <location filename="../src/engine/Exporter.cpp" line="55" />
         <source>The sequence is empty.</source>
         <translation>Секвенция бўш.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="55" />
+        <location filename="../src/engine/Exporter.cpp" line="57" />
         <source>Choose a file name.</source>
         <translation>Файл номини танланг.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="60" />
+        <location filename="../src/engine/Exporter.cpp" line="64" />
+        <source>Could not write the subtitle file %1.</source>
+        <translation>%1 субтитр файли ёзилмади.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="76" />
         <source>The sequence could not be prepared for export.</source>
         <translation>Секвенцияни экспортга тайёрлаб бўлмади.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="66" />
+        <location filename="../src/engine/Exporter.cpp" line="82" />
         <source>The MP4 writer (MLT avformat) is not available.</source>
         <translation>MP4 ёзувчи қисм (MLT avformat) мавжуд эмас.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="95" />
+        <location filename="../src/engine/Exporter.cpp" line="111" />
         <source>The export could not start.</source>
         <translation>Экспорт бошланмади.</translation>
     </message>
     <message>
-        <location filename="../src/engine/Exporter.cpp" line="130" />
+        <location filename="../src/engine/Exporter.cpp" line="146" />
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>Файл ёзилмади. Папкани ва дискдаги бўш жойни текширинг.</translation>
     </message>
@@ -1809,586 +1844,591 @@
 <context>
     <name>bc::MainWindow</name>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="156" />
+        <location filename="../src/app/MainWindow.cpp" line="157" />
         <source>Source</source>
         <translation>Манба</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="158" />
+        <location filename="../src/app/MainWindow.cpp" line="159" />
         <source>Program</source>
         <translation>Натижа</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="561" />
+        <location filename="../src/app/MainWindow.cpp" line="573" />
         <source>Media bin</source>
         <translation>Медиа кутубхонаси</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="562" />
+        <location filename="../src/app/MainWindow.cpp" line="574" />
         <source>Project files</source>
         <translation>Лойиҳа файллари</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="161" />
+        <location filename="../src/app/MainWindow.cpp" line="162" />
         <source>Drag media from the bin to the timeline.</source>
         <translation>Медиани кутубхонадан timeline’га судраб ташланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="162" />
+        <location filename="../src/app/MainWindow.cpp" line="163" />
         <source>No video at the playhead.</source>
         <translation>Курсор турган жойда видео йўқ.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="564" />
+        <location filename="../src/app/MainWindow.cpp" line="576" />
         <source>Effects</source>
         <translation>Эффектлар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="565" />
+        <location filename="../src/app/MainWindow.cpp" line="577" />
         <source>Color</source>
         <translation>Ранг</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="566" />
+        <location filename="../src/app/MainWindow.cpp" line="578" />
         <source>Audio</source>
         <translation>Овоз</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="508" />
+        <location filename="../src/app/MainWindow.cpp" line="520" />
         <source>New project</source>
         <translation>Янги лойиҳа</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="509" />
+        <location filename="../src/app/MainWindow.cpp" line="521" />
         <source>Open project...</source>
         <translation>Лойиҳани очиш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="511" />
-        <location filename="../src/app/MainWindow.cpp" line="550" />
-        <location filename="../src/app/MainWindow.cpp" line="768" />
-        <location filename="../src/app/MainWindow.cpp" line="824" />
-        <location filename="../src/app/MainWindow.cpp" line="842" />
+        <location filename="../src/app/MainWindow.cpp" line="523" />
+        <location filename="../src/app/MainWindow.cpp" line="562" />
+        <location filename="../src/app/MainWindow.cpp" line="781" />
+        <location filename="../src/app/MainWindow.cpp" line="837" />
+        <location filename="../src/app/MainWindow.cpp" line="855" />
         <source>Save</source>
         <translation>Сақлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="512" />
+        <location filename="../src/app/MainWindow.cpp" line="524" />
         <source>Save as...</source>
         <translation>Бошқа ном билан сақлаш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="538" />
+        <location filename="../src/app/MainWindow.cpp" line="550" />
         <source>Import media...</source>
         <translation>Медиа импорт...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="554" />
+        <location filename="../src/app/MainWindow.cpp" line="566" />
         <source>Export...</source>
         <translation>Экспорт...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="871" />
+        <location filename="../src/app/MainWindow.cpp" line="884" />
         <source>Undo</source>
         <translation>Бекор қилиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="871" />
+        <location filename="../src/app/MainWindow.cpp" line="884" />
         <source>Undo: %1</source>
         <translation>Бекор қилиш: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="872" />
+        <location filename="../src/app/MainWindow.cpp" line="885" />
         <source>Redo</source>
         <translation>Қайтариш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="520" />
+        <location filename="../src/app/MainWindow.cpp" line="532" />
         <source>Keyboard shortcuts...</source>
         <translation>Тезкор тугмалар...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="507" />
+        <location filename="../src/app/MainWindow.cpp" line="519" />
         <source>Audio gain...</source>
         <translation>Овоз кучайтириш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="539" />
+        <location filename="../src/app/MainWindow.cpp" line="551" />
         <source>Sequence settings...</source>
         <translation>Секвенция созламалари...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <location filename="../src/app/MainWindow.cpp" line="362" />
         <source>Render preview</source>
         <translation>Preview рендери</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="136" />
-        <location filename="../src/app/MainWindow.cpp" line="505" />
+        <location filename="../src/app/MainWindow.cpp" line="137" />
+        <location filename="../src/app/MainWindow.cpp" line="517" />
         <source>Pause</source>
         <translation>Тўхтатиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="136" />
-        <location filename="../src/app/MainWindow.cpp" line="505" />
+        <location filename="../src/app/MainWindow.cpp" line="137" />
+        <location filename="../src/app/MainWindow.cpp" line="517" />
         <source>Play</source>
         <translation>Ижро</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="533" />
+        <location filename="../src/app/MainWindow.cpp" line="545" />
         <source>Add marker</source>
         <translation>Маркер қўшиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="534" />
+        <location filename="../src/app/MainWindow.cpp" line="546" />
         <source>Go to next marker</source>
         <translation>Кейинги маркерга ўтиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="506" />
+        <location filename="../src/app/MainWindow.cpp" line="518" />
         <source>New text</source>
         <translation>Янги матн</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="427" />
-        <source>Import subtitles (SRT)...</source>
-        <translation>Субтитр импорти (SRT)...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="67" />
+        <location filename="../src/app/MainWindow.cpp" line="68" />
         <source>Autosaved at %1</source>
         <translation>%1 да автосақланди</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="70" />
+        <location filename="../src/app/MainWindow.cpp" line="71" />
         <source>Autosave failed: %1</source>
         <translation>Автосақлаб бўлмади: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="93" />
+        <location filename="../src/app/MainWindow.cpp" line="94" />
         <source>Making proxy: %1% (%2 more)</source>
         <translation>Proxy тайёрланяпти: %1% (яна %2 та)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="94" />
+        <location filename="../src/app/MainWindow.cpp" line="95" />
         <source>Making proxy: %1%</source>
         <translation>Proxy тайёрланяпти: %1%</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="100" />
+        <location filename="../src/app/MainWindow.cpp" line="101" />
         <source>Could not make a proxy: %1</source>
         <translation>Proxy тайёрлаб бўлмади: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="167" />
+        <location filename="../src/app/MainWindow.cpp" line="168" />
         <source>Double-click a clip in the media bin to watch it here.</source>
         <translation>Бу ерда кўриш учун медиа кутубхонасида клипни икки марта босинг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="168" />
+        <location filename="../src/app/MainWindow.cpp" line="169" />
         <source>No picture (sound only).</source>
         <translation>Тасвир йўқ (фақат овоз).</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="381" />
-        <location filename="../src/app/MainWindow.cpp" line="387" />
+        <location filename="../src/app/MainWindow.cpp" line="384" />
+        <location filename="../src/app/MainWindow.cpp" line="390" />
         <source>Nothing to insert: open a clip in the Source monitor, and keep one video and one audio track unlocked.</source>
         <translation>Қўйиладиган нарса йўқ: Source мониторида клип очинг ва камида битта видео ҳамда аудио йўлакни қулфламанг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="487" />
+        <location filename="../src/app/MainWindow.cpp" line="434" />
+        <source>Subtitles from speech (automatic)...</source>
+        <translation>Нутқдан автоматик субтитр...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="499" />
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="488" />
+        <location filename="../src/app/MainWindow.cpp" line="500" />
         <source>&amp;Edit</source>
         <translation>&amp;Таҳрир</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="489" />
+        <location filename="../src/app/MainWindow.cpp" line="501" />
         <source>&amp;Clip</source>
         <translation>&amp;Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="490" />
+        <location filename="../src/app/MainWindow.cpp" line="502" />
         <source>&amp;Sequence</source>
         <translation>&amp;Секвенция</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="491" />
+        <location filename="../src/app/MainWindow.cpp" line="503" />
         <source>&amp;Markers</source>
         <translation>&amp;Маркерлар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="492" />
+        <location filename="../src/app/MainWindow.cpp" line="504" />
         <source>Timeline tools</source>
         <translation>Timeline асбоблари</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="493" />
+        <location filename="../src/app/MainWindow.cpp" line="505" />
         <source>&amp;Graphics</source>
         <translation>&amp;Графика</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="494" />
+        <location filename="../src/app/MainWindow.cpp" line="506" />
         <source>&amp;View</source>
         <translation>&amp;Кўриниш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="495" />
+        <location filename="../src/app/MainWindow.cpp" line="507" />
         <source>&amp;Window</source>
         <translation>&amp;Ойна</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="496" />
+        <location filename="../src/app/MainWindow.cpp" line="508" />
         <source>&amp;Help</source>
         <translation>&amp;Ёрдам</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="501" />
+        <location filename="../src/app/MainWindow.cpp" line="513" />
         <source>Planned for phase %1</source>
         <translation>%1-босқичда режалаштирилган</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="510" />
+        <location filename="../src/app/MainWindow.cpp" line="522" />
         <source>Recent projects</source>
         <translation>Охирги лойиҳалар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="513" />
+        <location filename="../src/app/MainWindow.cpp" line="525" />
         <source>Previous versions...</source>
         <translation>Олдинги версиялар...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="514" />
+        <location filename="../src/app/MainWindow.cpp" line="526" />
         <source>Collect project...</source>
         <translation>Лойиҳани йиғиш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="515" />
+        <location filename="../src/app/MainWindow.cpp" line="527" />
         <source>Copy the project and its media into one folder</source>
         <translation>Лойиҳа ва медиани битта папкага нусхалаш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="516" />
+        <location filename="../src/app/MainWindow.cpp" line="528" />
         <source>Media cache...</source>
         <translation>Медиа кэши...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="517" />
+        <location filename="../src/app/MainWindow.cpp" line="529" />
         <source>Use proxies for playback</source>
         <translation>Ижрода proxy ишлатиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="518" />
+        <location filename="../src/app/MainWindow.cpp" line="530" />
         <source>Play big videos from their light proxy copies. Export always uses the originals.</source>
         <translation>Катта видеоларни енгил proxy нусхаларидан ижро қилиш. Экспорт ҳар доим асл файллардан.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="519" />
+        <location filename="../src/app/MainWindow.cpp" line="531" />
         <source>Stop making proxies</source>
         <translation>Proxy тайёрлашни тўхтатиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="521" />
+        <location filename="../src/app/MainWindow.cpp" line="533" />
         <source>Play backwards (J, again: faster)</source>
         <translation>Орқага ўйнатиш (J, яна босилса тезроқ)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="522" />
+        <location filename="../src/app/MainWindow.cpp" line="534" />
         <source>Stop (K)</source>
         <translation>Тўхташ (K)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="523" />
+        <location filename="../src/app/MainWindow.cpp" line="535" />
         <source>Play forwards (L, again: faster)</source>
         <translation>Олдинга ўйнатиш (L, яна босилса тезроқ)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="524" />
+        <location filename="../src/app/MainWindow.cpp" line="536" />
         <source>Insert from Source</source>
         <translation>Source'дан қўйиш (Insert)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="525" />
+        <location filename="../src/app/MainWindow.cpp" line="537" />
         <source>Insert the source In-Out part at the playhead; later clips move right (,)</source>
         <translation>Source'нинг In-Out қисмини курсор жойига қўйиш; кейинги клиплар ўнгга сурилади (,)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="526" />
+        <location filename="../src/app/MainWindow.cpp" line="538" />
         <source>Overwrite from Source</source>
         <translation>Source'дан устидан ёзиш (Overwrite)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="527" />
+        <location filename="../src/app/MainWindow.cpp" line="539" />
         <source>Put the source In-Out part at the playhead over what is there (.)</source>
         <translation>Source'нинг In-Out қисмини курсор жойидагининг устидан ёзиш (.)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="528" />
+        <location filename="../src/app/MainWindow.cpp" line="540" />
         <source>Mark In (Source)</source>
         <translation>In белгиси (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="529" />
+        <location filename="../src/app/MainWindow.cpp" line="541" />
         <source>Start of the part to use (I)</source>
         <translation>Ишлатиладиган қисмнинг боши (I)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="530" />
+        <location filename="../src/app/MainWindow.cpp" line="542" />
         <source>Mark Out (Source)</source>
         <translation>Out белгиси (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="531" />
+        <location filename="../src/app/MainWindow.cpp" line="543" />
         <source>End of the part to use (O)</source>
         <translation>Ишлатиладиган қисмнинг охири (O)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="532" />
+        <location filename="../src/app/MainWindow.cpp" line="544" />
         <source>Clear In and Out (Source)</source>
         <translation>In ва Out'ни олиб ташлаш (Source)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="535" />
+        <location filename="../src/app/MainWindow.cpp" line="547" />
         <source>Go to previous marker</source>
         <translation>Олдинги маркерга ўтиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="536" />
+        <location filename="../src/app/MainWindow.cpp" line="548" />
         <source>Rename marker...</source>
         <translation>Маркерни номлаш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="537" />
+        <location filename="../src/app/MainWindow.cpp" line="549" />
         <source>Delete marker</source>
         <translation>Маркерни ўчириш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="540" />
+        <location filename="../src/app/MainWindow.cpp" line="552" />
         <source>Settings...</source>
         <translation>Созламалар...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="541" />
+        <location filename="../src/app/MainWindow.cpp" line="553" />
         <source>Exit</source>
         <translation>Чиқиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="542" />
+        <location filename="../src/app/MainWindow.cpp" line="554" />
         <source>Full screen</source>
         <translation>Тўлиқ экран</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="543" />
+        <location filename="../src/app/MainWindow.cpp" line="555" />
         <source>Reset layout</source>
         <translation>Панеллар жойлашувини тиклаш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="544" />
+        <location filename="../src/app/MainWindow.cpp" line="556" />
         <source>Feature status...</source>
         <translation>Функциялар ҳолати...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="545" />
+        <location filename="../src/app/MainWindow.cpp" line="557" />
         <source>Licenses...</source>
         <translation>Лицензиялар...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="546" />
+        <location filename="../src/app/MainWindow.cpp" line="558" />
         <source>Open log folder</source>
         <translation>Журнал папкасини очиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="547" />
+        <location filename="../src/app/MainWindow.cpp" line="559" />
         <source>About BUKHARA CINEMA...</source>
         <translation>BUKHARA CINEMA ҳақида...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="549" />
+        <location filename="../src/app/MainWindow.cpp" line="561" />
         <source>Main toolbar</source>
         <translation>Асосий асбоблар панели</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="551" />
+        <location filename="../src/app/MainWindow.cpp" line="563" />
         <source>Save project (Ctrl+S)</source>
         <translation>Лойиҳани сақлаш (Ctrl+S)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="552" />
+        <location filename="../src/app/MainWindow.cpp" line="564" />
         <source>Export</source>
         <translation>Экспорт</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="553" />
+        <location filename="../src/app/MainWindow.cpp" line="565" />
         <source>Export to MP4 (Ctrl+M)</source>
         <translation>MP4’га экспорт (Ctrl+M)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="556" />
+        <location filename="../src/app/MainWindow.cpp" line="568" />
         <source>Project</source>
         <translation>Лойиҳа</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="557" />
+        <location filename="../src/app/MainWindow.cpp" line="569" />
         <source>Properties</source>
         <translation>Параметрлар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="558" />
+        <location filename="../src/app/MainWindow.cpp" line="570" />
         <source>Timeline</source>
         <translation>Timeline</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="559" />
+        <location filename="../src/app/MainWindow.cpp" line="571" />
         <source>Scopes</source>
         <translation>Scope'лар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="563" />
+        <location filename="../src/app/MainWindow.cpp" line="575" />
         <source>Clip</source>
         <translation>Клип</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="568" />
-        <source>Phase 10 done: loudness normalisation works (Clip &gt; Normalize loudness).</source>
-        <translation>10-босқич тугади: овоз баландлигини текислаш ишлайди (Клип &gt; Овоз баландлигини текислаш).</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MainWindow.cpp" line="604" />
+        <location filename="../src/app/MainWindow.cpp" line="617" />
         <source>Insert</source>
         <translation>Қўйиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="605" />
+        <location filename="../src/app/MainWindow.cpp" line="618" />
         <source>Overwrite</source>
         <translation>Устидан ёзиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="906" />
+        <location filename="../src/app/MainWindow.cpp" line="919" />
         <source>Previous versions</source>
         <translation>Олдинги версиялар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="909" />
+        <location filename="../src/app/MainWindow.cpp" line="922" />
         <source>An earlier version is open. Save to make it the current project.</source>
         <translation>Олдинги версия очилди. Уни асосий лойиҳа қилиш учун сақланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="946" />
+        <location filename="../src/app/MainWindow.cpp" line="959" />
         <source>Recover unsaved work</source>
         <translation>Сақланмаган ишни тиклаш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="950" />
+        <location filename="../src/app/MainWindow.cpp" line="963" />
         <source>Unsaved work recovered. Save the project to keep it.</source>
         <translation>Сақланмаган иш тикланди. Йўқолмаслиги учун лойиҳани сақланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="120" />
-        <location filename="../src/app/MainWindow.cpp" line="569" />
-        <location filename="../src/app/MainWindow.cpp" line="599" />
+        <location filename="../src/app/MainWindow.cpp" line="121" />
+        <location filename="../src/app/MainWindow.cpp" line="582" />
+        <location filename="../src/app/MainWindow.cpp" line="612" />
         <source>The video engine (MLT) could not be loaded: playback is off. See the log file.</source>
         <translation>Видео двигатели (MLT) юкланмади: ижро ўчирилган. Лог файлига қаранг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="872" />
+        <location filename="../src/app/MainWindow.cpp" line="885" />
         <source>Redo: %1</source>
         <translation>Қайтариш: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="764" />
+        <location filename="../src/app/MainWindow.cpp" line="777" />
         <source>Unsaved changes</source>
         <translation>Сақланмаган ўзгаришлар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
+        <location filename="../src/app/MainWindow.cpp" line="579" />
+        <source>Subtitles</source>
+        <translation>Субтитрлар</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="581" />
+        <source>Phase 11, part 1: subtitles and .srt files work (Subtitles tab, Graphics menu).</source>
+        <translation>11-босқич, 1-қисм: субтитрлар ва .srt файллар ишлайди («Субтитрлар» панели, Графика менюси).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="701" />
         <source>Rename marker</source>
         <translation>Маркерни номлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
+        <location filename="../src/app/MainWindow.cpp" line="701" />
         <source>Marker name:</source>
         <translation>Маркер номи:</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="765" />
+        <location filename="../src/app/MainWindow.cpp" line="778" />
         <source>Project "%1" has unsaved changes. Save them?</source>
         <translation>«%1» лойиҳасида сақланмаган ўзгаришлар бор. Сақлансинми?</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="769" />
+        <location filename="../src/app/MainWindow.cpp" line="782" />
         <source>Don't save</source>
         <translation>Сақламаслик</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="770" />
+        <location filename="../src/app/MainWindow.cpp" line="783" />
         <source>Cancel</source>
         <translation>Бекор қилиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="791" />
-        <location filename="../src/app/MainWindow.cpp" line="801" />
+        <location filename="../src/app/MainWindow.cpp" line="804" />
+        <location filename="../src/app/MainWindow.cpp" line="814" />
         <source>Open project</source>
         <translation>Лойиҳани очиш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="792" />
-        <location filename="../src/app/MainWindow.cpp" line="837" />
+        <location filename="../src/app/MainWindow.cpp" line="805" />
+        <location filename="../src/app/MainWindow.cpp" line="850" />
         <source>BUKHARA CINEMA projects (*.%1)</source>
         <translation>BUKHARA CINEMA лойиҳалари (*.%1)</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="801" />
-        <location filename="../src/app/MainWindow.cpp" line="906" />
-        <location filename="../src/app/MainWindow.cpp" line="946" />
+        <location filename="../src/app/MainWindow.cpp" line="814" />
+        <location filename="../src/app/MainWindow.cpp" line="919" />
+        <location filename="../src/app/MainWindow.cpp" line="959" />
         <source>Cannot open "%1":
 %2</source>
         <translation>«%1» очилмади:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="806" />
+        <location filename="../src/app/MainWindow.cpp" line="819" />
         <source>Missing files</source>
         <translation>Йўқолган файллар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="807" />
+        <location filename="../src/app/MainWindow.cpp" line="820" />
         <source>Media files not found: %1. They may have been moved or renamed.</source>
         <translation>Топилмаган медиа файллар: %1. Улар кўчирилган ёки қайта номланган бўлиши мумкин.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="809" />
+        <location filename="../src/app/MainWindow.cpp" line="822" />
         <source>Search in folder...</source>
         <translation>Папкадан қидириш...</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="810" />
+        <location filename="../src/app/MainWindow.cpp" line="823" />
         <source>Later</source>
         <translation>Кейинроқ</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="824" />
-        <location filename="../src/app/MainWindow.cpp" line="842" />
+        <location filename="../src/app/MainWindow.cpp" line="837" />
+        <location filename="../src/app/MainWindow.cpp" line="855" />
         <source>Cannot save the project:
 %1</source>
         <translation>Лойиҳа сақланмади:
 %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="827" />
-        <location filename="../src/app/MainWindow.cpp" line="846" />
+        <location filename="../src/app/MainWindow.cpp" line="840" />
+        <location filename="../src/app/MainWindow.cpp" line="859" />
         <source>Saved: %1</source>
         <translation>Сақланди: %1</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="836" />
+        <location filename="../src/app/MainWindow.cpp" line="849" />
         <source>Save project as</source>
         <translation>Лойиҳани бошқа ном билан сақлаш</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="855" />
+        <location filename="../src/app/MainWindow.cpp" line="868" />
         <source>(empty)</source>
         <translation>(бўш)</translation>
     </message>
@@ -2967,6 +3007,66 @@
         <source>Normalize loudness</source>
         <translation>Овоз баландлигини текислаш</translation>
     </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="34" />
+        <source>Add subtitle</source>
+        <translation>Субтитр қўшиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="56" />
+        <source>Subtitle text</source>
+        <translation>Субтитр матни</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="67" />
+        <source>Subtitle timing</source>
+        <translation>Субтитр вақти</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="83" />
+        <source>Delete subtitle</source>
+        <translation>Субтитрни ўчириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="83" />
+        <source>Delete subtitles</source>
+        <translation>Субтитрларни ўчириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="99" />
+        <source>Subtitle style</source>
+        <translation>Субтитр кўриниши</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="112" />
+        <source>Cannot open %1: %2</source>
+        <translation>%1 очилмади: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="117" />
+        <source>The file is too large for a subtitle file.</source>
+        <translation>Файл субтитр файли учун жуда катта.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="126" />
+        <source>No subtitles were found in %1.</source>
+        <translation>%1 ичида субтитр топилмади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="131" />
+        <source>Import subtitles</source>
+        <translation>Субтитрларни очиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="146" />
+        <source>The sequence has no subtitles with text.</source>
+        <translation>Секвенцияда матнли субтитр йўқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectSubtitles.cpp" line="152" />
+        <source>Cannot write %1: %2</source>
+        <translation>%1 ёзилмади: %2</translation>
+    </message>
 </context>
 <context>
     <name>bc::ProjectInfoPanel</name>
@@ -3370,6 +3470,174 @@
         <location filename="../src/app/StatusDialog.cpp" line="41" />
         <source>Close</source>
         <translation>Ёпиш</translation>
+    </message>
+</context>
+<context>
+    <name>bc::SubtitlesPanel</name>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="108" />
+        <source> s</source>
+        <translation> с</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="205" />
+        <source>Add subtitle</source>
+        <translation>Субтитр қўшиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="206" />
+        <source>A new subtitle at the playhead (3 seconds)</source>
+        <translation>Курсор жойига янги субтитр (3 сония)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="207" />
+        <source>Delete</source>
+        <translation>Ўчириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="208" />
+        <source>Delete the selected subtitles</source>
+        <translation>Танланган субтитрларни ўчириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="209" />
+        <source>Import subtitles (SRT)...</source>
+        <translation>Субтитрларни очиш (SRT)...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="210" />
+        <source>Export subtitles (SRT)...</source>
+        <translation>Субтитрларни сақлаш (SRT)...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="211" />
+        <source>+ Add</source>
+        <translation>+ Қўшиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="212" />
+        <source>Import SRT</source>
+        <translation>SRT очиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="213" />
+        <source>Export SRT</source>
+        <translation>SRT сақлаш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="214" />
+        <source>Start</source>
+        <translation>Бошланиши</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="214" />
+        <source>Text</source>
+        <translation>Матн</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="215" />
+        <source>No subtitles yet. Press "+ Add" to write one at the playhead, or import an .srt file.</source>
+        <translation>Ҳали субтитр йўқ. Курсор жойига ёзиш учун «+ Қўшиш»ни босинг ёки .srt файлни очинг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="216" />
+        <source>Selected subtitle</source>
+        <translation>Танланган субтитр</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="217" />
+        <source>Start:</source>
+        <translation>Боши:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="218" />
+        <source>Duration:</source>
+        <translation>Давомийлик:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="219" />
+        <source>Subtitle text (Enter starts a new line)</source>
+        <translation>Субтитр матни (Enter — янги қатор)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="220" />
+        <source>Look of all subtitles</source>
+        <translation>Ҳамма субтитрлар кўриниши</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="221" />
+        <source>Show in the picture (and burn in on export)</source>
+        <translation>Расмда кўрсатиш (экспортда видеога ҳам ёзилади)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="222" />
+        <source>Size:</source>
+        <translation>Ўлчами:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="223" />
+        <source>From the bottom:</source>
+        <translation>Пастдан:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="224" />
+        <location filename="../src/app/SubtitlesPanel.cpp" line="331" />
+        <source>Text colour</source>
+        <translation>Матн ранги</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="225" />
+        <source>Dark box behind the text</source>
+        <translation>Матн орқасида қора фон</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="255" />
+        <source>(empty)</source>
+        <translation>(бўш)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="344" />
+        <location filename="../src/app/SubtitlesPanel.cpp" line="351" />
+        <location filename="../src/app/SubtitlesPanel.cpp" line="367" />
+        <location filename="../src/app/SubtitlesPanel.cpp" line="369" />
+        <source>Import subtitles</source>
+        <translation>Субтитрларни очиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="345" />
+        <source>Subtitles (*.srt);;All files (*)</source>
+        <translation>Субтитрлар (*.srt);;Ҳамма файллар (*)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="352" />
+        <source>The sequence already has subtitles. Replace them or add the new ones?</source>
+        <translation>Секвенцияда субтитрлар бор. Уларни алмаштирайми ёки янгиларини қўшайми?</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="354" />
+        <source>Replace</source>
+        <translation>Алмаштириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="355" />
+        <source>Add</source>
+        <translation>Қўшиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="370" />
+        <source>%1 subtitles imported; %2 broken blocks were skipped.</source>
+        <translation>%1 та субтитр олинди; %2 та бузилган блок ташлаб кетилди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="381" />
+        <location filename="../src/app/SubtitlesPanel.cpp" line="394" />
+        <source>Export subtitles</source>
+        <translation>Субтитрларни сақлаш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SubtitlesPanel.cpp" line="383" />
+        <source>Subtitles (*.srt)</source>
+        <translation>Субтитрлар (*.srt)</translation>
     </message>
 </context>
 <context>

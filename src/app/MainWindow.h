@@ -21,6 +21,7 @@ class ProjectInfoPanel;
 class TimelinePanel;
 class ClipInspector;
 class EffectsPanel;
+class SubtitlesPanel;
 class ScopesPanel;
 class Autosave;
 
@@ -161,6 +162,7 @@ private:
     QTabWidget *m_leftTabs = nullptr;
     QTabWidget *m_rightTabs = nullptr;
     EffectsPanel *m_effectsPanel = nullptr;
+    SubtitlesPanel *m_subtitlesPanel = nullptr;
     ScopesPanel *m_scopes = nullptr;
     QDockWidget *m_scopesDock = nullptr;
     QAction *m_scopesAct = nullptr;

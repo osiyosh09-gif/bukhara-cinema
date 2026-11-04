@@ -14,6 +14,7 @@
 #include "app/CacheDialog.h"
 #include "app/ClipInspector.h"
 #include "app/AudioMixer.h"
+#include "app/SubtitlesPanel.h"
 #include "app/ColorPanel.h"
 #include "app/ScopesPanel.h"
 #include "app/EffectsPanel.h"
@@ -201,6 +202,8 @@ void MainWindow::buildDocks()
     m_rightTabs->addTab(m_effectsPanel, QString());
     m_rightTabs->addTab(new ColorPanel(m_ctl, m_timeline->view()), QString());
     m_rightTabs->addTab(new AudioMixer(m_ctl), QString());
+    m_subtitlesPanel = new SubtitlesPanel(m_ctl);
+    m_rightTabs->addTab(m_subtitlesPanel, QString());
     m_inspectorDock = new QDockWidget(this);
     m_inspectorDock->setObjectName(QStringLiteral("inspectorDock"));
     m_inspectorDock->setWidget(m_rightTabs);
@@ -424,7 +427,16 @@ void MainWindow::buildMenus()
     m_newTextAct = m_graphicsMenu->addAction(QString(), this, &MainWindow::addTitle);
     m_newTextAct->setObjectName(QStringLiteral("actNewText"));
     m_newTextAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+T")));
-    addPlanned(m_graphicsMenu, QT_TR_NOOP("Import subtitles (SRT)..."), 11, QStringLiteral("actImportSrt"));
+    m_graphicsMenu->addSeparator();
+    m_graphicsMenu->addAction(m_subtitlesPanel->addAction_());
+    m_graphicsMenu->addAction(m_subtitlesPanel->importAction());
+    m_graphicsMenu->addAction(m_subtitlesPanel->exportAction());
+    addPlanned(m_graphicsMenu, QT_TR_NOOP("Subtitles from speech (automatic)..."), 14, QStringLiteral("actAutoCaptions"));
+    for (QAction *a : {m_subtitlesPanel->addAction_(), m_subtitlesPanel->importAction()})
+        connect(a, &QAction::triggered, this, [this] {
+            m_inspectorDock->show();
+            m_rightTabs->setCurrentWidget(m_subtitlesPanel);
+        });
 
     m_viewMenu = mb->addMenu(QString());
     m_fullScreenAct = m_viewMenu->addAction(QString());
@@ -564,8 +576,9 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(1, tr("Effects"));
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
+    m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 10 done: loudness normalisation works (Clip > Normalize loudness).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 11, part 1: subtitles and .srt files work (Subtitles tab, Graphics menu).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

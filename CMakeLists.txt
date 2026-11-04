@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.24.0
+    VERSION 0.25.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -26,6 +26,7 @@ add_library(bc_core STATIC
     src/core/Timeline.h         src/core/Timeline.cpp
     src/core/Waveform.h         src/core/Waveform.cpp
     src/core/Loudness.h         src/core/Loudness.cpp
+    src/core/Subtitles.h        src/core/Subtitles.cpp
     src/core/Backups.h          src/core/Backups.cpp
     src/core/MediaCache.h       src/core/MediaCache.cpp
     src/core/Proxy.h            src/core/Proxy.cpp
@@ -78,6 +79,7 @@ add_library(bc_ui STATIC
     src/app/Shortcuts.h    src/app/Shortcuts.cpp
     src/app/SpeedDialog.h  src/app/SpeedDialog.cpp
     src/app/LoudnessDialog.h src/app/LoudnessDialog.cpp
+    src/app/SubtitlesPanel.h src/app/SubtitlesPanel.cpp
     src/app/AboutDialog.h       src/app/AboutDialog.cpp
     src/app/StatusDialog.h      src/app/StatusDialog.cpp
     src/app/MainWindow.h        src/app/MainWindow.cpp
@@ -87,6 +89,7 @@ add_library(bc_ui STATIC
     src/app/ProjectSource.cpp
     src/app/ProjectEditing.cpp
     src/app/ProjectLoudness.cpp
+    src/app/ProjectSubtitles.cpp
     src/app/MediaBinPanel.h     src/app/MediaBinPanel.cpp
     src/app/ProjectInfoPanel.h  src/app/ProjectInfoPanel.cpp
     src/app/SequenceSettingsDialog.h src/app/SequenceSettingsDialog.cpp

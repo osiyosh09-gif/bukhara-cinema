@@ -285,6 +285,18 @@ public:
     void shuttle(Monitor monitor, int direction); // -1 J, 0 K, +1 L
     double speed(Monitor monitor) const;
 
+    // --- subtitles (phase 11, ProjectSubtitles.cpp; undoable, on the open sequence)
+    // Adds a subtitle at `frame`: 3 s long, shorter when the next one starts sooner.
+    QUuid addSubtitle(qint64 frame, const QString &text = {});
+    bool setSubtitleText(const QUuid &id, const QString &text); // typing merges into one step
+    bool setSubtitleTiming(const QUuid &id, qint64 start, qint64 length);
+    int removeSubtitles(const QList<QUuid> &ids);
+    bool setSubtitleStyle(const SubtitleStyle &style); // dragging merges into one step
+    // Reads an .srt file and places its subtitles `offset` frames later (one
+    // undo step); `replace` removes the subtitles there were. Returns the count.
+    int importSrt(const QString &path, qint64 offset, bool replace, QString *error, int *skipped = nullptr);
+    bool exportSrt(const QString &path, QString *error) const;
+
     // --- markers (undoable)
     QUuid addMarker(qint64 frame);
     bool removeMarker(const QUuid &id);

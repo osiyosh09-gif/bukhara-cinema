@@ -23,6 +23,8 @@ struct ExportSettings
     MediaProbe::VideoEncoder encoder;
     int videoKbps = 8000;
     int audioKbps = 192;
+    bool burnSubtitles = true; // draw the sequence's subtitles into the picture (phase 11)
+    bool writeSrt = false;     // also write <name>.srt next to the video
 };
 
 // Writes the timeline to an MP4 file with the same MLT graph that the
