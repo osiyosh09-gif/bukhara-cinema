@@ -72,6 +72,9 @@ void Project::removeFolder(const QUuid &id)
     folders.erase(std::remove_if(folders.begin(), folders.end(),
                                  [&](const BinFolder &f) { return doomed.contains(f.id); }),
                   folders.end());
+    for (const auto &m : items)
+        if (doomed.contains(m.folderId))
+            timeline.removeClipsOfMedia(m.id);
     items.erase(std::remove_if(items.begin(), items.end(),
                                [&](const MediaItem &m) { return doomed.contains(m.folderId); }),
                 items.end());
@@ -105,6 +108,7 @@ bool Project::removeItem(const QUuid &id)
 {
     for (int i = 0; i < items.size(); ++i) {
         if (items[i].id == id) {
+            timeline.removeClipsOfMedia(id);
             items.removeAt(i);
             return true;
         }
@@ -213,6 +217,10 @@ QByteArray Project::toJson(const QString &projectFilePath) const
     }
     root[QStringLiteral("media")] = ia;
 
+    QJsonObject tl;
+    tl[QStringLiteral("tracks")] = timeline.toJson();
+    root[QStringLiteral("timeline")] = tl;
+
     return QJsonDocument(root).toJson(QJsonDocument::Indented);
 }
 
@@ -276,6 +284,19 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
         m.probed = o.value(QStringLiteral("probed")).toBool();
         m.info = infoFromJson(o.value(QStringLiteral("info")).toObject());
         p.items.append(m);
+    }
+
+    if (root.contains(QStringLiteral("timeline"))) {
+        p.timeline = Timeline::fromJson(
+            root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("tracks")).toArray());
+        // Drop clips whose media item is not in the project.
+        QSet<QUuid> known;
+        for (const auto &m : p.items)
+            known.insert(m.id);
+        for (auto &t : p.timeline.tracks)
+            t.clips.erase(std::remove_if(t.clips.begin(), t.clips.end(),
+                                         [&](const TimelineClip &c) { return !known.contains(c.mediaId); }),
+                          t.clips.end());
     }
 
     out = std::move(p);

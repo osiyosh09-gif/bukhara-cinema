@@ -1,5 +1,8 @@
 #include "app/Formatting.h"
 
+#include <cmath>
+#include <algorithm>
+
 #include <QCoreApplication>
 #include <QLocale>
 #include <QRegularExpression>
@@ -76,6 +79,19 @@ QString sequenceSummary(const SequenceSettings &s)
 {
     return QCoreApplication::translate("Fmt", "%1, %2 fps, %3")
         .arg(resolution(s.width, s.height), frameRate(s.fpsNum, s.fpsDen), audio(s.sampleRate, s.channels));
+}
+
+QString frameTimecode(qint64 frames, double fps)
+{
+    const qint64 base = std::max<qint64>(1, qint64(std::llround(fps)));
+    frames = std::max<qint64>(0, frames);
+    const qint64 f = frames % base;
+    const qint64 totalSec = frames / base;
+    return QStringLiteral("%1:%2:%3:%4")
+        .arg(totalSec / 3600, 2, 10, QLatin1Char('0'))
+        .arg((totalSec / 60) % 60, 2, 10, QLatin1Char('0'))
+        .arg(totalSec % 60, 2, 10, QLatin1Char('0'))
+        .arg(f, 2, 10, QLatin1Char('0'));
 }
 
 } // namespace bc::Fmt

@@ -50,6 +50,20 @@ QUuid BinTree::folderAt(const QPoint &pos) const
     return it ? it->data(0, MediaBinPanel::IdRole).toUuid() : QUuid();
 }
 
+QMimeData *BinTree::mimeData(const QList<QTreeWidgetItem *> &items) const
+{
+    QMimeData *data = QTreeWidget::mimeData(items); // keeps moves between folders working
+    if (!data)
+        data = new QMimeData;
+    QStringList ids;
+    for (QTreeWidgetItem *it : items)
+        if (!it->data(0, MediaBinPanel::IsFolderRole).toBool())
+            ids << it->data(0, MediaBinPanel::IdRole).toUuid().toString(QUuid::WithoutBraces);
+    if (!ids.isEmpty())
+        data->setData(QString::fromLatin1(kMediaIdsMime), ids.join(QLatin1Char('\n')).toLatin1());
+    return data;
+}
+
 void BinTree::dragEnterEvent(QDragEnterEvent *e)
 {
     if (e->mimeData()->hasUrls() || e->source() == this)

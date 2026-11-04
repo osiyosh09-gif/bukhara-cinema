@@ -12,6 +12,8 @@
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
 #include "app/StatusDialog.h"
+#include "app/Formatting.h"
+#include "app/TimelinePanel.h"
 
 #include <QAction>
 #include <QApplication>
@@ -32,6 +34,7 @@
 #include <QStyle>
 #include <QTabWidget>
 #include <QToolBar>
+#include <QUndoStack>
 #include <QUrl>
 
 namespace bc {
@@ -58,6 +61,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_ctl, &ProjectController::fileNameChanged, this, &MainWindow::updateTitle);
     connect(m_info, &ProjectInfoPanel::sequenceSettingsRequested, this, &MainWindow::editSequence);
 
+    // Program monitor: frame at the playhead.
+    connect(m_ctl, &ProjectController::programFrameReady, m_programMonitor, &MonitorView::setImage);
+    auto updateProgramTimecode = [this] {
+        m_programMonitor->setTimecode(Fmt::frameTimecode(m_ctl->playhead(), m_ctl->project().sequence.fps()));
+    };
+    connect(m_ctl, &ProjectController::playheadChanged, this, updateProgramTimecode);
+    connect(m_ctl, &ProjectController::sequenceChanged, this, updateProgramTimecode);
+    connect(m_ctl, &ProjectController::projectReset, this, updateProgramTimecode);
+
     retranslate();
 
     resize(1366, 768);
@@ -77,6 +89,11 @@ void MainWindow::buildCentral()
     source->setObjectName(QStringLiteral("sourceMonitor"));
     auto *program = new MonitorView([] { return MainWindow::tr("Program"); }, m_monitorSplit);
     program->setObjectName(QStringLiteral("programMonitor"));
+    program->setEmptyText([this] {
+        return m_ctl->timeline().isEmpty() ? MainWindow::tr("Drag media from the bin to the timeline.")
+                                           : MainWindow::tr("No video at the playhead.");
+    });
+    m_programMonitor = program;
     m_monitorSplit->addWidget(source);
     m_monitorSplit->addWidget(program);
     m_monitorSplit->setChildrenCollapsible(false);
@@ -110,15 +127,14 @@ void MainWindow::buildDocks()
     addDockWidget(Qt::RightDockWidgetArea, m_inspectorDock);
 
     // Bottom: timeline
-    auto *timeline = new TimelinePlaceholder;
-    timeline->setObjectName(QStringLiteral("timelinePlaceholder"));
+    m_timeline = new TimelinePanel(m_ctl);
     m_timelineDock = new QDockWidget(this);
     m_timelineDock->setObjectName(QStringLiteral("timelineDock"));
-    m_timelineDock->setWidget(timeline);
+    m_timelineDock->setWidget(m_timeline);
     addDockWidget(Qt::BottomDockWidgetArea, m_timelineDock);
 
     resizeDocks({m_mediaDock, m_inspectorDock}, {380, 300}, Qt::Horizontal);
-    resizeDocks({m_timelineDock}, {260}, Qt::Vertical);
+    resizeDocks({m_timelineDock}, {300}, Qt::Vertical);
 }
 
 QAction *MainWindow::addPlanned(QMenu *menu, const char *sourceText, int phase, const QString &objectName)
@@ -168,19 +184,26 @@ void MainWindow::buildMenus()
     m_exitAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+Q")));
 
     m_editMenu = mb->addMenu(QString());
-    addPlanned(m_editMenu, QT_TR_NOOP("Undo"), 2, QStringLiteral("actUndo"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Redo"), 2, QStringLiteral("actRedo"));
+    m_undoAct = m_editMenu->addAction(QString(), m_ctl->undoStack(), &QUndoStack::undo);
+    m_undoAct->setObjectName(QStringLiteral("actUndo"));
+    m_undoAct->setShortcut(QKeySequence::Undo);
+    m_redoAct = m_editMenu->addAction(QString(), m_ctl->undoStack(), &QUndoStack::redo);
+    m_redoAct->setObjectName(QStringLiteral("actRedo"));
+    m_redoAct->setShortcuts({QKeySequence(QStringLiteral("Ctrl+Shift+Z")), QKeySequence(QStringLiteral("Ctrl+Y"))});
+    connect(m_ctl->undoStack(), &QUndoStack::indexChanged, this, &MainWindow::updateUndoActions);
+    connect(m_ctl->undoStack(), &QUndoStack::cleanChanged, this, &MainWindow::updateUndoActions);
     m_editMenu->addSeparator();
-    addPlanned(m_editMenu, QT_TR_NOOP("Cut"), 2, QStringLiteral("actCut"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Copy"), 2, QStringLiteral("actCopy"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Paste"), 2, QStringLiteral("actPaste"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Delete"), 2, QStringLiteral("actDelete"));
-    addPlanned(m_editMenu, QT_TR_NOOP("Ripple delete"), 2, QStringLiteral("actRippleDelete"));
+    addPlanned(m_editMenu, QT_TR_NOOP("Cut"), 6, QStringLiteral("actCut"));
+    addPlanned(m_editMenu, QT_TR_NOOP("Copy"), 6, QStringLiteral("actCopy"));
+    addPlanned(m_editMenu, QT_TR_NOOP("Paste"), 6, QStringLiteral("actPaste"));
+    m_editMenu->addAction(m_timeline->deleteAction());
+    m_editMenu->addAction(m_timeline->rippleDeleteAction());
+    m_editMenu->addAction(m_timeline->selectAllAction());
     m_editMenu->addSeparator();
     addPlanned(m_editMenu, QT_TR_NOOP("Keyboard shortcuts..."), 6, QStringLiteral("actShortcuts"));
 
     m_clipMenu = mb->addMenu(QString());
-    addPlanned(m_clipMenu, QT_TR_NOOP("Split at playhead"), 2, QStringLiteral("actSplit"));
+    m_clipMenu->addAction(m_timeline->splitAction());
     addPlanned(m_clipMenu, QT_TR_NOOP("Audio gain..."), 3, QStringLiteral("actAudioGain"));
     addPlanned(m_clipMenu, QT_TR_NOOP("Speed / duration..."), 7, QStringLiteral("actSpeed"));
     addPlanned(m_clipMenu, QT_TR_NOOP("Link / unlink audio and video"), 6, QStringLiteral("actLink"));
@@ -189,8 +212,9 @@ void MainWindow::buildMenus()
     m_sequenceMenu = mb->addMenu(QString());
     m_sequenceAct = m_sequenceMenu->addAction(QString(), this, &MainWindow::editSequence);
     m_sequenceAct->setObjectName(QStringLiteral("actSequenceSettings"));
-    addPlanned(m_sequenceMenu, QT_TR_NOOP("Add track"), 2, QStringLiteral("actAddTrack"));
-    addPlanned(m_sequenceMenu, QT_TR_NOOP("Snapping"), 2, QStringLiteral("actSnapping"));
+    m_sequenceMenu->addAction(m_timeline->addVideoTrackAction());
+    m_sequenceMenu->addAction(m_timeline->addAudioTrackAction());
+    m_sequenceMenu->addAction(m_timeline->snappingAction());
     addPlanned(m_sequenceMenu, QT_TR_NOOP("Render preview"), 13, QStringLiteral("actRenderPreview"));
 
     m_markersMenu = mb->addMenu(QString());
@@ -272,6 +296,7 @@ void MainWindow::retranslate()
         p.action->setToolTip(tr("Planned for phase %1").arg(p.phase));
     }
 
+    updateUndoActions();
     m_newAct->setText(tr("New project"));
     m_openAct->setText(tr("Open project..."));
     m_recentMenu->setTitle(tr("Recent projects"));
@@ -305,7 +330,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(tr("Phase 1: projects and media bin work. Timeline editing is not working yet."));
+    m_statusLabel->setText(tr("Phase 2: timeline editing works; the Program monitor shows the frame at the playhead. Playback comes next."));
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -348,7 +373,7 @@ void MainWindow::resetLayout()
     m_inspectorDock->show();
     m_timelineDock->show();
     resizeDocks({m_mediaDock, m_inspectorDock}, {300, 320}, Qt::Horizontal);
-    resizeDocks({m_timelineDock}, {260}, Qt::Vertical);
+    resizeDocks({m_timelineDock}, {300}, Qt::Vertical);
     const int half = m_monitorSplit->width() / 2;
     m_monitorSplit->setSizes({half, half});
 }
@@ -477,6 +502,15 @@ void MainWindow::rebuildRecentMenu()
                 openProjectFile(p);
         });
     }
+}
+
+void MainWindow::updateUndoActions()
+{
+    const QUndoStack *st = m_ctl->undoStack();
+    m_undoAct->setEnabled(st->canUndo());
+    m_redoAct->setEnabled(st->canRedo());
+    m_undoAct->setText(st->canUndo() ? tr("Undo: %1").arg(st->undoText()) : tr("Undo"));
+    m_redoAct->setText(st->canRedo() ? tr("Redo: %1").arg(st->redoText()) : tr("Redo"));
 }
 
 void MainWindow::editSequence()

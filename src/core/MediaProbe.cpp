@@ -172,22 +172,12 @@ bool probe(const QString &path, MediaInfo &out, QString *error)
     return true;
 }
 
-QImage thumbnail(const QString &path, int maxWidth, int maxHeight, QString *error)
-{
-    if (isImageExt(path)) {
-        QImageReader reader(path);
-        reader.setAutoTransform(true);
-        QSize s = reader.size();
-        if (s.isValid()) {
-            s.scale(maxWidth, maxHeight, Qt::KeepAspectRatio);
-            reader.setScaledSize(s);
-        }
-        QImage img = reader.read();
-        if (img.isNull() && error)
-            *error = reader.errorString();
-        return img;
-    }
+namespace {
 
+// Decodes one video frame. targetUs < 0: about 10% into the file, first frame
+// after the seek point (fast). Otherwise the frame shown at targetUs (exact).
+QImage decodeVideoFrame(const QString &path, qint64 targetUs, int maxWidth, int maxHeight, QString *error)
+{
     FormatPtr fmt = openInput(path, error);
     if (!fmt)
         return {};
@@ -209,27 +199,55 @@ QImage thumbnail(const QString &path, int maxWidth, int maxHeight, QString *erro
         return {};
     }
 
-    // Seek to ~10% so the thumbnail is not a black first frame.
-    if (fmt->duration > 0) {
+    const bool exact = targetUs >= 0;
+    int64_t streamTarget = 0;
+    if (exact) {
+        // Seek to the key frame before the target, then decode up to it.
+        const int64_t startUs = fmt->start_time != AV_NOPTS_VALUE ? fmt->start_time : 0;
+        streamTarget = av_rescale_q(startUs + targetUs, AV_TIME_BASE_Q, st->time_base);
+        av_seek_frame(fmt.get(), vi, streamTarget, AVSEEK_FLAG_BACKWARD);
+        // Allow half a frame of rounding.
+        if (st->avg_frame_rate.num > 0)
+            streamTarget -= av_rescale_q(1, av_inv_q(st->avg_frame_rate), st->time_base) / 2;
+    } else if (fmt->duration > 0) {
+        // Seek to ~10% so the thumbnail is not a black first frame.
         const int64_t target = fmt->duration / 10;
         av_seek_frame(fmt.get(), -1, target, AVSEEK_FLAG_BACKWARD);
     }
 
     PacketPtr pkt(av_packet_alloc());
     FramePtr frame(av_frame_alloc());
-    bool got = false;
+    FramePtr last(av_frame_alloc());
+    bool got = false;     // a frame that satisfies the request
+    bool haveLast = false; // newest decoded frame (fallback near the end)
+    auto accept = [&]() {
+        av_frame_unref(last.get());
+        av_frame_ref(last.get(), frame.get());
+        haveLast = true;
+        if (!exact)
+            return true;
+        const int64_t pts = frame->best_effort_timestamp;
+        return pts == AV_NOPTS_VALUE || pts >= streamTarget;
+    };
     int packets = 0;
     while (!got && av_read_frame(fmt.get(), pkt.get()) >= 0 && packets < 2000) {
         if (pkt->stream_index == vi) {
             ++packets;
             if (avcodec_send_packet(cc.get(), pkt.get()) >= 0)
-                got = avcodec_receive_frame(cc.get(), frame.get()) >= 0;
+                while (!got && avcodec_receive_frame(cc.get(), frame.get()) >= 0)
+                    got = accept();
         }
         av_packet_unref(pkt.get());
     }
     if (!got) {
         avcodec_send_packet(cc.get(), nullptr); // flush
-        got = avcodec_receive_frame(cc.get(), frame.get()) >= 0;
+        while (!got && avcodec_receive_frame(cc.get(), frame.get()) >= 0)
+            got = accept();
+    }
+    if (!got && haveLast) {
+        av_frame_unref(frame.get());
+        av_frame_ref(frame.get(), last.get());
+        got = true;
     }
     if (!got) {
         if (error)
@@ -253,6 +271,34 @@ QImage thumbnail(const QString &path, int maxWidth, int maxHeight, QString *erro
     int dstStride[4] = {int(img.bytesPerLine()), 0, 0, 0};
     sws_scale(sws.get(), frame->data, frame->linesize, 0, frame->height, dst, dstStride);
     return img;
+}
+
+} // namespace
+
+QImage thumbnail(const QString &path, int maxWidth, int maxHeight, QString *error)
+{
+    if (isImageExt(path)) {
+        QImageReader reader(path);
+        reader.setAutoTransform(true);
+        QSize s = reader.size();
+        if (s.isValid()) {
+            s.scale(maxWidth, maxHeight, Qt::KeepAspectRatio);
+            reader.setScaledSize(s);
+        }
+        QImage img = reader.read();
+        if (img.isNull() && error)
+            *error = reader.errorString();
+        return img;
+    }
+
+    return decodeVideoFrame(path, -1, maxWidth, maxHeight, error);
+}
+
+QImage frameAt(const QString &path, qint64 timeUs, int maxWidth, int maxHeight, QString *error)
+{
+    if (isImageExt(path))
+        return thumbnail(path, maxWidth, maxHeight, error);
+    return decodeVideoFrame(path, std::max<qint64>(0, timeUs), maxWidth, maxHeight, error);
 }
 
 QString ffmpegVersionString()

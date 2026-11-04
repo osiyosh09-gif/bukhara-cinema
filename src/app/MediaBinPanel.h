@@ -12,6 +12,9 @@ namespace bc {
 
 class ProjectController;
 
+// Drag payload from the bin to the timeline: media ids, one per line.
+inline constexpr char kMediaIdsMime[] = "application/x-bukhara-media-ids";
+
 // Tree that accepts files from Windows Explorer and moves bin items
 // between folders by drag and drop.
 class BinTree : public QTreeWidget
@@ -25,6 +28,7 @@ signals:
     void itemsMoved(const QList<QUuid> &items, const QList<QUuid> &folders, const QUuid &target);
 
 protected:
+    QMimeData *mimeData(const QList<QTreeWidgetItem *> &items) const override;
     void dragEnterEvent(QDragEnterEvent *e) override;
     void dragMoveEvent(QDragMoveEvent *e) override;
     void dropEvent(QDropEvent *e) override;

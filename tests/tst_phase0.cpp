@@ -79,7 +79,7 @@ private slots:
                 QVERIFY2(!a->isEnabled(), qPrintable(a->objectName()));
             }
         }
-        QVERIFY(planned >= 20);
+        QVERIFY(planned >= 14); // phase 2 turned undo/redo, delete, split, tracks and snapping into real actions
 
         // Transport buttons must not pretend to play.
         for (auto *mon : w.findChildren<MonitorView *>())
@@ -101,9 +101,9 @@ private slots:
         QTest::addColumn<QString>("editMenu");
         QTest::addColumn<QString>("mediaBin");
         QTest::addColumn<QString>("phaseTag");
-        QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[2-босқич]";
-        QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[2-bosqich]";
-        QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 2]";
+        QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[6-босқич]";
+        QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[6-bosqich]";
+        QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 6]";
     }
 
     void languageSwitchUpdatesUi()
@@ -121,8 +121,8 @@ private slots:
         QCOMPARE(Language::instance().current(), code);
         QCOMPARE(menuAt(w, 1)->title(), editMenu);
         QCOMPARE(w.findChild<QTabWidget *>(QStringLiteral("leftTabs"))->tabText(0), mediaBin);
-        auto *undo = w.findChild<QAction *>(QStringLiteral("actUndo"));
-        QVERIFY(undo->text().endsWith(phaseTag));
+        auto *planned = w.findChild<QAction *>(QStringLiteral("actCut"));
+        QVERIFY(planned->text().endsWith(phaseTag));
 
         // Persisted for the next start.
         QCOMPARE(QSettings().value(QStringLiteral("ui/language")).toString(), code);

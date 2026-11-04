@@ -3,6 +3,7 @@
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QPixmap>
 #include <QStyle>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -50,6 +51,42 @@ MonitorView::MonitorView(std::function<QString()> title, QWidget *parent)
     retranslate();
 }
 
+void MonitorView::setEmptyText(std::function<QString()> text)
+{
+    m_emptyText = std::move(text);
+    retranslate();
+}
+
+void MonitorView::setImage(const QImage &image)
+{
+    m_image = image;
+    showImage();
+}
+
+void MonitorView::setTimecode(const QString &tc)
+{
+    m_timecode->setText(tc);
+}
+
+void MonitorView::showImage()
+{
+    if (m_image.isNull()) {
+        m_screen->setPixmap(QPixmap());
+        m_screen->setText(m_emptyText ? m_emptyText() : tr("No video yet.\nPlayback is planned for phase 2."));
+        return;
+    }
+    const QSize area = m_screen->contentsRect().size().boundedTo(QSize(4096, 4096)) - QSize(2, 2);
+    m_screen->setPixmap(QPixmap::fromImage(
+        m_image.scaled(area.expandedTo(QSize(16, 9)), Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+}
+
+void MonitorView::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    if (!m_image.isNull())
+        showImage();
+}
+
 void MonitorView::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange)
@@ -60,7 +97,7 @@ void MonitorView::changeEvent(QEvent *event)
 void MonitorView::retranslate()
 {
     m_titleLabel->setText(m_title());
-    m_screen->setText(tr("No video yet.\nPlayback is planned for phase 2."));
+    showImage();
     for (auto *b : m_transport)
         b->setToolTip(tr("Playback is planned for phase 2"));
 }

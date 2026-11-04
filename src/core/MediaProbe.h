@@ -22,6 +22,10 @@ bool probe(const QString &path, MediaInfo &out, QString *error);
 // to fit maxWidth x maxHeight. Audio-only files return a null image.
 QImage thumbnail(const QString &path, int maxWidth, int maxHeight, QString *error = nullptr);
 
+// Decodes the frame shown at `timeUs` (from the start of the file), scaled to
+// fit maxWidth x maxHeight. Images return the image; audio-only a null image.
+QImage frameAt(const QString &path, qint64 timeUs, int maxWidth, int maxHeight, QString *error = nullptr);
+
 // "avformat 61.7.100" etc. for the About / licenses window.
 QString ffmpegVersionString();
 QString ffmpegLicense();

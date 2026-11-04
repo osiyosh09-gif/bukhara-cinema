@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.2.0
+    VERSION 0.3.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -23,6 +23,7 @@ find_package(FFmpeg REQUIRED)
 add_library(bc_core STATIC
     src/core/Project.h          src/core/Project.cpp
     src/core/MediaProbe.h       src/core/MediaProbe.cpp
+    src/core/Timeline.h         src/core/Timeline.cpp
 )
 target_include_directories(bc_core PUBLIC src)
 target_link_libraries(bc_core PUBLIC Qt6::Core Qt6::Gui FFmpeg::FFmpeg)
@@ -47,6 +48,7 @@ add_library(bc_ui STATIC
     src/app/ProjectInfoPanel.h  src/app/ProjectInfoPanel.cpp
     src/app/SequenceSettingsDialog.h src/app/SequenceSettingsDialog.cpp
     src/app/Formatting.h        src/app/Formatting.cpp
+    src/app/TimelinePanel.h     src/app/TimelinePanel.cpp
     resources/resources.qrc
 )
 target_include_directories(bc_ui PUBLIC src)
