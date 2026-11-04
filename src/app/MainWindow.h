@@ -19,6 +19,7 @@ class MediaBinPanel;
 class ProjectInfoPanel;
 class TimelinePanel;
 class ClipInspector;
+class Autosave;
 
 // Main window layout:
 //   top     - menus and toolbar (save, export)
@@ -39,6 +40,9 @@ public:
     ProjectController *controller() const { return m_ctl; }
     // Opens a project file (used for the command line / file association).
     bool openProjectFile(const QString &path);
+    // Offers autosaved copies left by a crash. Returns true if one was opened.
+    bool checkRecovery();
+    Autosave *autosave() const { return m_autosave; }
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -75,6 +79,7 @@ private:
     void updateUndoActions();
     void addTitle(); // Graphics > New text: title at the playhead, ready to type
     void openExport(); // File > Export
+    void openVersions(); // File > Previous versions
 
     struct PlannedAction
     {
@@ -99,6 +104,7 @@ private:
     QMenu *m_recentMenu = nullptr;
     QAction *m_saveAct = nullptr;
     QAction *m_saveAsAct = nullptr;
+    QAction *m_versionsAct = nullptr;
     QAction *m_importAct = nullptr;
     QAction *m_sequenceAct = nullptr;
     QAction *m_undoAct = nullptr;
@@ -130,6 +136,7 @@ private:
     QLabel *m_statusLabel = nullptr;
 
     ProjectController *m_ctl = nullptr;
+    Autosave *m_autosave = nullptr;
     MediaBinPanel *m_bin = nullptr;
     ProjectInfoPanel *m_info = nullptr;
     TimelinePanel *m_timeline = nullptr;

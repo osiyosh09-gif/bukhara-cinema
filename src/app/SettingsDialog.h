@@ -5,6 +5,7 @@
 class QComboBox;
 class QLabel;
 class QDialogButtonBox;
+class QSpinBox;
 
 namespace bc {
 
@@ -17,7 +18,8 @@ public:
     QString selectedLanguage() const;
     void setSelectedLanguage(const QString &code);
 
-    // Applies the selected language (called on OK).
+    // Applies the selected language and stores the autosave and backup
+    // settings (called on OK).
     void apply();
 
 protected:
@@ -28,6 +30,10 @@ private:
 
     QLabel *m_langLabel;
     QComboBox *m_langCombo;
+    QLabel *m_autosaveLabel;
+    QComboBox *m_autosaveCombo;
+    QLabel *m_backupLabel;
+    QSpinBox *m_backupSpin;
     QDialogButtonBox *m_buttons;
 };
 

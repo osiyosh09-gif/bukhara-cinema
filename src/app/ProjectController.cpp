@@ -1,10 +1,13 @@
 #include "app/ProjectController.h"
 
+#include "core/Backups.h"
 #include "core/MediaProbe.h"
+#include "core/Waveform.h"
 #include "engine/TimelinePlayer.h"
 
 #include <QCryptographicHash>
 #include <QDir>
+#include <QFile>
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QPointer>
@@ -19,6 +22,7 @@ namespace {
 constexpr int kThumbW = 160;
 constexpr int kThumbH = 90;
 const char *kRecentKey = "project/recent";
+constexpr int kDefaultBackups = 20;
 constexpr int kProgramW = 960; // preview size: enough for the monitor, light for the CPU
 constexpr int kProgramH = 540;
 }
@@ -115,6 +119,7 @@ void ProjectController::newProject()
     m_pool.clear();
     m_project = Project();
     m_thumbs.clear();
+    m_waves.clear();
     m_pendingProbe.clear();
     m_online.clear();
     m_playhead = 0;
@@ -133,20 +138,46 @@ bool ProjectController::open(const QString &path, QString *error)
     Project p;
     if (!Project::load(path, p, error))
         return false;
+    adopt(std::move(p), QFileInfo(path).absoluteFilePath(), false);
+    return true;
+}
+
+bool ProjectController::openCopy(const QString &dataPath, const QString &originalPath, QString *error)
+{
+    QFile f(dataPath);
+    if (!f.open(QIODevice::ReadOnly)) {
+        if (error)
+            *error = f.errorString();
+        return false;
+    }
+    // Media paths are resolved as if the file were still at its original place.
+    Project p;
+    if (!Project::fromJson(f.readAll(), originalPath.isEmpty() ? dataPath : originalPath, p, error))
+        return false;
+    adopt(std::move(p), originalPath.isEmpty() ? QString() : QFileInfo(originalPath).absoluteFilePath(), true);
+    return true;
+}
+
+void ProjectController::adopt(Project &&p, const QString &filePath, bool modified)
+{
     ++m_generation;
     m_pool.clear();
     m_project = std::move(p);
-    m_project.name = QFileInfo(path).completeBaseName();
+    if (!filePath.isEmpty())
+        m_project.name = QFileInfo(filePath).completeBaseName();
     m_thumbs.clear();
+    m_waves.clear();
     m_pendingProbe.clear();
-    setFilePath(QFileInfo(path).absoluteFilePath());
+    setFilePath(filePath);
     refreshOnlineState();
     m_playhead = 0;
     m_lastFrameKey.clear();
     resetUndo();
     syncPlayer();
-    setModified(false);
-    addRecent(m_filePath);
+    m_modified = !modified; // make sure the signal is sent
+    setModified(modified);
+    if (!filePath.isEmpty() && !modified)
+        addRecent(m_filePath);
     emit projectReset();
     emit timelineChanged();
     requestProgramFrame();
@@ -154,12 +185,13 @@ bool ProjectController::open(const QString &path, QString *error)
     for (const MediaItem &m : m_project.items) {
         if (!m_online.contains(m.id))
             continue;
-        if (!m.probed)
+        if (!m.probed) {
             startProbe(m);
-        else
+        } else {
             startThumbnail(m);
+            startWaveform(m);
+        }
     }
-    return true;
 }
 
 bool ProjectController::save(QString *error)
@@ -178,6 +210,16 @@ bool ProjectController::saveAs(const QString &path, QString *error)
     if (QFileInfo(target).suffix().compare(Project::fileExtension(), Qt::CaseInsensitive) != 0)
         target += QLatin1Char('.') + Project::fileExtension();
     m_project.name = QFileInfo(target).completeBaseName();
+    // The file about to be replaced becomes a previous version (unless the
+    // save changes nothing).
+    QFile existing(target);
+    if (existing.open(QIODevice::ReadOnly) && existing.readAll() != m_project.toJson(target)) {
+        QString backupError;
+        if (!Backups::backup(target, QSettings().value(QStringLiteral("backup/keep"), kDefaultBackups).toInt(),
+                             &backupError))
+            qWarning("backup failed: %s", qPrintable(backupError));
+    }
+    existing.close();
     if (!m_project.save(target, error))
         return false;
     setFilePath(QFileInfo(target).absoluteFilePath());
@@ -207,6 +249,8 @@ void ProjectController::addRecent(const QString &path)
 
 void ProjectController::setModified(bool m)
 {
+    if (m)
+        ++m_changeSerial;
     if (m_modified == m)
         return;
     m_modified = m;
@@ -839,6 +883,7 @@ void ProjectController::startProbe(const MediaItem &item)
     const QString path = item.path;
     const quint64 gen = m_generation;
     m_pendingProbe.insert(id);
+    m_waves.remove(id); // the file may have changed (relink)
 
     QPointer<ProjectController> self(this);
     QThreadPool *pool = &m_pool;
@@ -860,6 +905,7 @@ void ProjectController::startProbe(const MediaItem &item)
                 m->probed = true;
                 self->setModified(true);
                 self->startThumbnail(*m);
+                self->startWaveform(*m);
             }
             emit self->itemUpdated(id);
         }, Qt::QueuedConnection);
@@ -893,6 +939,47 @@ void ProjectController::startThumbnail(const MediaItem &item)
             if (!m || m->path != path)
                 return;
             self->m_thumbs.insert(id, img);
+            emit self->itemUpdated(id);
+        }, Qt::QueuedConnection);
+    });
+}
+
+QString ProjectController::waveCachePath(const QString &mediaPath)
+{
+    QString p = thumbCachePath(mediaPath);
+    p.replace(QStringLiteral("/thumbs/"), QStringLiteral("/waveforms/"));
+    p.replace(QStringLiteral(".jpg"), QStringLiteral(".bcwf"));
+    return p;
+}
+
+void ProjectController::startWaveform(const MediaItem &item)
+{
+    if (!item.info.hasAudio() || m_waves.contains(item.id))
+        return;
+    const QUuid id = item.id;
+    const QString path = item.path;
+    const quint64 gen = m_generation;
+    QPointer<ProjectController> self(this);
+    (void)QtConcurrent::run(&m_pool, [self, id, path, gen] {
+        const QString cache = waveCachePath(path);
+        QByteArray peaks;
+        if (!Waveform::load(cache, peaks)) {
+            QString err;
+            if (!Waveform::compute(path, peaks, &err)) {
+                qWarning("waveform of %s: %s", qPrintable(path), qPrintable(err));
+                return;
+            }
+            Waveform::save(cache, peaks);
+        }
+        if (!self)
+            return;
+        QMetaObject::invokeMethod(self.data(), [self, id, path, gen, peaks] {
+            if (!self || gen != self->m_generation)
+                return;
+            const MediaItem *m = self->m_project.item(id);
+            if (!m || m->path != path)
+                return;
+            self->m_waves.insert(id, peaks);
             emit self->itemUpdated(id);
         }, Qt::QueuedConnection);
     });

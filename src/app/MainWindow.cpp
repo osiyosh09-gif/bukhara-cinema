@@ -2,6 +2,8 @@
 
 #include "app/AboutDialog.h"
 #include "app/AppInfo.h"
+#include "app/Autosave.h"
+#include "app/RecoveryDialog.h"
 #include "app/FeatureStatus.h"
 #include "app/Logging.h"
 #include "app/MediaBinPanel.h"
@@ -28,6 +30,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QLocale>
 #include <QMenuBar>
 #include <QScreen>
 #include <QSettings>
@@ -50,6 +53,13 @@ MainWindow::MainWindow(QWidget *parent)
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
     m_ctl = new ProjectController(this);
+    m_autosave = new Autosave(m_ctl, this);
+    connect(m_autosave, &Autosave::saved, this, [this](const QDateTime &t) {
+        statusBar()->showMessage(tr("Autosaved at %1").arg(QLocale().toString(t.time(), QStringLiteral("HH:mm"))), 4000);
+    });
+    connect(m_autosave, &Autosave::failed, this, [this](const QString &e) {
+        statusBar()->showMessage(tr("Autosave failed: %1").arg(e), 8000);
+    });
 
     buildCentral();
     buildDocks();
@@ -195,6 +205,11 @@ void MainWindow::buildMenus()
     m_saveAsAct = m_fileMenu->addAction(QString(), this, &MainWindow::saveProjectAs);
     m_saveAsAct->setObjectName(QStringLiteral("actSaveAs"));
     m_saveAsAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+S")));
+    m_versionsAct = m_fileMenu->addAction(QString(), this, &MainWindow::openVersions);
+    m_versionsAct->setObjectName(QStringLiteral("actVersions"));
+    m_versionsAct->setEnabled(false);
+    connect(m_ctl, &ProjectController::fileNameChanged, this,
+            [this](const QString &path) { m_versionsAct->setEnabled(!path.isEmpty()); });
     m_fileMenu->addSeparator();
     m_importAct = m_fileMenu->addAction(QString(), m_bin, &MediaBinPanel::importDialog);
     m_importAct->setObjectName(QStringLiteral("actImport"));
@@ -360,6 +375,7 @@ void MainWindow::retranslate()
     m_recentMenu->setTitle(tr("Recent projects"));
     m_saveAct->setText(tr("Save"));
     m_saveAsAct->setText(tr("Save as..."));
+    m_versionsAct->setText(tr("Previous versions..."));
     m_importAct->setText(tr("Import media..."));
     m_sequenceAct->setText(tr("Sequence settings..."));
     m_settingsAct->setText(tr("Settings..."));
@@ -389,7 +405,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 4: editing, playback, titles, clip volume and MP4 export work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 5: editing, playback, titles, MP4 export, autosave and waveforms work.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -592,6 +608,45 @@ void MainWindow::addTitle()
     m_clipInspector->focusTitleText();
 }
 
+void MainWindow::openVersions()
+{
+    if (m_ctl->filePath().isEmpty())
+        return;
+    VersionsDialog dlg(m_ctl->filePath(), this);
+    if (dlg.exec() != QDialog::Accepted || dlg.chosenPath().isEmpty())
+        return;
+    if (!maybeSave())
+        return;
+    const QString original = m_ctl->filePath();
+    QString err;
+    if (!m_ctl->openCopy(dlg.chosenPath(), original, &err)) {
+        QMessageBox::warning(this, tr("Previous versions"), tr("Cannot open \"%1\":\n%2").arg(dlg.chosenPath(), err));
+        return;
+    }
+    statusBar()->showMessage(tr("An earlier version is open. Save to make it the current project."), 8000);
+}
+
+bool MainWindow::checkRecovery()
+{
+    const QList<Autosave::Entry> entries = Autosave::orphaned();
+    if (entries.isEmpty())
+        return false;
+    RecoveryDialog dlg(entries, this);
+    if (dlg.exec() != QDialog::Accepted || !dlg.chosen())
+        return false;
+    const Autosave::Entry e = *dlg.chosen();
+    if (!maybeSave())
+        return false;
+    QString err;
+    if (!m_ctl->openCopy(e.dataPath, e.originalPath, &err)) {
+        QMessageBox::warning(this, tr("Recover unsaved work"), tr("Cannot open \"%1\":\n%2").arg(e.dataPath, err));
+        return false;
+    }
+    Autosave::discard(e); // this program autosaves it again from now on
+    statusBar()->showMessage(tr("Unsaved work recovered. Save the project to keep it."), 8000);
+    return true;
+}
+
 void MainWindow::editSequence()
 {
     SequenceSettingsDialog dlg(m_ctl->project().sequence, this);
@@ -605,7 +660,8 @@ void MainWindow::editSequence()
 void MainWindow::openSettings()
 {
     SettingsDialog dlg(this);
-    dlg.exec();
+    if (dlg.exec() == QDialog::Accepted)
+        m_autosave->setIntervalMinutes(Autosave::intervalSetting());
 }
 
 void MainWindow::openAbout()
