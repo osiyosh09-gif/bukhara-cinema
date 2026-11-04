@@ -330,6 +330,7 @@ void MainWindow::buildMenus()
     connect(m_ctl, &ProjectController::timelineChanged, this,
             [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
     m_clipMenu->addAction(m_timeline->speedAction());
+    m_clipMenu->addAction(m_timeline->loudnessAction());
     m_clipMenu->addAction(m_timeline->transitionAction());
     m_clipMenu->addAction(m_timeline->linkAction());
     m_toolsMenu = m_clipMenu->addMenu(QString());
@@ -564,7 +565,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 10, part 3: noise reduction and hum removal work (Effects panel, audio clips).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 10 done: loudness normalisation works (Clip > Normalize loudness).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

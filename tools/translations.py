@@ -1080,6 +1080,57 @@ T.update({
         "Фаза 10, часть 3: работают шумоподавление и удаление сетевого гула (панель «Эффекты», аудиоклипы)."),
 })
 
+T.update({
+    "Loudness (LUFS) normalisation": ("Овоз баландлигини (LUFS) текислаш", "Нормализация громкости (LUFS)"),
+    "Clip > Normalize loudness: measures the selected audio clips as in EBU R128 and sets their volume to -14, -16 or -23 LUFS (or your own target) with a peak ceiling. Measuring the whole mix comes with phase 13.": (
+        "Клип > Овоз баландлигини текислаш: танланган аудио клиплар EBU R128 бўйича ўлчанади ва овози −14, −16 ёки −23 LUFS га (ёки ўзингиз танлаган қийматга) келтирилади, энг баланд нуқта чегарадан ошмайди. Бутун аралашмани ўлчаш 13-босқичда.",
+        "Клип > Нормализовать громкость: выбранные аудиоклипы измеряются по EBU R128, их громкость приводится к -14, -16 или -23 LUFS (или своему значению) с ограничением пиков. Измерение всего микса — в фазе 13."),
+    "Export queue, render preview, GPU acceleration, loudness of the whole mix": ("Экспорт навбати, render preview, GPU тезлаштириш, бутун аралашма баландлиги", "Очередь экспорта, предпросмотр рендера, ускорение GPU, громкость всего микса"),
+    "Phase 10 done: loudness normalisation works (Clip > Normalize loudness).": (
+        "10-босқич тугади: овоз баландлигини текислаш ишлайди (Клип > Овоз баландлигини текислаш).",
+        "Фаза 10 завершена: работает нормализация громкости (Клип > Нормализовать громкость)."),
+    "Normalize loudness": ("Овоз баландлигини текислаш", "Нормализовать громкость"),
+    "Normalize loudness...": ("Овоз баландлигини текислаш...", "Нормализовать громкость..."),
+    "Measure the selected audio clips (LUFS) and set their volume to a target loudness": (
+        "Танланган аудио клипларни ўлчаш (LUFS) ва овозини мақсад баландликка келтириш",
+        "Измерить выбранные аудиоклипы (LUFS) и привести их громкость к целевой"),
+    "-14 LUFS: YouTube, Instagram, Telegram": ("−14 LUFS: YouTube, Instagram, Telegram", "-14 LUFS: YouTube, Instagram, Telegram"),
+    "-16 LUFS: podcasts, phones": ("−16 LUFS: подкастлар, телефонлар", "-16 LUFS: подкасты, телефоны"),
+    "-23 LUFS: television (EBU R128)": ("−23 LUFS: телевидение (EBU R128)", "-23 LUFS: телевидение (EBU R128)"),
+    "No sample may be louder than this after the change (sample peak)": (
+        "Ўзгаришдан кейин ҳеч бир нуқта бундан баланд бўлмайди (sample peak)",
+        "После изменения ни один отсчёт не будет громче этого (sample peak)"),
+    "One volume change for all clips (keeps their balance)": (
+        "Ҳамма клипларга битта ўзгариш (нисбати сақланади)",
+        "Одно изменение для всех клипов (сохраняет их баланс)"),
+    "For one recording cut into several clips: they are measured together": (
+        "Бир неча бўлакка кесилган битта ёзув учун: бўлаклар бирга ўлчанади",
+        "Для одной записи, разрезанной на несколько клипов: они измеряются вместе"),
+    "Loudness": ("Баландлик", "Громкость"),
+    "Peak": ("Энг баланд нуқта", "Пик"),
+    "New volume": ("Янги овоз", "Новая громкость"),
+    "Target:": ("Мақсад:", "Цель:"),
+    "Peak ceiling:": ("Энг баланд нуқта чегараси:", "Потолок пиков:"),
+    "The sound of the clip file is measured, before its volume and sound effects. Silence and very quiet parts are not counted.": (
+        "Клип файлидаги овоз ўлчанади: клип овози ва овоз эффектларидан олдин. Жимлик ва жуда паст жойлар ҳисобга олинмайди.",
+        "Измеряется звук файла клипа, до его громкости и звуковых эффектов. Тишина и очень тихие места не учитываются."),
+    "Apply": ("Қўллаш", "Применить"),
+    "measuring...": ("ўлчанмоқда...", "измерение..."),
+    "silent": ("жимлик", "тишина"),
+    "Now %1": ("Ҳозир %1", "Сейчас %1"),
+    "Select audio clips (or video clips with linked sound) on the timeline first.": (
+        "Аввал timeline'да аудио клипларни (ёки овози боғланган видео клипларни) танланг.",
+        "Сначала выберите на таймлайне аудиоклипы (или видеоклипы со связанным звуком)."),
+    "Measuring... clips left: %1": ("Ўлчанмоқда... қолган клиплар: %1", "Измерение... осталось клипов: %1"),
+    "Nothing to change: the clips are silent.": ("Ўзгартирадиган нарса йўқ: клипларда овоз йўқ.", "Нечего менять: в клипах тишина."),
+    "Some clips stay quieter than the target so that their peaks stay below the ceiling. A compressor (Effects tab) can help them.": (
+        "Баъзи клиплар энг баланд нуқтаси чегарадан ошмаслиги учун мақсаддан пастроқ қолади. «Эффектлар»даги компрессор ёрдам беради.",
+        "Некоторые клипы останутся тише цели, чтобы пики не превысили потолок. Поможет компрессор (вкладка «Эффекты»)."),
+    "Ready: Apply sets the clip volumes (one undo step).": (
+        "Тайёр: «Қўллаш» клип овозларини ўрнатади (битта Ctrl+Z қадами).",
+        "Готово: «Применить» установит громкость клипов (один шаг отмены)."),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

@@ -5,6 +5,7 @@
 #include "app/Formatting.h"
 #include "app/MediaBinPanel.h"
 #include "app/ProjectController.h"
+#include "app/LoudnessDialog.h"
 #include "app/SpeedDialog.h"
 
 #include <QAction>
@@ -1171,6 +1172,11 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         SpeedDialog dlg(m_ctl, id, this);
         dlg.exec();
     });
+    m_loudness = makeAction(QStringLiteral("actNormalizeLoudness"), {});
+    connect(m_loudness, &QAction::triggered, this, [this] {
+        LoudnessDialog dlg(m_ctl, m_view->selection(), this);
+        dlg.exec();
+    });
     m_renameSeq = makeAction(QStringLiteral("actRenameSequence"), {});
     connect(m_nest, &QAction::triggered, this, [this] {
         const QUuid id = m_ctl->nestClips(m_view->selection());
@@ -1232,7 +1238,7 @@ TimelinePanel::TimelinePanel(ProjectController *controller, QWidget *parent)
         m_view->setSelection(all);
     });
 
-    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_transition, m_delete, m_rippleDelete},
+    m_view->setContextActions({m_split, m_cut, m_copy, m_paste, m_link, m_nest, m_speed, m_loudness, m_transition, m_delete, m_rippleDelete},
                               {m_addVideo, m_addAudio});
 
     m_snapBtn->setDefaultAction(m_snapAct);
@@ -1391,6 +1397,7 @@ void TimelinePanel::updateState()
     m_link->setEnabled(linked || sel.size() >= 2);
     m_nest->setEnabled(hasSel);
     m_speed->setEnabled(!speedClip().isNull());
+    m_loudness->setEnabled(!m_ctl->loudnessClips(sel).isEmpty());
     m_transition->setEnabled(hasSel);
     m_link->setText(linked ? tr("Unlink audio and video") : tr("Link audio and video"));
 }
@@ -1422,6 +1429,8 @@ void TimelinePanel::retranslate()
     m_transition->setText(tr("Add transition"));
     m_transition->setToolTip(tr("A 1-second dissolve at the edit of the selected clips nearest the playhead (Ctrl+D)"));
     m_speed->setToolTip(tr("Play the clip faster or slower (Ctrl+R)"));
+    m_loudness->setText(tr("Normalize loudness..."));
+    m_loudness->setToolTip(tr("Measure the selected audio clips (LUFS) and set their volume to a target loudness"));
     m_nest->setToolTip(tr("Put the selected clips into a new nested sequence that works as one clip"));
     m_renameSeq->setText(tr("Rename..."));
     m_renameSeq->setToolTip(tr("Rename the nested sequence shown on the timeline"));

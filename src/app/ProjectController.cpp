@@ -143,6 +143,8 @@ void ProjectController::newProject()
     m_project = Project();
     m_thumbs.clear();
     m_waves.clear();
+    m_loudness.clear();
+    m_loudnessPending.clear();
     m_proxies.clear();
     cancelProxies();
     m_pendingProbe.clear();
@@ -196,6 +198,8 @@ void ProjectController::adopt(Project &&p, const QString &filePath, bool modifie
         m_project.name = QFileInfo(filePath).completeBaseName();
     m_thumbs.clear();
     m_waves.clear();
+    m_loudness.clear();
+    m_loudnessPending.clear();
     m_proxies.clear();
     cancelProxies();
     m_pendingProbe.clear();
@@ -1025,6 +1029,7 @@ void ProjectController::startProbe(const MediaItem &item)
     const quint64 gen = m_generation;
     m_pendingProbe.insert(id);
     m_waves.remove(id); // the file may have changed (relink)
+    m_loudness.remove(id);
 
     QPointer<ProjectController> self(this);
     QThreadPool *pool = &m_pool;

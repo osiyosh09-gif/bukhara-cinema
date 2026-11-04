@@ -59,10 +59,10 @@ QList<FeatureEntry> entries()
         {S::Ready,   10, QCoreApplication::translate("FeatureStatus", "Audio mixer: track volume and balance, master volume, level meters"), QCoreApplication::translate("FeatureStatus", "Audio tab on the right: a strip for each audio track (balance, fader in dB, M and S) and a master strip; the meters move while the Program monitor plays. The faders act on export too.")},
         {S::Ready,   10, QCoreApplication::translate("FeatureStatus", "Sound effects: equalizer and compressor"), QCoreApplication::translate("FeatureStatus", "Select an audio clip (or press Sound for a linked clip) in the Effects tab: low cut, bass, middle and treble; compressor with threshold, ratio, attack, release and make-up gain. They work before the clip volume.")},
         {S::Ready,   10, QCoreApplication::translate("FeatureStatus", "Noise reduction and hum removal"), QCoreApplication::translate("FeatureStatus", "Effects tab, audio clip: noise reduction learns the steady background noise and lowers it (speech; about 21 ms delay); hum removal cuts 50 or 60 Hz mains hum and its harmonics.")},
-        {S::Planned, 10, QCoreApplication::translate("FeatureStatus", "Loudness (LUFS) normalisation"), {}},
+        {S::Ready,   10, QCoreApplication::translate("FeatureStatus", "Loudness (LUFS) normalisation"), QCoreApplication::translate("FeatureStatus", "Clip > Normalize loudness: measures the selected audio clips as in EBU R128 and sets their volume to -14, -16 or -23 LUFS (or your own target) with a peak ceiling. Measuring the whole mix comes with phase 13.")},
         {S::Planned, 11, QCoreApplication::translate("FeatureStatus", "Subtitles and SRT import/export"), {}},
         {S::Planned, 12, QCoreApplication::translate("FeatureStatus", "Multicamera editing"), {}},
-        {S::Planned, 13, QCoreApplication::translate("FeatureStatus", "Export queue, render preview, GPU acceleration"), {}},
+        {S::Planned, 13, QCoreApplication::translate("FeatureStatus", "Export queue, render preview, GPU acceleration, loudness of the whole mix"), {}},
         {S::Planned, 14, QCoreApplication::translate("FeatureStatus", "AI assistants: transcription, text-based editing, scene detection"), {}},
         {S::Planned, 15, QCoreApplication::translate("FeatureStatus", "Plugins and project interchange"), {}},
     };
