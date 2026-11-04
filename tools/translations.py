@@ -951,6 +951,27 @@ T.update({
         "Не удалось прочитать файл как LUT .cube:\n%1"),
 })
 
+T.update({
+    "Colour wheels": ("Ранг ғилдираклари", "Цветовые круги"),
+    "Histogram": ("Гистограмма", "Гистограмма"),
+    "Phase 9, part 3: colour correction, LUTs and scopes work (Colour panel, Window > Scopes).": (
+        "9-босқич, 3-қисм: ранг тузатиш, LUT ва scope'лар ишлайди («Ранг» панели, «Ойна > Scope'лар»).",
+        "Этап 9, часть 3: цветокоррекция, LUT и осциллографы работают (панель «Цвет», «Окно > Осциллографы»)."),
+    "RGB parade": ("RGB parade", "RGB-парад"),
+    "Scopes": ("Scope'лар", "Осциллографы"),
+    "Scopes: waveform, RGB parade, vectorscope, histogram": (
+        "Scope'лар: waveform, RGB parade, vectorscope, гистограмма",
+        "Осциллографы: вейвформ, RGB-парад, вектороскоп, гистограмма"),
+    "Shows the picture in the Program monitor. Waveform and parade: 0 = black, 100 = white. Vectorscope: squares are pure colours, the dashed line is skin tone.": (
+        "Program мониторидаги расмни кўрсатади. Waveform ва parade: 0 = қора, 100 = оқ. Vectorscope: квадратлар соф ранглар, штрих чизиқ тери ранги.",
+        "Показывает изображение монитора программы. Вейвформ и парад: 0 = чёрный, 100 = белый. Вектороскоп: квадраты — чистые цвета, пунктир — тон кожи."),
+    "Vectorscope (hue and saturation)": ("Vectorscope (ранг тури ва тўйинганлик)", "Вектороскоп (тон и насыщенность)"),
+    "Waveform (brightness)": ("Waveform (ёруғлик)", "Вейвформ (яркость)"),
+    "Window > Scopes opens them; they show the frame in the Program monitor and work only while open (up to about 12 times a second while playing).": (
+        "«Ойна > Scope'лар» очади; Program мониторидаги кадрни кўрсатади ва фақат очиқ турганда ишлайди (ижро пайтида секундига 12 мартагача).",
+        "«Окно > Осциллографы» открывает их; они показывают кадр монитора программы и работают, только пока открыты (при воспроизведении примерно до 12 раз в секунду)."),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",
