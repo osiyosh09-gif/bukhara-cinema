@@ -18,7 +18,8 @@ Language &Language::instance()
 
 QStringList Language::availableCodes()
 {
-    return {QStringLiteral("uz_Cyrl"), QStringLiteral("uz_Latn"), QStringLiteral("ru")};
+    return {QStringLiteral("uz_Cyrl"), QStringLiteral("uz_Latn"), QStringLiteral("ru"),
+            QStringLiteral("en")};
 }
 
 QString Language::nativeName(const QString &code)
@@ -29,6 +30,8 @@ QString Language::nativeName(const QString &code)
         return QStringLiteral("O‘zbekcha (lotin)");
     if (code == QLatin1String("ru"))
         return QStringLiteral("Русский");
+    if (code == QLatin1String("en"))
+        return QStringLiteral("English");
     return code;
 }
 
@@ -62,6 +65,8 @@ bool Language::setLanguage(const QString &code, bool persist)
     m_current = code;
     if (code == QLatin1String("ru"))
         QLocale::setDefault(QLocale(QLocale::Russian, QLocale::Russia));
+    else if (code == QLatin1String("en"))
+        QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
     else if (code == QLatin1String("uz_Latn"))
         QLocale::setDefault(QLocale(QLocale::Uzbek, QLocale::LatinScript, QLocale::Uzbekistan));
     else

@@ -104,6 +104,7 @@ private slots:
         QTest::newRow("uz_Cyrl") << "uz_Cyrl" << "&Таҳрир" << "Медиа кутубхонаси" << "[14-босқич]";
         QTest::newRow("uz_Latn") << "uz_Latn" << "&Tahrir" << "Media kutubxonasi" << "[14-bosqich]";
         QTest::newRow("ru") << "ru" << "&Правка" << "Медиатека" << "[этап 14]";
+        QTest::newRow("en") << "en" << "&Edit" << "Media bin" << "[phase 14]";
     }
 
     void languageSwitchUpdatesUi()
@@ -133,6 +134,7 @@ private slots:
         QCOMPARE(Language::nativeName(QStringLiteral("uz_Cyrl")), QStringLiteral("Ўзбекча (кирилл)"));
         QCOMPARE(Language::nativeName(QStringLiteral("uz_Latn")), QStringLiteral("O‘zbekcha (lotin)"));
         QCOMPARE(Language::nativeName(QStringLiteral("ru")), QStringLiteral("Русский"));
+        QCOMPARE(Language::nativeName(QStringLiteral("en")), QStringLiteral("English"));
         QVERIFY(!Language::instance().setLanguage(QStringLiteral("xx")));
     }
 

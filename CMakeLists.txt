@@ -121,6 +121,7 @@ set(BC_TS_FILES
     i18n/bukhara_uz_Cyrl.ts
     i18n/bukhara_uz_Latn.ts
     i18n/bukhara_ru.ts
+    i18n/bukhara_en.ts
 )
 # lupdate reads the UI and the engine (export messages are shown to the user).
 get_target_property(BC_UI_SOURCES bc_ui SOURCES)
