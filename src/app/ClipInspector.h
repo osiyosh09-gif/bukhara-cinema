@@ -44,6 +44,9 @@ private:
     void applyAudio();     // widgets -> audio clip
     void applyMotion();    // widgets -> video clip (key at the playhead when animated)
     void refreshMotion();  // follows the playhead
+    void refreshTransitions();
+    void applyTransition(bool head);
+    QUuid transitionClip() const { return !motionClip().isNull() ? motionClip() : m_audio; }
     QUuid motionClip() const { return !m_title.isNull() ? m_title : m_video; }
     void pickColor();
     void showColor(const QString &color);
@@ -94,6 +97,15 @@ private:
     QToolButton *m_nextKey;
     QToolButton *m_resetMotion;
     QLabel *m_keyNote;
+    QGroupBox *m_transBox;
+    QLabel *m_headLabel;
+    QComboBox *m_headKind;
+    QDoubleSpinBox *m_headLen;
+    QLabel *m_tailLabel;
+    QComboBox *m_tailKind;
+    QDoubleSpinBox *m_tailLen;
+    QLabel *m_transNote;
+    bool m_transAudio = false; // combos hold the sound list
 };
 
 } // namespace bc

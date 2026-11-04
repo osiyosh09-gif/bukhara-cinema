@@ -786,6 +786,36 @@ T.update({
         "Когда клип становится длиннее или короче, следующие клипы на его дорожках сдвигаются вместе с его концом"),
 })
 
+T.update({
+    "A 1-second dissolve at the edit of the selected clips nearest the playhead (Ctrl+D)": (
+        "Танланган клипларнинг playhead'га энг яқин кесимига 1 сониялик dissolve (Ctrl+D)",
+        "Растворение на 1 секунду в ближайшей к указателю склейке выбранных клипов (Ctrl+D)"),
+    "Add transition": ("Ўтиш қўшиш", "Добавить переход"),
+    "Between two touching clips the transition mixes them; at a free end the clip fades. Ctrl+D adds a 1-second one at the edit nearest the playhead.": (
+        "Ёнма-ён икки клип орасида ўтиш уларни аралаштиради; бўш учда клип аста пайдо бўлади ёки йўқолади. Ctrl+D playhead'га энг яқин кесимга 1 сониялик ўтиш қўяди.",
+        "Между соседними клипами переход смешивает их; на свободном конце клип плавно появляется или исчезает. Ctrl+D добавляет переход на 1 секунду в ближайшую к указателю склейку."),
+    "Cross dissolve": ("Cross dissolve (аралашиш)", "Перекрёстное растворение"),
+    "Crossfade": ("Crossfade (овоз аралашиши)", "Кроссфейд"),
+    "Ctrl+D adds a 1-second dissolve at the edit nearest the playhead; the Clip panel sets the kind and length of the start and end. Between touching clips both are mixed (using extra frames of the files when they have them); at a free end the clip fades.": (
+        "Ctrl+D playhead'га энг яқин кесимга 1 сониялик dissolve қўяди; «Клип» панелида бош ва охирдаги ўтиш тури ва узунлиги танланади. Ёнма-ён клиплар аралашиб ўтади (файлда ортиқча кадр бўлса, ундан фойдаланилади); бўш учда клип аста пайдо бўлади ёки йўқолади.",
+        "Ctrl+D добавляет растворение на 1 секунду в ближайшую к указателю склейку; панель «Клип» задаёт тип и длину перехода в начале и в конце. Соседние клипы смешиваются (с запасными кадрами файлов, если они есть); на свободном конце клип плавно появляется или исчезает."),
+    "Dip to black": ("Қорага ўтиш", "Через чёрный"),
+    "Dip to white": ("Оққа ўтиш", "Через белый"),
+    "Effects, masks, chroma key": ("Эффектлар, маскалар, chroma key", "Эффекты, маски, хромакей"),
+    "End:": ("Охири:", "Конец:"),
+    "Start:": ("Боши:", "Начало:"),
+    "Phase 8, part 1: transitions between clips work (Ctrl+D, Clip panel).": (
+        "8-босқич, 1-қисм: клиплар орасидаги ўтишлар ишлайди (Ctrl+D, «Клип» панели).",
+        "Этап 8, часть 1: переходы между клипами работают (Ctrl+D, панель «Клип»)."),
+    "Transition": ("Ўтиш", "Переход"),
+    "Transitions": ("Ўтишлар", "Переходы"),
+    "Transitions: cross dissolve, dip to black or white, wipe; sound crossfade": (
+        "Ўтишлар: cross dissolve, қорага ёки оққа ўтиш, wipe; овоз crossfade",
+        "Переходы: растворение, через чёрный или белый, вытеснение; кроссфейд звука"),
+    "Wipe from the left": ("Чапдан сидириш (wipe)", "Вытеснение слева"),
+    "Wipe from the right": ("Ўнгдан сидириш (wipe)", "Вытеснение справа"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

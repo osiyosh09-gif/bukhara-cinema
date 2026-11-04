@@ -86,7 +86,7 @@ struct NestedSequence
 class Project
 {
 public:
-    static constexpr int kFormatVersion = 6; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences; 6: clip motion
+    static constexpr int kFormatVersion = 7; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences; 6: clip motion and speed; 7: transitions
     static QString fileExtension() { return QStringLiteral("bcproj"); }
 
     QString name = QStringLiteral("Untitled");

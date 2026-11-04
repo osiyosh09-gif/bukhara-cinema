@@ -316,6 +316,7 @@ void MainWindow::buildMenus()
     connect(m_ctl, &ProjectController::timelineChanged, this,
             [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
     m_clipMenu->addAction(m_timeline->speedAction());
+    m_clipMenu->addAction(m_timeline->transitionAction());
     m_clipMenu->addAction(m_timeline->linkAction());
     m_toolsMenu = m_clipMenu->addMenu(QString());
     m_toolsMenu->setObjectName(QStringLiteral("menuTools"));
@@ -545,7 +546,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 7 done: clip motion with keyframes (Clip panel) and speed changes (Ctrl+R) work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 8, part 1: transitions between clips work (Ctrl+D, Clip panel).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

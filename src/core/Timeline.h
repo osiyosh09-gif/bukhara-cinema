@@ -36,6 +36,27 @@ struct TitleData
     bool operator!=(const TitleData &o) const { return !(*this == o); }
 };
 
+// A transition at one end of a clip (phase 8a). At a cut between two
+// touching clips on one track the transition belongs to the head of the
+// later clip and mixes both; at a free end the clip fades in or out
+// (from transparent, black or white). Audio clips use Dissolve only
+// (a crossfade, or a fade at a free end).
+struct ClipTransition
+{
+    enum class Kind { None, Dissolve, DipBlack, DipWhite, WipeLeft, WipeRight };
+    Kind kind = Kind::None;
+    qint64 length = 0; // frames
+
+    bool isNone() const { return kind == Kind::None || length <= 0; }
+    bool operator==(const ClipTransition &o) const
+    {
+        return (isNone() && o.isNone()) || (kind == o.kind && length == o.length);
+    }
+    bool operator!=(const ClipTransition &o) const { return !(*this == o); }
+    static QString kindToString(Kind k);
+    static Kind kindFromString(const QString &s);
+};
+
 // One clip on a track. All positions are in frames of the sequence frame rate.
 struct TimelineClip
 {
@@ -51,6 +72,8 @@ struct TimelineClip
     qint64 fadeIn = 0;  // audio clips: fade lengths in frames
     qint64 fadeOut = 0;
     ClipMotion motion;  // video clips: position, scale, rotation, opacity (phase 7)
+    ClipTransition head; // transition at the start (with the clip before, when they touch)
+    ClipTransition tail; // fade at the end; used only when no clip touches the end
     double speed = 1.0; // media clips: 2.0 plays twice as fast (each timeline frame uses 2 source frames)
 
     // Source frames used by `frames` timeline frames.
@@ -71,7 +94,7 @@ struct TimelineClip
     {
         return id == o.id && mediaId == o.mediaId && nestId == o.nestId && linkId == o.linkId && start == o.start && in == o.in
                && length == o.length && title == o.title && gainDb == o.gainDb && fadeIn == o.fadeIn
-               && fadeOut == o.fadeOut && motion == o.motion && speed == o.speed;
+               && fadeOut == o.fadeOut && motion == o.motion && speed == o.speed && head == o.head && tail == o.tail;
     }
 };
 
@@ -183,6 +206,17 @@ public:
     // Removes the link of the clips (and of the clips linked to them).
     bool unlink(const QList<QUuid> &ids);
     bool isLinked(const QUuid &id) const;
+
+    // --- transitions (phase 8a)
+    // The clip that starts where this one ends on the same track, or null.
+    const TimelineClip *touchingAfter(const QUuid &id) const;
+    const TimelineClip *touchingBefore(const QUuid &id) const;
+    // The transition shown at an end of the clip: the tail of a clip with a
+    // touching clip after it is that clip's head.
+    ClipTransition transitionAt(const QUuid &id, bool head) const;
+    // Sets it (None removes it). The length is limited to the clip (and to
+    // the touching clip). Locked tracks do not change.
+    bool setTransition(const QUuid &id, bool head, const ClipTransition &t);
 
     // --- markers
     QUuid addMarker(qint64 frame, const QString &name = {}); // one marker per frame: returns the existing one

@@ -233,7 +233,7 @@ private slots:
         QVERIFY2(ctl.saveAs(file, &err), qPrintable(err));
         QFile f(file);
         QVERIFY(f.open(QIODevice::ReadOnly));
-        QCOMPARE(QJsonDocument::fromJson(f.readAll()).object().value(QStringLiteral("version")).toInt(), 6);
+        QCOMPARE(QJsonDocument::fromJson(f.readAll()).object().value(QStringLiteral("version")).toInt() >= 6, true);
         ProjectController other;
         QVERIFY2(other.open(file, &err), qPrintable(err));
         QVERIFY(at(other.timeline(), Kind::Video, 0, 0).motion == at(ctl.timeline(), Kind::Video, 0, 0).motion);

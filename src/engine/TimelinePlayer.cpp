@@ -277,50 +277,141 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
     tractor->set_track(bgList, 0);
 
     auto fill = [&](Mlt::Playlist &pl, const TimelineTrack &track, bool audio) {
+        const QList<TimelineClip> &clips = track.clips;
+        const int n = int(clips.size());
+        QVector<Mlt::Producer *> prod(n, nullptr);
+        QVector<qint64> baseIn(n, 0);   // first frame of the clip in the producer's frames
+        QVector<bool> still(n, false);  // every frame looks the same (titles, pictures)
+        for (int i = 0; i < n; ++i) {
+            const TimelineClip &c = clips[i];
+            if (c.isNested()) {
+                prod[i] = nestProducer(project, c.nestId, audio, depth);
+            } else if (c.isTitle()) {
+                prod[i] = audio ? nullptr : titleProducer(c.title);
+                still[i] = true;
+            } else if (const MediaItem *m = project.item(c.mediaId)) {
+                prod[i] = producerFor(*m, audio, c.speed);
+                still[i] = m->info.kind == MediaInfo::Kind::Image;
+            }
+            // A speed-changed producer counts its own (warped) frames.
+            baseIn[i] = still[i] ? 0 : c.speed != 1.0 ? qint64(std::llround(c.in / c.speed)) : c.in;
+        }
+
+        // Cuts with a transition: the clip before plays `b` frames past the
+        // cut and the clip after starts `a` frames early (centred when the
+        // sources have the frames), and MLT mixes the a + b frames.
+        QVector<qint64> headHandle(n, 0), tailHandle(n, 0), mixLen(n, 0);
+        auto touching = [&](int i) { return i > 0 && clips[i - 1].end() == clips[i].start; };
+        for (int i = 1; i < n; ++i) {
+            const TimelineClip &A = clips[i - 1];
+            const TimelineClip &B = clips[i];
+            if (!touching(i) || B.head.isNone() || !prod[i - 1] || !prod[i])
+                continue;
+            const qint64 L = std::min({B.head.length, (A.length - 1) / 2, (B.length - 1) / 2});
+            const qint64 hB = still[i] ? L : baseIn[i];
+            const qint64 hA = still[i - 1] ? L : qint64(prod[i - 1]->get_length()) - (baseIn[i - 1] + A.length);
+            qint64 a = L / 2, b = L - a;
+            if (a > hB) {
+                a = std::max<qint64>(0, hB);
+                b = std::min(L - a, hA);
+            }
+            if (b > hA) {
+                b = std::max<qint64>(0, hA);
+                a = std::min(L - b, std::max<qint64>(0, hB));
+            }
+            if (a + b < 2)
+                continue; // no frames to mix: a plain cut
+            headHandle[i] = a;
+            tailHandle[i - 1] = b;
+            mixLen[i] = a + b;
+        }
+
+        QVector<int> index(n, -1);
         qint64 pos = 0;
-        for (const TimelineClip &c : track.clips) {
+        for (int i = 0; i < n; ++i) {
+            const TimelineClip &c = clips[i];
             if (c.start > pos)
                 pl.blank(int(c.start - pos - 1));
-            Mlt::Producer *p = nullptr;
-            if (c.isNested()) {
-                p = nestProducer(project, c.nestId, audio, depth);
-            } else if (c.isTitle()) {
-                p = audio ? nullptr : titleProducer(c.title);
-            } else if (const MediaItem *m = project.item(c.mediaId)) {
-                p = producerFor(*m, audio, c.speed);
-            }
-            if (p) {
-                // A speed-changed producer counts its own (warped) frames.
-                const int in = c.isTitle() ? 0 : c.speed != 1.0 ? int(std::llround(c.in / c.speed)) : int(c.in);
-                std::unique_ptr<Mlt::Producer> cut(p->cut(in, int(in + c.length - 1)));
-                if (!audio && (c.motion.animated() || !c.motion.isIdentity())) {
-                    Mlt::Filter motion(*m_profile, "bc_transform");
-                    if (motion.is_valid()) {
-                        // Keys are in source frames; the filter counts from the cut's in point.
-                        motion.set("motion", c.motion.toEngineString(c.in).constData());
-                        motion.set("speed", c.speed);
-                        const MediaItem *m = c.mediaId.isNull() ? nullptr : project.item(c.mediaId);
-                        if (m && m->info.kind == MediaInfo::Kind::Video && m->info.hasVideo())
-                            motion.set("source_aspect", double(m->info.width) / m->info.height);
-                        motion.set_in_and_out(in, int(in + c.length - 1));
-                        cut->attach(motion);
-                    }
-                }
-                if (audio && (c.gainDb != 0 || c.fadeIn > 0 || c.fadeOut > 0)) {
-                    Mlt::Filter gain(*m_profile, "bc_gain");
-                    if (gain.is_valid()) {
-                        gain.set("gain_db", c.gainDb);
-                        gain.set("fade_in", double(c.fadeIn));
-                        gain.set("fade_out", double(c.fadeOut));
-                        gain.set_in_and_out(in, int(in + c.length - 1));
-                        cut->attach(gain);
-                    }
-                }
-                pl.append(*cut);
-            } else {
-                pl.blank(int(c.length - 1)); // missing file: gap
-            }
             pos = c.end();
+            Mlt::Producer *p = prod[i];
+            if (!p) {
+                pl.blank(int(c.length - 1)); // missing file: gap
+                continue;
+            }
+            const qint64 a = headHandle[i];
+            const qint64 total = c.length + a + tailHandle[i];
+            const int in = int(still[i] ? 0 : baseIn[i] - a);
+            std::unique_ptr<Mlt::Producer> cut(p->cut(in, int(in + total - 1)));
+            const bool nextTouches = i + 1 < n && clips[i + 1].start == c.end();
+            const ClipTransition headFade = mixLen[i] == 0 && !c.head.isNone() ? c.head : ClipTransition();
+            const ClipTransition tailFade = !nextTouches && !c.tail.isNone() ? c.tail : ClipTransition();
+            if (!audio && (c.motion.animated() || !c.motion.isIdentity())) {
+                Mlt::Filter motion(*m_profile, "bc_transform");
+                if (motion.is_valid()) {
+                    // Keys are in source frames; the filter counts from the cut's first frame.
+                    motion.set("motion", c.motion.toEngineString(c.in - c.src(a)).constData());
+                    motion.set("speed", c.speed);
+                    const MediaItem *m = c.mediaId.isNull() ? nullptr : project.item(c.mediaId);
+                    if (m && m->info.kind == MediaInfo::Kind::Video && m->info.hasVideo())
+                        motion.set("source_aspect", double(m->info.width) / m->info.height);
+                    motion.set_in_and_out(in, int(in + total - 1));
+                    cut->attach(motion);
+                }
+            }
+            if (!audio && (!headFade.isNone() || !tailFade.isNone())) {
+                Mlt::Filter fade(*m_profile, "bc_fade");
+                if (fade.is_valid()) {
+                    fade.set("lead", double(a));
+                    fade.set("length", double(c.length));
+                    fade.set("head_kind", int(headFade.kind));
+                    fade.set("head_len", double(std::min(headFade.length, c.length)));
+                    fade.set("tail_kind", int(tailFade.kind));
+                    fade.set("tail_len", double(std::min(tailFade.length, c.length)));
+                    fade.set_in_and_out(in, int(in + total - 1));
+                    cut->attach(fade);
+                }
+            }
+            const qint64 fadeIn = std::max(c.fadeIn, std::min(headFade.length, c.length));
+            const qint64 fadeOut = std::max(c.fadeOut, std::min(tailFade.length, c.length));
+            if (audio && (c.gainDb != 0 || fadeIn > 0 || fadeOut > 0)) {
+                Mlt::Filter gain(*m_profile, "bc_gain");
+                if (gain.is_valid()) {
+                    gain.set("gain_db", c.gainDb);
+                    gain.set("fade_in", double(fadeIn));
+                    gain.set("fade_out", double(fadeOut));
+                    gain.set("lead", double(a));
+                    gain.set("length", double(c.length));
+                    gain.set_in_and_out(in, int(in + total - 1));
+                    cut->attach(gain);
+                }
+            }
+            index[i] = pl.count();
+            if (mixLen[i] > 0 || (i + 1 < n && mixLen[i + 1] > 0)) {
+                // MLT mixes new cuts of the clip's producer, which would lose the
+                // filters of this cut: a one-clip playlist keeps them together.
+                Mlt::Playlist wrap(*m_profile);
+                wrap.append(*cut);
+                pl.append(wrap);
+            } else {
+                pl.append(*cut);
+            }
+        }
+        // From the end, so earlier indexes stay valid.
+        for (int i = n - 1; i >= 1; --i) {
+            if (mixLen[i] <= 0 || index[i - 1] < 0)
+                continue;
+            if (pl.mix(index[i - 1], int(mixLen[i])) != 0)
+                continue;
+            if (audio) {
+                Mlt::Transition mix(*m_profile, "mix");
+                mix.set("start", 0.0);
+                mix.set("end", 1.0);
+                pl.mix_add(index[i - 1] + 1, &mix);
+            } else {
+                Mlt::Transition xfade(*m_profile, "bc_xfade");
+                xfade.set("kind", int(clips[i].head.kind));
+                pl.mix_add(index[i - 1] + 1, &xfade);
+            }
         }
     };
 
@@ -382,7 +473,7 @@ Mlt::Producer *TimelinePlayer::nestProducer(const Project &project, const QUuid 
         for (const TimelineTrack &t : tl->tracks)
             for (const TimelineClip &c : t.clips)
                 if (c.nestId == nestId)
-                    length = std::max(length, c.in + c.length);
+                    length = std::max(length, c.in + c.length + c.tail.length + 250); // room for transition frames
     auto tractor = buildTractor(project, n->timeline, length, depth + 1);
     if (!tractor)
         return nullptr;

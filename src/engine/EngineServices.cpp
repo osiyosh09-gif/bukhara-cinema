@@ -168,8 +168,10 @@ int gainGetAudio(mlt_frame frame, void **buffer, mlt_audio_format *format, int *
     const double gain = std::pow(10.0, mlt_properties_get_double(props, "gain_db") / 20.0);
     const double fadeIn = mlt_properties_get_double(props, "fade_in");
     const double fadeOut = mlt_properties_get_double(props, "fade_out");
-    const double pos = double(mlt_filter_get_position(filter, frame));
-    const double length = double(mlt_filter_get_length2(filter, frame));
+    // `lead`: frames of the cut before the clip itself (handles of a crossfade).
+    const double pos = double(mlt_filter_get_position(filter, frame)) - mlt_properties_get_double(props, "lead");
+    const double length = mlt_properties_get(props, "length") ? mlt_properties_get_double(props, "length")
+                                                              : double(mlt_filter_get_length2(filter, frame));
     const double g0 = gain * envelope(pos, length, fadeIn, fadeOut);
     const double g1 = gain * envelope(pos + 1, length, fadeIn, fadeOut);
     const int n = *samples;
@@ -289,6 +291,167 @@ void *transformInit(mlt_profile, mlt_service_type, const char *, const void *)
     return filter;
 }
 
+// ---------------------------------------------------------------------------
+// Transitions (phase 8a): bc_fade filter (a free end of a clip fades in or
+// out) and bc_xfade transition (a cut between two clips). Kinds follow
+// ClipTransition::Kind: 1 dissolve, 2 dip to black, 3 dip to white,
+// 4 wipe from the left, 5 wipe from the right.
+
+inline uint8_t mixByte(int a, int b, double t)
+{
+    return uint8_t(std::clamp(int(std::lround(a + (b - a) * t)), 0, 255));
+}
+
+// Shows the clip with visibility `p` (0 = gone, 1 = fully there).
+void applyEdge(uint8_t *img, int w, int h, int kind, double p)
+{
+    p = std::clamp(p, 0.0, 1.0);
+    if (p >= 1.0)
+        return;
+    const int edge = int(std::lround(p * w));
+    for (int y = 0; y < h; ++y) {
+        uint8_t *row = img + size_t(y) * w * 4;
+        for (int x = 0; x < w; ++x) {
+            uint8_t *px = row + x * 4;
+            switch (kind) {
+            case 2:
+            case 3: {
+                const int c = kind == 2 ? 0 : 255;
+                px[0] = mixByte(c, px[0], p);
+                px[1] = mixByte(c, px[1], p);
+                px[2] = mixByte(c, px[2], p);
+                px[3] = mixByte(255, px[3], p);
+                break;
+            }
+            case 4:
+                if (x >= edge)
+                    px[3] = 0;
+                break;
+            case 5:
+                if (x < w - edge)
+                    px[3] = 0;
+                break;
+            default:
+                px[3] = uint8_t(std::lround(px[3] * p));
+            }
+        }
+    }
+}
+
+int fadeGetImage(mlt_frame frame, uint8_t **image, mlt_image_format *format, int *width, int *height, int /*writable*/)
+{
+    auto filter = static_cast<mlt_filter>(mlt_frame_pop_service(frame));
+    mlt_properties props = MLT_FILTER_PROPERTIES(filter);
+    const double pos = double(mlt_filter_get_position(filter, frame)) - mlt_properties_get_double(props, "lead");
+    *format = mlt_image_rgba;
+    const int err = mlt_frame_get_image(frame, image, format, width, height, 1);
+    if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)
+        return err;
+    const double length = mlt_properties_get_double(props, "length");
+    const double headLen = mlt_properties_get_double(props, "head_len");
+    const double tailLen = mlt_properties_get_double(props, "tail_len");
+    if (headLen > 0 && pos < headLen)
+        applyEdge(*image, *width, *height, mlt_properties_get_int(props, "head_kind"), (pos + 0.5) / headLen);
+    if (tailLen > 0 && pos >= length - tailLen)
+        applyEdge(*image, *width, *height, mlt_properties_get_int(props, "tail_kind"), (length - pos - 0.5) / tailLen);
+    return 0;
+}
+
+mlt_frame fadeProcess(mlt_filter filter, mlt_frame frame)
+{
+    mlt_frame_push_service(frame, filter);
+    mlt_frame_push_get_image(frame, fadeGetImage);
+    return frame;
+}
+
+void *fadeInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_filter filter = mlt_filter_new();
+    if (!filter)
+        return nullptr;
+    filter->process = fadeProcess;
+    return filter;
+}
+
+int xfadeGetImage(mlt_frame a, uint8_t **image, mlt_image_format *format, int *width, int *height, int /*writable*/)
+{
+    auto b = static_cast<mlt_frame>(mlt_frame_pop_frame(a));
+    auto transition = static_cast<mlt_transition>(mlt_frame_pop_service(a));
+    const double p = std::clamp(mlt_transition_get_progress(transition, a), 0.0, 1.0);
+    const int kind = mlt_properties_get_int(MLT_TRANSITION_PROPERTIES(transition), "kind");
+    *format = mlt_image_rgba;
+    int err = mlt_frame_get_image(a, image, format, width, height, 1);
+    if (err || !*image || *format != mlt_image_rgba || *width <= 0 || *height <= 0)
+        return err;
+    const int w = *width;
+    const int h = *height;
+    uint8_t *bImage = nullptr;
+    mlt_image_format bFormat = mlt_image_rgba;
+    int bw = w;
+    int bh = h;
+    if (!b || mlt_frame_get_image(b, &bImage, &bFormat, &bw, &bh, 0) || !bImage || bFormat != mlt_image_rgba
+        || bw != w || bh != h) {
+        return 0; // keep the first picture
+    }
+    const int edge = int(std::lround(p * w));
+    for (int y = 0; y < h; ++y) {
+        uint8_t *ra = *image + size_t(y) * w * 4;
+        const uint8_t *rb = bImage + size_t(y) * w * 4;
+        for (int x = 0; x < w; ++x) {
+            uint8_t *pa = ra + x * 4;
+            const uint8_t *pb = rb + x * 4;
+            switch (kind) {
+            case 2:
+            case 3: {
+                const int c = kind == 2 ? 0 : 255;
+                if (p < 0.5) {
+                    const double t = p * 2;
+                    for (int k = 0; k < 3; ++k)
+                        pa[k] = mixByte(pa[k], c, t);
+                    pa[3] = mixByte(pa[3], 255, t);
+                } else {
+                    const double t = p * 2 - 1;
+                    for (int k = 0; k < 3; ++k)
+                        pa[k] = mixByte(c, pb[k], t);
+                    pa[3] = mixByte(255, pb[3], t);
+                }
+                break;
+            }
+            case 4:
+                if (x < edge)
+                    std::memcpy(pa, pb, 4);
+                break;
+            case 5:
+                if (x >= w - edge)
+                    std::memcpy(pa, pb, 4);
+                break;
+            default:
+                for (int k = 0; k < 4; ++k)
+                    pa[k] = mixByte(pa[k], pb[k], p);
+            }
+        }
+    }
+    return 0;
+}
+
+mlt_frame xfadeProcess(mlt_transition transition, mlt_frame a, mlt_frame b)
+{
+    mlt_frame_push_service(a, transition);
+    mlt_frame_push_frame(a, b);
+    mlt_frame_push_get_image(a, xfadeGetImage);
+    return a;
+}
+
+void *xfadeInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_transition transition = mlt_transition_new();
+    if (!transition)
+        return nullptr;
+    transition->process = xfadeProcess;
+    mlt_properties_set_int(MLT_TRANSITION_PROPERTIES(transition), "_transition_type", 1); // video only
+    return transition;
+}
+
 } // namespace
 
 void registerAll(mlt_repository_s *repository)
@@ -298,6 +461,8 @@ void registerAll(mlt_repository_s *repository)
     mlt_repository_register(repository, mlt_service_producer_type, "bc_still", stillInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_gain", gainInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_transform", transformInit);
+    mlt_repository_register(repository, mlt_service_filter_type, "bc_fade", fadeInit);
+    mlt_repository_register(repository, mlt_service_transition_type, "bc_xfade", xfadeInit);
 }
 
 QByteArray stillResource(const QImage &image)

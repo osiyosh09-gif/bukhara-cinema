@@ -75,6 +75,12 @@ target_compile_definitions(tst_phase7b PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
 add_test(NAME phase7b_speed COMMAND tst_phase7b)
 set_tests_properties(phase7b_speed PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
 
+add_executable(tst_phase8a tst_phase8a.cpp)
+target_link_libraries(tst_phase8a PRIVATE bc_ui Qt6::Test)
+target_compile_definitions(tst_phase8a PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
+add_test(NAME phase8a_transitions COMMAND tst_phase8a)
+set_tests_properties(phase8a_transitions PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
+
 find_package(Python3 COMPONENTS Interpreter)
 if(Python3_Interpreter_FOUND)
     add_test(NAME translations_complete

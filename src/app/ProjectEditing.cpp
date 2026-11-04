@@ -405,4 +405,39 @@ bool ProjectController::setClipSpeed(const QUuid &clipId, double speed, qint64 l
     });
 }
 
+// ---------------------------------------------------------------------------
+// Transitions (phase 8a)
+
+ClipTransition ProjectController::clipTransition(const QUuid &clipId, bool head) const
+{
+    return timeline().transitionAt(clipId, head);
+}
+
+bool ProjectController::setClipTransition(const QUuid &clipId, bool head, const ClipTransition &t)
+{
+    return editTimeline(tr("Transition"), [&](Timeline &tl) { return tl.setTransition(clipId, head, t); },
+                        QStringLiteral("transition:") + clipId.toString() + (head ? QStringLiteral(":h") : QStringLiteral(":t")));
+}
+
+int ProjectController::addDefaultTransitions(const QList<QUuid> &clipIds, qint64 frame)
+{
+    const double fps = m_project.sequence.fps() > 0 ? m_project.sequence.fps() : 25.0;
+    const qint64 length = std::max<qint64>(2, qint64(std::llround(fps)));
+    int added = 0;
+    editTimeline(tr("Add transition"), [&](Timeline &t) {
+        for (const QUuid &id : t.withLinked(clipIds)) {
+            const TimelineClip *c = t.clip(id);
+            if (!c)
+                continue;
+            const bool head = std::llabs(frame - c->start) <= std::llabs(frame - c->end());
+            if (!t.transitionAt(id, head).isNone())
+                continue;
+            if (t.setTransition(id, head, ClipTransition{ClipTransition::Kind::Dissolve, length}))
+                ++added;
+        }
+        return added > 0;
+    });
+    return added;
+}
+
 } // namespace bc

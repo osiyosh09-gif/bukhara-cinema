@@ -65,6 +65,14 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     , m_nextKey(new QToolButton)
     , m_resetMotion(new QToolButton)
     , m_keyNote(new QLabel)
+    , m_transBox(new QGroupBox(this))
+    , m_headLabel(new QLabel)
+    , m_headKind(new QComboBox)
+    , m_headLen(new QDoubleSpinBox)
+    , m_tailLabel(new QLabel)
+    , m_tailKind(new QComboBox)
+    , m_tailLen(new QDoubleSpinBox)
+    , m_transNote(new QLabel)
 {
     setObjectName(QStringLiteral("clipInspector"));
     m_empty->setObjectName(QStringLiteral("inspectorEmpty"));
@@ -87,6 +95,10 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     m_key->setObjectName(QStringLiteral("motionKey"));
     m_nextKey->setObjectName(QStringLiteral("motionNextKey"));
     m_resetMotion->setObjectName(QStringLiteral("motionReset"));
+    m_headKind->setObjectName(QStringLiteral("transitionHeadKind"));
+    m_headLen->setObjectName(QStringLiteral("transitionHeadLength"));
+    m_tailKind->setObjectName(QStringLiteral("transitionTailKind"));
+    m_tailLen->setObjectName(QStringLiteral("transitionTailLength"));
 
     auto *lay = new QVBoxLayout(this);
     m_header->setStyleSheet(QStringLiteral("color:#d1a54a; font-weight:600;"));
@@ -173,6 +185,22 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     mf->addRow(m_keyNote);
     mf->addRow(QString(), m_resetMotion);
     lay->addWidget(m_motionBox);
+
+    // Transitions
+    auto *tf2 = new QFormLayout(m_transBox);
+    for (QDoubleSpinBox *b : {m_headLen, m_tailLen}) {
+        b->setDecimals(2);
+        b->setSingleStep(0.25);
+        b->setKeyboardTracking(false);
+    }
+    tf2->addRow(m_headLabel, m_headKind);
+    tf2->addRow(QString(), m_headLen);
+    tf2->addRow(m_tailLabel, m_tailKind);
+    tf2->addRow(QString(), m_tailLen);
+    m_transNote->setWordWrap(true);
+    m_transNote->setStyleSheet(QStringLiteral("color:#8a8a8a;"));
+    tf2->addRow(m_transNote);
+    lay->addWidget(m_transBox);
     lay->addStretch();
 
     connect(m_text, &QPlainTextEdit::textChanged, this, &ClipInspector::applyTitle);
@@ -212,6 +240,10 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
             m_ctl->resetClipMotion(motionClip());
     });
     connect(m_ctl, &ProjectController::playheadChanged, this, &ClipInspector::refreshMotion);
+    connect(m_headKind, &QComboBox::currentIndexChanged, this, [this] { applyTransition(true); });
+    connect(m_headLen, &QDoubleSpinBox::valueChanged, this, [this] { applyTransition(true); });
+    connect(m_tailKind, &QComboBox::currentIndexChanged, this, [this] { applyTransition(false); });
+    connect(m_tailLen, &QDoubleSpinBox::valueChanged, this, [this] { applyTransition(false); });
     connect(m_view, &TimelineView::selectionChanged, this, &ClipInspector::refresh);
     connect(m_ctl, &ProjectController::timelineChanged, this, &ClipInspector::refresh);
     connect(m_ctl, &ProjectController::projectReset, this, &ClipInspector::refresh);
@@ -256,6 +288,14 @@ void ClipInspector::retranslate()
     m_prevKey->setToolTip(tr("Previous keyframe"));
     m_key->setToolTip(tr("Add or remove a keyframe at the playhead"));
     m_nextKey->setToolTip(tr("Next keyframe"));
+    m_transBox->setTitle(tr("Transitions"));
+    m_headLabel->setText(tr("Start:"));
+    m_tailLabel->setText(tr("End:"));
+    m_headLen->setSuffix(tr(" s"));
+    m_tailLen->setSuffix(tr(" s"));
+    m_transNote->setText(tr("Between two touching clips the transition mixes them; at a free end the clip fades. "
+                            "Ctrl+D adds a 1-second one at the edit nearest the playhead."));
+    m_transAudio = !m_transAudio; // rebuild the lists in the new language
     m_resetMotion->setText(tr("Reset"));
     m_resetMotion->setToolTip(tr("Put the picture back in place: no move, scale, rotation or keyframes"));
     refresh();
@@ -291,6 +331,7 @@ void ClipInspector::refresh()
     m_audioBox->setVisible(!m_audio.isNull());
     m_videoNote->setVisible(!m_video.isNull());
     m_motionBox->setVisible(!motionClip().isNull());
+    m_transBox->setVisible(!transitionClip().isNull());
 
     QString header;
     if (const TimelineClip *c = tl.clip(m_title)) {
@@ -330,6 +371,61 @@ void ClipInspector::refresh()
     m_header->setText(header);
     m_header->setVisible(!header.isEmpty());
     refreshMotion();
+    refreshTransitions();
+}
+
+void ClipInspector::refreshTransitions()
+{
+    const QUuid id = transitionClip();
+    const Timeline &tl = m_ctl->timeline();
+    const TimelineClip *c = tl.clip(id);
+    if (!c)
+        return;
+    const bool audio = tl.kindOf(id) == Timeline::Kind::Audio;
+    m_updating = true;
+    const QSignalBlocker b1(m_headKind), b2(m_tailKind), b3(m_headLen), b4(m_tailLen);
+    if (audio != m_transAudio || m_headKind->count() == 0) {
+        m_transAudio = audio;
+        for (QComboBox *box : {m_headKind, m_tailKind}) {
+            box->clear();
+            box->addItem(tr("None"), int(ClipTransition::Kind::None));
+            if (audio) {
+                box->addItem(tr("Crossfade"), int(ClipTransition::Kind::Dissolve));
+            } else {
+                box->addItem(tr("Cross dissolve"), int(ClipTransition::Kind::Dissolve));
+                box->addItem(tr("Dip to black"), int(ClipTransition::Kind::DipBlack));
+                box->addItem(tr("Dip to white"), int(ClipTransition::Kind::DipWhite));
+                box->addItem(tr("Wipe from the left"), int(ClipTransition::Kind::WipeLeft));
+                box->addItem(tr("Wipe from the right"), int(ClipTransition::Kind::WipeRight));
+            }
+        }
+    }
+    const double fps = m_ctl->project().sequence.fps() > 0 ? m_ctl->project().sequence.fps() : 25.0;
+    for (bool head : {true, false}) {
+        const ClipTransition t = tl.transitionAt(id, head);
+        QComboBox *kind = head ? m_headKind : m_tailKind;
+        QDoubleSpinBox *len = head ? m_headLen : m_tailLen;
+        kind->setCurrentIndex(std::max(0, kind->findData(int(t.kind))));
+        len->setRange(1.0 / fps, std::max(1.0 / fps, c->length / fps));
+        len->setValue(t.isNone() ? std::min(1.0, c->length / fps) : t.length / fps);
+        len->setEnabled(!t.isNone());
+    }
+    m_updating = false;
+    m_transBox->setEnabled(!tl.tracks[tl.find(id).track].locked);
+}
+
+void ClipInspector::applyTransition(bool head)
+{
+    const QUuid id = transitionClip();
+    if (m_updating || id.isNull())
+        return;
+    const double fps = m_ctl->project().sequence.fps() > 0 ? m_ctl->project().sequence.fps() : 25.0;
+    QComboBox *kind = head ? m_headKind : m_tailKind;
+    QDoubleSpinBox *len = head ? m_headLen : m_tailLen;
+    ClipTransition t;
+    t.kind = ClipTransition::Kind(kind->currentData().toInt());
+    t.length = qint64(std::llround(len->value() * fps));
+    m_ctl->setClipTransition(id, head, t);
 }
 
 void ClipInspector::refreshMotion()
