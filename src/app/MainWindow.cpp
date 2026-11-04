@@ -380,6 +380,7 @@ void MainWindow::buildMenus()
             [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
     m_clipMenu->addAction(m_timeline->speedAction());
     m_clipMenu->addAction(m_timeline->loudnessAction());
+    m_clipMenu->addAction(m_timeline->scenesAction());
     m_clipMenu->addAction(m_timeline->transitionAction());
     m_clipMenu->addAction(m_timeline->linkAction());
     m_toolsMenu = m_clipMenu->addMenu(QString());
@@ -684,7 +685,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 4: video decoding on the video card (File > Settings shows what was found).")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 14, part 1: scene change detection (Clip > Detect scene changes), on this computer without the internet.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

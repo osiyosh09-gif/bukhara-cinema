@@ -2,6 +2,7 @@
 
 #include "core/Loudness.h"
 #include "core/Project.h"
+#include "core/SceneDetect.h"
 #include "engine/EngineServices.h"
 #include "engine/Exporter.h"
 
@@ -83,6 +84,25 @@ public:
     QByteArray waveform(const QUuid &id) const { return m_waves.value(id); }
 
     void setSequence(const SequenceSettings &s);
+
+    // --- scene changes (phase 14a, ProjectScenes.cpp)
+    // The video clips (of video files, not photos) among `clipIds` and the
+    // video linked to audio clips among them.
+    QList<QUuid> sceneClips(const QList<QUuid> &clipIds) const;
+    // Analyses the media of these clips one after another in the background
+    // (results are cached); sceneProgress and scenesAnalyzed report.
+    void analyzeScenes(const QList<QUuid> &clipIds);
+    void cancelScenes();
+    bool isAnalyzingScenes() const { return !m_scenesQueue.isEmpty() || !m_scenesRunning.isNull(); }
+    // True when every media of these clips was analysed (or failed).
+    bool scenesKnown(const QList<QUuid> &clipIds) const;
+    // Timeline frames inside the clips where a new shot begins.
+    QList<qint64> sceneCuts(const QUuid &clipId, double sensitivity) const;
+    int sceneCutCount(const QList<QUuid> &clipIds, double sensitivity) const;
+    // Splits the clips (with their linked sound) at every cut, or puts a
+    // timeline marker there. One undo step; returns the number of cuts.
+    int splitAtScenes(const QList<QUuid> &clipIds, double sensitivity);
+    int markScenes(const QList<QUuid> &clipIds, double sensitivity);
 
     // --- loudness (phase 10d, ProjectLoudness.cpp)
     // The audio clips among `clipIds` and the audio linked to the video clips among them.
@@ -398,6 +418,8 @@ signals:
     void clipboardChanged();
     void openSequenceChanged(); // another sequence is shown on the timeline
     void loudnessAnalyzed(const QUuid &mediaId, bool ok);
+    void sceneProgress(const QUuid &mediaId, double fraction);
+    void scenesAnalyzed(const QUuid &mediaId, bool ok);
     // Grid of all angles (null image when no multicamera clip is at the playhead).
     void multicamGridReady(const QImage &image, const QUuid &clipId);
     void mixLoudnessProgress(qint64 frame, qint64 total);
@@ -458,6 +480,12 @@ private:
     QHash<QUuid, QByteArray> m_waves;
     QHash<QUuid, std::shared_ptr<const Loudness::Profile>> m_loudness; // by media id
     QSet<QUuid> m_loudnessPending;
+    QHash<QUuid, std::shared_ptr<const SceneDetect::Profile>> m_scenes; // by media id
+    QSet<QUuid> m_scenesFailed;
+    QList<QUuid> m_scenesQueue;
+    QUuid m_scenesRunning;
+    std::shared_ptr<std::atomic_bool> m_scenesCancel;
+    void startNextScenes();
     quint64 m_changeSerial = 0;
     QHash<QUuid, QString> m_proxies;  // media id -> ready proxy file
     QList<QUuid> m_proxyQueue;
@@ -518,6 +546,7 @@ private:
     bool m_mixBusy = false;
     std::shared_ptr<std::atomic_bool> m_mixCancel;
     QThreadPool m_mixPool; // the mix measurement
+    QThreadPool m_scenePool; // one scene analysis at a time
     QThreadPool m_gridPool;  // one grid frame at a time; declared last, so it is destroyed (and waited for) first
 };
 
