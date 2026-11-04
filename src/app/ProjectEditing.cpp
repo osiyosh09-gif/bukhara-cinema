@@ -234,4 +234,101 @@ bool ProjectController::renameSequence(const QUuid &nestId, const QString &name)
     });
 }
 
+// ---------------------------------------------------------------------------
+// Motion (phase 7a)
+
+namespace {
+
+// Source frame of a timeline frame inside the clip (clamped to the clip).
+qint64 sourceFrame(const TimelineClip &c, qint64 frame)
+{
+    return c.in + std::clamp<qint64>(frame - c.start, 0, std::max<qint64>(0, c.length - 1));
+}
+
+TimelineClip *videoClip(Timeline &t, const QUuid &id)
+{
+    const Timeline::ClipRef r = t.find(id);
+    if (!r.isValid() || t.tracks[r.track].locked || t.tracks[r.track].kind != Timeline::Kind::Video)
+        return nullptr;
+    return &t.tracks[r.track].clips[r.index];
+}
+
+} // namespace
+
+ClipTransform ProjectController::clipTransformAt(const QUuid &clipId, qint64 frame) const
+{
+    const TimelineClip *c = timeline().clip(clipId);
+    return c ? c->motion.at(sourceFrame(*c, frame)) : ClipTransform();
+}
+
+bool ProjectController::setClipTransform(const QUuid &clipId, const ClipTransform &value, qint64 frame)
+{
+    return editTimeline(tr("Motion"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c)
+            return false;
+        c->motion.set(sourceFrame(*c, frame), value);
+        return true;
+    }, QStringLiteral("motion:") + clipId.toString());
+}
+
+bool ProjectController::setClipAnimated(const QUuid &clipId, bool on, qint64 frame)
+{
+    return editTimeline(on ? tr("Animate motion") : tr("Stop animating motion"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || c->motion.animated() == on)
+            return false;
+        c->motion.setAnimated(on, sourceFrame(*c, frame));
+        return true;
+    });
+}
+
+bool ProjectController::hasClipKey(const QUuid &clipId, qint64 frame) const
+{
+    const TimelineClip *c = timeline().clip(clipId);
+    return c && c->covers(frame) && c->motion.hasKey(sourceFrame(*c, frame));
+}
+
+bool ProjectController::toggleClipKey(const QUuid &clipId, qint64 frame)
+{
+    return editTimeline(tr("Keyframe"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || !c->covers(frame))
+            return false;
+        const qint64 f = sourceFrame(*c, frame);
+        if (c->motion.hasKey(f))
+            return c->motion.removeKey(f);
+        if (!c->motion.animated()) {
+            c->motion.setAnimated(true, f);
+            return true;
+        }
+        c->motion.set(f, c->motion.at(f));
+        return true;
+    });
+}
+
+bool ProjectController::resetClipMotion(const QUuid &clipId)
+{
+    return editTimeline(tr("Reset motion"), [&](Timeline &t) {
+        TimelineClip *c = videoClip(t, clipId);
+        if (!c || c->motion == ClipMotion())
+            return false;
+        c->motion = ClipMotion();
+        return true;
+    });
+}
+
+qint64 ProjectController::clipKeyNear(const QUuid &clipId, qint64 frame, bool next) const
+{
+    const TimelineClip *c = timeline().clip(clipId);
+    if (!c)
+        return -1;
+    const qint64 f = c->in + (frame - c->start); // may lie outside the clip
+    const qint64 k = next ? c->motion.nextKey(f) : c->motion.prevKey(f);
+    if (k < 0)
+        return -1;
+    const qint64 tf = c->start + (k - c->in);
+    return c->covers(tf) ? tf : -1;
+}
+
 } // namespace bc

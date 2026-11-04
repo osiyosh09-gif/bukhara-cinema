@@ -7,6 +7,8 @@
 #include <QString>
 #include <QUuid>
 
+#include "core/Motion.h"
+
 #include <functional>
 
 namespace bc {
@@ -47,6 +49,7 @@ struct TimelineClip
     double gainDb = 0;  // audio clips: volume change in dB
     qint64 fadeIn = 0;  // audio clips: fade lengths in frames
     qint64 fadeOut = 0;
+    ClipMotion motion;  // video clips: position, scale, rotation, opacity (phase 7)
 
     bool isTitle() const { return mediaId.isNull() && nestId.isNull(); }
     bool isNested() const { return !nestId.isNull(); }
@@ -56,7 +59,7 @@ struct TimelineClip
     {
         return id == o.id && mediaId == o.mediaId && nestId == o.nestId && linkId == o.linkId && start == o.start && in == o.in
                && length == o.length && title == o.title && gainDb == o.gainDb && fadeIn == o.fadeIn
-               && fadeOut == o.fadeOut;
+               && fadeOut == o.fadeOut && motion == o.motion;
     }
 };
 

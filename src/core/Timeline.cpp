@@ -856,6 +856,7 @@ void Timeline::rescale(double oldFps, double newFps)
             c.length = std::max<qint64>(1, qint64(std::llround(c.length * f)));
             c.fadeIn = qint64(std::llround(c.fadeIn * f));
             c.fadeOut = qint64(std::llround(c.fadeOut * f));
+            c.motion.rescale(f);
             prevEnd = c.end();
         }
     }
@@ -920,6 +921,9 @@ QJsonArray Timeline::toJson() const
                 co[QStringLiteral("fadeIn")] = double(c.fadeIn);
             if (c.fadeOut > 0)
                 co[QStringLiteral("fadeOut")] = double(c.fadeOut);
+            const QJsonObject motion = c.motion.toJson();
+            if (!motion.isEmpty())
+                co[QStringLiteral("motion")] = motion;
             ca.append(co);
         }
         to[QStringLiteral("clips")] = ca;
@@ -976,6 +980,8 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             c.gainDb = std::clamp(co.value(QStringLiteral("gainDb")).toDouble(), -60.0, 12.0);
             c.fadeIn = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeIn")).toDouble()));
             c.fadeOut = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeOut")).toDouble()));
+            if (t.kind == Kind::Video)
+                c.motion = ClipMotion::fromJson(co.value(QStringLiteral("motion")).toObject());
             if (c.length > 0)
                 t.clips << c;
         }

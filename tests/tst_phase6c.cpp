@@ -160,7 +160,7 @@ private slots:
         QVERIFY2(ctl.saveAs(file, &err), qPrintable(err));
         QFile f(file);
         QVERIFY(f.open(QIODevice::ReadOnly));
-        QCOMPARE(QJsonDocument::fromJson(f.readAll()).object().value(QStringLiteral("version")).toInt(), 5);
+        QCOMPARE(QJsonDocument::fromJson(f.readAll()).object().value(QStringLiteral("version")).toInt() >= 5, true);
 
         ProjectController other;
         QVERIFY2(other.open(file, &err), qPrintable(err));

@@ -545,7 +545,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 6 done: Source monitor, insert/overwrite, trim tools, nested sequences and custom shortcuts work.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 7, part 1: position, scale, rotation and opacity of clips with keyframes work (Clip panel).")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

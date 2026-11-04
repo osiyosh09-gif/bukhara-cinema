@@ -32,6 +32,7 @@ public:
 
     void focusTitleText();
     void focusGain();
+    QUuid videoClip() const { return motionClip(); }
 
 protected:
     void changeEvent(QEvent *e) override;
@@ -41,6 +42,9 @@ private:
     void refresh();        // follows the selection and the timeline
     void applyTitle();     // widgets -> title clip
     void applyAudio();     // widgets -> audio clip
+    void applyMotion();    // widgets -> video clip (key at the playhead when animated)
+    void refreshMotion();  // follows the playhead
+    QUuid motionClip() const { return !m_title.isNull() ? m_title : m_video; }
     void pickColor();
     void showColor(const QString &color);
 
@@ -73,6 +77,23 @@ private:
     QDoubleSpinBox *m_fadeIn;
     QLabel *m_fadeOutLabel;
     QDoubleSpinBox *m_fadeOut;
+    QGroupBox *m_motionBox;
+    QLabel *m_posXLabel;
+    QDoubleSpinBox *m_posX;
+    QLabel *m_posYLabel;
+    QDoubleSpinBox *m_posY;
+    QLabel *m_scaleLabel;
+    QDoubleSpinBox *m_scale;
+    QLabel *m_rotationLabel;
+    QDoubleSpinBox *m_rotation;
+    QLabel *m_opacityLabel;
+    QDoubleSpinBox *m_opacity;
+    QCheckBox *m_animate;
+    QToolButton *m_prevKey;
+    QToolButton *m_key;
+    QToolButton *m_nextKey;
+    QToolButton *m_resetMotion;
+    QLabel *m_keyNote;
 };
 
 } // namespace bc

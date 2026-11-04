@@ -10,6 +10,7 @@
 #include <QEvent>
 #include <QFormLayout>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QSignalBlocker>
@@ -47,6 +48,23 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     , m_fadeIn(new QDoubleSpinBox)
     , m_fadeOutLabel(new QLabel)
     , m_fadeOut(new QDoubleSpinBox)
+    , m_motionBox(new QGroupBox(this))
+    , m_posXLabel(new QLabel)
+    , m_posX(new QDoubleSpinBox)
+    , m_posYLabel(new QLabel)
+    , m_posY(new QDoubleSpinBox)
+    , m_scaleLabel(new QLabel)
+    , m_scale(new QDoubleSpinBox)
+    , m_rotationLabel(new QLabel)
+    , m_rotation(new QDoubleSpinBox)
+    , m_opacityLabel(new QLabel)
+    , m_opacity(new QDoubleSpinBox)
+    , m_animate(new QCheckBox)
+    , m_prevKey(new QToolButton)
+    , m_key(new QToolButton)
+    , m_nextKey(new QToolButton)
+    , m_resetMotion(new QToolButton)
+    , m_keyNote(new QLabel)
 {
     setObjectName(QStringLiteral("clipInspector"));
     m_empty->setObjectName(QStringLiteral("inspectorEmpty"));
@@ -59,6 +77,16 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     m_gainSlider->setObjectName(QStringLiteral("clipGainSlider"));
     m_fadeIn->setObjectName(QStringLiteral("clipFadeIn"));
     m_fadeOut->setObjectName(QStringLiteral("clipFadeOut"));
+    m_posX->setObjectName(QStringLiteral("motionX"));
+    m_posY->setObjectName(QStringLiteral("motionY"));
+    m_scale->setObjectName(QStringLiteral("motionScale"));
+    m_rotation->setObjectName(QStringLiteral("motionRotation"));
+    m_opacity->setObjectName(QStringLiteral("motionOpacity"));
+    m_animate->setObjectName(QStringLiteral("motionAnimate"));
+    m_prevKey->setObjectName(QStringLiteral("motionPrevKey"));
+    m_key->setObjectName(QStringLiteral("motionKey"));
+    m_nextKey->setObjectName(QStringLiteral("motionNextKey"));
+    m_resetMotion->setObjectName(QStringLiteral("motionReset"));
 
     auto *lay = new QVBoxLayout(this);
     m_header->setStyleSheet(QStringLiteral("color:#d1a54a; font-weight:600;"));
@@ -102,6 +130,49 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     af->addRow(m_fadeInLabel, m_fadeIn);
     af->addRow(m_fadeOutLabel, m_fadeOut);
     lay->addWidget(m_audioBox);
+
+    // Motion
+    auto *mf = new QFormLayout(m_motionBox);
+    for (QDoubleSpinBox *b : {m_posX, m_posY}) {
+        b->setRange(-20000, 20000);
+        b->setDecimals(0);
+        b->setSuffix(QStringLiteral(" px"));
+    }
+    m_scale->setRange(0, 1000);
+    m_scale->setDecimals(1);
+    m_scale->setSuffix(QStringLiteral(" %"));
+    m_rotation->setRange(-3600, 3600);
+    m_rotation->setDecimals(1);
+    m_rotation->setSuffix(QStringLiteral("\u00b0"));
+    m_opacity->setRange(0, 100);
+    m_opacity->setDecimals(0);
+    m_opacity->setSuffix(QStringLiteral(" %"));
+    for (QDoubleSpinBox *b : {m_posX, m_posY, m_scale, m_rotation, m_opacity}) {
+        b->setKeyboardTracking(false);
+        b->setAccelerated(true);
+    }
+    mf->addRow(m_posXLabel, m_posX);
+    mf->addRow(m_posYLabel, m_posY);
+    mf->addRow(m_scaleLabel, m_scale);
+    mf->addRow(m_rotationLabel, m_rotation);
+    mf->addRow(m_opacityLabel, m_opacity);
+    auto *keys = new QHBoxLayout;
+    keys->setContentsMargins(0, 0, 0, 0);
+    m_prevKey->setText(QStringLiteral("\u25c0"));
+    m_key->setText(QStringLiteral("\u25c6"));
+    m_key->setCheckable(true);
+    m_nextKey->setText(QStringLiteral("\u25b6"));
+    keys->addWidget(m_animate);
+    keys->addStretch();
+    keys->addWidget(m_prevKey);
+    keys->addWidget(m_key);
+    keys->addWidget(m_nextKey);
+    mf->addRow(keys);
+    m_keyNote->setWordWrap(true);
+    m_keyNote->setStyleSheet(QStringLiteral("color:#8a8a8a;"));
+    mf->addRow(m_keyNote);
+    mf->addRow(QString(), m_resetMotion);
+    lay->addWidget(m_motionBox);
     lay->addStretch();
 
     connect(m_text, &QPlainTextEdit::textChanged, this, &ClipInspector::applyTitle);
@@ -118,6 +189,29 @@ ClipInspector::ClipInspector(ProjectController *controller, TimelineView *view, 
     connect(m_fadeIn, &QDoubleSpinBox::valueChanged, this, &ClipInspector::applyAudio);
     connect(m_fadeOut, &QDoubleSpinBox::valueChanged, this, &ClipInspector::applyAudio);
 
+    for (QDoubleSpinBox *b : {m_posX, m_posY, m_scale, m_rotation, m_opacity})
+        connect(b, &QDoubleSpinBox::valueChanged, this, &ClipInspector::applyMotion);
+    connect(m_animate, &QCheckBox::toggled, this, [this](bool on) {
+        if (!m_updating && !motionClip().isNull())
+            m_ctl->setClipAnimated(motionClip(), on, m_ctl->playhead());
+    });
+    connect(m_key, &QToolButton::clicked, this, [this] {
+        if (!motionClip().isNull())
+            m_ctl->toggleClipKey(motionClip(), m_ctl->playhead());
+        refreshMotion();
+    });
+    auto jump = [this](bool next) {
+        const qint64 f = m_ctl->clipKeyNear(motionClip(), m_ctl->playhead(), next);
+        if (f >= 0)
+            m_ctl->setPlayhead(f);
+    };
+    connect(m_prevKey, &QToolButton::clicked, this, [jump] { jump(false); });
+    connect(m_nextKey, &QToolButton::clicked, this, [jump] { jump(true); });
+    connect(m_resetMotion, &QToolButton::clicked, this, [this] {
+        if (!motionClip().isNull())
+            m_ctl->resetClipMotion(motionClip());
+    });
+    connect(m_ctl, &ProjectController::playheadChanged, this, &ClipInspector::refreshMotion);
     connect(m_view, &TimelineView::selectionChanged, this, &ClipInspector::refresh);
     connect(m_ctl, &ProjectController::timelineChanged, this, &ClipInspector::refresh);
     connect(m_ctl, &ProjectController::projectReset, this, &ClipInspector::refresh);
@@ -150,7 +244,20 @@ void ClipInspector::retranslate()
     m_fadeOutLabel->setText(tr("Fade out:"));
     m_fadeIn->setSuffix(tr(" s"));
     m_fadeOut->setSuffix(tr(" s"));
-    m_videoNote->setText(tr("Position, scale and opacity of video clips arrive in phase 7."));
+    m_videoNote->setText(tr("Speed changes arrive in the next part of phase 7."));
+    m_motionBox->setTitle(tr("Motion"));
+    m_posXLabel->setText(tr("Position X:"));
+    m_posYLabel->setText(tr("Position Y:"));
+    m_scaleLabel->setText(tr("Scale:"));
+    m_rotationLabel->setText(tr("Rotation:"));
+    m_opacityLabel->setText(tr("Opacity:"));
+    m_animate->setText(tr("Animate"));
+    m_animate->setToolTip(tr("Keyframes: the values change over time. Changing a value sets a keyframe at the playhead."));
+    m_prevKey->setToolTip(tr("Previous keyframe"));
+    m_key->setToolTip(tr("Add or remove a keyframe at the playhead"));
+    m_nextKey->setToolTip(tr("Next keyframe"));
+    m_resetMotion->setText(tr("Reset"));
+    m_resetMotion->setToolTip(tr("Put the picture back in place: no move, scale, rotation or keyframes"));
     refresh();
 }
 
@@ -183,6 +290,7 @@ void ClipInspector::refresh()
     m_titleBox->setVisible(!m_title.isNull());
     m_audioBox->setVisible(!m_audio.isNull());
     m_videoNote->setVisible(!m_video.isNull());
+    m_motionBox->setVisible(!motionClip().isNull());
 
     QString header;
     if (const TimelineClip *c = tl.clip(m_title)) {
@@ -221,6 +329,56 @@ void ClipInspector::refresh()
     }
     m_header->setText(header);
     m_header->setVisible(!header.isEmpty());
+    refreshMotion();
+}
+
+void ClipInspector::refreshMotion()
+{
+    const QUuid id = motionClip();
+    const Timeline &tl = m_ctl->timeline();
+    const TimelineClip *c = tl.clip(id);
+    if (!c)
+        return;
+    const SequenceSettings &seq = m_ctl->project().sequence;
+    const qint64 ph = m_ctl->playhead();
+    const ClipTransform t = m_ctl->clipTransformAt(id, ph);
+    m_updating = true;
+    {
+        const QSignalBlocker b1(m_posX), b2(m_posY), b3(m_scale), b4(m_rotation), b5(m_opacity), b6(m_animate);
+        m_posX->setValue(std::round(t.x * seq.width));
+        m_posY->setValue(std::round(t.y * seq.height));
+        m_scale->setValue(t.scale);
+        m_rotation->setValue(t.rotation);
+        m_opacity->setValue(t.opacity);
+        m_animate->setChecked(c->motion.animated());
+    }
+    m_updating = false;
+    const bool animated = c->motion.animated();
+    const bool inside = c->covers(ph);
+    m_key->setEnabled(inside);
+    m_key->setChecked(m_ctl->hasClipKey(id, ph));
+    m_prevKey->setEnabled(animated && m_ctl->clipKeyNear(id, ph, false) >= 0);
+    m_nextKey->setEnabled(animated && m_ctl->clipKeyNear(id, ph, true) >= 0);
+    m_resetMotion->setEnabled(c->motion != ClipMotion());
+    m_keyNote->setVisible(animated);
+    m_keyNote->setText(inside ? tr("Keyframes: %1. Changes set a keyframe at the playhead.").arg(c->motion.keys.size())
+                              : tr("Move the playhead over the clip to change its keyframes."));
+    m_motionBox->setEnabled(!tl.tracks[tl.find(id).track].locked);
+}
+
+void ClipInspector::applyMotion()
+{
+    const QUuid id = motionClip();
+    if (m_updating || id.isNull())
+        return;
+    const SequenceSettings &seq = m_ctl->project().sequence;
+    ClipTransform t;
+    t.x = seq.width > 0 ? m_posX->value() / seq.width : 0;
+    t.y = seq.height > 0 ? m_posY->value() / seq.height : 0;
+    t.scale = m_scale->value();
+    t.rotation = m_rotation->value();
+    t.opacity = m_opacity->value();
+    m_ctl->setClipTransform(id, t, m_ctl->playhead());
 }
 
 void ClipInspector::applyTitle()

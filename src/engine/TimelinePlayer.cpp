@@ -269,6 +269,18 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             if (p) {
                 const int in = c.isTitle() ? 0 : int(c.in);
                 std::unique_ptr<Mlt::Producer> cut(p->cut(in, int(in + c.length - 1)));
+                if (!audio && (c.motion.animated() || !c.motion.isIdentity())) {
+                    Mlt::Filter motion(*m_profile, "bc_transform");
+                    if (motion.is_valid()) {
+                        // Keys are in source frames; the filter counts from the cut's in point.
+                        motion.set("motion", c.motion.toEngineString(c.in).constData());
+                        const MediaItem *m = c.mediaId.isNull() ? nullptr : project.item(c.mediaId);
+                        if (m && m->info.kind == MediaInfo::Kind::Video && m->info.hasVideo())
+                            motion.set("source_aspect", double(m->info.width) / m->info.height);
+                        motion.set_in_and_out(in, int(in + c.length - 1));
+                        cut->attach(motion);
+                    }
+                }
                 if (audio && (c.gainDb != 0 || c.fadeIn > 0 || c.fadeOut > 0)) {
                     Mlt::Filter gain(*m_profile, "bc_gain");
                     if (gain.is_valid()) {

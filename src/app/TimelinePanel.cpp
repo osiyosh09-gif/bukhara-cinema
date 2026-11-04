@@ -628,6 +628,23 @@ void TimelineView::drawClip(QPainter &p, int track, const TimelineClip &c)
             p.drawLine(QPointF(r.right() - c.fadeOut * m_ppf, r.top() + 2), QPointF(r.right(), r.bottom()));
         p.restore();
     }
+    // Motion keyframes: small diamonds along the bottom edge.
+    if (video && c.motion.animated()) {
+        p.save();
+        p.setRenderHint(QPainter::Antialiasing, true);
+        p.setPen(QPen(QColor(20, 20, 20), 1));
+        p.setBrush(kGold);
+        const double y = r.bottom() - 5;
+        for (const TransformKey &k : c.motion.keys) {
+            const qint64 off = k.frame - c.in;
+            if (off < 0 || off >= c.length)
+                continue;
+            const double x = r.left() + (off + 0.5) * m_ppf;
+            const QPointF pts[4] = {{x, y - 4}, {x + 4, y}, {x, y + 4}, {x - 4, y}};
+            p.drawPolygon(pts, 4);
+        }
+        p.restore();
+    }
     if (m_selection.contains(c.id)) {
         p.setPen(QPen(kGold, 2));
         p.drawRect(r.adjusted(1, 1, -1, -1));
