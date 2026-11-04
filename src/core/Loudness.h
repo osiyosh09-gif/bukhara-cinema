@@ -66,6 +66,10 @@ std::vector<double> blocks(const Profile &p, double fromSec, double toSec);
 double integrate(const std::vector<double> &blockPowers);
 double peakDb(const Profile &p, double fromSec, double toSec);
 Result measure(const Profile &p, double fromSec, double toSec);
+// Volume change in dB that brings `r` to `targetLufs` without sample peaks
+// above `ceilingDb` (the peak wins: the result may stay quieter). 0 when
+// `r` is not valid.
+double gainToTarget(const Result &r, double targetLufs, double ceilingDb);
 
 // Decodes the first audio stream with FFmpeg into a profile.
 bool compute(const QString &path, Profile &out, QString *error = nullptr,

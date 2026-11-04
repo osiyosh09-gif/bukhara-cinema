@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.30.0
+    VERSION 0.31.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -81,6 +81,7 @@ add_library(bc_ui STATIC
     src/app/SettingsDialog.h    src/app/SettingsDialog.cpp
     src/app/Shortcuts.h    src/app/Shortcuts.cpp
     src/app/SpeedDialog.h  src/app/SpeedDialog.cpp
+    src/app/MixLoudnessDialog.h src/app/MixLoudnessDialog.cpp
     src/app/LoudnessDialog.h src/app/LoudnessDialog.cpp
     src/app/MulticamDialog.h src/app/MulticamDialog.cpp
     src/app/MulticamMonitor.h src/app/MulticamMonitor.cpp
@@ -97,6 +98,7 @@ add_library(bc_ui STATIC
     src/app/ProjectEditing.cpp
     src/app/ProjectLoudness.cpp
     src/app/ProjectMulticam.cpp
+    src/app/ProjectMixLoudness.cpp
     src/app/ProjectPreview.cpp
     src/app/ProjectSubtitles.cpp
     src/app/MediaBinPanel.h     src/app/MediaBinPanel.cpp

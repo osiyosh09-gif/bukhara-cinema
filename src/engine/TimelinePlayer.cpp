@@ -757,6 +757,35 @@ double TimelinePlayer::audioLevel(qint64 frame)
     return std::sqrt(sum / (samples * channels));
 }
 
+bool TimelinePlayer::renderAudio(qint64 from, qint64 to,
+                                 const std::function<bool(const float *samples, int count)> &sink)
+{
+    if (m_playing)
+        return false;
+    QMutexLocker lock(&m_mutex);
+    if (!m_tractor || from >= to)
+        return false;
+    const int freq = m_seq.sampleRate > 0 ? m_seq.sampleRate : 48000;
+    const double fps = m_profile->fps();
+    m_tractor->seek(int(from));
+    for (qint64 frame = from; frame < to; ++frame) {
+        // Frames come one after another (no seek), so sound effects keep their state.
+        std::unique_ptr<Mlt::Frame> f(m_tractor->get_frame());
+        if (!f)
+            return false;
+        mlt_audio_format fmt = mlt_audio_f32le;
+        int channels = 2;
+        int rate = freq;
+        int samples = mlt_audio_calculate_frame_samples(float(fps), freq, frame);
+        auto *pcm = static_cast<float *>(f->get_audio(fmt, rate, channels, samples));
+        if (!pcm || fmt != mlt_audio_f32le || channels != 2 || samples <= 0)
+            return false;
+        if (!sink(pcm, samples))
+            return false;
+    }
+    return true;
+}
+
 bool TimelinePlayer::play(qint64 frame, double speed)
 {
     if (speed == 0)

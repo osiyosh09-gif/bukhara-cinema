@@ -1,4 +1,5 @@
 #include "app/MainWindow.h"
+#include "app/MixLoudnessDialog.h"
 
 #include "app/AboutDialog.h"
 #include "app/AppInfo.h"
@@ -415,6 +416,12 @@ void MainWindow::buildMenus()
         statusBar()->showMessage(tr("Preview files deleted: %1.").arg(n), 4000);
     });
     m_deletePreviewsAct->setObjectName(QStringLiteral("actDeletePreviews"));
+    m_mixLoudnessAct = m_sequenceMenu->addAction(QString(), this, [this] {
+        MixLoudnessDialog dlg(m_ctl, this);
+        dlg.exec();
+    });
+    m_mixLoudnessAct->setObjectName(QStringLiteral("actMixLoudness"));
+    m_mixLoudnessAct->setEnabled(m_ctl->canPlay());
     m_sequenceMenu->addSeparator();
     m_sequenceMenu->addAction(m_bin->multicamAction());
     // Live switching: 1-9 picture, Alt+1-9 sound, from the playhead on.
@@ -615,6 +622,8 @@ void MainWindow::retranslate()
     m_renderPreviewAct->setToolTip(tr("Render the red parts of the selected clips (or of the whole sequence) once, so "
                                       "they play smoothly (Enter on the timeline)"));
     m_deletePreviewsAct->setText(tr("Delete preview files"));
+    m_mixLoudnessAct->setText(tr("Mix loudness..."));
+    m_mixLoudnessAct->setToolTip(tr("Measure the loudness of the whole mix (LUFS) and set the master volume to a target"));
     m_useProxiesAct->setText(tr("Use proxies for playback"));
     m_useProxiesAct->setToolTip(tr("Play big videos from their light proxy copies. Export always uses the originals."));
     m_proxyCancel->setToolTip(tr("Stop making proxies"));
@@ -675,7 +684,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 2: render preview (Sequence menu, Enter): red parts on the ruler play smoothly once rendered.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 13, part 3: loudness of the whole mix (Sequence > Mix loudness): measure in LUFS and set the master volume.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 

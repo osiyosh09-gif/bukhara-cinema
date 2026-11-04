@@ -13,6 +13,7 @@
 #include <QElapsedTimer>
 #include <QSize>
 #include <QThreadPool>
+#include <functional>
 #include <memory>
 
 namespace Mlt {
@@ -83,6 +84,10 @@ public:
     // Loudness (RMS, 0..1) of the mixed sound of one frame; -1 when not
     // available. Used by tests now and by audio meters later.
     double audioLevel(qint64 frame);
+    // The mixed sound of frames from..to (exclusive), as the export hears it:
+    // `sink` gets interleaved stereo floats at the sequence rate, frame by
+    // frame; it returns false to stop. False when stopped or not ready.
+    bool renderAudio(qint64 from, qint64 to, const std::function<bool(const float *samples, int count)> &sink);
     // Mixer meters (phase 10a): the last peaks of an audio track of the main
     // sequence after its fader, or of the master (null id). Thread-safe.
     EngineServices::MeterLevel meterLevel(const QUuid &trackId) const;
