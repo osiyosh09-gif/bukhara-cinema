@@ -79,7 +79,7 @@ private slots:
                 QVERIFY2(!a->isEnabled(), qPrintable(a->objectName()));
             }
         }
-        QVERIFY(planned >= 14); // phase 2 turned undo/redo, delete, split, tracks and snapping into real actions
+        QVERIFY(planned >= 12); // phases 2 and 3 turned editing, "New text" and "Audio gain" into real actions
 
         // Source monitor cannot play yet: its buttons must not pretend to.
         // (The Program monitor plays the timeline since phase 2.)
@@ -89,7 +89,7 @@ private slots:
 
         // Working items are enabled.
         for (const char *name : {"actSettings", "actExit", "actResetLayout", "actStatus", "actLicenses", "actAbout",
-                                 "actFullScreen", "actLogFolder"}) {
+                                 "actFullScreen", "actLogFolder", "actNewText"}) {
             auto *a = w.findChild<QAction *>(QString::fromLatin1(name));
             QVERIFY2(a, name);
             QVERIFY2(a->isEnabled(), name);

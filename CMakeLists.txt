@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.4.0
+    VERSION 0.5.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -34,6 +34,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(MLT REQUIRED IMPORTED_TARGET mlt++-7)
 add_library(bc_engine STATIC
     src/engine/TimelinePlayer.h src/engine/TimelinePlayer.cpp
+    src/engine/TitleRenderer.h src/engine/TitleRenderer.cpp
+    src/engine/EngineServices.h src/engine/EngineServices.cpp
 )
 target_include_directories(bc_engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(bc_engine PUBLIC bc_core Qt6::Core Qt6::Gui PRIVATE PkgConfig::MLT)
@@ -48,6 +50,7 @@ add_library(bc_ui STATIC
     src/app/FeatureStatus.h     src/app/FeatureStatus.cpp
     src/app/PlaceholderPanel.h  src/app/PlaceholderPanel.cpp
     src/app/MonitorView.h       src/app/MonitorView.cpp
+    src/app/ClipInspector.h     src/app/ClipInspector.cpp
     src/app/SettingsDialog.h    src/app/SettingsDialog.cpp
     src/app/AboutDialog.h       src/app/AboutDialog.cpp
     src/app/StatusDialog.h      src/app/StatusDialog.cpp

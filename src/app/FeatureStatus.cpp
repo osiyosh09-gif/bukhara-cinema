@@ -39,7 +39,7 @@ QList<FeatureEntry> entries()
         {S::Ready,   2, QCoreApplication::translate("FeatureStatus", "Undo/redo and keyboard shortcuts"), QCoreApplication::translate("FeatureStatus", "Ctrl+Z, Ctrl+Shift+Z, Ctrl+K split, Delete, Shift+Delete ripple delete, S snapping. Custom shortcuts are planned for phase 6.")},
         {S::Ready,   2, QCoreApplication::translate("FeatureStatus", "Playback in Program monitor"), QCoreApplication::translate("FeatureStatus", "Real-time playback with sound (Space), frame steps, start and end. On a slow computer frames are skipped so sound stays in sync.")},
         {S::Planned, 6, QCoreApplication::translate("FeatureStatus", "Source monitor playback, J/K/L shuttle, in and out points"), {}},
-        {S::Planned, 3, QCoreApplication::translate("FeatureStatus", "Text titles and audio volume, fades, mute and solo"), {}},
+        {S::Ready,   3, QCoreApplication::translate("FeatureStatus", "Text titles and audio volume, fades, mute and solo"), QCoreApplication::translate("FeatureStatus", "Graphics > New text (Ctrl+T); text, size, color, place and a dark box in the Clip panel. Clip volume in dB with fade in and out; M and S buttons on audio tracks. Font choice and animated titles come in later phases.")},
         {S::Planned, 4, QCoreApplication::translate("FeatureStatus", "MP4 export (H.264 + AAC) with progress and cancel"), {}},
         {S::Planned, 5, QCoreApplication::translate("FeatureStatus", "Autosave, crash recovery, versions, backups"), {}},
         {S::Planned, 6, QCoreApplication::translate("FeatureStatus", "Professional editing: insert, overwrite, roll, slip, slide, markers, nesting"), {}},

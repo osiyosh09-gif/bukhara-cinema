@@ -18,6 +18,7 @@ class ProjectController;
 class MediaBinPanel;
 class ProjectInfoPanel;
 class TimelinePanel;
+class ClipInspector;
 
 // Main window layout:
 //   top     - menus and toolbar (save, export)
@@ -72,6 +73,7 @@ private:
     void rebuildRecentMenu();
     void editSequence();
     void updateUndoActions();
+    void addTitle(); // Graphics > New text: title at the playhead, ready to type
 
     struct PlannedAction
     {
@@ -101,6 +103,8 @@ private:
     QAction *m_undoAct = nullptr;
     QAction *m_redoAct = nullptr;
     QAction *m_playAct = nullptr;
+    QAction *m_newTextAct = nullptr;
+    QAction *m_audioGainAct = nullptr;
     QAction *m_settingsAct = nullptr;
     QAction *m_exitAct = nullptr;
     QAction *m_fullScreenAct = nullptr;
@@ -119,6 +123,7 @@ private:
     QDockWidget *m_timelineDock = nullptr;
     QTabWidget *m_leftTabs = nullptr;
     QTabWidget *m_rightTabs = nullptr;
+    ClipInspector *m_clipInspector = nullptr;
     QSplitter *m_monitorSplit = nullptr;
     QLabel *m_statusLabel = nullptr;
 

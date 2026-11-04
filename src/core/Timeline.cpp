@@ -181,16 +181,20 @@ void Timeline::clearRange(int track, qint64 from, qint64 to)
             right.in += to - c.start;
             right.start = to;
             right.length = c.end() - to;
+            right.fadeIn = 0;
             c.length = from - c.start;
+            c.fadeOut = 0;
             out << c << right;
         } else if (c.start < from) {
             c.length = from - c.start;
+            c.fadeOut = 0;
             out << c;
         } else if (c.end() > to) {
             const qint64 cut = to - c.start;
             c.in += cut;
             c.start = to;
             c.length -= cut;
+            c.fadeIn = 0;
             out << c;
         }
         // else: fully covered, dropped
@@ -369,7 +373,9 @@ QList<QUuid> Timeline::splitAt(qint64 frame, const QList<QUuid> &only)
             right.in += frame - c.start;
             right.start = frame;
             right.length = c.end() - frame;
+            right.fadeIn = 0;
             c.length = frame - c.start;
+            c.fadeOut = 0;
             clips.insert(i + 1, right);
             created << right.id;
             ++i;
@@ -404,6 +410,31 @@ bool Timeline::remove(const QList<QUuid> &ids, bool ripple)
         t.clips = kept;
     }
     return changed;
+}
+
+QUuid Timeline::placeTitle(const TitleData &title, int videoTrack, qint64 start, qint64 length)
+{
+    const int t = indexOf(Kind::Video, videoTrack);
+    if (t < 0 || tracks[t].locked || length <= 0)
+        return {};
+    TimelineClip c;
+    c.id = QUuid::createUuid();
+    c.title = title;
+    c.start = std::max<qint64>(0, start);
+    c.length = length;
+    clearRange(t, c.start, c.end());
+    insertSorted(t, c);
+    return c.id;
+}
+
+bool Timeline::isAudible(int track) const
+{
+    if (track < 0 || track >= tracks.size() || tracks[track].kind != Kind::Audio || tracks[track].muted)
+        return false;
+    bool anySolo = false;
+    for (const auto &t : tracks)
+        anySolo = anySolo || (t.kind == Kind::Audio && t.solo);
+    return !anySolo || tracks[track].solo;
 }
 
 int Timeline::addTrack(Kind kind)
@@ -446,6 +477,8 @@ void Timeline::rescale(double oldFps, double newFps)
             c.start = std::max(prevEnd, qint64(std::llround(c.start * f)));
             c.in = qint64(std::llround(c.in * f));
             c.length = std::max<qint64>(1, qint64(std::llround(c.length * f)));
+            c.fadeIn = qint64(std::llround(c.fadeIn * f));
+            c.fadeOut = qint64(std::llround(c.fadeOut * f));
             prevEnd = c.end();
         }
     }
@@ -476,6 +509,8 @@ QJsonArray Timeline::toJson() const
         to[QStringLiteral("locked")] = t.locked;
         to[QStringLiteral("muted")] = t.muted;
         to[QStringLiteral("hidden")] = t.hidden;
+        if (t.solo)
+            to[QStringLiteral("solo")] = true;
         QJsonArray ca;
         for (const auto &c : t.clips) {
             QJsonObject co;
@@ -485,6 +520,23 @@ QJsonArray Timeline::toJson() const
             co[QStringLiteral("start")] = double(c.start);
             co[QStringLiteral("in")] = double(c.in);
             co[QStringLiteral("length")] = double(c.length);
+            if (c.isTitle()) {
+                QJsonObject tt;
+                tt[QStringLiteral("text")] = c.title.text;
+                tt[QStringLiteral("size")] = c.title.size;
+                tt[QStringLiteral("color")] = c.title.color;
+                tt[QStringLiteral("position")] = c.title.position == TitleData::Position::Top      ? QStringLiteral("top")
+                                                 : c.title.position == TitleData::Position::Center ? QStringLiteral("center")
+                                                                                                    : QStringLiteral("bottom");
+                tt[QStringLiteral("box")] = c.title.box;
+                co[QStringLiteral("title")] = tt;
+            }
+            if (c.gainDb != 0)
+                co[QStringLiteral("gainDb")] = c.gainDb;
+            if (c.fadeIn > 0)
+                co[QStringLiteral("fadeIn")] = double(c.fadeIn);
+            if (c.fadeOut > 0)
+                co[QStringLiteral("fadeOut")] = double(c.fadeOut);
             ca.append(co);
         }
         to[QStringLiteral("clips")] = ca;
@@ -507,6 +559,7 @@ Timeline Timeline::fromJson(const QJsonArray &a)
         t.locked = to.value(QStringLiteral("locked")).toBool();
         t.muted = to.value(QStringLiteral("muted")).toBool();
         t.hidden = to.value(QStringLiteral("hidden")).toBool();
+        t.solo = t.kind == Kind::Audio && to.value(QStringLiteral("solo")).toBool();
         for (const auto &cv : to.value(QStringLiteral("clips")).toArray()) {
             const QJsonObject co = cv.toObject();
             TimelineClip c;
@@ -518,6 +571,26 @@ Timeline Timeline::fromJson(const QJsonArray &a)
             c.start = std::max<qint64>(0, qint64(co.value(QStringLiteral("start")).toDouble()));
             c.in = std::max<qint64>(0, qint64(co.value(QStringLiteral("in")).toDouble()));
             c.length = qint64(co.value(QStringLiteral("length")).toDouble());
+            if (c.isTitle()) {
+                // Titles live on video tracks only.
+                const QJsonObject tt = co.value(QStringLiteral("title")).toObject();
+                if (t.kind != Kind::Video || tt.isEmpty())
+                    continue;
+                c.title.text = tt.value(QStringLiteral("text")).toString();
+                c.title.size = std::clamp(tt.value(QStringLiteral("size")).toInt(80), 8, 400);
+                const QString color = tt.value(QStringLiteral("color")).toString();
+                if (!color.isEmpty())
+                    c.title.color = color;
+                const QString pos = tt.value(QStringLiteral("position")).toString();
+                c.title.position = pos == QLatin1String("top")      ? TitleData::Position::Top
+                                   : pos == QLatin1String("center") ? TitleData::Position::Center
+                                                                    : TitleData::Position::Bottom;
+                c.title.box = tt.value(QStringLiteral("box")).toBool();
+                c.linkId = QUuid();
+            }
+            c.gainDb = std::clamp(co.value(QStringLiteral("gainDb")).toDouble(), -60.0, 12.0);
+            c.fadeIn = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeIn")).toDouble()));
+            c.fadeOut = std::max<qint64>(0, qint64(co.value(QStringLiteral("fadeOut")).toDouble()));
             if (c.length > 0)
                 t.clips << c;
         }

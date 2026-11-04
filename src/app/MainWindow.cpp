@@ -9,6 +9,7 @@
 #include "app/ProjectController.h"
 #include "app/ProjectInfoPanel.h"
 #include "app/SequenceSettingsDialog.h"
+#include "app/ClipInspector.h"
 #include "app/PlaceholderPanel.h"
 #include "app/SettingsDialog.h"
 #include "app/StatusDialog.h"
@@ -135,20 +136,23 @@ void MainWindow::buildDocks()
     m_mediaDock->setWidget(m_leftTabs);
     addDockWidget(Qt::LeftDockWidgetArea, m_mediaDock);
 
+    // The timeline panel exists first: the clip inspector follows its selection.
+    m_timeline = new TimelinePanel(m_ctl);
+
     // Right: clip parameters, effects, color, audio
     m_rightTabs = new QTabWidget;
     m_rightTabs->setObjectName(QStringLiteral("rightTabs"));
-    m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Clip parameters"); }, 3), QString());
+    m_clipInspector = new ClipInspector(m_ctl, m_timeline->view());
+    m_rightTabs->addTab(m_clipInspector, QString());
     m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Effects"); }, 8), QString());
     m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Color"); }, 9), QString());
-    m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Audio"); }, 3), QString());
+    m_rightTabs->addTab(new PlaceholderPanel([] { return MainWindow::tr("Audio mixer"); }, 10), QString());
     m_inspectorDock = new QDockWidget(this);
     m_inspectorDock->setObjectName(QStringLiteral("inspectorDock"));
     m_inspectorDock->setWidget(m_rightTabs);
     addDockWidget(Qt::RightDockWidgetArea, m_inspectorDock);
 
     // Bottom: timeline
-    m_timeline = new TimelinePanel(m_ctl);
     m_timelineDock = new QDockWidget(this);
     m_timelineDock->setObjectName(QStringLiteral("timelineDock"));
     m_timelineDock->setWidget(m_timeline);
@@ -225,7 +229,18 @@ void MainWindow::buildMenus()
 
     m_clipMenu = mb->addMenu(QString());
     m_clipMenu->addAction(m_timeline->splitAction());
-    addPlanned(m_clipMenu, QT_TR_NOOP("Audio gain..."), 3, QStringLiteral("actAudioGain"));
+    m_audioGainAct = m_clipMenu->addAction(QString(), this, [this] {
+        m_inspectorDock->show();
+        m_rightTabs->setCurrentWidget(m_clipInspector);
+        m_clipInspector->focusGain();
+    });
+    m_audioGainAct->setObjectName(QStringLiteral("actAudioGain"));
+    m_audioGainAct->setShortcut(QKeySequence(QStringLiteral("G")));
+    m_audioGainAct->setEnabled(false);
+    connect(m_timeline->view(), &TimelineView::selectionChanged, this,
+            [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
+    connect(m_ctl, &ProjectController::timelineChanged, this,
+            [this] { m_audioGainAct->setEnabled(!m_clipInspector->audioClip().isNull()); });
     addPlanned(m_clipMenu, QT_TR_NOOP("Speed / duration..."), 7, QStringLiteral("actSpeed"));
     addPlanned(m_clipMenu, QT_TR_NOOP("Link / unlink audio and video"), 6, QStringLiteral("actLink"));
     addPlanned(m_clipMenu, QT_TR_NOOP("Nest..."), 6, QStringLiteral("actNest"));
@@ -248,7 +263,9 @@ void MainWindow::buildMenus()
     addPlanned(m_markersMenu, QT_TR_NOOP("Go to next marker"), 6, QStringLiteral("actNextMarker"));
 
     m_graphicsMenu = mb->addMenu(QString());
-    addPlanned(m_graphicsMenu, QT_TR_NOOP("New text"), 3, QStringLiteral("actNewText"));
+    m_newTextAct = m_graphicsMenu->addAction(QString(), this, &MainWindow::addTitle);
+    m_newTextAct->setObjectName(QStringLiteral("actNewText"));
+    m_newTextAct->setShortcut(QKeySequence(QStringLiteral("Ctrl+T")));
     addPlanned(m_graphicsMenu, QT_TR_NOOP("Import subtitles (SRT)..."), 11, QStringLiteral("actImportSrt"));
 
     m_viewMenu = mb->addMenu(QString());
@@ -324,6 +341,8 @@ void MainWindow::retranslate()
 
     updateUndoActions();
     m_playAct->setText(m_ctl->isPlaying() ? tr("Pause") : tr("Play"));
+    m_newTextAct->setText(tr("New text"));
+    m_audioGainAct->setText(tr("Audio gain..."));
     m_newAct->setText(tr("New project"));
     m_openAct->setText(tr("Open project..."));
     m_recentMenu->setTitle(tr("Recent projects"));
@@ -357,7 +376,7 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(2, tr("Color"));
     m_rightTabs->setTabText(3, tr("Audio"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 2: timeline editing and playback with sound work. Text, audio levels and export come next.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 3: editing, playback, titles and clip volume work. MP4 export comes next.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
 }
 
@@ -539,6 +558,17 @@ void MainWindow::updateUndoActions()
     m_redoAct->setEnabled(st->canRedo());
     m_undoAct->setText(st->canUndo() ? tr("Undo: %1").arg(st->undoText()) : tr("Undo"));
     m_redoAct->setText(st->canRedo() ? tr("Redo: %1").arg(st->redoText()) : tr("Redo"));
+}
+
+void MainWindow::addTitle()
+{
+    const QUuid id = m_ctl->addTitle(m_ctl->playhead());
+    if (id.isNull())
+        return;
+    m_timeline->view()->setSelection({id});
+    m_inspectorDock->show();
+    m_rightTabs->setCurrentWidget(m_clipInspector);
+    m_clipInspector->focusTitleText();
 }
 
 void MainWindow::editSequence()

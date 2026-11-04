@@ -289,13 +289,13 @@ bool Project::fromJson(const QByteArray &json, const QString &projectFilePath, P
     if (root.contains(QStringLiteral("timeline"))) {
         p.timeline = Timeline::fromJson(
             root.value(QStringLiteral("timeline")).toObject().value(QStringLiteral("tracks")).toArray());
-        // Drop clips whose media item is not in the project.
+        // Drop clips whose media item is not in the project (titles have none).
         QSet<QUuid> known;
         for (const auto &m : p.items)
             known.insert(m.id);
         for (auto &t : p.timeline.tracks)
             t.clips.erase(std::remove_if(t.clips.begin(), t.clips.end(),
-                                         [&](const TimelineClip &c) { return !known.contains(c.mediaId); }),
+                                         [&](const TimelineClip &c) { return !c.isTitle() && !known.contains(c.mediaId); }),
                           t.clips.end());
     }
 
