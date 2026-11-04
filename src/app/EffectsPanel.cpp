@@ -48,6 +48,10 @@ QString EffectsPanel::kindName(ClipEffect::Kind kind)
         return tr("Crop");
     case ClipEffect::Kind::Mirror:
         return tr("Mirror");
+    case ClipEffect::Kind::ChromaKey:
+        return tr("Chroma key (remove a colour)");
+    case ClipEffect::Kind::Mask:
+        return tr("Mask (rectangle or ellipse)");
     }
     return {};
 }
@@ -76,6 +80,30 @@ QString EffectsPanel::paramName(const QString &key)
         return tr("Flip left and right");
     if (key == QLatin1String("vertical"))
         return tr("Flip upside down");
+    if (key == QLatin1String("hue"))
+        return tr("Key colour (hue), °");
+    if (key == QLatin1String("tolerance"))
+        return tr("Tolerance, °");
+    if (key == QLatin1String("softness"))
+        return tr("Softness, °");
+    if (key == QLatin1String("minimum"))
+        return tr("Keep greys below, %");
+    if (key == QLatin1String("spill"))
+        return tr("Spill removal, %");
+    if (key == QLatin1String("ellipse"))
+        return tr("Ellipse");
+    if (key == QLatin1String("x"))
+        return tr("Centre X, %");
+    if (key == QLatin1String("y"))
+        return tr("Centre Y, %");
+    if (key == QLatin1String("width"))
+        return tr("Width, %");
+    if (key == QLatin1String("height"))
+        return tr("Height, %");
+    if (key == QLatin1String("feather"))
+        return tr("Soft edge, px");
+    if (key == QLatin1String("invert"))
+        return tr("Invert (hide the inside)");
     return key;
 }
 

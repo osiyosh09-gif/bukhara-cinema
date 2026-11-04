@@ -26,6 +26,8 @@ constexpr KindName kNames[] = {
     {ClipEffect::Kind::Sharpen, "sharpen"},
     {ClipEffect::Kind::Crop, "crop"},
     {ClipEffect::Kind::Mirror, "mirror"},
+    {ClipEffect::Kind::ChromaKey, "chroma_key"},
+    {ClipEffect::Kind::Mask, "mask"},
 };
 
 } // namespace
@@ -75,6 +77,24 @@ QList<EffectParamSpec> ClipEffect::specs(Kind kind)
     case Kind::Mirror:
         // 0 or 1 (switches)
         return {{QStringLiteral("horizontal"), 0, 1, 1, 1, 0}, {QStringLiteral("vertical"), 0, 1, 0, 1, 0}};
+    case Kind::ChromaKey:
+        // Hue of the key colour (120 = green, 240 = blue), how far around it
+        // pixels go fully (tolerance) and partly (softness) transparent, the
+        // least colourfulness a pixel needs to be keyed, and spill removal.
+        return {{QStringLiteral("hue"), 0, 360, 120, 1, 0},
+                {QStringLiteral("tolerance"), 0, 180, 40, 1, 0},
+                {QStringLiteral("softness"), 0, 180, 20, 1, 0},
+                {QStringLiteral("minimum"), 0, 100, 15, 1, 0},
+                {QStringLiteral("spill"), 0, 100, 50, 5, 0}};
+    case Kind::Mask:
+        // Centre and size in % of the picture, soft edge in px of a 1080-line frame.
+        return {{QStringLiteral("ellipse"), 0, 1, 1, 1, 0},
+                {QStringLiteral("x"), 0, 100, 50, 1, 0},
+                {QStringLiteral("y"), 0, 100, 50, 1, 0},
+                {QStringLiteral("width"), 0, 200, 60, 1, 0},
+                {QStringLiteral("height"), 0, 200, 60, 1, 0},
+                {QStringLiteral("feather"), 0, 200, 10, 1, 0},
+                {QStringLiteral("invert"), 0, 1, 0, 1, 0}};
     }
     return {};
 }
@@ -130,6 +150,10 @@ bool ClipEffect::isNeutral() const
                && value(QStringLiteral("top")) == 0 && value(QStringLiteral("bottom")) == 0;
     case Kind::Mirror:
         return value(QStringLiteral("horizontal")) == 0 && value(QStringLiteral("vertical")) == 0;
+    case Kind::ChromaKey:
+        return value(QStringLiteral("tolerance")) == 0 && value(QStringLiteral("softness")) == 0;
+    case Kind::Mask:
+        return false; // even a full-frame mask hides the letterbox bars
     }
     return true;
 }
@@ -360,6 +384,87 @@ void mirror(uint8_t *img, int w, int h, bool horizontal, bool vertical)
     }
 }
 
+// Hue of an RGB colour in degrees (0 .. 360).
+double hueOf(int r, int g, int b)
+{
+    const int mx = std::max({r, g, b}), mn = std::min({r, g, b});
+    const double c = mx - mn;
+    if (c <= 0)
+        return 0;
+    double h;
+    if (mx == r)
+        h = std::fmod((g - b) / c, 6.0);
+    else if (mx == g)
+        h = (b - r) / c + 2;
+    else
+        h = (r - g) / c + 4;
+    h *= 60;
+    return h < 0 ? h + 360 : h;
+}
+
+void chromaKey(uint8_t *img, size_t n, double keyHue, double tolerance, double softness, double minimum, double spill)
+{
+    for (size_t i = 0; i < n; ++i, img += 4) {
+        if (img[3] == 0)
+            continue;
+        const int r = img[0], g = img[1], b = img[2];
+        const double chroma = (std::max({r, g, b}) - std::min({r, g, b})) / 255.0 * 100.0;
+        // Grey, black and white pixels are never keyed; a 10% ramp avoids a hard edge.
+        const double colourful = std::clamp((chroma - minimum) / 10.0, 0.0, 1.0);
+        if (colourful <= 0)
+            continue;
+        double d = std::fabs(hueOf(r, g, b) - keyHue);
+        if (d > 180)
+            d = 360 - d;
+        double keep; // 0 = the key colour (transparent), 1 = kept
+        if (d <= tolerance)
+            keep = 0;
+        else if (d >= tolerance + softness)
+            keep = 1;
+        else
+            keep = (d - tolerance) / softness;
+        const double key = (1 - keep) * colourful;
+        img[3] = clampByte(img[3] * (1 - key));
+        // Spill: what stays near the key colour loses that tint (towards grey).
+        const double near = 1 - std::clamp((d - tolerance - softness) / 30.0, 0.0, 1.0);
+        const double s = spill / 100.0 * near * colourful;
+        if (s > 0 && img[3] > 0) {
+            const double l = 0.299 * r + 0.587 * g + 0.114 * b;
+            img[0] = clampByte(r + (l - r) * s);
+            img[1] = clampByte(g + (l - g) * s);
+            img[2] = clampByte(b + (l - b) * s);
+        }
+    }
+}
+
+void mask(uint8_t *img, int w, int h, const QRectF &content, bool ellipse, double x, double y, double width,
+          double height, double feather, bool invert)
+{
+    const double cx = content.left() + content.width() * x / 100.0;
+    const double cy = content.top() + content.height() * y / 100.0;
+    const double a = content.width() * width / 200.0;  // half sizes
+    const double b = content.height() * height / 200.0;
+    for (int py = 0; py < h; ++py) {
+        uint8_t *row = img + size_t(py) * w * 4;
+        const double dy = py + 0.5 - cy;
+        for (int px = 0; px < w; ++px) {
+            const double dx = px + 0.5 - cx;
+            double inside; // distance from the edge in pixels, > 0 inside
+            if (a <= 0 || b <= 0)
+                inside = -1;
+            else if (ellipse)
+                inside = (1 - std::sqrt((dx / a) * (dx / a) + (dy / b) * (dy / b))) * std::min(a, b);
+            else
+                inside = std::min(a - std::fabs(dx), b - std::fabs(dy));
+            double m = feather > 0 ? std::clamp(inside / feather, 0.0, 1.0) : (inside >= 0 ? 1.0 : 0.0);
+            if (invert)
+                m = 1 - m;
+            if (m < 1)
+                row[px * 4 + 3] = uint8_t(std::lround(row[px * 4 + 3] * m));
+        }
+    }
+}
+
 } // namespace
 
 void applyEffects(uint8_t *rgba, int w, int h, const ClipEffects &effects, const QRectF &content0)
@@ -395,6 +500,15 @@ void applyEffects(uint8_t *rgba, int w, int h, const ClipEffects &effects, const
         case ClipEffect::Kind::Mirror:
             // Letterbox bars are symmetric, so flipping the whole frame flips the picture in place.
             mirror(rgba, w, h, e.value(QStringLiteral("horizontal")) >= 0.5, e.value(QStringLiteral("vertical")) >= 0.5);
+            break;
+        case ClipEffect::Kind::ChromaKey:
+            chromaKey(rgba, n, e.value(QStringLiteral("hue")), e.value(QStringLiteral("tolerance")),
+                      e.value(QStringLiteral("softness")), e.value(QStringLiteral("minimum")), e.value(QStringLiteral("spill")));
+            break;
+        case ClipEffect::Kind::Mask:
+            mask(rgba, w, h, content, e.value(QStringLiteral("ellipse")) >= 0.5, e.value(QStringLiteral("x")),
+                 e.value(QStringLiteral("y")), e.value(QStringLiteral("width")), e.value(QStringLiteral("height")),
+                 e.value(QStringLiteral("feather")) * scale, e.value(QStringLiteral("invert")) >= 0.5);
             break;
         }
     }
