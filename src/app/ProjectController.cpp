@@ -69,6 +69,7 @@ ProjectController::ProjectController(QObject *parent)
     // The target PC has 2 cores: keep background decoding modest.
     m_pool.setMaxThreadCount(2);
     m_proxyPool.setMaxThreadCount(1);
+    m_gridPool.setMaxThreadCount(1);
     m_useProxies = proxiesEnabledSetting();
     m_undo = new QUndoStack(this);
     m_undo->setUndoLimit(200);
@@ -124,6 +125,7 @@ ProjectController::~ProjectController()
     m_pool.clear();
     m_pool.waitForDone();
     m_proxyPool.waitForDone();
+    m_gridPool.waitForDone();
 }
 
 QString ProjectController::displayName() const

@@ -23,6 +23,7 @@ class ClipInspector;
 class EffectsPanel;
 class SubtitlesPanel;
 class ScopesPanel;
+class MulticamMonitor;
 class Autosave;
 
 // Main window layout:
@@ -166,6 +167,14 @@ private:
     ScopesPanel *m_scopes = nullptr;
     QDockWidget *m_scopesDock = nullptr;
     QAction *m_scopesAct = nullptr;
+    MulticamMonitor *m_multicam = nullptr;   // phase 12b
+    QDockWidget *m_multicamDock = nullptr;
+    QAction *m_multicamAct = nullptr;
+    QMenu *m_cameraMenu = nullptr;
+    QMenu *m_soundMenu = nullptr;
+    QList<QAction *> m_cameraActs;           // 1..9
+    QList<QAction *> m_soundActs;            // Alt+1..9
+    void updateMulticamActions();
     ClipInspector *m_clipInspector = nullptr;
     QSplitter *m_monitorSplit = nullptr;
     QLabel *m_statusLabel = nullptr;
