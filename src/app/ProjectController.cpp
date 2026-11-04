@@ -6,6 +6,8 @@
 #include "core/Waveform.h"
 #include "engine/TimelinePlayer.h"
 
+#include <cmath>
+#include <algorithm>
 #include <QCryptographicHash>
 #include <QDir>
 #include <QFile>
@@ -752,6 +754,48 @@ void ProjectController::setTrackFlag(int track, const QString &flag, bool on)
         *f = on;
         return true;
     });
+}
+
+bool ProjectController::setTrackGain(int track, double db)
+{
+    db = std::clamp(std::round(db * 10) / 10, TimelineTrack::kMinGainDb, TimelineTrack::kMaxGainDb);
+    const QUuid id = track >= 0 && track < timeline().tracks.size() ? timeline().tracks[track].id : QUuid();
+    return editTimeline(tr("Track volume"), [&](Timeline &t) {
+        if (track < 0 || track >= t.tracks.size() || t.tracks[track].kind != Timeline::Kind::Audio
+            || t.tracks[track].gainDb == db)
+            return false;
+        t.tracks[track].gainDb = db;
+        return true;
+    }, QStringLiteral("trackgain:%1").arg(id.toString()));
+}
+
+bool ProjectController::setTrackPan(int track, double pan)
+{
+    pan = std::clamp(std::round(pan * 100) / 100, -1.0, 1.0);
+    const QUuid id = track >= 0 && track < timeline().tracks.size() ? timeline().tracks[track].id : QUuid();
+    return editTimeline(tr("Track balance"), [&](Timeline &t) {
+        if (track < 0 || track >= t.tracks.size() || t.tracks[track].kind != Timeline::Kind::Audio
+            || t.tracks[track].pan == pan)
+            return false;
+        t.tracks[track].pan = pan;
+        return true;
+    }, QStringLiteral("trackpan:%1").arg(id.toString()));
+}
+
+bool ProjectController::setMasterGain(double db)
+{
+    db = std::clamp(std::round(db * 10) / 10, TimelineTrack::kMinGainDb, TimelineTrack::kMaxGainDb);
+    return editTimeline(tr("Master volume"), [&](Timeline &t) {
+        if (t.masterGainDb == db)
+            return false;
+        t.masterGainDb = db;
+        return true;
+    }, QStringLiteral("mastergain"));
+}
+
+EngineServices::MeterLevel ProjectController::meterLevel(const QUuid &trackId) const
+{
+    return m_player ? m_player->meterLevel(trackId) : EngineServices::MeterLevel();
 }
 
 QUuid ProjectController::addTitle(qint64 start)

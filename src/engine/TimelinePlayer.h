@@ -1,5 +1,7 @@
 #pragma once
 
+#include "engine/EngineServices.h"
+
 #include "core/Project.h"
 
 #include <QByteArray>
@@ -70,6 +72,9 @@ public:
     // Loudness (RMS, 0..1) of the mixed sound of one frame; -1 when not
     // available. Used by tests now and by audio meters later.
     double audioLevel(qint64 frame);
+    // Mixer meters (phase 10a): the last peaks of an audio track of the main
+    // sequence after its fader, or of the master (null id). Thread-safe.
+    EngineServices::MeterLevel meterLevel(const QUuid &trackId) const;
 
 signals:
     // Emitted in the GUI thread for each frame shown during playback.
@@ -120,6 +125,7 @@ private:
     SequenceSettings m_seq;
     qint64 m_duration = 0;
     QSize m_previewLimit{960, 540};
+    QByteArray m_meterPrefix; // unique per player, keys of its bc_meter filters
     bool m_playing = false;
     double m_speed = 1;
     qint64 m_lastShown = 0;

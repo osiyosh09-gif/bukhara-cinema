@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/Project.h"
+#include "engine/EngineServices.h"
 #include "engine/Exporter.h"
 
 #include <QHash>
@@ -115,6 +116,13 @@ public:
     bool removeClips(const QList<QUuid> &clipIds, bool ripple);
     int addTrack(Timeline::Kind kind);
     void setTrackFlag(int track, const QString &flag, bool on); // "locked", "muted", "hidden", "solo"
+    // Audio mixer (phase 10a), on the open sequence; a fader drag is one undo step.
+    bool setTrackGain(int track, double db);   // audio tracks, TimelineTrack::kMinGainDb .. kMaxGainDb
+    bool setTrackPan(int track, double pan);   // audio tracks, -1 .. 1
+    bool setMasterGain(double db);
+    // Last peaks of an audio track (or the master: null id) of the main sequence
+    // while the Program monitor plays.
+    EngineServices::MeterLevel meterLevel(const QUuid &trackId) const;
     // Adds a 5-second title at `start` on the highest video track that is free
     // there (a new track when none is). Returns the new clip id.
     QUuid addTitle(qint64 start);

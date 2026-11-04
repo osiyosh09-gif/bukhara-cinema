@@ -113,12 +113,17 @@ struct TimelineTrack
     bool muted = false;    // audio tracks
     bool hidden = false;   // video tracks
     bool solo = false;     // audio tracks: when any track is solo, only solo tracks sound
+    double gainDb = 0;     // audio tracks: mixer fader (phase 10a), kMinGainDb .. kMaxGainDb
+    double pan = 0;        // audio tracks: -1 = left only, 0 = centre, 1 = right only
     QList<TimelineClip> clips; // sorted by start, never overlapping
+
+    static constexpr double kMinGainDb = -60;
+    static constexpr double kMaxGainDb = 12;
 
     bool operator==(const TimelineTrack &o) const
     {
         return id == o.id && kind == o.kind && locked == o.locked && muted == o.muted && hidden == o.hidden
-               && solo == o.solo && clips == o.clips;
+               && solo == o.solo && gainDb == o.gainDb && pan == o.pan && clips == o.clips;
     }
 };
 
@@ -151,10 +156,14 @@ public:
 
     QList<TimelineTrack> tracks;
     QList<TimelineMarker> markers; // sorted by frame
+    double masterGainDb = 0;       // mixer master fader (phase 10a)
 
     static Timeline makeDefault(); // V1-V3, A1-A3
 
-    bool operator==(const Timeline &o) const { return tracks == o.tracks && markers == o.markers; }
+    bool operator==(const Timeline &o) const
+    {
+        return tracks == o.tracks && markers == o.markers && masterGainDb == o.masterGainDb;
+    }
     bool operator!=(const Timeline &o) const { return !(*this == o); }
 
     int count(Kind kind) const;

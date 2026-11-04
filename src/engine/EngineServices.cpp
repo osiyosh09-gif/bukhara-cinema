@@ -178,19 +178,29 @@ int gainGetAudio(mlt_frame frame, void **buffer, mlt_audio_format *format, int *
     const double g1 = gain * envelope(pos + 1, length, fadeIn, fadeOut);
     const int n = *samples;
     const int ch = *channels;
+    // Balance (track pan): the other side gets quieter, the centre stays at full volume.
+    const double pan = std::clamp(mlt_properties_get_double(props, "pan"), -1.0, 1.0);
+    double side[8];
+    for (int c = 0; c < 8; ++c)
+        side[c] = 1.0;
+    if (ch >= 2) {
+        side[0] = pan > 0 ? 1 - pan : 1;
+        side[1] = pan < 0 ? 1 + pan : 1;
+    }
     if (*format == mlt_audio_f32le) {
         auto *s = static_cast<float *>(*buffer);
         for (int i = 0; i < n; ++i) {
-            const float g = float(g0 + (g1 - g0) * i / n);
+            const double g = g0 + (g1 - g0) * i / n;
             for (int c = 0; c < ch; ++c)
-                s[i * ch + c] *= g;
+                s[i * ch + c] *= float(g * side[std::min(c, 7)]);
         }
     } else if (*format == mlt_audio_s16) {
         auto *s = static_cast<int16_t *>(*buffer);
         for (int i = 0; i < n; ++i) {
             const double g = g0 + (g1 - g0) * i / n;
             for (int c = 0; c < ch; ++c)
-                s[i * ch + c] = int16_t(std::clamp(std::lround(s[i * ch + c] * g), -32768L, 32767L));
+                s[i * ch + c] = int16_t(
+                    std::clamp(std::lround(s[i * ch + c] * g * side[std::min(c, 7)]), -32768L, 32767L));
         }
     }
     return 0;
@@ -210,6 +220,71 @@ void *gainInit(mlt_profile, mlt_service_type, const char *, const void *)
         return nullptr;
     filter->process = gainProcess;
     mlt_properties_set_double(MLT_FILTER_PROPERTIES(filter), "gain_db", 0.0);
+    return filter;
+}
+
+// ---------------------------------------------------------------------------
+// bc_meter filter: remembers the peak of each channel for the mixer meters.
+
+struct MeterState
+{
+    float peak[2] = {0, 0};
+    qint64 serial = 0; // how many frames were measured
+};
+
+QMutex s_meterMutex;
+QHash<QByteArray, MeterState> s_meters;
+
+int meterGetAudio(mlt_frame frame, void **buffer, mlt_audio_format *format, int *frequency, int *channels,
+                  int *samples)
+{
+    auto filter = static_cast<mlt_filter>(mlt_frame_pop_audio(frame));
+    *format = mlt_audio_f32le;
+    const int err = mlt_frame_get_audio(frame, buffer, format, frequency, channels, samples);
+    if (err || !*buffer || *samples <= 0 || *channels <= 0)
+        return err;
+    float peak[2] = {0, 0};
+    const int n = *samples;
+    const int ch = *channels;
+    if (*format == mlt_audio_f32le) {
+        const auto *s = static_cast<const float *>(*buffer);
+        for (int i = 0; i < n * ch; ++i) {
+            float &p = peak[std::min(i % ch, 1)];
+            p = std::max(p, std::abs(s[i]));
+        }
+    } else if (*format == mlt_audio_s16) {
+        const auto *s = static_cast<const int16_t *>(*buffer);
+        for (int i = 0; i < n * ch; ++i) {
+            float &p = peak[std::min(i % ch, 1)];
+            p = std::max(p, std::abs(s[i]) / 32768.0f);
+        }
+    }
+    if (ch == 1)
+        peak[1] = peak[0];
+    const char *key = mlt_properties_get(MLT_FILTER_PROPERTIES(filter), "meter");
+    if (key && *key) {
+        QMutexLocker lock(&s_meterMutex);
+        MeterState &m = s_meters[QByteArray(key)];
+        m.peak[0] = peak[0];
+        m.peak[1] = peak[1];
+        ++m.serial;
+    }
+    return 0;
+}
+
+mlt_frame meterProcess(mlt_filter filter, mlt_frame frame)
+{
+    mlt_frame_push_audio(frame, filter);
+    mlt_frame_push_audio(frame, reinterpret_cast<void *>(meterGetAudio));
+    return frame;
+}
+
+void *meterInit(mlt_profile, mlt_service_type, const char *, const void *)
+{
+    mlt_filter filter = mlt_filter_new();
+    if (!filter)
+        return nullptr;
+    filter->process = meterProcess;
     return filter;
 }
 
@@ -510,6 +585,7 @@ void registerAll(mlt_repository_s *repository)
         return;
     mlt_repository_register(repository, mlt_service_producer_type, "bc_still", stillInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_gain", gainInit);
+    mlt_repository_register(repository, mlt_service_filter_type, "bc_meter", meterInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_transform", transformInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_fade", fadeInit);
     mlt_repository_register(repository, mlt_service_filter_type, "bc_effects", effectsInit);
@@ -522,6 +598,22 @@ QByteArray stillResource(const QImage &image)
     const QByteArray key = "bc_still:" + QByteArray::number(++s_counter);
     s_pending.insert(key.mid(9), image);
     return key;
+}
+
+MeterLevel meterLevel(const QByteArray &key)
+{
+    QMutexLocker lock(&s_meterMutex);
+    const auto it = s_meters.constFind(key);
+    if (it == s_meters.constEnd())
+        return {};
+    return {it->peak[0], it->peak[1], it->serial};
+}
+
+void clearMeters(const QByteArray &prefix)
+{
+    QMutexLocker lock(&s_meterMutex);
+    for (auto it = s_meters.begin(); it != s_meters.end();)
+        it = it.key().startsWith(prefix) ? s_meters.erase(it) : std::next(it);
 }
 
 } // namespace bc::EngineServices

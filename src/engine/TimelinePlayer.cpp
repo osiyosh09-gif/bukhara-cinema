@@ -15,6 +15,7 @@
 #include <mlt++/Mlt.h>
 
 #include <algorithm>
+#include <atomic>
 #include <clocale>
 #include <cmath>
 
@@ -137,7 +138,15 @@ void onFrameShow(mlt_properties, void *self, mlt_event_data data)
 TimelinePlayer::TimelinePlayer(QObject *parent)
     : QObject(parent)
 {
+    static std::atomic<int> s_players{0};
+    m_meterPrefix = "p" + QByteArray::number(++s_players) + ':';
     m_revPool.setMaxThreadCount(1);
+}
+
+EngineServices::MeterLevel TimelinePlayer::meterLevel(const QUuid &trackId) const
+{
+    return EngineServices::meterLevel(m_meterPrefix
+                                      + (trackId.isNull() ? QByteArray("master") : trackId.toByteArray()));
 }
 
 TimelinePlayer::~TimelinePlayer()
@@ -147,6 +156,7 @@ TimelinePlayer::~TimelinePlayer()
     m_playing = false;
     m_revPool.waitForDone();
     stopConsumer();
+    EngineServices::clearMeters(m_meterPrefix);
     QMutexLocker lock(&m_mutex);
     m_tractor.reset();
     m_nestCache.clear();
@@ -440,6 +450,22 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
         Mlt::Playlist pl(*m_profile);
         fill(pl, t, true);
         pl.set("hide", tl.isAudible(ti) ? 1 : 3); // 1 = no picture, 3 = nothing
+        // Mixer strip: fader and balance, then the meter (after the fader).
+        if (t.gainDb != 0 || t.pan != 0) {
+            Mlt::Filter fader(*m_profile, "bc_gain");
+            if (fader.is_valid()) {
+                fader.set("gain_db", t.gainDb);
+                fader.set("pan", t.pan);
+                pl.attach(fader);
+            }
+        }
+        if (depth == 0) {
+            Mlt::Filter meter(*m_profile, "bc_meter");
+            if (meter.is_valid()) {
+                meter.set("meter", (m_meterPrefix + t.id.toByteArray()).constData());
+                pl.attach(meter);
+            }
+        }
         tractor->set_track(pl, index);
         Mlt::Transition mix(*m_profile, "mix");
         mix.set("always_active", 1);
@@ -465,6 +491,21 @@ std::unique_ptr<Mlt::Tractor> TimelinePlayer::buildTractor(const Project &projec
             tractor->plant_transition(over, 0, index);
         }
         ++index;
+    }
+    // Master fader and meter on the mixed result.
+    if (tl.masterGainDb != 0) {
+        Mlt::Filter master(*m_profile, "bc_gain");
+        if (master.is_valid()) {
+            master.set("gain_db", tl.masterGainDb);
+            tractor->attach(master);
+        }
+    }
+    if (depth == 0) {
+        Mlt::Filter meter(*m_profile, "bc_meter");
+        if (meter.is_valid()) {
+            meter.set("meter", (m_meterPrefix + "master").constData());
+            tractor->attach(meter);
+        }
     }
     return tractor;
 }
