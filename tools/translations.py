@@ -1756,6 +1756,15 @@ T.update({
     '%1 did not work on this computer; the file was written with %2.': ('%1 бу компьютерда ишламади; файл %2 билан ёзилди.', '%1 не сработал на этом компьютере; файл записан с помощью %2.'),
 })
 
+# Why the multicamera command is off: the selected files (deep check)
+T.update({
+    '%1: still being read, wait a moment': ('%1: ҳали ўқиляпти, бир оз кутинг', '%1: ещё читается, подождите немного'),
+    '%1: the file could not be read (its name is red)': ('%1: файлни ўқиб бўлмади (номи қизил)', '%1: файл не удалось прочитать (имя красное)'),
+    '%1: a picture, not a recording': ('%1: бу расм, ёзув эмас', '%1: это изображение, а не запись'),
+    '%1: no picture and no sound found in it': ('%1: унда тасвир ҳам, овоз ҳам топилмади', '%1: в нём не найдено ни изображения, ни звука'),
+    'Selected: %1 recording(s); at least two are needed.': ('Танланган: %1 та ёзув; камида иккита керак.', 'Выбрано записей: %1; нужно минимум две.'),
+})
+
 # Why grey menu commands are off (audit)
 T.update({
     'Select clips on the timeline first.': ("Аввал timeline'да клипларни танланг.", 'Сначала выделите клипы на таймлайне.'),

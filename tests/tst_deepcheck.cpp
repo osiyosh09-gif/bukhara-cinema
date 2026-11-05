@@ -202,6 +202,12 @@ private slots:
             ids[m.path.endsWith(QStringLiteral("ҳ.mkv")) ? 1 : 0] = m.id;
         }
 
+        // One file selected: off, and the tool tip says how many are selected.
+        bin->tree()->clearSelection();
+        bin->tree()->topLevelItem(0)->setSelected(true);
+        QVERIFY(!act->isEnabled());
+        QVERIFY2(act->toolTip().count(QLatin1Char('\n')) >= 1, qPrintable(act->toolTip()));
+
         // Nothing in the bin, both clips selected on the timeline: also on.
         bin->tree()->clearSelection();
         QVERIFY(!act->isEnabled());

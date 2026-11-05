@@ -590,7 +590,30 @@ void MediaBinPanel::setTimelineMedia(std::function<QList<QUuid>()> provider)
 
 void MediaBinPanel::updateMulticamAction()
 {
-    m_multicam->setEnabled(multicamMedia().size() >= 2);
+    const bool on = multicamMedia().size() >= 2;
+    // Why the selected files cannot be angles (shown with the reason it is off).
+    QStringList why;
+    if (!on) {
+        for (const QUuid &id : selectedItems()) {
+            const MediaItem *m = m_ctl->project().item(id);
+            if (!m)
+                continue;
+            if (m_ctl->isProbing(id))
+                why << tr("%1: still being read, wait a moment").arg(m->name);
+            else if (!m->probed)
+                why << tr("%1: the file could not be read (its name is red)").arg(m->name);
+            else if (m->info.kind == MediaInfo::Kind::Image)
+                why << tr("%1: a picture, not a recording").arg(m->name);
+            else if (!m->info.hasVideo() && !m->info.hasAudio())
+                why << tr("%1: no picture and no sound found in it").arg(m->name);
+        }
+        const int usable = int(multicamMedia().size());
+        if (why.isEmpty() && !selectedItems().isEmpty())
+            why << tr("Selected: %1 recording(s); at least two are needed.").arg(usable);
+    }
+    m_multicam->setProperty("bc_offDetail", why.join(QLatin1Char('\n')));
+    m_multicam->setEnabled(on);
+    emit multicamChecked();
 }
 
 void MediaBinPanel::openMulticamDialog()

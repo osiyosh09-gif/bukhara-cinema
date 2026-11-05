@@ -64,6 +64,11 @@ public:
     void setTimelineMedia(std::function<QList<QUuid>()> provider);
     void updateMulticamAction();
 
+signals:
+    // The multicamera command was checked again; while it is off, its
+    // property "bc_offDetail" names the selected files that cannot be used.
+    void multicamChecked();
+
 public slots:
     void importDialog();
     void newFolder();

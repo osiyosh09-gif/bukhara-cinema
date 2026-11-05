@@ -316,7 +316,9 @@ void MainWindow::applyOffReason(const OffReason &r)
     QAction *a = r.action;
     if (!a)
         return;
-    const QString reason = tr(r.sourceText);
+    QString reason = tr(r.sourceText);
+    if (const QString detail = a->property("bc_offDetail").toString(); !detail.isEmpty())
+        reason += QLatin1Char('\n') + detail;
     const QString shown = a->property("bc_reasonShown").toString();
     if (!a->isEnabled()) {
         if (a->toolTip() != shown && a->toolTip() != reason) {
@@ -371,6 +373,11 @@ void MainWindow::setupOffReasons()
     explainWhenOff(QStringLiteral("actCreateMulticam"),
                    QT_TR_NOOP(
                        "Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline."));
+    connect(m_bin, &MediaBinPanel::multicamChecked, this, [this] {
+        for (const OffReason &r : std::as_const(m_offReasons))
+            if (r.action == m_bin->multicamAction())
+                applyOffReason(r);
+    });
     for (int i = 1; i <= 9; ++i) {
         explainWhenOff(QStringLiteral("actMulticamCamera%1").arg(i),
                        QT_TR_NOOP("Put the playhead on a multicamera clip that has this camera "

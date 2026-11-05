@@ -3745,6 +3745,31 @@
         <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
         <translation>Медиа кутубхонасида (ёки timeline'да уларнинг клипларини) бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади</translation>
     </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="602" />
+        <source>%1: still being read, wait a moment</source>
+        <translation>%1: ҳали ўқиляпти, бир оз кутинг</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="604" />
+        <source>%1: the file could not be read (its name is red)</source>
+        <translation>%1: файлни ўқиб бўлмади (номи қизил)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="606" />
+        <source>%1: a picture, not a recording</source>
+        <translation>%1: бу расм, ёзув эмас</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="608" />
+        <source>%1: no picture and no sound found in it</source>
+        <translation>%1: унда тасвир ҳам, овоз ҳам топилмади</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="612" />
+        <source>Selected: %1 recording(s); at least two are needed.</source>
+        <translation>Танланган: %1 та ёзув; камида иккита керак.</translation>
+    </message>
 </context>
 <context>
     <name>bc::MixLoudnessDialog</name>

@@ -3745,6 +3745,31 @@
         <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
         <translation>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</translation>
     </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="602" />
+        <source>%1: still being read, wait a moment</source>
+        <translation>%1: still being read, wait a moment</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="604" />
+        <source>%1: the file could not be read (its name is red)</source>
+        <translation>%1: the file could not be read (its name is red)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="606" />
+        <source>%1: a picture, not a recording</source>
+        <translation>%1: a picture, not a recording</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="608" />
+        <source>%1: no picture and no sound found in it</source>
+        <translation>%1: no picture and no sound found in it</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="612" />
+        <source>Selected: %1 recording(s); at least two are needed.</source>
+        <translation>Selected: %1 recording(s); at least two are needed.</translation>
+    </message>
 </context>
 <context>
     <name>bc::MixLoudnessDialog</name>

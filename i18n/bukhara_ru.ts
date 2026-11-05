@@ -3745,6 +3745,31 @@
         <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
         <translation>Выберите в медиатеке (или их клипы на таймлайне) две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа</translation>
     </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="602" />
+        <source>%1: still being read, wait a moment</source>
+        <translation>%1: ещё читается, подождите немного</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="604" />
+        <source>%1: the file could not be read (its name is red)</source>
+        <translation>%1: файл не удалось прочитать (имя красное)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="606" />
+        <source>%1: a picture, not a recording</source>
+        <translation>%1: это изображение, а не запись</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="608" />
+        <source>%1: no picture and no sound found in it</source>
+        <translation>%1: в нём не найдено ни изображения, ни звука</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="612" />
+        <source>Selected: %1 recording(s); at least two are needed.</source>
+        <translation>Выбрано записей: %1; нужно минимум две.</translation>
+    </message>
 </context>
 <context>
     <name>bc::MixLoudnessDialog</name>
