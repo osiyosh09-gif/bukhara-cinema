@@ -299,11 +299,6 @@
         <translation>Select video clips on the timeline, then Clip &gt; Detect scene changes: each video is read once on this computer (no internet, no AI model) and the hard cuts between shots are found. Split cuts the clips (with their sound) at every new shot, or markers are put there instead; one undo step. A slider sets the sensitivity. Slow fades between shots are not found.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="73" />
-        <source>AI assistants: transcription, text-based editing</source>
-        <translation>AI assistants: transcription, text-based editing</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sequence settings: size, frame rate, audio</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="65" />
         <source>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</source>
         <translation>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <source>Edit by transcript: delete words to cut the video</source>
+        <translation>Edit by transcript: delete words to cut the video</translation>
     </message>
 </context>
 <context>
@@ -3398,6 +3398,11 @@
         <location filename="../src/app/MainWindow.cpp" line="662" />
         <source>Hear the clips on this computer and write what is said as subtitles</source>
         <translation>Hear the clips on this computer and write what is said as subtitles</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="548" />
+        <source>Edit by transcript (delete words to cut)...</source>
+        <translation>Edit by transcript (delete words to cut)...</translation>
     </message>
 </context>
 <context>

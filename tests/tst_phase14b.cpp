@@ -219,7 +219,7 @@ private slots:
         QCOMPARE(ctl.importFiles({env("BC_SPEECH_WAV")}), 1);
         waitIdle(ctl);
         // At 2 s on the sequence, from 0 of the file.
-        QVERIFY(!ctl.placeMedia({ctl.project().items.first().id}, 50, 0).isEmpty());
+        QVERIFY(!ctl.placeMedia({ctl.project().items.first().id}, 0, 50).isEmpty());
         const QList<QUuid> clips = ctl.speechClips({}); // nothing selected: the first audio track
         QCOMPARE(clips.size(), 1);
         const QString model = env("BC_VOSK_MODEL");

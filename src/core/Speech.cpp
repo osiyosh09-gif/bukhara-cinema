@@ -86,12 +86,14 @@ bool loadLibrary(QString *error) // s_mutex held
         return v.ok;
     }
     v.tried = true;
+    QStringList errors;
     for (const QString &name : candidates()) {
         v.lib.setFileName(name);
         if (v.lib.load())
             break;
-        v.error = v.lib.errorString();
+        errors << v.lib.errorString();
     }
+    v.error = errors.join(QStringLiteral("; "));
     if (!v.lib.isLoaded()) {
         if (error)
             *error = v.error;

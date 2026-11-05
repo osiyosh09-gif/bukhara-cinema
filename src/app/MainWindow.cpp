@@ -544,6 +544,8 @@ void MainWindow::buildMenus()
         }
     });
     m_autoCaptionsAct->setObjectName(QStringLiteral("actAutoCaptions"));
+    // Next AI step: cut the video by deleting words from what was heard.
+    addPlanned(m_graphicsMenu, QT_TR_NOOP("Edit by transcript (delete words to cut)..."), 14, QStringLiteral("actTextEditing"));
     // The subtitle strip on the timeline and the Subtitles panel show the same subtitle.
     connect(m_timeline->view(), &TimelineView::subtitleClicked, this, [this](const QUuid &id) {
         m_inspectorDock->show();

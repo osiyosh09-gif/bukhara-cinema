@@ -1671,6 +1671,10 @@ T.update({
 
 # Phase 14b: subtitles from speech (Vosk)
 T.update({
+    "Edit by transcript (delete words to cut)...": (
+        "Матн орқали монтаж (сўзни ўчириб кесиш)...", "Монтаж по тексту (удалить слова, чтобы вырезать)..."),
+    "Edit by transcript: delete words to cut the video": (
+        "Матн орқали монтаж: сўзни ўчириб видеони кесиш", "Монтаж по тексту: удаление слов вырезает видео"),
     "Subtitles from speech": ("Нутқдан субтитр", "Субтитры из речи"),
     "Subtitles from speech: %1 added.": ("Нутқдан субтитр: %1 та қўшилди.", "Субтитры из речи: добавлено %1."),
     "Hear the clips on this computer and write what is said as subtitles": (

@@ -299,11 +299,6 @@
         <translation>Timeline'да видео клипларни танланг, кейин «Клип &gt; Саҳна алмашишларини топиш»: ҳар бир видео шу компьютерда бир марта ўқилади (интернетсиз, AI моделсиз) ва кадрлар орасидаги кескин кесимлар топилади. «Клипларни бўлиш» клипларни (овози билан) ҳар бир янги кадр бошида бўлади, ёки ўрнига маркер қўйилади; битта бекор қилиш қадами. Сезгирликни ползунок билан ўзгартириш мумкин. Секин алмашадиган (fade) ўтишлар топилмайди.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="73" />
-        <source>AI assistants: transcription, text-based editing</source>
-        <translation>AI ёрдамчилар: нутқни матнга айлантириш, матн орқали монтаж</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Секвенция созламалари: ўлчам, кадрлар частотаси, аудио</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="65" />
         <source>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</source>
         <translation>«Графика &gt; Нутқдан субтитр» танланган клипларни (ёки биринчи аудио йўлакни) шу компьютерда Vosk (Apache 2.0) билан тинглайди ва айтилганларни субтитр қаторларига ёзади: битта бекор қилиш қадами, кейин «Субтитрлар» панелида тузатилади. Ўзбек, рус ва инглиз моделлари бир марта юкланади (40–50 МБ) ёки папкадан олинади; ўзбекча кириллда ёзилиши мумкин. Ҳеч нарса ҳеч қаёққа юборилмайди. Ҳар 8 сўздан бири хато бўлиши мумкин. CI'да нутқ синтезатори айтган инглизча гап билан текширилган, ҳақиқий ўзбекча ёзувлар билан эмас.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <source>Edit by transcript: delete words to cut the video</source>
+        <translation>Матн орқали монтаж: сўзни ўчириб видеони кесиш</translation>
     </message>
 </context>
 <context>
@@ -3398,6 +3398,11 @@
         <location filename="../src/app/MainWindow.cpp" line="662" />
         <source>Hear the clips on this computer and write what is said as subtitles</source>
         <translation>Клипларни шу компьютерда тинглаб, айтилганларни субтитр қилиб ёзиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="548" />
+        <source>Edit by transcript (delete words to cut)...</source>
+        <translation>Матн орқали монтаж (сўзни ўчириб кесиш)...</translation>
     </message>
 </context>
 <context>

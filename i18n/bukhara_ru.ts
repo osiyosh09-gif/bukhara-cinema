@@ -299,11 +299,6 @@
         <translation>Выделите видеоклипы на таймлайне, затем «Клип &gt; Найти смену сцен»: каждое видео один раз читается на этом компьютере (без интернета и без модели ИИ), и находятся резкие склейки между планами. «Разрезать клипы» режет клипы (вместе со звуком) в начале каждого нового плана, либо там ставятся маркеры; один шаг отмены. Чувствительность задаётся ползунком. Плавные переходы (затемнения) не находятся.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="73" />
-        <source>AI assistants: transcription, text-based editing</source>
-        <translation>ИИ-помощники: расшифровка речи, монтаж по тексту</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Настройки эпизода: размер, частота кадров, звук</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="65" />
         <source>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</source>
         <translation>«Графика &gt; Субтитры из речи» прослушивает выделенные клипы (или первую аудиодорожку) на этом компьютере с помощью Vosk (Apache 2.0) и записывает сказанное строками субтитров: один шаг отмены, затем их можно исправить в панели «Субтитры». Модели для узбекского, русского и английского загружаются один раз (40–50 МБ) или берутся из папки; узбекский можно писать кириллицей. Ничего никуда не отправляется. Примерно каждое восьмое слово может быть неверным. Проверено в CI на английской речи синтезатора, а не на реальных узбекских записях.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <source>Edit by transcript: delete words to cut the video</source>
+        <translation>Монтаж по тексту: удаление слов вырезает видео</translation>
     </message>
 </context>
 <context>
@@ -3398,6 +3398,11 @@
         <location filename="../src/app/MainWindow.cpp" line="662" />
         <source>Hear the clips on this computer and write what is said as subtitles</source>
         <translation>Прослушать клипы на этом компьютере и записать сказанное субтитрами</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="548" />
+        <source>Edit by transcript (delete words to cut)...</source>
+        <translation>Монтаж по тексту (удалить слова, чтобы вырезать)...</translation>
     </message>
 </context>
 <context>

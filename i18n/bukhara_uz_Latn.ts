@@ -299,11 +299,6 @@
         <translation>Timeline'da video kliplarni tanlang, keyin «Klip &gt; Sahna almashishlarini topish»: har bir video shu kompyuterda bir marta o‘qiladi (internetsiz, AI modelsiz) va kadrlar orasidagi keskin kesimlar topiladi. «Kliplarni bo‘lish» kliplarni (ovozi bilan) har bir yangi kadr boshida bo‘ladi, yoki o‘rniga marker qo‘yiladi; bitta bekor qilish qadami. Sezgirlikni polzunok bilan o‘zgartirish mumkin. Sekin almashadigan (fade) o‘tishlar topilmaydi.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="73" />
-        <source>AI assistants: transcription, text-based editing</source>
-        <translation>AI yordamchilar: nutqni matnga aylantirish, matn orqali montaj</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sekvensiya sozlamalari: o‘lcham, kadrlar chastotasi, audio</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="65" />
         <source>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</source>
         <translation>«Grafika &gt; Nutqdan subtitr» tanlangan kliplarni (yoki birinchi audio yo‘lakni) shu kompyuterda Vosk (Apache 2.0) bilan tinglaydi va aytilganlarni subtitr qatorlariga yozadi: bitta bekor qilish qadami, keyin «Subtitrlar» panelida tuzatiladi. O‘zbek, rus va ingliz modellari bir marta yuklanadi (40–50 MB) yoki papkadan olinadi; o‘zbekcha kirillda yozilishi mumkin. Hech narsa hech qayoqqa yuborilmaydi. Har 8 so‘zdan biri xato bo‘lishi mumkin. CI'da nutq sintezatori aytgan inglizcha gap bilan tekshirilgan, haqiqiy o‘zbekcha yozuvlar bilan emas.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <source>Edit by transcript: delete words to cut the video</source>
+        <translation>Matn orqali montaj: so‘zni o‘chirib videoni kesish</translation>
     </message>
 </context>
 <context>
@@ -3398,6 +3398,11 @@
         <location filename="../src/app/MainWindow.cpp" line="662" />
         <source>Hear the clips on this computer and write what is said as subtitles</source>
         <translation>Kliplarni shu kompyuterda tinglab, aytilganlarni subtitr qilib yozish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="548" />
+        <source>Edit by transcript (delete words to cut)...</source>
+        <translation>Matn orqali montaj (so‘zni o‘chirib kesish)...</translation>
     </message>
 </context>
 <context>
