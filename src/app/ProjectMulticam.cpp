@@ -125,6 +125,13 @@ bool ProjectController::makeMulticam(const QUuid &nestId)
     return editProject(tr("Create multicamera sequence"), [&](EditState &s) {
         for (NestedSequence &n : s.nested)
             if (n.id == nestId && !n.multicam) {
+                // Angle n = n-th video/audio track (TimelinePlayer::nestProducer):
+                // drop any track with no clips so the kept tracks line up with angles.
+                QList<TimelineTrack> kept;
+                for (const TimelineTrack &t : n.timeline.tracks)
+                    if (!t.clips.isEmpty())
+                        kept << t;
+                n.timeline.tracks = kept;
                 n.multicam = true;
                 return true;
             }
