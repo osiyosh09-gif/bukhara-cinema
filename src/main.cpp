@@ -1,3 +1,4 @@
+#include "app/AboutDialog.h"
 #include "app/AppInfo.h"
 #include "app/Language.h"
 #include "app/Logging.h"
@@ -13,6 +14,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    bc::AboutDialog::initResources();
     QApplication::setOrganizationName(bc::orgName());
     QApplication::setApplicationName(bc::appName());
     QApplication::setApplicationVersion(bc::appVersion());

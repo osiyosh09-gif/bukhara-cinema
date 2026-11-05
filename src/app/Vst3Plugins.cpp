@@ -42,14 +42,21 @@ qint64 stamp(const QString &path)
     return t;
 }
 
+// One spelling per bundle (separators, case of the drive, links).
+QString normalized(const QString &path)
+{
+    const QString canonical = QFileInfo(path).canonicalFilePath();
+    return canonical.isEmpty() ? QDir::cleanPath(QDir::fromNativeSeparators(path)) : canonical;
+}
+
 QStringList allBundles()
 {
     QStringList out;
     for (const std::string &b : vst3::standardBundles())
-        out << QString::fromStdString(b);
+        out << normalized(QString::fromStdString(b));
     for (const QString &folder : Vst3Plugins::extraFolders())
         for (const std::string &b : vst3::findBundles(folder.toStdString()))
-            out << QString::fromStdString(b);
+            out << normalized(QString::fromStdString(b));
     out.removeDuplicates();
     out.sort(Qt::CaseInsensitive);
     return out;
@@ -66,8 +73,8 @@ void scan()
     // A bundle being read when the program last stopped is not read again.
     const QString crashed = settings.value(QString::fromLatin1(kScanningKey)).toString();
     if (!crashed.isEmpty()) {
-        if (!bad.contains(crashed))
-            bad << crashed;
+        if (!bad.contains(normalized(crashed)))
+            bad << normalized(crashed);
         settings.setValue(QString::fromLatin1(kBadKey), bad);
         settings.remove(QString::fromLatin1(kScanningKey));
     }

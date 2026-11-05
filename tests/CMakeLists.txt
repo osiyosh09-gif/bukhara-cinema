@@ -217,7 +217,7 @@ if(BC_ENABLE_VST3)
     target_link_libraries(tst_phase15c PRIVATE bc_ui Qt6::Test)
     add_dependencies(tst_phase15c BcTestGain)
     target_compile_definitions(tst_phase15c PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}"
-                                                    BC_TEST_VST3_DIR="${CMAKE_CURRENT_BINARY_DIR}/vst3")
+                                                    BC_TEST_VST3_DIR="${CMAKE_CURRENT_BINARY_DIR}/test-vst3")
     add_test(NAME phase15c_vst3_plugins COMMAND tst_phase15c)
     set_tests_properties(phase15c_vst3_plugins PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
 endif()

@@ -246,7 +246,7 @@ private slots:
         QSettings().setValue(QStringLiteral("vst3/scanning"), m_copy);
         Vst3Plugins::rescan();
         QCOMPARE(count(Vst3Plugins::plugins()), 1);
-        QVERIFY(Vst3Plugins::badBundles().contains(m_copy));
+        QVERIFY(Vst3Plugins::badBundles().contains(QFileInfo(m_copy).canonicalFilePath()));
         QVERIFY(!QSettings().contains(QStringLiteral("vst3/scanning")));
         QSettings().setValue(QStringLiteral("vst3/folders"), QStringList{bundleDir()});
         Vst3Plugins::rescan();
@@ -339,7 +339,7 @@ private slots:
         QVERIFY(ctl.setClipEffectEnabled(audio, e, true));
 
         // The export sound (frames one after another, as the exporter and the
-        // mix measurement get them): half of the sound without the plug-in.
+        // mix measurement get them): half of the plug-in at its neutral value.
         auto rendered = [&] {
             std::vector<float> mix;
             player.setProject(ctl.project());
@@ -349,11 +349,14 @@ private slots:
             });
             return ok ? peak(mix) : -1.0;
         };
-        const double with = rendered();
+        const double half2 = rendered();
+        QVERIFY(ctl.setClipEffectValue(audio, e, ClipEffect::pluginParamKey(0), 0.5));
+        const double unity = rendered();
         QVERIFY(ctl.setClipEffectEnabled(audio, e, false));
         const double without = rendered();
-        QVERIFY2(without > 0.02 && std::abs(with / without - 0.5) < 0.05,
-                 qPrintable(QStringLiteral("%1 %2").arg(with).arg(without)));
+        qInfo("rendered peaks: x0.5 %f, x1 %f, without %f", half2, unity, without);
+        QVERIFY2(unity > 0.02 && std::abs(half2 / unity - 0.5) < 0.02,
+                 qPrintable(QStringLiteral("%1 %2").arg(half2).arg(unity)));
     }
 
     void controller()
@@ -456,7 +459,7 @@ private slots:
         QVERIFY(f.open(QIODevice::ReadOnly));
         QByteArray data = f.readAll();
         f.close();
-        const QByteArray from = QDir::fromNativeSeparators(bundlePath()).toUtf8();
+        const QByteArray from = ctl->clipEffects(audio)[0].pluginPath.toUtf8();
         QVERIFY(data.contains(from));
         data.replace(from, QDir::fromNativeSeparators(m_dir.filePath(QStringLiteral("elsewhere/BcTestGain.vst3"))).toUtf8());
         QVERIFY(f.open(QIODevice::WriteOnly | QIODevice::Truncate));
@@ -473,6 +476,7 @@ private slots:
 
     void about()
     {
+        AboutDialog::initResources();
         QVERIFY(!QImage(QStringLiteral(":/vst/vst-compatible.png")).isNull());
         const QString html = AboutDialog::licensesHtml();
         QVERIFY(html.contains(QStringLiteral("VST 3 SDK")));

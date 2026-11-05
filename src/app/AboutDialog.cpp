@@ -12,7 +12,19 @@
 #include <QVBoxLayout>
 #include <QtGlobal>
 
+// resources.qrc is compiled into the static bc_ui library; a linker may drop
+// it unless it is registered by name (at global scope, as Qt requires).
+static void initBcResources()
+{
+    Q_INIT_RESOURCE(resources);
+}
+
 namespace bc {
+
+void AboutDialog::initResources()
+{
+    initBcResources();
+}
 
 QString AboutDialog::licensesHtml()
 {
@@ -59,6 +71,7 @@ QString AboutDialog::vstTrademark()
 AboutDialog::AboutDialog(Page page, QWidget *parent)
     : QDialog(parent)
 {
+    initResources();
     setObjectName(QStringLiteral("aboutDialog"));
     setWindowTitle(tr("About BUKHARA CINEMA"));
     auto *tabs = new QTabWidget(this);

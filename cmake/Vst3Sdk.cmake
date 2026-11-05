@@ -96,7 +96,8 @@ elseif(UNIX AND NOT APPLE)
     list(APPEND BC_VST3_PLUGIN_SOURCES ${_s}/public.sdk/source/main/linuxmain.cpp)
 endif()
 
-# Builds a .vst3 bundle: <name>.vst3/Contents/<arch>/<name>.vst3|.so
+# Builds a .vst3 bundle: test-vst3/<name>.vst3/Contents/<arch>/<name>.vst3|.so
+# (not "vst3" next to the tests: the SDK looks there, so every test would find it)
 function(bc_add_test_vst3 name)
     add_library(${name} MODULE ${ARGN} ${BC_VST3_PLUGIN_SOURCES})
     bc_vst3_setup(${name})
@@ -108,7 +109,7 @@ function(bc_add_test_vst3 name)
         set(suffix .so)
         target_link_libraries(${name} PRIVATE ${CMAKE_DL_LIBS} pthread)
     endif()
-    set(bundle ${CMAKE_CURRENT_BINARY_DIR}/vst3/${name}.vst3)
+    set(bundle ${CMAKE_CURRENT_BINARY_DIR}/test-vst3/${name}.vst3)
     set_target_properties(${name} PROPERTIES
         PREFIX ""
         SUFFIX ${suffix}

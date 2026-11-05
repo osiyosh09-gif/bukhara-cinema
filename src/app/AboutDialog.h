@@ -13,6 +13,7 @@ public:
 
     static QString licensesHtml();
     static QString vstTrademark(); // attribution Steinberg asks for
+    static void initResources();   // registers resources.qrc (logo, icon)
 };
 
 } // namespace bc
