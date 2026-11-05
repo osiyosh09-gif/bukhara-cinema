@@ -180,6 +180,44 @@ const char *kPremiereXml = R"(<?xml version="1.0" encoding="UTF-8"?>
 </xmeml>
 )";
 
+// Items equal to earlier ones written only as references (OpenTimelineIO's
+// fcp_xml adapter does this for the sound of a picture clip).
+const char *kBackrefXml = R"(<?xml version="1.0" encoding="UTF-8"?>
+<xmeml version="4">
+  <sequence id="s1">
+    <name>Refs</name>
+    <rate><timebase>25</timebase><ntsc>FALSE</ntsc></rate>
+    <media>
+      <video>
+        <track>
+          <clipitem id="clipitem-1">
+            <name>a.mov</name>
+            <start>0</start><end>-1</end><in>25</in><out>135</out>
+            <file id="file-1"><name>a.mov</name><pathurl>file:///media/ref/a.mov</pathurl></file>
+          </clipitem>
+          <transitionitem id="transitionitem-1">
+            <start>90</start><end>110</end><alignment>center</alignment>
+            <effect><name>Cross Dissolve</name></effect>
+          </transitionitem>
+          <clipitem id="clipitem-2">
+            <name>b.mov</name>
+            <start>-1</start><end>200</end><in>40</in><out>150</out>
+            <file id="file-2"><name>b.mov</name><pathurl>file:///media/ref/b.mov</pathurl></file>
+          </clipitem>
+        </track>
+      </video>
+      <audio>
+        <track>
+          <clipitem id="clipitem-1"/>
+          <transitionitem id="transitionitem-1"/>
+          <clipitem id="clipitem-2"/>
+        </track>
+      </audio>
+    </media>
+  </sequence>
+</xmeml>
+)";
+
 const char *kResolveEdl =
     "TITLE: Resolve cut\r\n"
     "FCM: NON-DROP FRAME\r\n"
@@ -332,6 +370,23 @@ private slots:
         const ReadResult c = Interchange::read(kPremiereXml, Format::FcpXml, rate(25, 1), m_dir.path());
         QCOMPARE(line(on(c, Kind::Video, 0)[0]), QStringLiteral("0+75 from 25"));
         QCOMPARE(on(c, Kind::Video, 1)[0].start, qint64(167)); // 200 / 29.97 * 25
+    }
+
+    void backReferencedItems()
+    {
+        const ReadResult r = Interchange::read(kBackrefXml, Format::FcpXml, rate(25, 1), {});
+        QCOMPARE(int(r.error), int(ReadResult::Error::None));
+        for (Kind kind : {Kind::Video, Kind::Audio}) {
+            const QList<ImportClip> cs = on(r, kind, 0);
+            QCOMPARE(int(cs.size()), 2);
+            QCOMPARE(line(cs[0]), QStringLiteral("0+100 from 25"));
+            QCOMPARE(line(cs[1]), QStringLiteral("100+100 from 50"));
+            QCOMPARE(cs[1].head.length, qint64(20));
+            QCOMPARE(cs[1].path, QStringLiteral("/media/ref/b.mov"));
+        }
+        QVERIFY(r.losses.isEmpty());
+        QVERIFY(on(r, Kind::Video, 0)[0].link >= 0); // the same item: picture and sound together
+        QCOMPARE(on(r, Kind::Video, 0)[0].link, on(r, Kind::Audio, 0)[0].link);
     }
 
     void resolveStyleEdl()

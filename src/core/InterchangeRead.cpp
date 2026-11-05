@@ -341,6 +341,19 @@ ReadResult readXml(const QByteArray &data, const SequenceSettings &seq, const QS
             files.insert(id, ref);
     }
 
+    // Full definitions of items that later appear as bare references.
+    QHash<QString, const XNode *> defined;
+    for (const char *tag : {"clipitem", "transitionitem", "generatoritem"}) {
+        std::vector<const XNode *> nodes;
+        collect(*sequence, tag, nodes);
+        for (const XNode *n : nodes) {
+            const QString id = n->attrs.value(QStringLiteral("id"));
+            const QString key = n->name + QLatin1Char('#') + id;
+            if (!id.isEmpty() && !n->kids.empty() && !defined.contains(key))
+                defined.insert(key, n);
+        }
+    }
+
     const XNode *media = sequence->child("media");
     if (const XNode *video = media->child("video"))
         if (const XNode *fmt = video->child("format"))
@@ -368,10 +381,19 @@ ReadResult readXml(const QByteArray &data, const SequenceSettings &seq, const QS
             // Cut points of the transitions on this track, in item order.
             struct Trans { qint64 s, e, cut; };
             const std::vector<XNode> &items = track.kids;
+            // An item equal to one written before may be only a reference:
+            // <clipitem id="clipitem-1"/>. Use the full one it names.
+            auto full = [&](size_t i) -> const XNode & {
+                const XNode &n = items[i];
+                if (!n.kids.empty())
+                    return n;
+                const XNode *def = defined.value(n.name + QLatin1Char('#') + n.attrs.value(QStringLiteral("id")));
+                return def ? *def : n;
+            };
             auto transAt = [&](size_t i, Trans *t) {
                 if (i >= items.size() || items[i].name != QLatin1String("transitionitem"))
                     return false;
-                const XNode &n = items[i];
+                const XNode &n = full(i);
                 t->s = n.number("start", 0);
                 t->e = n.number("end", t->s);
                 const QString align = n.value("alignment");
@@ -381,7 +403,7 @@ ReadResult readXml(const QByteArray &data, const SequenceSettings &seq, const QS
                 return true;
             };
             for (size_t i = 0; i < items.size(); ++i) {
-                const XNode &it = items[i];
+                const XNode &it = full(i);
                 if (it.name == QLatin1String("transitionitem")) {
                     Trans t;
                     transAt(i, &t);
