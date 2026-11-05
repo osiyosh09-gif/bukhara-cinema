@@ -146,10 +146,9 @@ jobs:
           set -e
           curl -sSL -o vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-win64-0.3.45.zip
           unzip -q vosk.zip -d vosk-dl
-          mkdir -p vosk && cp -v vosk-dl/vosk-win64-0.3.45/libvosk.dll vosk/
-          # For the tests: Qt loads it with the safe DLL search (its folder, not PATH),
-          # so the C++ runtime it needs goes next to it (the package has these next to the exe).
-          cp -v /ucrt64/bin/libstdc++-6.dll /ucrt64/bin/libgcc_s_seh-1.dll /ucrt64/bin/libwinpthread-1.dll vosk/
+          # libvosk.dll is built with an older (msvcrt) C++ runtime than ours: it is loaded
+          # only by BukharaSpeech.exe (static), with its own runtime DLLs next to it.
+          mkdir -p vosk && cp -v vosk-dl/vosk-win64-0.3.45/*.dll vosk/
           echo "BC_VOSK_LIB=$(cygpath -m "$PWD/vosk/libvosk.dll")" >> "$GITHUB_ENV"
           if curl -sSL --fail -o model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
             unzip -q model.zip -d models
@@ -208,7 +207,8 @@ jobs:
           # Plug-ins run in this program (phase 15c-2): it must be in the package.
           test -f dist/BukharaPluginHost.exe
           # Speech recognition (phase 14b); its C++ runtime DLLs come from MSYS2 below.
-          cp -v vosk/libvosk.dll dist/   # the runtime DLLs next to it come from MSYS2 below
+          test -f dist/BukharaSpeech.exe
+          mkdir -p dist/speech && cp -v vosk/*.dll dist/speech/
           # FFmpeg LGPL DLLs (not from MSYS2, so copied explicitly)
           cp -v ffmpeg/bin/av*.dll ffmpeg/bin/sw*.dll dist/
           mkdir -p dist/licenses/ffmpeg

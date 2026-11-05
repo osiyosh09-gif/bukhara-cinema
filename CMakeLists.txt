@@ -169,6 +169,17 @@ target_link_libraries(BukharaCinema PRIVATE bc_ui)
 
 install(TARGETS BukharaCinema RUNTIME DESTINATION .)
 
+# Speech recognition helper (phase 14b): runs Vosk (speech/libvosk.dll with its
+# own C++ runtime) in a process of its own; plain C++, no Qt.
+add_executable(BukharaSpeech src/speechhelper/main.cpp)
+target_compile_features(BukharaSpeech PRIVATE cxx_std_17)
+if(MINGW)
+    target_link_options(BukharaSpeech PRIVATE -static -static-libgcc -static-libstdc++)
+elseif(UNIX)
+    target_link_libraries(BukharaSpeech PRIVATE ${CMAKE_DL_LIBS})
+endif()
+install(TARGETS BukharaSpeech RUNTIME DESTINATION .)
+
 # The plug-in host (phase 15c-2): each VST 3 plug-in runs in its own copy of
 # this small program, so a crashing plug-in cannot take the editor down.
 if(BC_ENABLE_VST3)

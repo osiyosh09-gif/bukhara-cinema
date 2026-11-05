@@ -18,7 +18,7 @@ GNU LGPL requires.
 | MinGW-w64 GCC runtime (libgcc, libstdc++) | GPL v3 with GCC Runtime Library Exception | C++ runtime | https://gcc.gnu.org/ |
 | winpthreads | MIT / ZPL | Threads runtime | https://www.mingw-w64.org/ |
 | Steinberg VST 3 SDK 3.8.1 (base, pluginterfaces, public.sdk hosting) | MIT (`VST3-SDK-MIT.txt`) | Hosting VST® 3 audio plug-ins; compiled into the program (not a DLL) | https://github.com/steinbergmedia/vst3sdk |
-| Vosk 0.3.45 (`libvosk.dll`, with Kaldi, OpenFST, OpenBLAS, CLAPACK inside) | Apache 2.0 (`Vosk-Apache-2.0.txt`); OpenBLAS/CLAPACK BSD | Speech recognition for automatic subtitles; prebuilt from https://github.com/alphacep/vosk-api/releases | https://github.com/alphacep/vosk-api |
+| Vosk 0.3.45 (`speech/libvosk.dll`, with Kaldi, OpenFST, OpenBLAS, CLAPACK inside, and the MinGW runtime DLLs it was built with in `speech/`) | Apache 2.0 (`Vosk-Apache-2.0.txt`); OpenBLAS/CLAPACK BSD; MinGW runtime GPL v3 with GCC Runtime Library Exception | Speech recognition for automatic subtitles, run by `BukharaSpeech.exe` (our own small program); prebuilt from https://github.com/alphacep/vosk-api/releases | https://github.com/alphacep/vosk-api |
 | Vosk speech models (downloaded by the user, not shipped) | Apache 2.0 | Uzbek, Russian, English | https://alphacephei.com/vosk/models |
 | Qt dependencies from MSYS2 (zlib, libpng, freetype, harfbuzz, pcre2, zstd, double-conversion, ICU, md4c, …) | Permissive licenses (zlib, MIT, BSD, FreeType, ICU) | Fonts, images, text | https://packages.msys2.org/ |
 

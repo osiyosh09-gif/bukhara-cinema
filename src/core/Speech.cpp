@@ -8,7 +8,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QLibrary>
 #include <QMutex>
 #include <QProcess>
 #include <QSaveFile>
@@ -30,108 +29,44 @@ namespace bc::Speech {
 
 namespace {
 
-// --- libvosk, loaded at run time (the program works without it)
-
-struct VoskModel;
-struct VoskRecognizer;
-
-struct Vosk
-{
-    QLibrary lib;
-    bool tried = false;
-    bool ok = false;
-    QString error;
-    VoskModel *(*modelNew)(const char *) = nullptr;
-    VoskRecognizer *(*recognizerNew)(VoskModel *, float) = nullptr;
-    void (*setWords)(VoskRecognizer *, int) = nullptr;
-    int (*accept)(VoskRecognizer *, const short *, int) = nullptr;
-    const char *(*result)(VoskRecognizer *) = nullptr;
-    const char *(*finalResult)(VoskRecognizer *) = nullptr;
-    void (*recognizerFree)(VoskRecognizer *) = nullptr;
-    void (*setLogLevel)(int) = nullptr;
-};
+// --- the helper program and the library (phase 14b): Vosk runs in
+// BukharaSpeech, which loads libvosk itself (see src/speechhelper/main.cpp).
 
 QMutex s_mutex;
 QString s_libraryPath;
-Vosk &vosk()
-{
-    static Vosk v;
-    return v;
-}
-QHash<QString, VoskModel *> s_models; // loaded models stay loaded (a few seconds to load)
+QString s_helperPath;
 
-QStringList candidates()
+QString appDir()
 {
-    QStringList out;
+    return QCoreApplication::applicationDirPath();
+}
+
+QString helperPath()
+{
+    if (!s_helperPath.isEmpty())
+        return s_helperPath;
+    const QString env = qEnvironmentVariable("BC_SPEECH_HELPER");
+    if (!env.isEmpty())
+        return env;
+#ifdef Q_OS_WIN
+    return QDir(appDir()).filePath(QStringLiteral("BukharaSpeech.exe"));
+#else
+    return QDir(appDir()).filePath(QStringLiteral("BukharaSpeech"));
+#endif
+}
+
+QString libraryPath()
+{
     if (!s_libraryPath.isEmpty())
-        out << s_libraryPath;
+        return s_libraryPath;
     const QString env = qEnvironmentVariable("BC_VOSK_LIB");
     if (!env.isEmpty())
-        out << env;
-    const QString dir = QCoreApplication::applicationDirPath();
+        return env;
 #ifdef Q_OS_WIN
-    out << QDir(dir).filePath(QStringLiteral("libvosk.dll")) << QStringLiteral("libvosk");
+    return QDir(appDir()).filePath(QStringLiteral("speech/libvosk.dll"));
 #else
-    out << QDir(dir).filePath(QStringLiteral("libvosk.so")) << QStringLiteral("vosk");
+    return QDir(appDir()).filePath(QStringLiteral("speech/libvosk.so"));
 #endif
-    return out;
-}
-
-bool loadLibrary(QString *error) // s_mutex held
-{
-    Vosk &v = vosk();
-    if (v.tried) {
-        if (!v.ok && error)
-            *error = v.error;
-        return v.ok;
-    }
-    v.tried = true;
-    QStringList errors;
-    for (const QString &name : candidates()) {
-        v.lib.setFileName(name);
-        if (v.lib.load())
-            break;
-        errors << v.lib.errorString();
-    }
-    v.error = errors.join(QStringLiteral("; "));
-    if (!v.lib.isLoaded()) {
-        if (error)
-            *error = v.error;
-        return false;
-    }
-    v.modelNew = reinterpret_cast<decltype(v.modelNew)>(v.lib.resolve("vosk_model_new"));
-    v.recognizerNew = reinterpret_cast<decltype(v.recognizerNew)>(v.lib.resolve("vosk_recognizer_new"));
-    v.setWords = reinterpret_cast<decltype(v.setWords)>(v.lib.resolve("vosk_recognizer_set_words"));
-    v.accept = reinterpret_cast<decltype(v.accept)>(v.lib.resolve("vosk_recognizer_accept_waveform_s"));
-    v.result = reinterpret_cast<decltype(v.result)>(v.lib.resolve("vosk_recognizer_result"));
-    v.finalResult = reinterpret_cast<decltype(v.finalResult)>(v.lib.resolve("vosk_recognizer_final_result"));
-    v.recognizerFree = reinterpret_cast<decltype(v.recognizerFree)>(v.lib.resolve("vosk_recognizer_free"));
-    v.setLogLevel = reinterpret_cast<decltype(v.setLogLevel)>(v.lib.resolve("vosk_set_log_level"));
-    v.ok = v.modelNew && v.recognizerNew && v.setWords && v.accept && v.result && v.finalResult && v.recognizerFree;
-    if (!v.ok) {
-        v.error = QStringLiteral("libvosk lacks functions this program needs");
-        if (error)
-            *error = v.error;
-        return false;
-    }
-    if (v.setLogLevel)
-        v.setLogLevel(-1); // its log goes to the console
-    return true;
-}
-
-VoskModel *modelFor(const QString &dir, QString *error) // s_mutex held
-{
-    const QString key = QFileInfo(dir).absoluteFilePath();
-    if (VoskModel *m = s_models.value(key))
-        return m;
-    VoskModel *m = vosk().modelNew(QDir::toNativeSeparators(key).toUtf8().constData());
-    if (!m) {
-        if (error)
-            *error = QStringLiteral("the model in %1 could not be loaded").arg(QDir::toNativeSeparators(key));
-        return nullptr;
-    }
-    s_models.insert(key, m);
-    return m;
 }
 
 struct FormatCloser { void operator()(AVFormatContext *c) const { avformat_close_input(&c); } };
@@ -176,10 +111,26 @@ void setLibraryPath(const QString &path)
     s_libraryPath = path;
 }
 
+void setHelperProgram(const QString &path)
+{
+    QMutexLocker lock(&s_mutex);
+    s_helperPath = path;
+}
+
 bool libraryAvailable(QString *error)
 {
     QMutexLocker lock(&s_mutex);
-    return loadLibrary(error);
+    if (!QFileInfo(helperPath()).isExecutable()) {
+        if (error)
+            *error = QStringLiteral("%1 is not there").arg(QDir::toNativeSeparators(helperPath()));
+        return false;
+    }
+    if (!QFileInfo::exists(libraryPath())) {
+        if (error)
+            *error = QStringLiteral("%1 is not there").arg(QDir::toNativeSeparators(libraryPath()));
+        return false;
+    }
+    return true;
 }
 
 // --- models
@@ -302,17 +253,15 @@ bool transcribe(const QString &mediaPath, const QString &modelDir, double from, 
         return false;
     };
     words->clear();
-    VoskModel *model = nullptr;
+    QString helper, library;
     {
+        QString why;
+        if (!libraryAvailable(&why))
+            return fail(QStringLiteral("speech recognition is not installed: %1").arg(why));
         QMutexLocker lock(&s_mutex);
-        QString err;
-        if (!loadLibrary(&err))
-            return fail(QStringLiteral("speech recognition library (libvosk) not found: %1").arg(err));
-        model = modelFor(modelDir, error);
-        if (!model)
-            return false;
+        helper = helperPath();
+        library = libraryPath();
     }
-    Vosk &v = vosk();
 
     AVFormatContext *raw = nullptr;
     if (avformat_open_input(&raw, QFileInfo(mediaPath).absoluteFilePath().toUtf8().constData(), nullptr, nullptr) < 0)
@@ -331,6 +280,7 @@ bool transcribe(const QString &mediaPath, const QString &modelDir, double from, 
     for (unsigned i = 0; i < raw->nb_streams; ++i)
         if (int(i) != ai)
             raw->streams[i]->discard = AVDISCARD_ALL;
+    const int rate = cc->sample_rate > 0 ? cc->sample_rate : 16000;
     const double fileStart = raw->start_time != AV_NOPTS_VALUE ? raw->start_time / double(AV_TIME_BASE) : 0.0;
     const double duration = raw->duration > 0 ? raw->duration / double(AV_TIME_BASE) : 0.0;
     const double end = to >= 0 ? to : (duration > 0 ? duration : 1e12);
@@ -339,37 +289,55 @@ bool transcribe(const QString &mediaPath, const QString &modelDir, double from, 
         av_seek_frame(raw, -1, ts, AVSEEK_FLAG_BACKWARD);
     }
 
-    std::unique_ptr<AVFrame, FrameCloser> frame(av_frame_alloc());
-    std::unique_ptr<AVPacket, PacketCloser> pkt(av_packet_alloc());
-    VoskRecognizer *rec = nullptr;
-    struct RecCloser { Vosk *v; VoskRecognizer **r; ~RecCloser() { if (*r) v->recognizerFree(*r); } } closer{&v, &rec};
-    int rate = 0;
-    double fed = 0;     // seconds given to the recognizer
-    double origin = 0;  // file time of the first sample given
-    double clock = -1;  // file time of the next decoded sample
+    // The recognizer: the helper program, fed through its standard input.
+    QProcess proc;
+    proc.setProcessChannelMode(QProcess::SeparateChannels);
+    proc.start(helper, {QDir::toNativeSeparators(library), QDir::toNativeSeparators(QFileInfo(modelDir).absoluteFilePath()),
+                        QString::number(rate)});
+    if (!proc.waitForStarted(30000))
+        return fail(QStringLiteral("%1 did not start").arg(QDir::toNativeSeparators(helper)));
+    double origin = -1; // file time of the first sample given
+    QString helperError;
     bool done = false;
-    std::vector<short> mono;
-
-    auto collect = [&](const char *json) {
-        for (Word w : parseResult(QByteArray(json))) {
-            w.start += origin;
-            w.end += origin;
-            *words << w;
+    auto readLines = [&] {
+        while (proc.canReadLine()) {
+            const QByteArray line = proc.readLine().trimmed();
+            if (line.startsWith('{')) {
+                for (Word w : parseResult(line)) {
+                    w.start += std::max(0.0, origin);
+                    w.end += std::max(0.0, origin);
+                    *words << w;
+                }
+            } else if (line.startsWith("error ")) {
+                helperError = QString::fromUtf8(line.mid(6));
+            } else if (line == "done") {
+                done = true;
+            }
         }
     };
-    auto consume = [&]() -> bool {
-        const int channels = frame->ch_layout.nb_channels;
-        if (channels <= 0 || frame->sample_rate <= 0)
-            return true;
-        if (!rec) {
-            rate = frame->sample_rate;
-            rec = v.recognizerNew(model, float(rate));
-            if (!rec)
-                return false;
-            v.setWords(rec, 1);
+    // Loading a model takes a few seconds.
+    for (bool ready = false; !ready;) {
+        if (!proc.canReadLine() && !proc.waitForReadyRead(120000))
+            return fail(helperError.isEmpty() ? QStringLiteral("the recognizer did not start") : helperError);
+        while (proc.canReadLine()) {
+            const QByteArray line = proc.readLine().trimmed();
+            if (line == "ready")
+                ready = true;
+            else if (line.startsWith("error "))
+                return fail(QString::fromUtf8(line.mid(6)));
         }
-        if (frame->sample_rate != rate)
-            return true;
+    }
+
+    std::unique_ptr<AVFrame, FrameCloser> frame(av_frame_alloc());
+    std::unique_ptr<AVPacket, PacketCloser> pkt(av_packet_alloc());
+    double fed = 0;
+    double clock = -1;
+    bool finished = false;
+    std::vector<short> mono;
+    auto consume = [&] {
+        const int channels = frame->ch_layout.nb_channels;
+        if (channels <= 0 || frame->sample_rate != rate)
+            return;
         if (frame->pts != AV_NOPTS_VALUE)
             clock = frame->pts * av_q2d(st->time_base) - fileStart;
         else if (clock < 0)
@@ -380,10 +348,10 @@ bool transcribe(const QString &mediaPath, const QString &modelDir, double from, 
             if (t < from)
                 continue;
             if (t >= end) {
-                done = true;
+                finished = true;
                 break;
             }
-            if (fed == 0 && mono.empty())
+            if (origin < 0)
                 origin = t;
             float m = 0;
             for (int c = 0; c < channels; ++c)
@@ -392,32 +360,56 @@ bool transcribe(const QString &mediaPath, const QString &modelDir, double from, 
             mono.push_back(short(std::clamp(m, -1.0f, 1.0f) * 32767.0f));
         }
         clock += double(frame->nb_samples) / rate;
-        if (!mono.empty()) {
-            if (v.accept(rec, mono.data(), int(mono.size())))
-                collect(v.result(rec));
-            fed += double(mono.size()) / rate;
-            if (progress && end > from && end < 1e11)
-                progress(std::clamp(fed / (end - from), 0.0, 1.0));
-        }
-        return true;
+        if (mono.empty())
+            return;
+        proc.write(reinterpret_cast<const char *>(mono.data()), qint64(mono.size() * sizeof(short)));
+        if (proc.bytesToWrite() > (1 << 20))
+            proc.waitForBytesWritten(60000);
+        readLines();
+        fed += double(mono.size()) / rate;
+        if (progress && end > from && end < 1e11)
+            progress(std::clamp(fed / (end - from), 0.0, 0.99));
     };
 
-    while (!done && av_read_frame(raw, pkt.get()) >= 0) {
-        if (cancel && cancel->load())
+    while (!finished && av_read_frame(raw, pkt.get()) >= 0) {
+        if (cancel && cancel->load()) {
+            proc.kill();
+            proc.waitForFinished(5000);
             return fail(QStringLiteral("cancelled"));
+        }
         if (pkt->stream_index == ai && avcodec_send_packet(cc.get(), pkt.get()) >= 0)
-            while (!done && avcodec_receive_frame(cc.get(), frame.get()) >= 0)
-                if (!consume())
-                    return fail(QStringLiteral("the recognizer could not start"));
+            while (!finished && avcodec_receive_frame(cc.get(), frame.get()) >= 0)
+                consume();
         av_packet_unref(pkt.get());
+        if (proc.state() != QProcess::Running)
+            break;
     }
-    if (!done) {
+    if (!finished) {
         avcodec_send_packet(cc.get(), nullptr);
-        while (!done && avcodec_receive_frame(cc.get(), frame.get()) >= 0)
+        while (!finished && avcodec_receive_frame(cc.get(), frame.get()) >= 0)
             consume();
     }
-    if (rec)
-        collect(v.finalResult(rec));
+    proc.waitForBytesWritten(60000);
+    proc.closeWriteChannel();
+    while (!done) {
+        readLines();
+        if (done)
+            break;
+        if (proc.state() != QProcess::Running && !proc.canReadLine()) {
+            proc.waitForReadyRead(100);
+            readLines();
+            break;
+        }
+        if (cancel && cancel->load()) {
+            proc.kill();
+            proc.waitForFinished(5000);
+            return fail(QStringLiteral("cancelled"));
+        }
+        proc.waitForReadyRead(1000);
+    }
+    proc.waitForFinished(10000);
+    if (!done)
+        return fail(helperError.isEmpty() ? QStringLiteral("the recognizer stopped") : helperError);
     if (progress)
         progress(1.0);
     return true;

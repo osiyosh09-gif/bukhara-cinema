@@ -8,9 +8,9 @@
 
 namespace bc::Speech {
 
-// Speech to text (phase 14b) with Vosk (Apache 2.0), on this computer: the
-// library (libvosk) is loaded when first needed, the models (folders) are
-// downloaded once or chosen by the user. Nothing is sent anywhere.
+// Speech to text (phase 14b) with Vosk (Apache 2.0), on this computer, in the
+// helper program BukharaSpeech; the models (folders) are downloaded once or
+// chosen by the user. Nothing is sent anywhere.
 
 struct Word
 {
@@ -21,9 +21,12 @@ struct Word
     bool operator==(const Word &o) const { return start == o.start && end == o.end && text == o.text; }
 };
 
-// --- the library
-void setLibraryPath(const QString &path); // a file, or empty for the default search
-bool libraryAvailable(QString *error = nullptr);
+// --- the recognizer: the helper program BukharaSpeech (next to the program,
+// or BC_SPEECH_HELPER) loads libvosk (speech/libvosk.dll next to the program,
+// or BC_VOSK_LIB) in a process of its own.
+void setLibraryPath(const QString &path);   // empty: the default
+void setHelperProgram(const QString &path); // empty: the default
+bool libraryAvailable(QString *error = nullptr); // both files are there
 
 // --- models
 struct ModelInfo

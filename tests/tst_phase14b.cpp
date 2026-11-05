@@ -80,6 +80,7 @@ private slots:
         QSettings().setValue(QStringLiteral("proxy/auto"), false);
         QDir(MediaCache::root()).removeRecursively();
         QVERIFY(m_dir.isValid());
+        Speech::setHelperProgram(QStringLiteral(BC_SPEECH_HELPER_EXE));
     }
 
     void cyrillic()
@@ -180,6 +181,7 @@ private slots:
     {
         if (env("BC_VOSK_LIB").isEmpty())
             QSKIP("no speech library here (CI sets BC_VOSK_LIB)");
+        QVERIFY(QFileInfo(QStringLiteral(BC_SPEECH_HELPER_EXE)).isExecutable());
         QString why;
         QVERIFY2(Speech::libraryAvailable(&why), qPrintable(why));
         if (!recognitionReady())

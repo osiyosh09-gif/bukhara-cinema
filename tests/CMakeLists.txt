@@ -212,6 +212,8 @@ set_tests_properties(phase15b_interchange_import PROPERTIES ENVIRONMENT "QT_QPA_
 
 add_executable(tst_phase14b tst_phase14b.cpp)
 target_link_libraries(tst_phase14b PRIVATE bc_ui Qt6::Test)
+add_dependencies(tst_phase14b BukharaSpeech)
+target_compile_definitions(tst_phase14b PRIVATE BC_SPEECH_HELPER_EXE="$<TARGET_FILE:BukharaSpeech>")
 add_test(NAME phase14b_speech_subtitles COMMAND tst_phase14b)
 set_tests_properties(phase14b_speech_subtitles PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 600)
 
