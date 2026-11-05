@@ -503,6 +503,11 @@
         <source>VST 3 plug-in windows and crash protection</source>
         <translation>VST 3 plug-in windows and crash protection</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="77" />
+        <source>Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.</source>
+        <translation>Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -1727,14 +1732,59 @@
         <translation>This plug-in has no values to set here.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="561" />
-        <source>Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.</source>
-        <translation>Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.</translation>
-    </message>
-    <message>
         <location filename="../src/app/EffectsPanel.cpp" line="608" />
         <source>The plug-in did not start: %1</source>
         <translation>The plug-in did not start: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="524" />
+        <source>The plug-in "%1" stopped working (%2). BUKHARA CINEMA keeps running; the sound of this effect passes unchanged until the plug-in is started again.</source>
+        <translation>The plug-in "%1" stopped working (%2). BUKHARA CINEMA keeps running; the sound of this effect passes unchanged until the plug-in is started again.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="527" />
+        <source>it stopped answering</source>
+        <translation>it stopped answering</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="528" />
+        <source>it crashed</source>
+        <translation>it crashed</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="536" />
+        <source>Start the plug-in again</source>
+        <translation>Start the plug-in again</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="564" />
+        <source>Open plug-in window</source>
+        <translation>Open plug-in window</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="567" />
+        <source>Plug-in windows work in the Windows version of the program.</source>
+        <translation>Plug-in windows work in the Windows version of the program.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="570" />
+        <source>This plug-in has no window of its own.</source>
+        <translation>This plug-in has no window of its own.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="572" />
+        <source>What you change in the plug-in window is saved in the project and can be undone.</source>
+        <translation>What you change in the plug-in window is saved in the project and can be undone.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="577" />
+        <source>The plug-in window did not open: %1</source>
+        <translation>The plug-in window did not open: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="632" />
+        <source>Only the first %1 of %2 values are shown here.</source>
+        <translation>Only the first %1 of %2 values are shown here.</translation>
     </message>
 </context>
 <context>

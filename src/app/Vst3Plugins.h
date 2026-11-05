@@ -3,10 +3,14 @@
 #include <QList>
 #include <QString>
 #include <QStringList>
+#include <QUuid>
+
+class QWidget;
 
 namespace bc {
 
 namespace vst3 { class Plugin; }
+class ProjectController;
 
 struct Vst3PluginEntry
 {
@@ -37,6 +41,24 @@ public:
     // A running instance for the interface (parameter names, value texts),
     // kept for the rest of the run; null with *error when it cannot start.
     static vst3::Plugin *uiInstance(const QString &path, const QString &uid, QString *error = nullptr);
+
+    // --- phase 15c-2: the host program and crashes
+    // Plug-ins run in BukharaPluginHost from `folder` when it is there.
+    static void useHostProgram(const QString &folder);
+    // Why the plug-in stopped in this run (crash, hang); empty when it did not.
+    static QString crashMessage(const QString &path, const QString &uid);
+    // Lets a crashed plug-in start again (playback starts it on the next frame).
+    static void restart(const QString &path, const QString &uid);
+
+    // --- the plug-in's own window (Windows, host program needed). It belongs
+    // to one effect of one clip; what the user changes there goes through the
+    // controller (one undo step per value), and undo moves its knobs back.
+    static bool editorsAvailable();
+    static bool openEditor(ProjectController *ctl, const QUuid &clip, int index, QWidget *owner, QString *error);
+    static bool isEditorOpen(ProjectController *ctl, const QUuid &clip, int index);
+    static void closeEditor(ProjectController *ctl, const QUuid &clip, int index);
+    static void closeAllEditors();
+    static int openEditorCount();
 };
 
 } // namespace bc

@@ -2,14 +2,25 @@
 // sound by 2 x its normalized value (0.5 = unchanged) and "Invert" turns the
 // polarity over. The processor takes its values only from the parameter
 // changes the host sends, so the tests see whether the host sends them.
+// Phase 15c-2: hidden "Crash" and "Hang" parameters make the processor crash
+// or stop answering, and on Windows a small window changes "Gain" to 0.75 as
+// soon as it is opened (as if the user turned the knob).
 #include "base/source/fstreamer.h"
 #include "pluginterfaces/base/ibstream.h"
 #include "pluginterfaces/vst/ivstcomponent.h"
 #include "pluginterfaces/vst/ivstparameterchanges.h"
+#include "public.sdk/source/common/pluginview.h"
 #include "public.sdk/source/main/pluginfactory.h"
 #include "public.sdk/source/vst/vstsinglecomponenteffect.h"
 
 #include <algorithm>
+#include <chrono>
+#include <cstring>
+#include <thread>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 using namespace Steinberg;
 using namespace Steinberg::Vst;
@@ -18,6 +29,61 @@ namespace {
 
 constexpr ParamID kGain = 0;
 constexpr ParamID kInvert = 1;
+constexpr ParamID kCrash = 2;
+constexpr ParamID kHang = 3;
+
+class TestGain;
+
+// The plug-in's window: a label, and one turn of the "Gain" knob.
+class TestView : public CPluginView
+{
+public:
+    TestView(EditController *controller) : CPluginView(nullptr), m_controller(controller)
+    {
+        ViewRect r(0, 0, 320, 120);
+        setRect(r);
+    }
+
+    tresult PLUGIN_API isPlatformTypeSupported(FIDString type) override
+    {
+#ifdef _WIN32
+        return std::strcmp(type, kPlatformTypeHWND) == 0 ? kResultTrue : kResultFalse;
+#else
+        (void)type;
+        return kResultFalse;
+#endif
+    }
+
+    tresult PLUGIN_API attached(void *parent, FIDString type) override
+    {
+        const tresult r = CPluginView::attached(parent, type);
+#ifdef _WIN32
+        m_label = CreateWindowExW(0, L"STATIC", L"BC Test Gain", WS_CHILD | WS_VISIBLE | SS_CENTER, 0, 40, 320, 40,
+                                  static_cast<HWND>(parent), nullptr, GetModuleHandleW(nullptr), nullptr);
+#endif
+        m_controller->beginEdit(kGain);
+        m_controller->setParamNormalized(kGain, 0.75);
+        m_controller->performEdit(kGain, 0.75);
+        m_controller->endEdit(kGain);
+        return r;
+    }
+
+    tresult PLUGIN_API removed() override
+    {
+#ifdef _WIN32
+        if (m_label)
+            DestroyWindow(m_label);
+        m_label = nullptr;
+#endif
+        return CPluginView::removed();
+    }
+
+private:
+    EditController *m_controller;
+#ifdef _WIN32
+    HWND m_label = nullptr;
+#endif
+};
 
 class TestGain : public SingleComponentEffect
 {
@@ -33,7 +99,16 @@ public:
         addAudioOutput(STR16("Stereo Out"), SpeakerArr::kStereo);
         parameters.addParameter(STR16("Gain"), STR16("x"), 0, 0.5, ParameterInfo::kCanAutomate, kGain);
         parameters.addParameter(STR16("Invert"), nullptr, 1, 0, ParameterInfo::kCanAutomate, kInvert);
+        parameters.addParameter(STR16("Crash"), nullptr, 1, 0, ParameterInfo::kIsHidden, kCrash);
+        parameters.addParameter(STR16("Hang"), nullptr, 1, 0, ParameterInfo::kIsHidden, kHang);
         return kResultOk;
+    }
+
+    IPlugView *PLUGIN_API createView(FIDString name) override
+    {
+        if (name && std::strcmp(name, ViewType::kEditor) == 0)
+            return new TestView(this);
+        return nullptr;
     }
 
     tresult PLUGIN_API setBusArrangements(SpeakerArrangement *inputs, int32 numIns, SpeakerArrangement *outputs,
@@ -68,6 +143,11 @@ public:
                     m_gain = v;
                 else if (q->getParameterId() == kInvert)
                     m_invert = v >= 0.5;
+                else if (q->getParameterId() == kCrash && v >= 0.5)
+                    *static_cast<volatile int *>(nullptr) = 1; // on purpose: the host must survive this
+                else if (q->getParameterId() == kHang && v >= 0.5)
+                    for (;;)
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
             }
         }
         if (data.numSamples <= 0 || data.numInputs < 1 || data.numOutputs < 1)

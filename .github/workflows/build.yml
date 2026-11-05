@@ -160,6 +160,8 @@ jobs:
         run: |
           set -e
           cmake --install build --prefix dist
+          # Plug-ins run in this program (phase 15c-2): it must be in the package.
+          test -f dist/BukharaPluginHost.exe
           # FFmpeg LGPL DLLs (not from MSYS2, so copied explicitly)
           cp -v ffmpeg/bin/av*.dll ffmpeg/bin/sw*.dll dist/
           mkdir -p dist/licenses/ffmpeg

@@ -1595,6 +1595,31 @@ T.update({
     "VST 3 plug-in windows and crash protection": ("VST 3 плагин ойналари ва ишдан чиқишдан ҳимоя", "Окна плагинов VST 3 и защита от сбоев"),
 })
 
+# Phase 15c-2: plug-ins in the host program, plug-in windows
+T.update({
+    'The plug-in "%1" stopped working (%2). BUKHARA CINEMA keeps running; the sound of this effect passes unchanged until the plug-in is started again.': (
+        "«%1» плагини ишдан чиқди (%2). BUKHARA CINEMA ишлашда давом этади; плагин қайта ишга туширилгунча бу эффектнинг овози ўзгаришсиз ўтади.",
+        "Плагин «%1» перестал работать (%2). BUKHARA CINEMA продолжает работу; звук этого эффекта проходит без изменений, пока плагин не будет запущен снова."),
+    "it stopped answering": ("жавоб бермай қолди", "перестал отвечать"),
+    "it crashed": ("хато билан ёпилди", "аварийно завершился"),
+    "Start the plug-in again": ("Плагинни қайта ишга тушириш", "Запустить плагин снова"),
+    "Open plug-in window": ("Плагин ойнасини очиш", "Открыть окно плагина"),
+    "Plug-in windows work in the Windows version of the program.": (
+        "Плагин ойналари дастурнинг Windows версиясида ишлайди.",
+        "Окна плагинов работают в версии программы для Windows."),
+    "This plug-in has no window of its own.": ("Бу плагиннинг ўз ойнаси йўқ.", "У этого плагина нет собственного окна."),
+    "What you change in the plug-in window is saved in the project and can be undone.": (
+        "Плагин ойнасида ўзгартирганингиз лойиҳада сақланади ва бекор қилиш мумкин.",
+        "Изменения в окне плагина сохраняются в проекте, и их можно отменить."),
+    "The plug-in window did not open: %1": ("Плагин ойнаси очилмади: %1", "Окно плагина не открылось: %1"),
+    "Only the first %1 of %2 values are shown here.": (
+        "Бу ерда %2 та қийматдан фақат биринчи %1 таси кўрсатилган.",
+        "Здесь показаны только первые %1 из %2 значений."),
+    "Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.": (
+        "Ҳар бир плагин ўзининг кичик дастурида ишлайди (BukharaPluginHost). Плагин ишдан чиқса ёки жавоб бермай қолса, фақат ўша дастур ёпилади: BUKHARA CINEMA ишлашда давом этади, овоз ўзгаришсиз ўтади ва «Эффектлар» панели плагинни қайта ишга туширишни таклиф қилади. «Плагин ойнасини очиш» плагиннинг ўз ойнасини кўрсатади (Windows); у ерда ўзгартирилгани лойиҳада сақланади, бекор қилинади, ижро ва экспортда эшитилади. CI'да атайлаб ишдан чиқадиган ва қотадиган синов плагини билан текширилган; тижорат плагинлари биз томондан синалмаган.",
+        "Каждый плагин работает в собственной небольшой программе (BukharaPluginHost). Если плагин аварийно завершается или перестаёт отвечать, закрывается только эта программа: BUKHARA CINEMA продолжает работу, звук проходит без изменений, а панель «Эффекты» предлагает запустить плагин снова. «Открыть окно плагина» показывает собственное окно плагина (Windows); изменения в нём сохраняются в проекте, отменяются и слышны при воспроизведении и экспорте. Проверено в CI тестовым плагином, который намеренно падает и зависает; коммерческие плагины нами не проверялись."),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

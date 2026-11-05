@@ -138,7 +138,7 @@ void AudioChain::configure(const ClipEffects &effects, int sampleRate, int chann
         } else if (e.kind == ClipEffect::Kind::Plugin) {
             s.pluginKey = e.pluginPath + QLatin1Char('|') + e.pluginId;
             for (Stage &o : old) // the same plug-in keeps its instance (and its sound in flight)
-                if (o.plugin && o.pluginKey == s.pluginKey) {
+                if (o.plugin && o.pluginKey == s.pluginKey && !o.plugin->crashed()) {
                     s.plugin = std::move(o.plugin);
                     break;
                 }
