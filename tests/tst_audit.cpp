@@ -23,6 +23,8 @@
 #include <QUndoStack>
 #include <QtTest>
 
+#include <cstdio>
+
 using namespace bc;
 
 namespace {
@@ -113,6 +115,8 @@ class TestAudit : public QObject
             }
             if (kSkip.contains(a->objectName()))
                 continue;
+            std::fprintf(stderr, "RUN %s %s\n", qPrintable(situation), qPrintable(name));
+            std::fflush(stderr);
             a->trigger();
             QTest::qWait(20);
             ++run;
