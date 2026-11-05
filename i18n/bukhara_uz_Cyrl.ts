@@ -518,6 +518,11 @@
         <source>Sequence &gt; Automatic multicamera edit cuts a multicamera clip between its cameras: by whoever is speaking (the camera that hears a person loudest shows that person; a wide shot when nobody or several people speak, and between long shots) or in a rhythm. Shortest and longest shot can be set; the result is one undo step and every cut can be changed afterwards. Works best when each camera or person has its own microphone. Without the internet and without an AI model; tested in CI with recordings made for the test, not with real interviews.</source>
         <translation>«Секвенция &gt; Автоматик мультикам монтаж» мультикам клипни камералар орасида ўзи кесади: ким гапираётган бўлса (одамни энг баланд эшитган камера уни кўрсатади; ҳеч ким ёки бир неча киши гапирса ва узун кадрлар орасида — умумий план) ёки ритм бўйича. Энг қисқа ва энг узун кадр созланади; натижа битта бекор қилиш қадами, ҳар бир кесимни кейин ўзгартириш мумкин. Ҳар бир камера ёки одамнинг ўз микрофони бўлса яхши ишлайди. Интернетсиз ва AI моделсиз; CI'да тест учун ясалган ёзувлар билан текширилган, ҳақиқий интервьюлар билан эмас.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="65" />
+        <source>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</source>
+        <translation>«Графика &gt; Нутқдан субтитр» танланган клипларни (ёки биринчи аудио йўлакни) шу компьютерда Vosk (Apache 2.0) билан тинглайди ва айтилганларни субтитр қаторларига ёзади: битта бекор қилиш қадами, кейин «Субтитрлар» панелида тузатилади. Ўзбек, рус ва инглиз моделлари бир марта юкланади (40–50 МБ) ёки папкадан олинади; ўзбекча кириллда ёзилиши мумкин. Ҳеч нарса ҳеч қаёққа юборилмайди. Ҳар 8 сўздан бири хато бўлиши мумкин. CI'да нутқ синтезатори айтган инглизча гап билан текширилган, ҳақиқий ўзбекча ёзувлар билан эмас.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -693,6 +698,11 @@
         <location filename="../src/app/AboutDialog.cpp" line="92" />
         <source>Author: %1</source>
         <translation>Муаллиф: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="57" />
+        <source>Speech recognition for subtitles (libvosk.dll; models downloaded separately)</source>
+        <translation>Субтитр учун нутқни таниш (libvosk.dll; моделлар алоҳида юкланади)</translation>
     </message>
 </context>
 <context>
@@ -3379,6 +3389,16 @@
         <source>Cut a multicamera clip between its cameras by who is speaking, or in a rhythm</source>
         <translation>Мультикам клипни камералар орасида ким гапираётганига қараб ёки ритм бўйича кесиш</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="543" />
+        <source>Subtitles from speech: %1 added.</source>
+        <translation>Нутқдан субтитр: %1 та қўшилди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="662" />
+        <source>Hear the clips on this computer and write what is said as subtitles</source>
+        <translation>Клипларни шу компьютерда тинглаб, айтилганларни субтитр қилиб ёзиш</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4365,6 +4385,11 @@
         <source>Automatic multicamera edit</source>
         <translation>Автоматик мультикам монтаж</translation>
     </message>
+    <message>
+        <location filename="../src/app/ProjectSpeech.cpp" line="286" />
+        <source>Subtitles from speech</source>
+        <translation>Нутқдан субтитр</translation>
+    </message>
 </context>
 <context>
     <name>bc::ProjectInfoPanel</name>
@@ -4825,6 +4850,184 @@
         <location filename="../src/app/Shortcuts.cpp" line="251" />
         <source>%1 was used by: %2. It was removed there.</source>
         <translation>%1 аввал «%2» учун эди. У ердан олиб ташланди.</translation>
+    </message>
+</context>
+<context>
+    <name>bc::SpeechDialog</name>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="31" />
+        <source>Uzbek</source>
+        <translation>Ўзбекча</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="33" />
+        <source>Russian</source>
+        <translation>Русча</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="35" />
+        <source>English</source>
+        <translation>Инглизча</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="36" />
+        <source>Other language</source>
+        <translation>Бошқа тил</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="54" />
+        <source>Subtitles from speech</source>
+        <translation>Нутқдан субтитр</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="65" />
+        <source>Download</source>
+        <translation>Юклаб олиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="66" />
+        <source>Model folder...</source>
+        <translation>Модел папкаси...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="67" />
+        <source>Use a Vosk model you already have (an unpacked folder)</source>
+        <translation>Ўзингизда бор Vosk моделини ишлатиш (очилган папка)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="68" />
+        <source>Write Uzbek in Cyrillic letters</source>
+        <translation>Ўзбекчани кирилл ҳарфларида ёзиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="72" />
+        <source> letters</source>
+        <translation> ҳарф</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="73" />
+        <source>Replace the subtitles there were where these clips are</source>
+        <translation>Бу клиплар турган жойдаги эски субтитрларни алмаштириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="83" />
+        <source>Language:</source>
+        <translation>Тил:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="85" />
+        <source>Line length:</source>
+        <translation>Қатор узунлиги:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="88" />
+        <source>Speech is recognized on this computer with Vosk (free, Apache 2.0); the sound is not sent anywhere. A model is downloaded once (about 40-50 MB) from alphacephei.com. About one word in eight may be wrong: read the subtitles through in the Subtitles panel. Each recording is heard once and remembered.</source>
+        <translation>Нутқ шу компьютерда Vosk (бепул, Apache 2.0) билан танилади; овоз ҳеч қаёққа юборилмайди. Модел alphacephei.com'дан бир марта юкланади (тахминан 40–50 МБ). Ҳар 8 сўздан бири хато бўлиши мумкин: субтитрларни «Субтитрлар» панелида ўқиб чиқинг. Ҳар бир ёзув бир марта тингланади ва эслаб қолинади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="97" />
+        <source>Close</source>
+        <translation>Ёпиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="98" />
+        <source>Make subtitles</source>
+        <translation>Субтитр ясаш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="153" />
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="158" />
+        <source>%1: download (%2 MB)</source>
+        <translation>%1: юклаб олиш (%2 МБ)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="186" />
+        <source>Stop</source>
+        <translation>Тўхтатиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="191" />
+        <source>Select the clips to hear on the timeline (or none: then the first audio track is heard).</source>
+        <translation>Тингланадиган клипларни timeline'да танланг (ҳеч бирини танламасангиз, биринчи аудио йўлак тингланади).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="193" />
+        <source>Download a model for this language first, or choose a model folder.</source>
+        <translation>Аввал бу тил учун моделни юклаб олинг ёки модел папкасини танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="195" />
+        <source>The speech recognition library (libvosk) is missing: %1</source>
+        <translation>Нутқни таниш кутубхонаси (libvosk) йўқ: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="197" />
+        <source>Clips to hear: %1.</source>
+        <translation>Тингланадиган клиплар: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="215" />
+        <source>Cannot write %1.</source>
+        <translation>%1 га ёзиб бўлмади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="223" />
+        <source>Downloading the model...</source>
+        <translation>Модел юкланмоқда...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="238" />
+        <source>The model could not be downloaded: %1</source>
+        <translation>Моделни юклаб бўлмади: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="240" />
+        <source>Unpacking the model...</source>
+        <translation>Модел очилмоқда...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="245" />
+        <source>The model could not be unpacked: %1</source>
+        <translation>Моделни очиб бўлмади: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="259" />
+        <source>Folder of a Vosk model</source>
+        <translation>Vosk модели папкаси</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="263" />
+        <source>This folder holds no Vosk model (no am/final.mdl in it).</source>
+        <translation>Бу папкада Vosk модели йўқ (ичида am/final.mdl йўқ).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="278" />
+        <source>Listening... you can keep working. A minute of sound takes about half a minute.</source>
+        <translation>Тингланмоқда... ишлашни давом эттиришингиз мумкин. Бир дақиқалик овоз тахминан ярим дақиқада тингланади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="290" />
+        <source>Stopped.</source>
+        <translation>Тўхтатилди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="290" />
+        <source>Speech could not be recognized: %1</source>
+        <translation>Нутқни таниб бўлмади: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="298" />
+        <source>Subtitles added: %1. Ctrl+Z removes them.</source>
+        <translation>Субтитрлар қўшилди: %1. Ctrl+Z уларни олиб ташлайди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="299" />
+        <source>No speech was found in these clips.</source>
+        <translation>Бу клипларда нутқ топилмади.</translation>
     </message>
 </context>
 <context>

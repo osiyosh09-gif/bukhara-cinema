@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.38.0
+    VERSION 0.39.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -12,7 +12,7 @@ set(CMAKE_AUTORCC ON)
 
 option(BC_BUILD_TESTS "Build automated tests" ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Concurrent LinguistTools)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Concurrent Network LinguistTools)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(FFmpeg REQUIRED)
@@ -45,6 +45,7 @@ add_library(bc_core STATIC
     src/core/Vst3Ipc.h          src/core/Vst3Ipc.cpp
     src/core/Vst3Remote.cpp
     src/core/AutoMulticam.h     src/core/AutoMulticam.cpp
+    src/core/Speech.h           src/core/Speech.cpp
     src/core/InterchangeRead.cpp
     src/core/RenderPreview.h    src/core/RenderPreview.cpp
     src/core/Collector.h        src/core/Collector.cpp
@@ -124,6 +125,8 @@ add_library(bc_ui STATIC
     src/app/ProjectSubtitles.cpp
     src/app/ProjectInterchange.cpp
     src/app/ProjectAutoMulticam.cpp
+    src/app/ProjectSpeech.cpp
+    src/app/SpeechDialog.h      src/app/SpeechDialog.cpp
     src/app/AutoMulticamDialog.h src/app/AutoMulticamDialog.cpp
     src/app/InterchangeDialog.h src/app/InterchangeDialog.cpp
     src/app/InterchangeImportDialog.h src/app/InterchangeImportDialog.cpp
@@ -135,7 +138,7 @@ add_library(bc_ui STATIC
     resources/resources.qrc
 )
 target_include_directories(bc_ui PUBLIC src)
-target_link_libraries(bc_ui PUBLIC bc_core bc_engine Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent)
+target_link_libraries(bc_ui PUBLIC bc_core bc_engine Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Concurrent Qt6::Network)
 target_compile_definitions(bc_ui PUBLIC
     BC_VERSION="${PROJECT_VERSION}")
 
@@ -188,6 +191,7 @@ install(FILES
     licenses/LGPL-3.0.txt
     licenses/GPL-3.0.txt
     licenses/VST3-SDK-MIT.txt
+    licenses/Vosk-Apache-2.0.txt
     DESTINATION licenses)
 
 # ---------------------------------------------------------------------------

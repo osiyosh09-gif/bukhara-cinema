@@ -72,6 +72,7 @@ ProjectController::ProjectController(QObject *parent)
     m_gridPool.setMaxThreadCount(1);
     m_scenePool.setMaxThreadCount(1);
     m_soundPool.setMaxThreadCount(1);
+    m_speechPool.setMaxThreadCount(1);
     m_useProxies = proxiesEnabledSetting();
     m_undo = new QUndoStack(this);
     m_undo->setUndoLimit(200);
@@ -138,6 +139,9 @@ ProjectController::~ProjectController()
     if (m_soundCancel)
         m_soundCancel->store(true);
     m_soundPool.waitForDone();
+    if (m_speechCancel)
+        m_speechCancel->store(true);
+    m_speechPool.waitForDone();
     m_gridPool.waitForDone();
 }
 
@@ -165,6 +169,7 @@ void ProjectController::newProject()
     m_scenesFailed.clear();
     m_envelopes.clear();
     m_envelopesFailed.clear();
+    m_transcripts.clear();
     m_proxies.clear();
     cancelProxies();
     m_pendingProbe.clear();
@@ -225,6 +230,7 @@ void ProjectController::adopt(Project &&p, const QString &filePath, bool modifie
     m_scenesFailed.clear();
     m_envelopes.clear();
     m_envelopesFailed.clear();
+    m_transcripts.clear();
     m_proxies.clear();
     cancelProxies();
     m_pendingProbe.clear();

@@ -210,6 +210,11 @@ target_link_libraries(tst_phase15b PRIVATE bc_ui Qt6::Test)
 add_test(NAME phase15b_interchange_import COMMAND tst_phase15b)
 set_tests_properties(phase15b_interchange_import PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
 
+add_executable(tst_phase14b tst_phase14b.cpp)
+target_link_libraries(tst_phase14b PRIVATE bc_ui Qt6::Test)
+add_test(NAME phase14b_speech_subtitles COMMAND tst_phase14b)
+set_tests_properties(phase14b_speech_subtitles PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 600)
+
 add_executable(tst_phase16a tst_phase16a.cpp)
 target_link_libraries(tst_phase16a PRIVATE bc_ui Qt6::Test)
 target_compile_definitions(tst_phase16a PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")

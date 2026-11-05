@@ -41,6 +41,7 @@ QString AboutDialog::licensesHtml()
                            "<tr><td><b>SDL 2</b></td><td>zlib</td><td>%10</td></tr>"
                            "<tr><td><b>MinGW-w64 runtime</b></td><td>%3</td><td>%4</td></tr>"
                            "<tr><td><b>Steinberg VST 3 SDK 3.8.1</b></td><td>MIT</td><td>%11</td></tr>"
+                           "<tr><td><b>Vosk 0.3.45 (Kaldi, OpenFST, OpenBLAS)</b></td><td>Apache 2.0, BSD</td><td>%12</td></tr>"
                            "</table>")
                 .arg(QString::fromLatin1(qVersion()),
                      tr("User interface"),
@@ -52,7 +53,8 @@ QString AboutDialog::licensesHtml()
                      Engine::versionString().toHtmlEscaped(),
                      tr("Video engine: timeline playback"),
                      tr("Sound output"),
-                     tr("Hosting VST 3 audio plug-ins (built into the program)"));
+                     tr("Hosting VST 3 audio plug-ins (built into the program)"),
+                     tr("Speech recognition for subtitles (libvosk.dll; models downloaded separately)"));
     html += QStringLiteral("<p>%1</p>").arg(
         tr("Full license texts are installed in the \"licenses\" folder next to the program. "
            "Source code: Qt https://download.qt.io/, FFmpeg https://ffmpeg.org/download.html, "

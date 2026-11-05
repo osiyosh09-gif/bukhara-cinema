@@ -5,6 +5,7 @@
 #include "core/Loudness.h"
 #include "core/Project.h"
 #include "core/SceneDetect.h"
+#include "core/Speech.h"
 #include "engine/EngineServices.h"
 #include "engine/Exporter.h"
 
@@ -263,6 +264,25 @@ public:
     // Renders every angle of the multicamera clip at the playhead in a grid
     // (in the background, the newest request wins); emits multicamGridReady.
     void requestMulticamGrid();
+    // --- subtitles from speech (phase 14b, ProjectSpeech.cpp)
+    // The sound clips it listens to: the selected ones and those linked to
+    // selected pictures; with nothing selected, the clips of the first audio
+    // track that has any. Media clips and nested / multicamera clips.
+    QList<QUuid> speechClips(const QList<QUuid> &selection) const;
+    // Whether those clips were heard with `modelDir` (results are cached);
+    // transcribeClips listens to the rest in the background and reports with
+    // speechProgress / speechReady.
+    bool speechKnown(const QList<QUuid> &clipIds, const QString &modelDir) const;
+    void transcribeClips(const QList<QUuid> &clipIds, const QString &modelDir);
+    void cancelSpeech();
+    bool isTranscribing() const { return m_speechRunning; }
+    // The subtitle lines (sequence frames) of what was heard in the clips.
+    QList<Subtitle> speechSubtitles(const QList<QUuid> &clipIds, const QString &modelDir,
+                                    const Speech::CueSettings &settings, bool cyrillic) const;
+    // Puts them on the open sequence (one undo step); `replace` removes the
+    // subtitles there were where the clips are. Returns the number added.
+    int addSpeechSubtitles(const QList<QUuid> &clipIds, const QString &modelDir, const Speech::CueSettings &settings,
+                           bool cyrillic, bool replace);
     // --- automatic multicamera edit (phase 16a, ProjectAutoMulticam.cpp)
     // The multicamera picture clips of the open sequence it works on: the
     // selected ones, else the one at the playhead.
@@ -463,6 +483,8 @@ signals:
     void scenesAnalyzed(const QUuid &mediaId, bool ok);
     // Grid of all angles (null image when no multicamera clip is at the playhead).
     void multicamGridReady(const QImage &image, const QUuid &clipId);
+    void speechProgress(double fraction);
+    void speechReady(bool ok, const QString &error);
     void multicamSoundProgress(int done, int total);
     void multicamSoundReady(bool ok);
     void mixLoudnessProgress(qint64 frame, qint64 total);
@@ -601,6 +623,11 @@ private:
     bool m_soundRunning = false;
     std::shared_ptr<std::atomic_bool> m_soundCancel;
     QThreadPool m_soundPool; // reads the cameras' sound
+    // Subtitles from speech (ProjectSpeech.cpp): what was heard, by "media id|model dir".
+    QHash<QString, Speech::Transcript> m_transcripts;
+    bool m_speechRunning = false;
+    std::shared_ptr<std::atomic_bool> m_speechCancel;
+    QThreadPool m_speechPool;
     QThreadPool m_gridPool;  // one grid frame at a time; declared last, so it is destroyed (and waited for) first
 };
 
