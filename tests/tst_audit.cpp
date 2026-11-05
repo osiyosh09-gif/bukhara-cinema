@@ -109,7 +109,10 @@ class TestAudit : public QObject
                                  a->toolTip());
             if (!a->isEnabled()) {
                 // A disabled command must say why (Qt makes the tool tip from the text when none is set).
-                if (!planned && (a->toolTip().isEmpty() || a->toolTip() == text))
+                QString bare = text;
+                if (bare.endsWith(QLatin1String("...")))
+                    bare.chop(3);
+                if (!planned && !a->objectName().isEmpty() && (a->toolTip().isEmpty() || a->toolTip() == bare))
                     m_unexplained << situation + QStringLiteral(": ") + name + QStringLiteral(" (") + text + QLatin1Char(')');
                 continue;
             }
@@ -188,6 +191,11 @@ private slots:
             qInfo("AUDIT %s", qPrintable(line));
         for (const QString &line : m_unexplained)
             qInfo("UNEXPLAINED %s", qPrintable(line));
+        QVERIFY2(m_unexplained.isEmpty(), "grey commands that do not say why (see UNEXPLAINED above)");
+        // Menus show the reasons.
+        for (QAction *top : w.menuBar()->actions())
+            if (top->menu())
+                QVERIFY(top->menu()->toolTipsVisible());
     }
 };
 

@@ -3230,11 +3230,6 @@
         <translation>Субтитры</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
-        <translation>Этап 14, часть 1: поиск смены сцен («Клип &gt; Найти смену сцен»), на этом компьютере без интернета.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Переименовать маркер</translation>
@@ -3403,6 +3398,86 @@
         <location filename="../src/app/MainWindow.cpp" line="548" />
         <source>Edit by transcript (delete words to cut)...</source>
         <translation>Монтаж по тексту (удалить слова, чтобы вырезать)...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="335" />
+        <source>Select clips on the timeline first.</source>
+        <translation>Сначала выделите клипы на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="336" />
+        <source>Open a clip in the Source monitor first: double-click it in the media bin.</source>
+        <translation>Сначала откройте клип в мониторе источника: дважды щёлкните его в медиатеке.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="341" />
+        <source>Nothing to undo yet.</source>
+        <translation>Пока нечего отменять.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="342" />
+        <source>Nothing to redo.</source>
+        <translation>Нечего повторять.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="343" />
+        <source>Copy or cut clips first.</source>
+        <translation>Сначала скопируйте или вырежьте клипы.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="346" />
+        <source>Save the project first: older versions are kept each time it is saved again.</source>
+        <translation>Сначала сохраните проект: при каждом новом сохранении старые версии сохраняются.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="347" />
+        <source>Put clips on the timeline first.</source>
+        <translation>Сначала поместите клипы на таймлайн.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="349" />
+        <source>Put the playhead over a clip on the timeline first.</source>
+        <translation>Сначала поставьте курсор на клип на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="350" />
+        <source>Select audio clips on the timeline first.</source>
+        <translation>Сначала выделите аудиоклипы на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="352" />
+        <source>Select one video or audio clip on the timeline first.</source>
+        <translation>Сначала выделите на таймлайне один видео- или аудиоклип.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="353" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Сначала выделите видеоклипы на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="354" />
+        <source>Select a clip next to a cut first.</source>
+        <translation>Сначала выделите клип рядом со склейкой.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="356" />
+        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
+        <translation>Сначала выделите в медиатеке две или больше записей одного события (Ctrl+щелчок).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
+        <translation>Поставьте курсор на многокамерный клип с этой камерой («Эпизод &gt; Создать многокамерный эпизод»).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="366" />
+        <source>The video engine could not be loaded: see the log file.</source>
+        <translation>Не удалось загрузить видеодвижок: см. файл журнала.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="813" />
+        <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
+        <translation>Серые команды меню показывают, что им нужно, если навести на них мышь. Справка &gt; Состояние функций показывает, что работает.</translation>
     </message>
 </context>
 <context>

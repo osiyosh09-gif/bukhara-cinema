@@ -1749,6 +1749,26 @@ _MAP = {
 _VOWELS = set("аеёиоуўэюяaeiou")
 
 
+# Why grey menu commands are off (audit)
+T.update({
+    'Select clips on the timeline first.': ("Аввал timeline'да клипларни танланг.", 'Сначала выделите клипы на таймлайне.'),
+    'Open a clip in the Source monitor first: double-click it in the media bin.': ('Аввал клипни Source мониторида очинг: медиа кутубхонасида уни икки марта босинг.', 'Сначала откройте клип в мониторе источника: дважды щёлкните его в медиатеке.'),
+    'Nothing to undo yet.': ('Ҳозирча бекор қиладиган амал йўқ.', 'Пока нечего отменять.'),
+    'Nothing to redo.': ('Қайтарадиган амал йўқ.', 'Нечего повторять.'),
+    'Copy or cut clips first.': ('Аввал клипларни нусхаланг ёки кесиб олинг.', 'Сначала скопируйте или вырежьте клипы.'),
+    'Save the project first: older versions are kept each time it is saved again.': ('Аввал лойиҳани сақланг: ҳар сафар қайта сақлаганда эски версиялари қолади.', 'Сначала сохраните проект: при каждом новом сохранении старые версии сохраняются.'),
+    'Put clips on the timeline first.': ("Аввал timeline'га клип қўйинг.", 'Сначала поместите клипы на таймлайн.'),
+    'Put the playhead over a clip on the timeline first.': ("Аввал курсорни timeline'даги клип устига қўйинг.", 'Сначала поставьте курсор на клип на таймлайне.'),
+    'Select audio clips on the timeline first.': ("Аввал timeline'да аудио клипларни танланг.", 'Сначала выделите аудиоклипы на таймлайне.'),
+    'Select one video or audio clip on the timeline first.': ("Аввал timeline'да битта видео ёки аудио клипни танланг.", 'Сначала выделите на таймлайне один видео- или аудиоклип.'),
+    'Select video clips on the timeline first.': ("Аввал timeline'да видео клипларни танланг.", 'Сначала выделите видеоклипы на таймлайне.'),
+    'Select a clip next to a cut first.': ('Аввал кесим ёнидаги клипни танланг.', 'Сначала выделите клип рядом со склейкой.'),
+    'Select two or more recordings of one event in the media bin first (Ctrl+click).': ('Аввал медиа кутубхонасида бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш).', 'Сначала выделите в медиатеке две или больше записей одного события (Ctrl+щелчок).'),
+    'Put the playhead on a multicamera clip that has this camera (Sequence > Create multicamera sequence).': ('Курсорни шу камераси бор мультикам клип устига қўйинг («Секвенция > Мультикам секвенция яратиш»).', 'Поставьте курсор на многокамерный клип с этой камерой («Эпизод > Создать многокамерный эпизод»).'),
+    'The video engine could not be loaded: see the log file.': ('Видео двигатели юкланмади: журнал файлига қаранг.', 'Не удалось загрузить видеодвижок: см. файл журнала.'),
+    'Grey menu commands say what they need when you point at them. Help > Feature status lists what works.': ('Кулранг меню буйруқлари устига сичқонча келтирсангиз, нима кераклигини айтади. Ёрдам > Функциялар ҳолати нима ишлашини кўрсатади.', 'Серые команды меню показывают, что им нужно, если навести на них мышь. Справка > Состояние функций показывает, что работает.'),
+})
+
 def cyr_to_lat(text: str) -> str:
     out = []
     n = len(text)

@@ -3230,11 +3230,6 @@
         <translation>Subtitles</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
-        <translation>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Rename marker</translation>
@@ -3403,6 +3398,86 @@
         <location filename="../src/app/MainWindow.cpp" line="548" />
         <source>Edit by transcript (delete words to cut)...</source>
         <translation>Edit by transcript (delete words to cut)...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="335" />
+        <source>Select clips on the timeline first.</source>
+        <translation>Select clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="336" />
+        <source>Open a clip in the Source monitor first: double-click it in the media bin.</source>
+        <translation>Open a clip in the Source monitor first: double-click it in the media bin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="341" />
+        <source>Nothing to undo yet.</source>
+        <translation>Nothing to undo yet.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="342" />
+        <source>Nothing to redo.</source>
+        <translation>Nothing to redo.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="343" />
+        <source>Copy or cut clips first.</source>
+        <translation>Copy or cut clips first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="346" />
+        <source>Save the project first: older versions are kept each time it is saved again.</source>
+        <translation>Save the project first: older versions are kept each time it is saved again.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="347" />
+        <source>Put clips on the timeline first.</source>
+        <translation>Put clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="349" />
+        <source>Put the playhead over a clip on the timeline first.</source>
+        <translation>Put the playhead over a clip on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="350" />
+        <source>Select audio clips on the timeline first.</source>
+        <translation>Select audio clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="352" />
+        <source>Select one video or audio clip on the timeline first.</source>
+        <translation>Select one video or audio clip on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="353" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Select video clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="354" />
+        <source>Select a clip next to a cut first.</source>
+        <translation>Select a clip next to a cut first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="356" />
+        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
+        <translation>Select two or more recordings of one event in the media bin first (Ctrl+click).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
+        <translation>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="366" />
+        <source>The video engine could not be loaded: see the log file.</source>
+        <translation>The video engine could not be loaded: see the log file.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="813" />
+        <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
+        <translation>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</translation>
     </message>
 </context>
 <context>

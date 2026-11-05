@@ -3230,11 +3230,6 @@
         <translation>Субтитрлар</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
-        <translation>14-босқич, 1-қисм: саҳна алмашишларини топиш (Клип &gt; Саҳна алмашишларини топиш), шу компьютерда, интернетсиз.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Маркерни номлаш</translation>
@@ -3403,6 +3398,86 @@
         <location filename="../src/app/MainWindow.cpp" line="548" />
         <source>Edit by transcript (delete words to cut)...</source>
         <translation>Матн орқали монтаж (сўзни ўчириб кесиш)...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="335" />
+        <source>Select clips on the timeline first.</source>
+        <translation>Аввал timeline'да клипларни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="336" />
+        <source>Open a clip in the Source monitor first: double-click it in the media bin.</source>
+        <translation>Аввал клипни Source мониторида очинг: медиа кутубхонасида уни икки марта босинг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="341" />
+        <source>Nothing to undo yet.</source>
+        <translation>Ҳозирча бекор қиладиган амал йўқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="342" />
+        <source>Nothing to redo.</source>
+        <translation>Қайтарадиган амал йўқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="343" />
+        <source>Copy or cut clips first.</source>
+        <translation>Аввал клипларни нусхаланг ёки кесиб олинг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="346" />
+        <source>Save the project first: older versions are kept each time it is saved again.</source>
+        <translation>Аввал лойиҳани сақланг: ҳар сафар қайта сақлаганда эски версиялари қолади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="347" />
+        <source>Put clips on the timeline first.</source>
+        <translation>Аввал timeline'га клип қўйинг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="349" />
+        <source>Put the playhead over a clip on the timeline first.</source>
+        <translation>Аввал курсорни timeline'даги клип устига қўйинг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="350" />
+        <source>Select audio clips on the timeline first.</source>
+        <translation>Аввал timeline'да аудио клипларни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="352" />
+        <source>Select one video or audio clip on the timeline first.</source>
+        <translation>Аввал timeline'да битта видео ёки аудио клипни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="353" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Аввал timeline'да видео клипларни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="354" />
+        <source>Select a clip next to a cut first.</source>
+        <translation>Аввал кесим ёнидаги клипни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="356" />
+        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
+        <translation>Аввал медиа кутубхонасида бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
+        <translation>Курсорни шу камераси бор мультикам клип устига қўйинг («Секвенция &gt; Мультикам секвенция яратиш»).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="366" />
+        <source>The video engine could not be loaded: see the log file.</source>
+        <translation>Видео двигатели юкланмади: журнал файлига қаранг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="813" />
+        <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
+        <translation>Кулранг меню буйруқлари устига сичқонча келтирсангиз, нима кераклигини айтади. Ёрдам &gt; Функциялар ҳолати нима ишлашини кўрсатади.</translation>
     </message>
 </context>
 <context>
