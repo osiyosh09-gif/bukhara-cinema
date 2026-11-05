@@ -131,6 +131,7 @@ private:
     QAction *m_renderPreviewAct = nullptr;
     QAction *m_deletePreviewsAct = nullptr;
     QAction *m_mixLoudnessAct = nullptr;
+    QAction *m_autoMulticamAct = nullptr;
     QAction *m_importAct = nullptr;
     QAction *m_sequenceAct = nullptr;
     QAction *m_undoAct = nullptr;

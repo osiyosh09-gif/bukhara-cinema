@@ -508,6 +508,16 @@
         <source>Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.</source>
         <translation>Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="78" />
+        <source>Automatic multicamera edit</source>
+        <translation>Automatic multicamera edit</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="78" />
+        <source>Sequence &gt; Automatic multicamera edit cuts a multicamera clip between its cameras: by whoever is speaking (the camera that hears a person loudest shows that person; a wide shot when nobody or several people speak, and between long shots) or in a rhythm. Shortest and longest shot can be set; the result is one undo step and every cut can be changed afterwards. Works best when each camera or person has its own microphone. Without the internet and without an AI model; tested in CI with recordings made for the test, not with real interviews.</source>
+        <translation>Sequence &gt; Automatic multicamera edit cuts a multicamera clip between its cameras: by whoever is speaking (the camera that hears a person loudest shows that person; a wide shot when nobody or several people speak, and between long shots) or in a rhythm. Shortest and longest shot can be set; the result is one undo step and every cut can be changed afterwards. Works best when each camera or person has its own microphone. Without the internet and without an AI model; tested in CI with recordings made for the test, not with real interviews.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -746,6 +756,139 @@
         <location filename="../src/app/AudioMixer.cpp" line="353" />
         <source>Track faders and balance act after the clip volume. The meters move while the Program monitor plays.</source>
         <translation>Track faders and balance act after the clip volume. The meters move while the Program monitor plays.</translation>
+    </message>
+</context>
+<context>
+    <name>bc::AutoMulticamDialog</name>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="33" />
+        <source>Automatic multicamera edit</source>
+        <translation>Automatic multicamera edit</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="44" />
+        <source>Whoever is speaking (each camera's own sound)</source>
+        <translation>Whoever is speaking (each camera's own sound)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="45" />
+        <source>In a rhythm (cameras in turn)</source>
+        <translation>In a rhythm (cameras in turn)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="47" />
+        <source>None</source>
+        <translation>None</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="50" />
+        <source>Camera %1: %2</source>
+        <translation>Camera %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="53" />
+        <source>Shown when nobody speaks or several people speak at once, and between long shots</source>
+        <translation>Shown when nobody speaks or several people speak at once, and between long shots</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="57" />
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="63" />
+        <source>No limit</source>
+        <translation>No limit</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="67" />
+        <source> dB</source>
+        <translation> dB</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="70" />
+        <source>How much louder the speaker's camera must hear than the others. Lower switches more readily.</source>
+        <translation>How much louder the speaker's camera must hear than the others. Lower switches more readily.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="81" />
+        <source>Switch by:</source>
+        <translation>Switch by:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="82" />
+        <source>Wide shot:</source>
+        <translation>Wide shot:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="83" />
+        <source>Shortest shot:</source>
+        <translation>Shortest shot:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="84" />
+        <source>Longest shot:</source>
+        <translation>Longest shot:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="85" />
+        <source>Speaker louder by:</source>
+        <translation>Speaker louder by:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="87" />
+        <source>Works best when each camera (or each person's microphone) records its own sound: the camera that hears a person loudest shows that person. It works on this computer, without the internet; the sound of each recording is read once and remembered. The result is one undo step, and every cut can be changed afterwards with the camera keys 1-9 or in the Clip panel.</source>
+        <translation>Works best when each camera (or each person's microphone) records its own sound: the camera that hears a person loudest shows that person. It works on this computer, without the internet; the sound of each recording is read once and remembered. The result is one undo step, and every cut can be changed afterwards with the camera keys 1-9 or in the Clip panel.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="97" />
+        <source>Close</source>
+        <translation>Close</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="98" />
+        <source>Edit</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="166" />
+        <source>Put the playhead on a multicamera clip, or select multicamera clips on the timeline first (Sequence &gt; Create multicamera sequence makes one).</source>
+        <translation>Put the playhead on a multicamera clip, or select multicamera clips on the timeline first (Sequence &gt; Create multicamera sequence makes one).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="174" />
+        <source>Listening to the cameras... you can keep working.</source>
+        <translation>Listening to the cameras... you can keep working.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="175" />
+        <source>The sound of the cameras could not be read.</source>
+        <translation>The sound of the cameras could not be read.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="197" />
+        <source>%1 %2%</source>
+        <translation>%1 %2%</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="197" />
+        <source>Camera %1</source>
+        <translation>Camera %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="199" />
+        <source>Cuts: %1. On screen: %2.</source>
+        <translation>Cuts: %1. On screen: %2.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="200" />
+        <source>No cuts with these settings.</source>
+        <translation>No cuts with these settings.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="202" />
+        <source>The cameras hear almost the same sound, so who is speaking is hard to tell. Try "In a rhythm", a lower "Speaker louder by", or choose a wide shot.</source>
+        <translation>The cameras hear almost the same sound, so who is speaking is hard to tell. Try "In a rhythm", a lower "Speaker louder by", or choose a wide shot.</translation>
     </message>
 </context>
 <context>
@@ -3221,6 +3364,21 @@
         <source>Imported from %1: %2 clips</source>
         <translation>Imported from %1: %2 clips</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="444" />
+        <source>Automatic multicamera edit done. Ctrl+Z undoes it.</source>
+        <translation>Automatic multicamera edit done. Ctrl+Z undoes it.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="651" />
+        <source>Automatic multicamera edit...</source>
+        <translation>Automatic multicamera edit...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="652" />
+        <source>Cut a multicamera clip between its cameras by who is speaking, or in a rhythm</source>
+        <translation>Cut a multicamera clip between its cameras by who is speaking, or in a rhythm</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4201,6 +4359,11 @@
         <location filename="../src/app/ProjectEditing.cpp" line="492" />
         <source>Add plug-in</source>
         <translation>Add plug-in</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectAutoMulticam.cpp" line="227" />
+        <source>Automatic multicamera edit</source>
+        <translation>Automatic multicamera edit</translation>
     </message>
 </context>
 <context>

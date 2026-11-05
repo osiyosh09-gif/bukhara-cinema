@@ -21,6 +21,7 @@
 #include "app/ColorPanel.h"
 #include "app/ScopesPanel.h"
 #include "app/MulticamMonitor.h"
+#include "app/AutoMulticamDialog.h"
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
@@ -436,6 +437,13 @@ void MainWindow::buildMenus()
     m_mixLoudnessAct->setEnabled(m_ctl->canPlay());
     m_sequenceMenu->addSeparator();
     m_sequenceMenu->addAction(m_bin->multicamAction());
+    // Phase 16a: cuts between the cameras by who is speaking, or in a rhythm.
+    m_autoMulticamAct = m_sequenceMenu->addAction(QString(), this, [this] {
+        AutoMulticamDialog dlg(m_ctl, m_timeline->view()->selection(), this);
+        if (dlg.exec() == QDialog::Accepted)
+            statusBar()->showMessage(tr("Automatic multicamera edit done. Ctrl+Z undoes it."), 5000);
+    });
+    m_autoMulticamAct->setObjectName(QStringLiteral("actAutoMulticam"));
     // Live switching: 1-9 picture, Alt+1-9 sound, from the playhead on.
     m_cameraMenu = m_sequenceMenu->addMenu(QString());
     m_soundMenu = m_sequenceMenu->addMenu(QString());
@@ -640,6 +648,8 @@ void MainWindow::retranslate()
     m_renderPreviewAct->setToolTip(tr("Render the red parts of the selected clips (or of the whole sequence) once, so "
                                       "they play smoothly (Enter on the timeline)"));
     m_deletePreviewsAct->setText(tr("Delete preview files"));
+    m_autoMulticamAct->setText(tr("Automatic multicamera edit..."));
+    m_autoMulticamAct->setToolTip(tr("Cut a multicamera clip between its cameras by who is speaking, or in a rhythm"));
     m_mixLoudnessAct->setText(tr("Mix loudness..."));
     m_mixLoudnessAct->setToolTip(tr("Measure the loudness of the whole mix (LUFS) and set the master volume to a target"));
     m_useProxiesAct->setText(tr("Use proxies for playback"));

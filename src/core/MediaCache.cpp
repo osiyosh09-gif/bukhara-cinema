@@ -19,6 +19,7 @@ QString subfolder(Kind kind)
     case Kind::Loudness: return QStringLiteral("waveforms");
     case Kind::Preview: return QStringLiteral("previews");
     case Kind::Scenes: return QStringLiteral("waveforms");
+    case Kind::Envelope: return QStringLiteral("waveforms");
     }
     return {};
 }
@@ -31,6 +32,7 @@ QString extension(Kind kind)
     case Kind::Loudness: return QStringLiteral(".bcld");
     case Kind::Preview: return QStringLiteral(".mkv");
     case Kind::Scenes: return QStringLiteral(".bcsc");
+    case Kind::Envelope: return QStringLiteral(".bcen");
     }
     return {};
 }
