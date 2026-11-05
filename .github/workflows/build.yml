@@ -29,9 +29,9 @@ jobs:
       - name: Speech recognition test data
         run: |
           sudo apt-get install -y -qq espeak-ng unzip
-          curl -sSL -o /tmp/vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-linux-x86_64-0.3.45.zip
+          curl -sSL --fail --retry 5 --retry-all-errors --retry-delay 5 -o /tmp/vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-linux-x86_64-0.3.45.zip
           unzip -q /tmp/vosk.zip -d /tmp/vosk
-          if curl -sSL --fail -o /tmp/model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
+          if curl -sSL --fail --retry 5 --retry-all-errors --retry-delay 5 -o /tmp/model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
             unzip -q /tmp/model.zip -d /tmp/models
             echo "BC_VOSK_MODEL=/tmp/models/vosk-model-small-en-us-0.15" >> "$GITHUB_ENV"
           fi
@@ -148,13 +148,13 @@ jobs:
       - name: Download Vosk
         run: |
           set -e
-          curl -sSL -o vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-win64-0.3.45.zip
+          curl -sSL --fail --retry 5 --retry-all-errors --retry-delay 5 -o vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-win64-0.3.45.zip
           unzip -q vosk.zip -d vosk-dl
           # libvosk.dll is built with an older (msvcrt) C++ runtime than ours: it is loaded
           # only by BukharaSpeech.exe (static), with its own runtime DLLs next to it.
           mkdir -p vosk && cp -v vosk-dl/vosk-win64-0.3.45/*.dll vosk/
           echo "BC_VOSK_LIB=$(cygpath -m "$PWD/vosk/libvosk.dll")" >> "$GITHUB_ENV"
-          if curl -sSL --fail -o model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
+          if curl -sSL --fail --retry 5 --retry-all-errors --retry-delay 5 -o model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
             unzip -q model.zip -d models
             echo "BC_VOSK_MODEL=$(cygpath -m "$PWD/models/vosk-model-small-en-us-0.15")" >> "$GITHUB_ENV"
           fi
