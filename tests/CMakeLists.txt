@@ -210,6 +210,12 @@ target_link_libraries(tst_phase15b PRIVATE bc_ui Qt6::Test)
 add_test(NAME phase15b_interchange_import COMMAND tst_phase15b)
 set_tests_properties(phase15b_interchange_import PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
 
+add_executable(tst_phase16a tst_phase16a.cpp)
+target_link_libraries(tst_phase16a PRIVATE bc_ui Qt6::Test)
+target_compile_definitions(tst_phase16a PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
+add_test(NAME phase16a_auto_multicam COMMAND tst_phase16a)
+set_tests_properties(phase16a_auto_multicam PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
+
 # Phase 15c: VST 3 audio plug-ins, tested with a small plug-in built from the SDK.
 if(BC_ENABLE_VST3)
     bc_add_test_vst3(BcTestGain vst3/BcTestGain.cpp)

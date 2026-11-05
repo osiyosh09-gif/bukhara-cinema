@@ -508,6 +508,16 @@
         <source>Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.</source>
         <translation>Har bir plagin o‘zining kichik dasturida ishlaydi (BukharaPluginHost). Plagin ishdan chiqsa yoki javob bermay qolsa, faqat o‘sha dastur yopiladi: BUKHARA CINEMA ishlashda davom etadi, ovoz o‘zgarishsiz o‘tadi va «Effektlar» paneli plaginni qayta ishga tushirishni taklif qiladi. «Plagin oynasini ochish» plaginning o‘z oynasini ko‘rsatadi (Windows); u yerda o‘zgartirilgani loyihada saqlanadi, bekor qilinadi, ijro va eksportda eshitiladi. CI'da ataylab ishdan chiqadigan va qotadigan sinov plagini bilan tekshirilgan; tijorat plaginlari biz tomondan sinalmagan.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="78" />
+        <source>Automatic multicamera edit</source>
+        <translation>Avtomatik multikam montaj</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="78" />
+        <source>Sequence &gt; Automatic multicamera edit cuts a multicamera clip between its cameras: by whoever is speaking (the camera that hears a person loudest shows that person; a wide shot when nobody or several people speak, and between long shots) or in a rhythm. Shortest and longest shot can be set; the result is one undo step and every cut can be changed afterwards. Works best when each camera or person has its own microphone. Without the internet and without an AI model; tested in CI with recordings made for the test, not with real interviews.</source>
+        <translation>«Sekvensiya &gt; Avtomatik multikam montaj» multikam klipni kameralar orasida o‘zi kesadi: kim gapirayotgan bo‘lsa (odamni eng baland eshitgan kamera uni ko‘rsatadi; hech kim yoki bir necha kishi gapirsa va uzun kadrlar orasida — umumiy plan) yoki ritm bo‘yicha. Eng qisqa va eng uzun kadr sozlanadi; natija bitta bekor qilish qadami, har bir kesimni keyin o‘zgartirish mumkin. Har bir kamera yoki odamning o‘z mikrofoni bo‘lsa yaxshi ishlaydi. Internetsiz va AI modelsiz; CI'da test uchun yasalgan yozuvlar bilan tekshirilgan, haqiqiy intervyular bilan emas.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -746,6 +756,139 @@
         <location filename="../src/app/AudioMixer.cpp" line="353" />
         <source>Track faders and balance act after the clip volume. The meters move while the Program monitor plays.</source>
         <translation>Yo‘lak feyderlari va balans klip ovozidan keyin ishlaydi. Indikatorlar Program monitori ijro etayotganda harakatlanadi.</translation>
+    </message>
+</context>
+<context>
+    <name>bc::AutoMulticamDialog</name>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="33" />
+        <source>Automatic multicamera edit</source>
+        <translation>Avtomatik multikam montaj</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="44" />
+        <source>Whoever is speaking (each camera's own sound)</source>
+        <translation>Kim gapirayotgan bo‘lsa (har bir kameraning o‘z ovozi)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="45" />
+        <source>In a rhythm (cameras in turn)</source>
+        <translation>Ritm bo‘yicha (kameralar navbat bilan)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="47" />
+        <source>None</source>
+        <translation>Yo‘q</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="50" />
+        <source>Camera %1: %2</source>
+        <translation>%1-kamera: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="53" />
+        <source>Shown when nobody speaks or several people speak at once, and between long shots</source>
+        <translation>Hech kim gapirmaganda yoki bir necha kishi birdan gapirganda va uzun kadrlar orasida ko‘rsatiladi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="57" />
+        <source> s</source>
+        <translation> s</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="63" />
+        <source>No limit</source>
+        <translation>Cheklanmagan</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="67" />
+        <source> dB</source>
+        <translation> dB</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="70" />
+        <source>How much louder the speaker's camera must hear than the others. Lower switches more readily.</source>
+        <translation>Gapirayotgan odamning kamerasi qolganlaridan qancha baland eshitishi kerak. Kichikroq qiymat kamerani tezroq almashtiradi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="81" />
+        <source>Switch by:</source>
+        <translation>Almashtirish:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="82" />
+        <source>Wide shot:</source>
+        <translation>Umumiy plan:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="83" />
+        <source>Shortest shot:</source>
+        <translation>Eng qisqa kadr:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="84" />
+        <source>Longest shot:</source>
+        <translation>Eng uzun kadr:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="85" />
+        <source>Speaker louder by:</source>
+        <translation>Gapiruvchi balandroq:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="87" />
+        <source>Works best when each camera (or each person's microphone) records its own sound: the camera that hears a person loudest shows that person. It works on this computer, without the internet; the sound of each recording is read once and remembered. The result is one undo step, and every cut can be changed afterwards with the camera keys 1-9 or in the Clip panel.</source>
+        <translation>Har bir kamera (yoki har bir odamning mikrofoni) o‘z ovozini yozsa, eng yaxshi ishlaydi: odamni eng baland eshitgan kamera uni ko‘rsatadi. Bu kompyuterda, internetsiz ishlaydi; har bir yozuvning ovozi bir marta o‘qiladi va eslab qolinadi. Natija bitta bekor qilish qadami; har bir kesimni keyin 1-9 kamera tugmalari yoki «Klip» paneli orqali o‘zgartirish mumkin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="97" />
+        <source>Close</source>
+        <translation>Yopish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="98" />
+        <source>Edit</source>
+        <translation>Montaj qilish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="166" />
+        <source>Put the playhead on a multicamera clip, or select multicamera clips on the timeline first (Sequence &gt; Create multicamera sequence makes one).</source>
+        <translation>Avval kursorni multikam klip ustiga qo‘ying yoki timeline'da multikam kliplarni tanlang (uni «Sekvensiya &gt; Multikam sekvensiya yaratish» yasaydi).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="174" />
+        <source>Listening to the cameras... you can keep working.</source>
+        <translation>Kameralar tinglanmoqda... ishlashni davom ettirishingiz mumkin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="175" />
+        <source>The sound of the cameras could not be read.</source>
+        <translation>Kameralarning ovozini o‘qib bo‘lmadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="197" />
+        <source>%1 %2%</source>
+        <translation>%1 %2%</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="197" />
+        <source>Camera %1</source>
+        <translation>%1-kamera</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="199" />
+        <source>Cuts: %1. On screen: %2.</source>
+        <translation>Kesimlar: %1. Ekranda: %2.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="200" />
+        <source>No cuts with these settings.</source>
+        <translation>Bu sozlamalar bilan kesim yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AutoMulticamDialog.cpp" line="202" />
+        <source>The cameras hear almost the same sound, so who is speaking is hard to tell. Try "In a rhythm", a lower "Speaker louder by", or choose a wide shot.</source>
+        <translation>Kameralar deyarli bir xil ovoz eshitadi, shuning uchun kim gapirayotganini aniqlash qiyin. «Ritm bo‘yicha»ni, kichikroq «Gapiruvchi balandroq»ni sinab ko‘ring yoki umumiy planni tanlang.</translation>
     </message>
 </context>
 <context>
@@ -3221,6 +3364,21 @@
         <source>Imported from %1: %2 clips</source>
         <translation>%1 dan import qilindi: %2 klip</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="444" />
+        <source>Automatic multicamera edit done. Ctrl+Z undoes it.</source>
+        <translation>Avtomatik multikam montaj tayyor. Ctrl+Z uni bekor qiladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="651" />
+        <source>Automatic multicamera edit...</source>
+        <translation>Avtomatik multikam montaj...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="652" />
+        <source>Cut a multicamera clip between its cameras by who is speaking, or in a rhythm</source>
+        <translation>Multikam klipni kameralar orasida kim gapirayotganiga qarab yoki ritm bo‘yicha kesish</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4201,6 +4359,11 @@
         <location filename="../src/app/ProjectEditing.cpp" line="492" />
         <source>Add plug-in</source>
         <translation>Plagin qo‘shish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectAutoMulticam.cpp" line="227" />
+        <source>Automatic multicamera edit</source>
+        <translation>Avtomatik multikam montaj</translation>
     </message>
 </context>
 <context>

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.37.0
+    VERSION 0.38.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -44,6 +44,7 @@ add_library(bc_core STATIC
     src/core/Vst3Host.h         src/core/Vst3Host.cpp
     src/core/Vst3Ipc.h          src/core/Vst3Ipc.cpp
     src/core/Vst3Remote.cpp
+    src/core/AutoMulticam.h     src/core/AutoMulticam.cpp
     src/core/InterchangeRead.cpp
     src/core/RenderPreview.h    src/core/RenderPreview.cpp
     src/core/Collector.h        src/core/Collector.cpp
@@ -122,6 +123,8 @@ add_library(bc_ui STATIC
     src/app/ProjectPreview.cpp
     src/app/ProjectSubtitles.cpp
     src/app/ProjectInterchange.cpp
+    src/app/ProjectAutoMulticam.cpp
+    src/app/AutoMulticamDialog.h src/app/AutoMulticamDialog.cpp
     src/app/InterchangeDialog.h src/app/InterchangeDialog.cpp
     src/app/InterchangeImportDialog.h src/app/InterchangeImportDialog.cpp
     src/app/MediaBinPanel.h     src/app/MediaBinPanel.cpp

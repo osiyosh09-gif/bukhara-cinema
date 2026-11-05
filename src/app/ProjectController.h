@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/AutoMulticam.h"
 #include "core/Interchange.h"
 #include "core/Loudness.h"
 #include "core/Project.h"
@@ -262,6 +263,22 @@ public:
     // Renders every angle of the multicamera clip at the playhead in a grid
     // (in the background, the newest request wins); emits multicamGridReady.
     void requestMulticamGrid();
+    // --- automatic multicamera edit (phase 16a, ProjectAutoMulticam.cpp)
+    // The multicamera picture clips of the open sequence it works on: the
+    // selected ones, else the one at the playhead.
+    QList<QUuid> autoMulticamClips(const QList<QUuid> &selection) const;
+    // Whether the sound of every camera of those clips has been read (results
+    // are cached); analyzeMulticamSound reads the rest in the background and
+    // reports with multicamSoundProgress / multicamSoundReady.
+    bool multicamSoundKnown(const QList<QUuid> &clipIds) const;
+    void analyzeMulticamSound(const QList<QUuid> &clipIds);
+    bool isAnalyzingMulticamSound() const { return m_soundRunning; }
+    QStringList multicamClipAngles(const QUuid &clipId) const; // camera names of a clip's sequence
+    // Which camera is shown when, in sequence frames (needs the sound read).
+    AutoMulticam::Plan autoMulticamPlan(const QUuid &clipId, const AutoMulticam::Settings &settings) const;
+    // Cuts the clips at those frames (with their linked sound, which keeps its
+    // camera) and sets the cameras: one undo step. Returns the cuts made.
+    int applyAutoMulticam(const QList<QUuid> &clipIds, const AutoMulticam::Settings &settings);
 
     // --- loudness of the whole mix (phase 13c, ProjectMixLoudness.cpp)
     // Measures the mixed sound of the open sequence as the export hears it
@@ -446,6 +463,8 @@ signals:
     void scenesAnalyzed(const QUuid &mediaId, bool ok);
     // Grid of all angles (null image when no multicamera clip is at the playhead).
     void multicamGridReady(const QImage &image, const QUuid &clipId);
+    void multicamSoundProgress(int done, int total);
+    void multicamSoundReady(bool ok);
     void mixLoudnessProgress(qint64 frame, qint64 total);
     void mixLoudnessMeasured(bool ok, const QString &error); // error empty after cancel
     void previewProgress(qint64 frame, qint64 total);
@@ -576,6 +595,12 @@ private:
     std::shared_ptr<std::atomic_bool> m_mixCancel;
     QThreadPool m_mixPool; // the mix measurement
     QThreadPool m_scenePool; // one scene analysis at a time
+    // Automatic multicamera edit (ProjectAutoMulticam.cpp): sound envelopes by media id.
+    QHash<QUuid, std::shared_ptr<const std::vector<float>>> m_envelopes;
+    QSet<QUuid> m_envelopesFailed;
+    bool m_soundRunning = false;
+    std::shared_ptr<std::atomic_bool> m_soundCancel;
+    QThreadPool m_soundPool; // reads the cameras' sound
     QThreadPool m_gridPool;  // one grid frame at a time; declared last, so it is destroyed (and waited for) first
 };
 
