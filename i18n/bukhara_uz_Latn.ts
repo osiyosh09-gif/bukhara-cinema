@@ -674,6 +674,11 @@
         <source>Works with VST® 3 audio plug-ins.</source>
         <translation>VST® 3 audio plaginlar bilan ishlaydi.</translation>
     </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="92" />
+        <source>Author: %1</source>
+        <translation>Muallif: %1</translation>
+    </message>
 </context>
 <context>
     <name>bc::AudioMixer</name>

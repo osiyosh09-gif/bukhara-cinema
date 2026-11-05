@@ -494,6 +494,8 @@ private slots:
         QVERIFY(logo);
         QVERIFY(logo->text().contains(QStringLiteral(":/vst/vst-compatible.png")));
         QVERIFY(logo->text().contains(QStringLiteral("VST®")));
+        auto *text = d.findChild<QLabel *>(QStringLiteral("aboutText"));
+        QVERIFY(text && text->text().contains(QStringLiteral("Shavkat")));
     }
 };
 

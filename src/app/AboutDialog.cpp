@@ -78,16 +78,18 @@ AboutDialog::AboutDialog(Page page, QWidget *parent)
 
     auto *about = new QLabel(this);
     about->setAlignment(Qt::AlignCenter);
+    about->setObjectName(QStringLiteral("aboutText"));
     about->setTextFormat(Qt::RichText);
     about->setText(QStringLiteral(
                        "<p style='font-size:22px; font-weight:700; color:#d1a54a;'>%1</p>"
-                       "<p>%2</p><p>%3</p><p style='color:#8a8a8a;'>%4</p>")
+                       "<p>%2</p><p>%3</p><p>%5</p><p style='color:#8a8a8a;'>%4</p>")
                        .arg(appName(),
                             tr("Version %1").arg(appVersion()),
                             tr("Independent video editor for Windows."),
                             tr("Phase 6 (part 2): editing with razor, roll, slip and slide, copy and paste, Source "
                                "monitor with In/Out, insert/overwrite, markers, titles, clip volume, MP4 export, "
-                               "autosave, waveforms and proxies. See Help > Feature status.")));
+                               "autosave, waveforms and proxies. See Help > Feature status."),
+                            tr("Author: %1").arg(QStringLiteral("Shavkat"))));
     auto *aboutPage = new QWidget(this);
     auto *aboutLay = new QVBoxLayout(aboutPage);
     aboutLay->addWidget(about, 1);
