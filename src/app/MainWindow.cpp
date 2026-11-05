@@ -244,7 +244,7 @@ void MainWindow::buildDocks()
             media << c->mediaId;
         return media;
     });
-    connect(m_timeline, &TimelinePanel::selectionChanged, m_bin, &MediaBinPanel::updateMulticamAction);
+    connect(m_timeline->view(), &TimelineView::selectionChanged, m_bin, &MediaBinPanel::updateMulticamAction);
     connect(m_ctl, &ProjectController::timelineChanged, m_bin, &MediaBinPanel::updateMulticamAction);
 
     // Right: clip parameters, effects, color, audio
