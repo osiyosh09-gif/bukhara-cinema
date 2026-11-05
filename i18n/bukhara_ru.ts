@@ -479,14 +479,19 @@
         <translation>Файл &gt; Экспорт для других монтажных программ записывает основной эпизод для Premiere Pro, DaVinci Resolve и других программ: какая часть какого файла где лежит на какой дорожке, растворения, маркеры и (в XML) громкость клипа. Вложенные и мультикамерные клипы становятся клипами внутри них. Перед сохранением окно показывает, что не будет перенесено: титры, эффекты, цвет, движение, изменение скорости, субтитры и другое. EDL содержит только видеодорожку V1. Открытие файлов в Premiere Pro и DaVinci Resolve нами не проверялось.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="75" />
-        <source>Import from other editors (XML, OpenTimelineIO, EDL)</source>
-        <translation>Импорт из других программ (XML, OpenTimelineIO, EDL)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="76" />
         <source>Audio plugins (VST3)</source>
         <translation>Аудиоплагины (VST3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
+        <translation>Импорт из других программ: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
+        <translation>Файл &gt; Импорт из других монтажных программ открывает эпизод из Premiere Pro, DaVinci Resolve или другой программы: клипы на своих местах, растворения, маркеры и (в XML) громкость клипа; одним вложенным клипом или прямо в открытый эпизод под указатель; один шаг отмены. Медиафайлы находятся по пути, рядом с файлом или в медиатеке; ненайденные остаются офлайн для привязки. Эффекты, титры, изменение скорости и вложенные эпизоды другой программы не импортируются; окно заранее показывает это. Файлы из самих Premiere Pro и DaVinci Resolve нами не проверялись.</translation>
     </message>
 </context>
 <context>
@@ -2103,6 +2108,129 @@
     </message>
 </context>
 <context>
+    <name>bc::InterchangeImportDialog</name>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="37" />
+        <source>Import from other editors</source>
+        <translation>Импорт из других монтажных программ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="46" />
+        <source>As one nested clip at the playhead (double-click it to edit)</source>
+        <translation>Одним вложенным клипом под указателем (дважды щёлкните, чтобы редактировать)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="47" />
+        <source>Clips straight onto the open sequence at the playhead</source>
+        <translation>Клипы прямо в открытый эпизод под указатель</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="52" />
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="53" />
+        <source>Import</source>
+        <translation>Импорт</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="74" />
+        <source>File: %1</source>
+        <translation>Файл: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="86" />
+        <source>Final Cut Pro XML</source>
+        <translation>Final Cut Pro XML</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="87" />
+        <source>OpenTimelineIO</source>
+        <translation>OpenTimelineIO</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="88" />
+        <source>EDL (CMX 3600)</source>
+        <translation>EDL (CMX 3600)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="90" />
+        <source>Format: %1</source>
+        <translation>Формат: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="91" />
+        <source>Clips: %1 on %2 video and %3 audio tracks</source>
+        <translation>Клипов: %1 на %2 видео- и %3 аудиодорожках</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="94" />
+        <source>Media files: %1 found, %2 not found. Files not found stay offline; relink them later in the media bin.</source>
+        <translation>Медиафайлы: найдено %1, не найдено %2. Ненайденные останутся офлайн; привяжите их позже в медиатеке.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="99" />
+        <source>An EDL has no frame rate: the sequence rate (%1 fps) is used.</source>
+        <translation>В EDL нет частоты кадров: используется частота эпизода (%1 fps).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="100" />
+        <source>EDL source times are timecodes: for camera files with their own start timecode the clips may show the wrong part. XML and OpenTimelineIO do not have this problem.</source>
+        <translation>Время источника в EDL — это таймкод: у файлов камеры с собственным начальным таймкодом клип может показать не ту часть. В XML и OpenTimelineIO такой проблемы нет.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="105" />
+        <source>The file runs at %1 fps, the sequence at %2 fps: times are converted to the sequence.</source>
+        <translation>Файл — %1 fps, эпизод — %2 fps: время пересчитывается под эпизод.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="113" />
+        <source>Everything in the file will be imported.</source>
+        <translation>Всё из файла будет импортировано.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="115" />
+        <source>Not imported:</source>
+        <translation>Не импортируется:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="131" />
+        <source>Titles, colour mattes and other generated clips: %1</source>
+        <translation>Титры, цветные подложки и другие генерируемые клипы: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="132" />
+        <source>Effects, motion or colour settings: %1 clips</source>
+        <translation>Эффекты, движение или настройки цвета: клипов — %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="133" />
+        <source>Speed changes: %1 clips (they play at normal speed)</source>
+        <translation>Изменение скорости: клипов — %1 (они играют с обычной скоростью)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="134" />
+        <source>Nested sequences and multicamera clips: %1</source>
+        <translation>Вложенные эпизоды и мультикамерные клипы: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="135" />
+        <source>Transitions other than dissolves: %1 (they become dissolves)</source>
+        <translation>Переходы, кроме растворения: %1 (станут растворением)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="136" />
+        <source>Clips switched off: %1</source>
+        <translation>Выключенные клипы: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="137" />
+        <source>Clips without a media file: %1</source>
+        <translation>Клипы без медиафайла: %1</translation>
+    </message>
+</context>
+<context>
     <name>bc::LoudnessDialog</name>
     <message>
         <location filename="../src/app/LoudnessDialog.cpp" line="43" />
@@ -2925,6 +3053,31 @@
         <location filename="../src/app/MainWindow.cpp" line="1036" />
         <source>Saved for other editors: %1</source>
         <translation>Сохранено для других программ: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="633" />
+        <source>Import from other editors...</source>
+        <translation>Импорт из других монтажных программ...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="634" />
+        <source>Open a sequence from Premiere Pro, DaVinci Resolve or another editor: Final Cut Pro XML, OpenTimelineIO or EDL</source>
+        <translation>Открыть эпизод из Premiere Pro, DaVinci Resolve или другой программы: Final Cut Pro XML, OpenTimelineIO или EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1054" />
+        <source>Import from other editors</source>
+        <translation>Импорт из других монтажных программ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1055" />
+        <source>Timelines (*.xml *.otio *.edl)</source>
+        <translation>Файлы монтажа (*.xml *.otio *.edl)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1061" />
+        <source>Imported from %1: %2 clips</source>
+        <translation>Импортировано из %1: клипов — %2</translation>
     </message>
 </context>
 <context>
@@ -3871,6 +4024,31 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="23" />
         <source>Could not write the file %1: %2</source>
         <translation>Не удалось записать файл %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="62" />
+        <source>Could not open the file %1: %2</source>
+        <translation>Не удалось открыть файл %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="77" />
+        <source>This file could not be read as a timeline.</source>
+        <translation>Этот файл не удалось прочитать как монтаж.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="82" />
+        <source>The file holds no clips.</source>
+        <translation>В файле нет клипов.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="240" />
+        <source>Import from other editors</source>
+        <translation>Импорт из других монтажных программ</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="302" />
+        <source>The clips could not be placed: the first video and audio tracks are locked.</source>
+        <translation>Клипы не удалось разместить: первые видео- и аудиодорожки заблокированы.</translation>
     </message>
 </context>
 <context>

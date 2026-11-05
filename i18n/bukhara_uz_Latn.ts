@@ -479,14 +479,19 @@
         <translation>Fayl &gt; Boshqa dasturlar uchun eksport asosiy sekvensiyani Premiere Pro, DaVinci Resolve va boshqa dasturlar uchun yozadi: qaysi faylning qaysi qismi qaysi yo‘lakda qayerda turishi, cross dissolve o‘tishlari, markerlar va (XML'da) klip ovozi. Nested va multikam kliplar ichidagi kliplarga aylanadi. Saqlashdan oldin oyna nima o‘tkazilmasligini ko‘rsatadi: titrlar, effektlar, rang, harakat, tezlik o‘zgarishi, subtitrlar va boshqalar. EDL'da faqat V1 video yo‘lagi bo‘ladi. Fayllarni Premiere Pro va DaVinci Resolve'da ochish biz tomondan sinalmagan.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="75" />
-        <source>Import from other editors (XML, OpenTimelineIO, EDL)</source>
-        <translation>Boshqa dasturlardan import (XML, OpenTimelineIO, EDL)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="76" />
         <source>Audio plugins (VST3)</source>
         <translation>Audio plaginlar (VST3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
+        <translation>Boshqa dasturlardan import: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
+        <translation>Fayl &gt; Boshqa dasturlardan import Premiere Pro, DaVinci Resolve yoki boshqa dasturda qilingan sekvensiyani ochadi: kliplar o‘z joyi bilan, dissolve o‘tishlari, markerlar va (XML'da) klip ovozi; bitta nested klip bo‘lib yoki to‘g‘ridan-to‘g‘ri ochiq sekvensiyaga, kursor joyiga; bitta bekor qilish qadami. Media fayllar yo‘li bo‘yicha, fayl yonidan yoki kutubxonadan topiladi; topilmaganlari qayta bog‘lash uchun oflayn qoladi. Boshqa dasturdagi effektlar, titrlar, tezlik o‘zgarishi va nested sekvensiyalar import qilinmaydi; oyna buni oldindan ko‘rsatadi. Premiere Pro va DaVinci Resolve'ning o‘zidan olingan fayllar biz tomondan sinalmagan.</translation>
     </message>
 </context>
 <context>
@@ -2103,6 +2108,129 @@
     </message>
 </context>
 <context>
+    <name>bc::InterchangeImportDialog</name>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="37" />
+        <source>Import from other editors</source>
+        <translation>Boshqa dasturlardan import</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="46" />
+        <source>As one nested clip at the playhead (double-click it to edit)</source>
+        <translation>Kursor joyiga bitta nested klip bo‘lib (tahrirlash uchun uni ikki marta bosing)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="47" />
+        <source>Clips straight onto the open sequence at the playhead</source>
+        <translation>Kliplar to‘g‘ridan-to‘g‘ri ochiq sekvensiyaga, kursor joyiga</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="52" />
+        <source>Close</source>
+        <translation>Yopish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="53" />
+        <source>Import</source>
+        <translation>Import</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="74" />
+        <source>File: %1</source>
+        <translation>Fayl: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="86" />
+        <source>Final Cut Pro XML</source>
+        <translation>Final Cut Pro XML</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="87" />
+        <source>OpenTimelineIO</source>
+        <translation>OpenTimelineIO</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="88" />
+        <source>EDL (CMX 3600)</source>
+        <translation>EDL (CMX 3600)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="90" />
+        <source>Format: %1</source>
+        <translation>Format: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="91" />
+        <source>Clips: %1 on %2 video and %3 audio tracks</source>
+        <translation>Kliplar: %1 ta, %2 video va %3 audio yo‘lakda</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="94" />
+        <source>Media files: %1 found, %2 not found. Files not found stay offline; relink them later in the media bin.</source>
+        <translation>Media fayllar: %1 tasi topildi, %2 tasi topilmadi. Topilmaganlari oflayn bo‘lib qoladi; ularni keyin media kutubxonasida qayta bog‘lang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="99" />
+        <source>An EDL has no frame rate: the sequence rate (%1 fps) is used.</source>
+        <translation>EDL'da kadr tezligi yo‘q: sekvensiya tezligi (%1 fps) olinadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="100" />
+        <source>EDL source times are timecodes: for camera files with their own start timecode the clips may show the wrong part. XML and OpenTimelineIO do not have this problem.</source>
+        <translation>EDL'dagi manba vaqtlari timecode: o‘z boshlang‘ich timecode'i bor kamera fayllarida klip noto‘g‘ri qismni ko‘rsatishi mumkin. XML va OpenTimelineIO'da bu muammo yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="105" />
+        <source>The file runs at %1 fps, the sequence at %2 fps: times are converted to the sequence.</source>
+        <translation>Fayl %1 fps, sekvensiya %2 fps: vaqtlar sekvensiyaga o‘giriladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="113" />
+        <source>Everything in the file will be imported.</source>
+        <translation>Fayldagi hamma narsa import qilinadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="115" />
+        <source>Not imported:</source>
+        <translation>Import qilinmaydi:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="131" />
+        <source>Titles, colour mattes and other generated clips: %1</source>
+        <translation>Titrlar, rangli fonlar va boshqa yasalgan kliplar: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="132" />
+        <source>Effects, motion or colour settings: %1 clips</source>
+        <translation>Effektlar, harakat yoki rang sozlamalari: %1 klip</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="133" />
+        <source>Speed changes: %1 clips (they play at normal speed)</source>
+        <translation>Tezlik o‘zgarishi: %1 klip (ular oddiy tezlikda o‘ynaydi)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="134" />
+        <source>Nested sequences and multicamera clips: %1</source>
+        <translation>Nested sekvensiyalar va multikam kliplar: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="135" />
+        <source>Transitions other than dissolves: %1 (they become dissolves)</source>
+        <translation>Dissolve'dan boshqa o‘tishlar: %1 (ular dissolve bo‘ladi)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="136" />
+        <source>Clips switched off: %1</source>
+        <translation>O‘chirib qo‘yilgan kliplar: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="137" />
+        <source>Clips without a media file: %1</source>
+        <translation>Media fayli yo‘q kliplar: %1</translation>
+    </message>
+</context>
+<context>
     <name>bc::LoudnessDialog</name>
     <message>
         <location filename="../src/app/LoudnessDialog.cpp" line="43" />
@@ -2925,6 +3053,31 @@
         <location filename="../src/app/MainWindow.cpp" line="1036" />
         <source>Saved for other editors: %1</source>
         <translation>Boshqa dasturlar uchun saqlandi: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="633" />
+        <source>Import from other editors...</source>
+        <translation>Boshqa dasturlardan import...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="634" />
+        <source>Open a sequence from Premiere Pro, DaVinci Resolve or another editor: Final Cut Pro XML, OpenTimelineIO or EDL</source>
+        <translation>Premiere Pro, DaVinci Resolve yoki boshqa dasturda qilingan sekvensiyani ochish: Final Cut Pro XML, OpenTimelineIO yoki EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1054" />
+        <source>Import from other editors</source>
+        <translation>Boshqa dasturlardan import</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1055" />
+        <source>Timelines (*.xml *.otio *.edl)</source>
+        <translation>Montaj fayllari (*.xml *.otio *.edl)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1061" />
+        <source>Imported from %1: %2 clips</source>
+        <translation>%1 dan import qilindi: %2 klip</translation>
     </message>
 </context>
 <context>
@@ -3871,6 +4024,31 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="23" />
         <source>Could not write the file %1: %2</source>
         <translation>%1 faylini yozib bo‘lmadi: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="62" />
+        <source>Could not open the file %1: %2</source>
+        <translation>%1 faylini ochib bo‘lmadi: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="77" />
+        <source>This file could not be read as a timeline.</source>
+        <translation>Bu faylni montaj sifatida o‘qib bo‘lmadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="82" />
+        <source>The file holds no clips.</source>
+        <translation>Faylda kliplar yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="240" />
+        <source>Import from other editors</source>
+        <translation>Boshqa dasturlardan import</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="302" />
+        <source>The clips could not be placed: the first video and audio tracks are locked.</source>
+        <translation>Kliplarni qo‘yib bo‘lmadi: birinchi video va audio yo‘laklar qulflangan.</translation>
     </message>
 </context>
 <context>

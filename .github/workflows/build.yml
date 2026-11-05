@@ -46,6 +46,12 @@ jobs:
           python3 -m venv /tmp/otio
           /tmp/otio/bin/pip install -q opentimelineio otio-fcp-adapter otio-cmx3600-adapter
           /tmp/otio/bin/python tests/check_interchange.py /tmp/interchange
+      # Phase 15b: files written by the OpenTimelineIO library imported by us.
+      - name: OpenTimelineIO files imported
+        run: |
+          /tmp/otio/bin/python tests/make_interchange_refs.py /tmp/interchange_refs
+          BC_INTERCHANGE_IN=/tmp/interchange_refs QT_QPA_PLATFORM=offscreen SDL_AUDIODRIVER=dummy \
+            build/tests/tst_phase15b readReferenceFiles
 
   windows:
     name: Windows build, tests and installer

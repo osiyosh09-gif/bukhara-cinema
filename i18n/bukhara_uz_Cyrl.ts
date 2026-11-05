@@ -479,14 +479,19 @@
         <translation>Файл &gt; Бошқа дастурлар учун экспорт асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун ёзади: қайси файлнинг қайси қисми қайси йўлакда қаерда туриши, cross dissolve ўтишлари, маркерлар ва (XML'да) клип овози. Nested ва мультикам клиплар ичидаги клипларга айланади. Сақлашдан олдин ойна нима ўтказилмаслигини кўрсатади: титрлар, эффектлар, ранг, ҳаракат, тезлик ўзгариши, субтитрлар ва бошқалар. EDL'да фақат V1 видео йўлаги бўлади. Файлларни Premiere Pro ва DaVinci Resolve'да очиш биз томондан синалмаган.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="75" />
-        <source>Import from other editors (XML, OpenTimelineIO, EDL)</source>
-        <translation>Бошқа дастурлардан импорт (XML, OpenTimelineIO, EDL)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="76" />
         <source>Audio plugins (VST3)</source>
         <translation>Аудио плагинлар (VST3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
+        <translation>Бошқа дастурлардан импорт: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
+        <translation>Файл &gt; Бошқа дастурлардан импорт Premiere Pro, DaVinci Resolve ёки бошқа дастурда қилинган секвенцияни очади: клиплар ўз жойи билан, dissolve ўтишлари, маркерлар ва (XML'да) клип овози; битта nested клип бўлиб ёки тўғридан-тўғри очиқ секвенцияга, курсор жойига; битта бекор қилиш қадами. Медиа файллар йўли бўйича, файл ёнидан ёки кутубхонадан топилади; топилмаганлари қайта боғлаш учун офлайн қолади. Бошқа дастурдаги эффектлар, титрлар, тезлик ўзгариши ва nested секвенциялар импорт қилинмайди; ойна буни олдиндан кўрсатади. Premiere Pro ва DaVinci Resolve'нинг ўзидан олинган файллар биз томондан синалмаган.</translation>
     </message>
 </context>
 <context>
@@ -2103,6 +2108,129 @@
     </message>
 </context>
 <context>
+    <name>bc::InterchangeImportDialog</name>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="37" />
+        <source>Import from other editors</source>
+        <translation>Бошқа дастурлардан импорт</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="46" />
+        <source>As one nested clip at the playhead (double-click it to edit)</source>
+        <translation>Курсор жойига битта nested клип бўлиб (таҳрирлаш учун уни икки марта босинг)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="47" />
+        <source>Clips straight onto the open sequence at the playhead</source>
+        <translation>Клиплар тўғридан-тўғри очиқ секвенцияга, курсор жойига</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="52" />
+        <source>Close</source>
+        <translation>Ёпиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="53" />
+        <source>Import</source>
+        <translation>Импорт</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="74" />
+        <source>File: %1</source>
+        <translation>Файл: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="86" />
+        <source>Final Cut Pro XML</source>
+        <translation>Final Cut Pro XML</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="87" />
+        <source>OpenTimelineIO</source>
+        <translation>OpenTimelineIO</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="88" />
+        <source>EDL (CMX 3600)</source>
+        <translation>EDL (CMX 3600)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="90" />
+        <source>Format: %1</source>
+        <translation>Формат: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="91" />
+        <source>Clips: %1 on %2 video and %3 audio tracks</source>
+        <translation>Клиплар: %1 та, %2 видео ва %3 аудио йўлакда</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="94" />
+        <source>Media files: %1 found, %2 not found. Files not found stay offline; relink them later in the media bin.</source>
+        <translation>Медиа файллар: %1 таси топилди, %2 таси топилмади. Топилмаганлари офлайн бўлиб қолади; уларни кейин медиа кутубхонасида қайта боғланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="99" />
+        <source>An EDL has no frame rate: the sequence rate (%1 fps) is used.</source>
+        <translation>EDL'да кадр тезлиги йўқ: секвенция тезлиги (%1 fps) олинади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="100" />
+        <source>EDL source times are timecodes: for camera files with their own start timecode the clips may show the wrong part. XML and OpenTimelineIO do not have this problem.</source>
+        <translation>EDL'даги манба вақтлари timecode: ўз бошланғич timecode'и бор камера файлларида клип нотўғри қисмни кўрсатиши мумкин. XML ва OpenTimelineIO'да бу муаммо йўқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="105" />
+        <source>The file runs at %1 fps, the sequence at %2 fps: times are converted to the sequence.</source>
+        <translation>Файл %1 fps, секвенция %2 fps: вақтлар секвенцияга ўгирилади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="113" />
+        <source>Everything in the file will be imported.</source>
+        <translation>Файлдаги ҳамма нарса импорт қилинади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="115" />
+        <source>Not imported:</source>
+        <translation>Импорт қилинмайди:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="131" />
+        <source>Titles, colour mattes and other generated clips: %1</source>
+        <translation>Титрлар, рангли фонлар ва бошқа ясалган клиплар: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="132" />
+        <source>Effects, motion or colour settings: %1 clips</source>
+        <translation>Эффектлар, ҳаракат ёки ранг созламалари: %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="133" />
+        <source>Speed changes: %1 clips (they play at normal speed)</source>
+        <translation>Тезлик ўзгариши: %1 клип (улар оддий тезликда ўйнайди)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="134" />
+        <source>Nested sequences and multicamera clips: %1</source>
+        <translation>Nested секвенциялар ва мультикам клиплар: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="135" />
+        <source>Transitions other than dissolves: %1 (they become dissolves)</source>
+        <translation>Dissolve'дан бошқа ўтишлар: %1 (улар dissolve бўлади)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="136" />
+        <source>Clips switched off: %1</source>
+        <translation>Ўчириб қўйилган клиплар: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="137" />
+        <source>Clips without a media file: %1</source>
+        <translation>Медиа файли йўқ клиплар: %1</translation>
+    </message>
+</context>
+<context>
     <name>bc::LoudnessDialog</name>
     <message>
         <location filename="../src/app/LoudnessDialog.cpp" line="43" />
@@ -2925,6 +3053,31 @@
         <location filename="../src/app/MainWindow.cpp" line="1036" />
         <source>Saved for other editors: %1</source>
         <translation>Бошқа дастурлар учун сақланди: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="633" />
+        <source>Import from other editors...</source>
+        <translation>Бошқа дастурлардан импорт...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="634" />
+        <source>Open a sequence from Premiere Pro, DaVinci Resolve or another editor: Final Cut Pro XML, OpenTimelineIO or EDL</source>
+        <translation>Premiere Pro, DaVinci Resolve ёки бошқа дастурда қилинган секвенцияни очиш: Final Cut Pro XML, OpenTimelineIO ёки EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1054" />
+        <source>Import from other editors</source>
+        <translation>Бошқа дастурлардан импорт</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1055" />
+        <source>Timelines (*.xml *.otio *.edl)</source>
+        <translation>Монтаж файллари (*.xml *.otio *.edl)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1061" />
+        <source>Imported from %1: %2 clips</source>
+        <translation>%1 дан импорт қилинди: %2 клип</translation>
     </message>
 </context>
 <context>
@@ -3871,6 +4024,31 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="23" />
         <source>Could not write the file %1: %2</source>
         <translation>%1 файлини ёзиб бўлмади: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="62" />
+        <source>Could not open the file %1: %2</source>
+        <translation>%1 файлини очиб бўлмади: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="77" />
+        <source>This file could not be read as a timeline.</source>
+        <translation>Бу файлни монтаж сифатида ўқиб бўлмади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="82" />
+        <source>The file holds no clips.</source>
+        <translation>Файлда клиплар йўқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="240" />
+        <source>Import from other editors</source>
+        <translation>Бошқа дастурлардан импорт</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="302" />
+        <source>The clips could not be placed: the first video and audio tracks are locked.</source>
+        <translation>Клипларни қўйиб бўлмади: биринчи видео ва аудио йўлаклар қулфланган.</translation>
     </message>
 </context>
 <context>

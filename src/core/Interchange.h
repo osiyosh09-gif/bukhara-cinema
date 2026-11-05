@@ -57,6 +57,66 @@ Result write(const Project &project, Format format, bool checkFiles = true);
 QString timecode(qint64 frame, int base);
 // Whole-number timecode base of a rate: 25 -> 25, 29.97 -> 30, 23.976 -> 24.
 int timecodeBase(int fpsNum, int fpsDen);
+// Frame number of a timecode "HH:MM:SS:FF" (";" or a drop-frame flag = 29.97/59.94
+// drop-frame counting); -1 if it is not a timecode.
+qint64 parseTimecode(const QString &tc, int base, bool dropFrame);
+
+// --- reading (phase 15b): the same three formats, from other editors
+
+// What is in the file but not imported, counted per clip (or item).
+enum class ImportLoss {
+    Generators,      // titles, colour mattes, bars and other generated items
+    Effects,         // effects, motion, colour and opacity settings
+    Speed,           // speed changes and freeze frames (the clip plays at 100 %)
+    Nested,          // nested sequences, compound and multicamera clips
+    TransitionKinds, // transitions other than dissolves (imported as dissolves)
+    DisabledClips,   // clips switched off in the other editor
+    NoMedia,         // clips without a usable media reference
+};
+
+struct ImportClip
+{
+    QString path;      // absolute local path; empty when the file gave only a name
+    QString name;      // clip or file name (used to find the file when there is no path)
+    TimelineTrack::Kind kind = TimelineTrack::Kind::Video;
+    int track = 0;     // n-th track of its kind (0 = V1 / A1)
+    qint64 start = 0;  // sequence frames
+    qint64 in = 0;     // first source frame, sequence frames
+    qint64 length = 0;
+    double gainDb = 0;
+    ClipTransition head; // dissolve with the touching clip before, or a fade at a free start
+    ClipTransition tail; // fade at a free end
+    int link = -1;       // clips with the same number belong together (picture + sound)
+
+    qint64 end() const { return start + length; }
+};
+
+struct ImportMarker
+{
+    qint64 frame = 0;
+    QString name;
+};
+
+struct ReadResult
+{
+    enum class Error { None, NotRecognized, Empty };
+    Error error = Error::None;
+    Format format = Format::FcpXml;
+    QString name;           // sequence / timeline name from the file
+    int fpsNum = 0;         // the file's own rate; 0 = none given (EDL)
+    int fpsDen = 1;
+    int width = 0, height = 0;
+    QList<ImportClip> clips;  // sorted by kind, track, start; no overlaps on a track
+    QList<ImportMarker> markers;
+    QMap<ImportLoss, int> losses;
+    int videoTracks = 0, audioTracks = 0;
+};
+
+// Format by file suffix (.xml, .otio, .edl); false for anything else.
+bool formatFromPath(const QString &path, Format *format);
+// Reads a timeline; times are converted to the rate of `seq`. Relative or
+// name-only references are resolved against `baseDir` (the file's folder).
+ReadResult read(const QByteArray &data, Format format, const SequenceSettings &seq, const QString &baseDir);
 
 } // namespace Interchange
 } // namespace bc

@@ -204,3 +204,8 @@ add_executable(tst_phase15a tst_phase15a.cpp)
 target_link_libraries(tst_phase15a PRIVATE bc_ui Qt6::Test)
 add_test(NAME phase15a_interchange COMMAND tst_phase15a)
 set_tests_properties(phase15a_interchange PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
+
+add_executable(tst_phase15b tst_phase15b.cpp)
+target_link_libraries(tst_phase15b PRIVATE bc_ui Qt6::Test)
+add_test(NAME phase15b_interchange_import COMMAND tst_phase15b)
+set_tests_properties(phase15b_interchange_import PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)

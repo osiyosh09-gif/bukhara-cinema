@@ -389,6 +389,19 @@ public:
     bool exportInterchange(Interchange::Format format, const QString &path, QString *error,
                            Interchange::Result *result = nullptr) const;
 
+    // --- import from other editors (phase 15b, ProjectInterchange.cpp)
+    // Reads the file without changing the project; false with a message when
+    // it is not a timeline or holds no clips.
+    bool readInterchange(const QString &path, Interchange::ReadResult *result, QString *error) const;
+    // How many distinct media files of the result exist (in the bin or on the disk).
+    void interchangeMediaCount(const Interchange::ReadResult &r, const QString &baseDir, int *found, int *missing) const;
+    // Adds the media to the bin (new files in a folder named after the file;
+    // missing ones as offline items to relink later), then in one undo step
+    // either a nested sequence placed at the playhead of the open sequence
+    // (`nested`) or the clips themselves at the playhead. Returns the number
+    // of clips, 0 on failure.
+    int importInterchange(const QString &path, bool nested, QString *error);
+
     // --- markers (undoable)
     QUuid addMarker(qint64 frame);
     bool removeMarker(const QUuid &id);
@@ -448,6 +461,11 @@ private:
     void startNextProxy();
     void refreshOnlineState();
     static QString thumbCachePath(const QString &mediaPath);
+    // Phase 15b: the file a clip of another editor means: an item already in
+    // the bin, a file on the disk (also next to the timeline file), or, when
+    // none exists, the path it should have. *exists tells which.
+    QString resolveInterchangePath(const Interchange::ImportClip &c, const QString &baseDir, bool *exists,
+                                   QUuid *binItem) const;
 public:
     // Everything an edit can change (see TimelineCommand).
     struct EditState

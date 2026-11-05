@@ -1501,6 +1501,63 @@ T.update({
     "Audio plugins (VST3)": ("Аудио плагинлар (VST3)", "Аудиоплагины (VST3)"),
 })
 
+# Phase 15b: import from other editors
+T.update({
+    "Import from other editors": ("Бошқа дастурлардан импорт", "Импорт из других монтажных программ"),
+    "Import from other editors...": ("Бошқа дастурлардан импорт...", "Импорт из других монтажных программ..."),
+    "Open a sequence from Premiere Pro, DaVinci Resolve or another editor: Final Cut Pro XML, OpenTimelineIO or EDL": (
+        "Premiere Pro, DaVinci Resolve ёки бошқа дастурда қилинган секвенцияни очиш: Final Cut Pro XML, OpenTimelineIO ёки EDL",
+        "Открыть эпизод из Premiere Pro, DaVinci Resolve или другой программы: Final Cut Pro XML, OpenTimelineIO или EDL"),
+    "Timelines (*.xml *.otio *.edl)": ("Монтаж файллари (*.xml *.otio *.edl)", "Файлы монтажа (*.xml *.otio *.edl)"),
+    "Imported from %1: %2 clips": ("%1 дан импорт қилинди: %2 клип", "Импортировано из %1: клипов — %2"),
+    "Could not open the file %1: %2": ("%1 файлини очиб бўлмади: %2", "Не удалось открыть файл %1: %2"),
+    "This file could not be read as a timeline.": ("Бу файлни монтаж сифатида ўқиб бўлмади.", "Этот файл не удалось прочитать как монтаж."),
+    "The file holds no clips.": ("Файлда клиплар йўқ.", "В файле нет клипов."),
+    "The clips could not be placed: the first video and audio tracks are locked.": (
+        "Клипларни қўйиб бўлмади: биринчи видео ва аудио йўлаклар қулфланган.",
+        "Клипы не удалось разместить: первые видео- и аудиодорожки заблокированы."),
+    "As one nested clip at the playhead (double-click it to edit)": (
+        "Курсор жойига битта nested клип бўлиб (таҳрирлаш учун уни икки марта босинг)",
+        "Одним вложенным клипом под указателем (дважды щёлкните, чтобы редактировать)"),
+    "Clips straight onto the open sequence at the playhead": (
+        "Клиплар тўғридан-тўғри очиқ секвенцияга, курсор жойига",
+        "Клипы прямо в открытый эпизод под указатель"),
+    "Import": ("Импорт", "Импорт"),
+    "File: %1": ("Файл: %1", "Файл: %1"),
+    "Final Cut Pro XML": ("Final Cut Pro XML", "Final Cut Pro XML"),
+    "OpenTimelineIO": ("OpenTimelineIO", "OpenTimelineIO"),
+    "EDL (CMX 3600)": ("EDL (CMX 3600)", "EDL (CMX 3600)"),
+    "Format: %1": ("Формат: %1", "Формат: %1"),
+    "Clips: %1 on %2 video and %3 audio tracks": ("Клиплар: %1 та, %2 видео ва %3 аудио йўлакда", "Клипов: %1 на %2 видео- и %3 аудиодорожках"),
+    "Media files: %1 found, %2 not found. Files not found stay offline; relink them later in the media bin.": (
+        "Медиа файллар: %1 таси топилди, %2 таси топилмади. Топилмаганлари офлайн бўлиб қолади; уларни кейин медиа кутубхонасида қайта боғланг.",
+        "Медиафайлы: найдено %1, не найдено %2. Ненайденные останутся офлайн; привяжите их позже в медиатеке."),
+    "An EDL has no frame rate: the sequence rate (%1 fps) is used.": (
+        "EDL'да кадр тезлиги йўқ: секвенция тезлиги (%1 fps) олинади.",
+        "В EDL нет частоты кадров: используется частота эпизода (%1 fps)."),
+    "EDL source times are timecodes: for camera files with their own start timecode the clips may show the wrong part. XML and OpenTimelineIO do not have this problem.": (
+        "EDL'даги манба вақтлари timecode: ўз бошланғич timecode'и бор камера файлларида клип нотўғри қисмни кўрсатиши мумкин. XML ва OpenTimelineIO'да бу муаммо йўқ.",
+        "Время источника в EDL — это таймкод: у файлов камеры с собственным начальным таймкодом клип может показать не ту часть. В XML и OpenTimelineIO такой проблемы нет."),
+    "The file runs at %1 fps, the sequence at %2 fps: times are converted to the sequence.": (
+        "Файл %1 fps, секвенция %2 fps: вақтлар секвенцияга ўгирилади.",
+        "Файл — %1 fps, эпизод — %2 fps: время пересчитывается под эпизод."),
+    "Everything in the file will be imported.": ("Файлдаги ҳамма нарса импорт қилинади.", "Всё из файла будет импортировано."),
+    "Not imported:": ("Импорт қилинмайди:", "Не импортируется:"),
+    "Titles, colour mattes and other generated clips: %1": ("Титрлар, рангли фонлар ва бошқа ясалган клиплар: %1", "Титры, цветные подложки и другие генерируемые клипы: %1"),
+    "Effects, motion or colour settings: %1 clips": ("Эффектлар, ҳаракат ёки ранг созламалари: %1 клип", "Эффекты, движение или настройки цвета: клипов — %1"),
+    "Speed changes: %1 clips (they play at normal speed)": ("Тезлик ўзгариши: %1 клип (улар оддий тезликда ўйнайди)", "Изменение скорости: клипов — %1 (они играют с обычной скоростью)"),
+    "Nested sequences and multicamera clips: %1": ("Nested секвенциялар ва мультикам клиплар: %1", "Вложенные эпизоды и мультикамерные клипы: %1"),
+    "Transitions other than dissolves: %1 (they become dissolves)": ("Dissolve'дан бошқа ўтишлар: %1 (улар dissolve бўлади)", "Переходы, кроме растворения: %1 (станут растворением)"),
+    "Clips switched off: %1": ("Ўчириб қўйилган клиплар: %1", "Выключенные клипы: %1"),
+    "Clips without a media file: %1": ("Медиа файли йўқ клиплар: %1", "Клипы без медиафайла: %1"),
+    "Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL": (
+        "Бошқа дастурлардан импорт: Final Cut Pro XML, OpenTimelineIO, EDL",
+        "Импорт из других программ: Final Cut Pro XML, OpenTimelineIO, EDL"),
+    "File > Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.": (
+        "Файл > Бошқа дастурлардан импорт Premiere Pro, DaVinci Resolve ёки бошқа дастурда қилинган секвенцияни очади: клиплар ўз жойи билан, dissolve ўтишлари, маркерлар ва (XML'да) клип овози; битта nested клип бўлиб ёки тўғридан-тўғри очиқ секвенцияга, курсор жойига; битта бекор қилиш қадами. Медиа файллар йўли бўйича, файл ёнидан ёки кутубхонадан топилади; топилмаганлари қайта боғлаш учун офлайн қолади. Бошқа дастурдаги эффектлар, титрлар, тезлик ўзгариши ва nested секвенциялар импорт қилинмайди; ойна буни олдиндан кўрсатади. Premiere Pro ва DaVinci Resolve'нинг ўзидан олинган файллар биз томондан синалмаган.",
+        "Файл > Импорт из других монтажных программ открывает эпизод из Premiere Pro, DaVinci Resolve или другой программы: клипы на своих местах, растворения, маркеры и (в XML) громкость клипа; одним вложенным клипом или прямо в открытый эпизод под указатель; один шаг отмены. Медиафайлы находятся по пути, рядом с файлом или в медиатеке; ненайденные остаются офлайн для привязки. Эффекты, титры, изменение скорости и вложенные эпизоды другой программы не импортируются; окно заранее показывает это. Файлы из самих Premiere Pro и DaVinci Resolve нами не проверялись."),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",
