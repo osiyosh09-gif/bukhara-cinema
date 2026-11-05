@@ -389,7 +389,9 @@ private slots:
         QVERIFY2(sample(m_dir.path()).save(projectPath, &error), qPrintable(error));
 
         MainWindow w;
-        QVERIFY(w.openProjectFile(projectPath));
+        // Through the controller: MainWindow::openProjectFile would ask about
+        // the missing media in a modal box (b.mov and c.png do not exist).
+        QVERIFY2(w.controller()->open(projectPath, &error), qPrintable(error));
         w.controller()->waitForBackgroundWork();
         QAction *act = w.findChild<QAction *>(QStringLiteral("actExportInterchange"));
         QVERIFY(act);
