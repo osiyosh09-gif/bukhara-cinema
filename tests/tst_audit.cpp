@@ -20,6 +20,7 @@
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTimer>
+#include <QUndoStack>
 #include <QtTest>
 
 using namespace bc;
