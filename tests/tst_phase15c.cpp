@@ -347,7 +347,17 @@ private slots:
                 mix.insert(mix.end(), s, s + size_t(frames) * 2);
                 return true;
             });
-            return ok ? peak(mix) : -1.0;
+            if (!ok)
+                return -1.0;
+            // Where the loudest sample is, for a report on failure.
+            size_t at = 0;
+            for (size_t i = 0; i < mix.size(); ++i)
+                if (std::abs(mix[i]) > std::abs(mix[at]))
+                    at = i;
+            qInfo("peak %f at sample %d of %d; start %f %f %f %f", mix[at], int(at / 2), int(mix.size() / 2),
+                  mix.size() > 40 ? mix[0] : 0.f, mix.size() > 40 ? mix[10] : 0.f, mix.size() > 40 ? mix[20] : 0.f,
+                  mix.size() > 40 ? mix[40] : 0.f);
+            return peak(mix);
         };
         const double half2 = rendered();
         QVERIFY(ctl.setClipEffectValue(audio, e, ClipEffect::pluginParamKey(0), 0.5));
