@@ -6,6 +6,7 @@
 #include "app/Autosave.h"
 #include "app/RecoveryDialog.h"
 #include "app/FeatureStatus.h"
+#include "app/InterchangeDialog.h"
 #include "app/Logging.h"
 #include "app/MediaBinPanel.h"
 #include "app/MonitorView.h"
@@ -329,6 +330,12 @@ void MainWindow::buildMenus()
                                             : tr("Export queue finished: %1 done.").arg(done),
                                  15000);
     });
+    m_interchangeAct = m_fileMenu->addAction(QString(), this, &MainWindow::openInterchange);
+    m_interchangeAct->setObjectName(QStringLiteral("actExportInterchange"));
+    auto updateInterchange = [this] { m_interchangeAct->setEnabled(!m_ctl->project().timeline.isEmpty()); };
+    connect(m_ctl, &ProjectController::timelineChanged, this, updateInterchange);
+    connect(m_ctl, &ProjectController::projectReset, this, updateInterchange);
+    m_interchangeAct->setEnabled(false);
     m_fileMenu->addSeparator();
     m_cacheAct = m_fileMenu->addAction(QString(), this, &MainWindow::openCache);
     m_cacheAct->setObjectName(QStringLiteral("actMediaCache"));
@@ -616,6 +623,9 @@ void MainWindow::retranslate()
     m_saveAct->setText(tr("Save"));
     m_saveAsAct->setText(tr("Save as..."));
     m_versionsAct->setText(tr("Previous versions..."));
+    m_interchangeAct->setText(tr("Export for other editors..."));
+    m_interchangeAct->setToolTip(tr("Save the main sequence as XML, OpenTimelineIO or EDL for Premiere Pro, "
+                                    "DaVinci Resolve and other editors"));
     m_collectAct->setText(tr("Collect project..."));
     m_collectAct->setToolTip(tr("Copy the project and its media into one folder"));
     m_cacheAct->setText(tr("Media cache..."));
@@ -1017,6 +1027,14 @@ void MainWindow::openExportQueue()
     m_exportQueueDialog->show();
     m_exportQueueDialog->raise();
     m_exportQueueDialog->activateWindow();
+}
+
+void MainWindow::openInterchange()
+{
+    InterchangeDialog dlg(m_ctl, this);
+    if (dlg.exec() == QDialog::Accepted && !dlg.savedPath().isEmpty())
+        statusBar()->showMessage(tr("Saved for other editors: %1").arg(QDir::toNativeSeparators(dlg.savedPath())),
+                                 15000);
 }
 
 void MainWindow::addTitle()

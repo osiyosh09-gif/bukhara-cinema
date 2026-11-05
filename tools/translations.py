@@ -1438,6 +1438,69 @@ T.update({
     "No scene changes found in the selected clips.": ("Танланган клипларда саҳна алмашиши топилмади.", "В выбранных клипах смен сцен не найдено."),
 })
 
+# Phase 15a: export for other editors
+T.update({
+    "Export for other editors": ("Бошқа дастурлар учун экспорт", "Экспорт для других монтажных программ"),
+    "Export for other editors...": ("Бошқа дастурлар учун экспорт...", "Экспорт для других монтажных программ..."),
+    "Save the main sequence as XML, OpenTimelineIO or EDL for Premiere Pro, DaVinci Resolve and other editors": (
+        "Асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун XML, OpenTimelineIO ёки EDL сифатида сақлаш",
+        "Сохранить основной эпизод как XML, OpenTimelineIO или EDL для Premiere Pro, DaVinci Resolve и других программ"),
+    "Saved for other editors: %1": ("Бошқа дастурлар учун сақланди: %1", "Сохранено для других программ: %1"),
+    "Could not write the file %1: %2": ("%1 файлини ёзиб бўлмади: %2", "Не удалось записать файл %1: %2"),
+    "Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)": (
+        "Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)", "Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)"),
+    "OpenTimelineIO (.otio)": ("OpenTimelineIO (.otio)", "OpenTimelineIO (.otio)"),
+    "EDL (CMX 3600): video track V1 only": ("EDL (CMX 3600): фақат V1 видео йўлаги", "EDL (CMX 3600): только видеодорожка V1"),
+    "Writes the main sequence for Premiere Pro, DaVinci Resolve and other editors. Only the edit travels: which part of which file lies where. The media files are not copied; keep them where they are.": (
+        "Асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун ёзади. Фақат монтажнинг ўзи ўтади: қайси файлнинг қайси қисми қаерда туриши. Медиа файллар нусхаланмайди; уларни жойида қолдиринг.",
+        "Записывает основной эпизод для Premiere Pro, DaVinci Resolve и других программ. Переносится только сам монтаж: какая часть какого файла где стоит. Медиафайлы не копируются; оставьте их на месте."),
+    "Format:": ("Формат:", "Формат:"),
+    "Text titles: %1": ("Матн титрлари: %1", "Текстовые титры: %1"),
+    "Picture effects, chroma key and masks: %1 clips": ("Тасвир эффектлари, chroma key ва ниқоблар: %1 клип", "Эффекты изображения, хромакей и маски: клипов — %1"),
+    "Colour correction and LUTs: %1 clips": ("Ранг тузатиш ва LUT: %1 клип", "Цветокоррекция и LUT: клипов — %1"),
+    "Position, scale, rotation and opacity: %1 clips": ("Жой, ўлчам, бурилиш ва шаффофлик: %1 клип", "Положение, масштаб, поворот и непрозрачность: клипов — %1"),
+    "Speed changes: %1 clips (they play at normal speed from the same first frame)": (
+        "Тезлик ўзгариши: %1 клип (улар ўша биринчи кадрдан оддий тезликда ўйнайди)",
+        "Изменение скорости: клипов — %1 (они играют с обычной скоростью с того же первого кадра)"),
+    "Dips to black or white and wipes: %1 (they become cross dissolves)": (
+        "Қорага ёки оққа ўтиш ва wipe: %1 (улар оддий dissolve бўлади)",
+        "Переходы через чёрный или белый и шторки: %1 (станут обычным растворением)"),
+    "Transitions: %1": ("Ўтишлар: %1", "Переходы: %1"),
+    "Fades at free clip ends: %1": ("Клипларнинг бўш учидаги fade: %1", "Затухания на свободных краях клипов: %1"),
+    "Sound fades in and out: %1 clips": ("Овознинг fade in ва fade out'и: %1 клип", "Нарастание и затухание звука: клипов — %1"),
+    "Clip volume: %1 clips": ("Клип овоз баландлиги: %1 клип", "Громкость клипа: клипов — %1"),
+    "Sound effects (equalizer, compressor, noise, hum): %1 clips": (
+        "Овоз эффектлари (эквалайзер, компрессор, шовқин, гувиллаш): %1 клип",
+        "Звуковые эффекты (эквалайзер, компрессор, шум, гул): клипов — %1"),
+    "Track volume and balance, master volume": ("Йўлак овози ва баланси, мастер овоз", "Громкость и баланс дорожек, мастер-громкость"),
+    "Subtitles: %1 (save them with Export SRT in the Subtitles tab)": (
+        "Субтитрлар: %1 (уларни «Субтитрлар» панелидаги «SRT сақлаш» тугмаси билан сақланг)",
+        "Субтитры: %1 (сохраните их кнопкой «Экспорт SRT» на вкладке «Субтитры»)"),
+    "Markers: %1": ("Маркерлар: %1", "Маркеры: %1"),
+    "Clips on tracks other than V1, and all sound: %1": ("V1 дан бошқа йўлаклардаги клиплар ва бутун овоз: %1", "Клипы на дорожках кроме V1 и весь звук: %1"),
+    "Everything in this sequence will be transferred.": ("Бу секвенциядаги ҳамма нарса ўтказилади.", "Всё в этом эпизоде будет перенесено."),
+    "Will not be transferred:": ("Ўтказилмайди:", "Не будет перенесено:"),
+    "Clips to write: %1": ("Ёзиладиган клиплар: %1", "Клипов к записи: %1"),
+    "Nested and multicamera clips: %1. They are written as the clips inside them.": (
+        "Nested ва мультикам клиплар: %1. Улар ичидаги клиплар сифатида ёзилади.",
+        "Вложенные и мультикамерные клипы: %1. Они записываются как клипы внутри них."),
+    "Missing media files: %1. The other editor will ask for them.": (
+        "Топилмаган медиа файллар: %1. Бошқа дастур уларни сўрайди.",
+        "Отсутствующие медиафайлы: %1. Другая программа запросит их."),
+    "Final Cut Pro XML (*.xml)": ("Final Cut Pro XML (*.xml)", "Final Cut Pro XML (*.xml)"),
+    "OpenTimelineIO (*.otio)": ("OpenTimelineIO (*.otio)", "OpenTimelineIO (*.otio)"),
+    "EDL (*.edl)": ("EDL (*.edl)", "EDL (*.edl)"),
+    "Export for other editors: Final Cut Pro XML, OpenTimelineIO, EDL": (
+        "Бошқа дастурлар учун экспорт: Final Cut Pro XML, OpenTimelineIO, EDL",
+        "Экспорт для других программ: Final Cut Pro XML, OpenTimelineIO, EDL"),
+    "File > Export for other editors writes the main sequence for Premiere Pro, DaVinci Resolve and other editors: which part of which file lies where on which track, cross dissolves, markers and (XML) clip volume. Nested and multicamera clips become the clips inside them. Before saving, the window lists what will not be transferred: titles, effects, colour, motion, speed changes, subtitles and more. The EDL holds video track V1 only. Opening the files in Premiere Pro and DaVinci Resolve has not been tested by us.": (
+        "Файл > Бошқа дастурлар учун экспорт асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун ёзади: қайси файлнинг қайси қисми қайси йўлакда қаерда туриши, cross dissolve ўтишлари, маркерлар ва (XML'да) клип овози. Nested ва мультикам клиплар ичидаги клипларга айланади. Сақлашдан олдин ойна нима ўтказилмаслигини кўрсатади: титрлар, эффектлар, ранг, ҳаракат, тезлик ўзгариши, субтитрлар ва бошқалар. EDL'да фақат V1 видео йўлаги бўлади. Файлларни Premiere Pro ва DaVinci Resolve'да очиш биз томондан синалмаган.",
+        "Файл > Экспорт для других монтажных программ записывает основной эпизод для Premiere Pro, DaVinci Resolve и других программ: какая часть какого файла где лежит на какой дорожке, растворения, маркеры и (в XML) громкость клипа. Вложенные и мультикамерные клипы становятся клипами внутри них. Перед сохранением окно показывает, что не будет перенесено: титры, эффекты, цвет, движение, изменение скорости, субтитры и другое. EDL содержит только видеодорожку V1. Открытие файлов в Premiere Pro и DaVinci Resolve нами не проверялось."),
+    "Import from other editors (XML, OpenTimelineIO, EDL)": (
+        "Бошқа дастурлардан импорт (XML, OpenTimelineIO, EDL)", "Импорт из других программ (XML, OpenTimelineIO, EDL)"),
+    "Audio plugins (VST3)": ("Аудио плагинлар (VST3)", "Аудиоплагины (VST3)"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

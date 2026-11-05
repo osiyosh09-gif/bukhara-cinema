@@ -470,8 +470,23 @@
     </message>
     <message>
         <location filename="../src/app/FeatureStatus.cpp" line="74" />
-        <source>Plugins and project interchange</source>
-        <translation>Плагинлар ва лойиҳа алмашинуви</translation>
+        <source>Export for other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
+        <translation>Бошқа дастурлар учун экспорт: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="74" />
+        <source>File &gt; Export for other editors writes the main sequence for Premiere Pro, DaVinci Resolve and other editors: which part of which file lies where on which track, cross dissolves, markers and (XML) clip volume. Nested and multicamera clips become the clips inside them. Before saving, the window lists what will not be transferred: titles, effects, colour, motion, speed changes, subtitles and more. The EDL holds video track V1 only. Opening the files in Premiere Pro and DaVinci Resolve has not been tested by us.</source>
+        <translation>Файл &gt; Бошқа дастурлар учун экспорт асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун ёзади: қайси файлнинг қайси қисми қайси йўлакда қаерда туриши, cross dissolve ўтишлари, маркерлар ва (XML'да) клип овози. Nested ва мультикам клиплар ичидаги клипларга айланади. Сақлашдан олдин ойна нима ўтказилмаслигини кўрсатади: титрлар, эффектлар, ранг, ҳаракат, тезлик ўзгариши, субтитрлар ва бошқалар. EDL'да фақат V1 видео йўлаги бўлади. Файлларни Premiere Pro ва DaVinci Resolve'да очиш биз томондан синалмаган.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>Import from other editors (XML, OpenTimelineIO, EDL)</source>
+        <translation>Бошқа дастурлардан импорт (XML, OpenTimelineIO, EDL)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>Audio plugins (VST3)</source>
+        <translation>Аудио плагинлар (VST3)</translation>
     </message>
 </context>
 <context>
@@ -1930,6 +1945,164 @@
     </message>
 </context>
 <context>
+    <name>bc::InterchangeDialog</name>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="35" />
+        <source>Export for other editors</source>
+        <translation>Бошқа дастурлар учун экспорт</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="40" />
+        <source>Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)</source>
+        <translation>Final Cut Pro 7 XML (Premiere Pro, DaVinci Resolve)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="41" />
+        <source>OpenTimelineIO (.otio)</source>
+        <translation>OpenTimelineIO (.otio)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="42" />
+        <source>EDL (CMX 3600): video track V1 only</source>
+        <translation>EDL (CMX 3600): фақат V1 видео йўлаги</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="46" />
+        <source>Writes the main sequence for Premiere Pro, DaVinci Resolve and other editors. Only the edit travels: which part of which file lies where. The media files are not copied; keep them where they are.</source>
+        <translation>Асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун ёзади. Фақат монтажнинг ўзи ўтади: қайси файлнинг қайси қисми қаерда туриши. Медиа файллар нусхаланмайди; уларни жойида қолдиринг.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="58" />
+        <source>Format:</source>
+        <translation>Формат:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="61" />
+        <source>Close</source>
+        <translation>Ёпиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="62" />
+        <source>Export...</source>
+        <translation>Экспорт...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="97" />
+        <source>Text titles: %1</source>
+        <translation>Матн титрлари: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="98" />
+        <source>Picture effects, chroma key and masks: %1 clips</source>
+        <translation>Тасвир эффектлари, chroma key ва ниқоблар: %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="99" />
+        <source>Colour correction and LUTs: %1 clips</source>
+        <translation>Ранг тузатиш ва LUT: %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="100" />
+        <source>Position, scale, rotation and opacity: %1 clips</source>
+        <translation>Жой, ўлчам, бурилиш ва шаффофлик: %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="101" />
+        <source>Speed changes: %1 clips (they play at normal speed from the same first frame)</source>
+        <translation>Тезлик ўзгариши: %1 клип (улар ўша биринчи кадрдан оддий тезликда ўйнайди)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="102" />
+        <source>Dips to black or white and wipes: %1 (they become cross dissolves)</source>
+        <translation>Қорага ёки оққа ўтиш ва wipe: %1 (улар оддий dissolve бўлади)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="103" />
+        <source>Transitions: %1</source>
+        <translation>Ўтишлар: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="104" />
+        <source>Fades at free clip ends: %1</source>
+        <translation>Клипларнинг бўш учидаги fade: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="105" />
+        <source>Sound fades in and out: %1 clips</source>
+        <translation>Овознинг fade in ва fade out'и: %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="106" />
+        <source>Clip volume: %1 clips</source>
+        <translation>Клип овоз баландлиги: %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="107" />
+        <source>Sound effects (equalizer, compressor, noise, hum): %1 clips</source>
+        <translation>Овоз эффектлари (эквалайзер, компрессор, шовқин, гувиллаш): %1 клип</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="108" />
+        <source>Track volume and balance, master volume</source>
+        <translation>Йўлак овози ва баланси, мастер овоз</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="109" />
+        <source>Subtitles: %1 (save them with Export SRT in the Subtitles tab)</source>
+        <translation>Субтитрлар: %1 (уларни «Субтитрлар» панелидаги «SRT сақлаш» тугмаси билан сақланг)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="110" />
+        <source>Markers: %1</source>
+        <translation>Маркерлар: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="111" />
+        <source>Clips on tracks other than V1, and all sound: %1</source>
+        <translation>V1 дан бошқа йўлаклардаги клиплар ва бутун овоз: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="123" />
+        <source>Everything in this sequence will be transferred.</source>
+        <translation>Бу секвенциядаги ҳамма нарса ўтказилади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="125" />
+        <source>Will not be transferred:</source>
+        <translation>Ўтказилмайди:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="131" />
+        <source>Clips to write: %1</source>
+        <translation>Ёзиладиган клиплар: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="133" />
+        <source>Nested and multicamera clips: %1. They are written as the clips inside them.</source>
+        <translation>Nested ва мультикам клиплар: %1. Улар ичидаги клиплар сифатида ёзилади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="135" />
+        <source>Missing media files: %1. The other editor will ask for them.</source>
+        <translation>Топилмаган медиа файллар: %1. Бошқа дастур уларни сўрайди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="162" />
+        <source>Final Cut Pro XML (*.xml)</source>
+        <translation>Final Cut Pro XML (*.xml)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="163" />
+        <source>OpenTimelineIO (*.otio)</source>
+        <translation>OpenTimelineIO (*.otio)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeDialog.cpp" line="164" />
+        <source>EDL (*.edl)</source>
+        <translation>EDL (*.edl)</translation>
+    </message>
+</context>
+<context>
     <name>bc::LoudnessDialog</name>
     <message>
         <location filename="../src/app/LoudnessDialog.cpp" line="43" />
@@ -2737,6 +2910,21 @@
         <location filename="../src/app/MainWindow.cpp" line="985" />
         <source>(empty)</source>
         <translation>(бўш)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="626" />
+        <source>Export for other editors...</source>
+        <translation>Бошқа дастурлар учун экспорт...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="627" />
+        <source>Save the main sequence as XML, OpenTimelineIO or EDL for Premiere Pro, DaVinci Resolve and other editors</source>
+        <translation>Асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун XML, OpenTimelineIO ёки EDL сифатида сақлаш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1036" />
+        <source>Saved for other editors: %1</source>
+        <translation>Бошқа дастурлар учун сақланди: %1</translation>
     </message>
 </context>
 <context>
@@ -3678,6 +3866,11 @@
         <location filename="../src/app/ProjectScenes.cpp" line="179" />
         <source>Mark scene changes</source>
         <translation>Саҳна алмашишларига маркер қўйиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="23" />
+        <source>Could not write the file %1: %2</source>
+        <translation>%1 файлини ёзиб бўлмади: %2</translation>
     </message>
 </context>
 <context>
