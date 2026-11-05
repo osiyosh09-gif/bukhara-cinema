@@ -347,16 +347,11 @@ private slots:
                 mix.insert(mix.end(), s, s + size_t(frames) * 2);
                 return true;
             });
-            if (!ok)
+            if (!ok || mix.size() < size_t(kRate))
                 return -1.0;
-            // Where the loudest sample is, for a report on failure.
-            size_t at = 0;
-            for (size_t i = 0; i < mix.size(); ++i)
-                if (std::abs(mix[i]) > std::abs(mix[at]))
-                    at = i;
-            qInfo("peak %f at sample %d of %d; start %f %f %f %f", mix[at], int(at / 2), int(mix.size() / 2),
-                  mix.size() > 40 ? mix[0] : 0.f, mix.size() > 40 ? mix[10] : 0.f, mix.size() > 40 ? mix[20] : 0.f,
-                  mix.size() > 40 ? mix[40] : 0.f);
+            // The first frames after the seek to 0 depend on where the AAC
+            // decoder was before; from frame 10 on the tone is steady.
+            mix.erase(mix.begin(), mix.begin() + 10 * 1920 * 2);
             return peak(mix);
         };
         const double half2 = rendered();
@@ -367,6 +362,7 @@ private slots:
         qInfo("rendered peaks: x0.5 %f, x1 %f, without %f", half2, unity, without);
         QVERIFY2(unity > 0.02 && std::abs(half2 / unity - 0.5) < 0.02,
                  qPrintable(QStringLiteral("%1 %2").arg(half2).arg(unity)));
+        QVERIFY(std::abs(unity / without - 1) < 0.02); // the neutral value changes nothing
     }
 
     void controller()
