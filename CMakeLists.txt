@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.35.0
+    VERSION 0.36.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -16,6 +16,12 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Widgets Concurrent LinguistToo
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(FFmpeg REQUIRED)
+
+# VST 3 audio plug-ins (phase 15c): Steinberg VST 3 SDK, MIT licence, fetched at configure time.
+option(BC_ENABLE_VST3 "Host VST 3 audio plug-ins (Steinberg VST 3 SDK, MIT)" ON)
+if(BC_ENABLE_VST3)
+    include(Vst3Sdk)
+endif()
 
 # ---------------------------------------------------------------------------
 # Core (no widgets): project model, media probing
@@ -35,6 +41,7 @@ add_library(bc_core STATIC
     src/core/HwAccel.h          src/core/HwAccel.cpp
     src/core/SceneDetect.h      src/core/SceneDetect.cpp
     src/core/Interchange.h      src/core/Interchange.cpp
+    src/core/Vst3Host.h         src/core/Vst3Host.cpp
     src/core/InterchangeRead.cpp
     src/core/RenderPreview.h    src/core/RenderPreview.cpp
     src/core/Collector.h        src/core/Collector.cpp
@@ -47,6 +54,10 @@ add_library(bc_core STATIC
 )
 target_include_directories(bc_core PUBLIC src)
 target_link_libraries(bc_core PUBLIC Qt6::Core Qt6::Gui FFmpeg::FFmpeg)
+if(BC_ENABLE_VST3)
+    target_link_libraries(bc_core PRIVATE bc_vst3host)
+    set_source_files_properties(src/core/Vst3Host.cpp PROPERTIES COMPILE_DEFINITIONS BC_HAVE_VST3)
+endif()
 
 # Video engine: MLT (LGPL). On Windows CI it is built from source against the
 # LGPL FFmpeg; never use a distribution package that links GPL FFmpeg there.
@@ -73,6 +84,7 @@ add_library(bc_ui STATIC
     src/app/MonitorView.h       src/app/MonitorView.cpp
     src/app/ClipInspector.h     src/app/ClipInspector.cpp
     src/app/EffectsPanel.h      src/app/EffectsPanel.cpp
+    src/app/Vst3Plugins.h       src/app/Vst3Plugins.cpp
     src/app/AudioMixer.h        src/app/AudioMixer.cpp
     src/app/ColorPanel.h        src/app/ColorPanel.cpp
     src/app/ColorWheel.h        src/app/ColorWheel.cpp
@@ -152,6 +164,7 @@ install(FILES
     licenses/THIRD_PARTY.md
     licenses/LGPL-3.0.txt
     licenses/GPL-3.0.txt
+    licenses/VST3-SDK-MIT.txt
     DESTINATION licenses)
 
 # ---------------------------------------------------------------------------

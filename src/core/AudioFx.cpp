@@ -1,7 +1,14 @@
 #include "core/AudioFx.h"
 
+#include "core/Vst3Host.h"
+
+#include <QDebug>
+#include <QMutex>
+#include <QSet>
+
 #include <algorithm>
 #include <cmath>
+#include <map>
 
 namespace bc {
 
@@ -128,6 +135,41 @@ void AudioChain::configure(const ClipEffects &effects, int sampleRate, int chann
                 design(b.b0, b.b1, b.b2, b.a1, b.a2, Shape::Notch, rate, base * h, 0, base * h / width);
                 s.filters.push_back(b);
             }
+        } else if (e.kind == ClipEffect::Kind::Plugin) {
+            s.pluginKey = e.pluginPath + QLatin1Char('|') + e.pluginId;
+            for (Stage &o : old) // the same plug-in keeps its instance (and its sound in flight)
+                if (o.plugin && o.pluginKey == s.pluginKey) {
+                    s.plugin = std::move(o.plugin);
+                    break;
+                }
+            if (!s.plugin) {
+                std::string error;
+                std::unique_ptr<vst3::Plugin> p =
+                    vst3::Plugin::create(e.pluginPath.toStdString(), e.pluginId.toStdString(), &error);
+                if (!p) {
+                    static QMutex mutex;
+                    static QSet<QString> told;
+                    const QMutexLocker lock(&mutex);
+                    if (!told.contains(s.pluginKey)) {
+                        told.insert(s.pluginKey);
+                        qWarning().noquote() << "VST 3 plug-in" << e.pluginName << "(" << e.pluginPath
+                                             << ") not loaded:" << QString::fromStdString(error);
+                    }
+                    continue; // the sound passes unchanged
+                }
+                s.plugin = std::move(p);
+            }
+            if (!s.plugin->isPrepared() || !sameShape) {
+                if (!s.plugin->prepare(sampleRate, channels, 4096))
+                    continue;
+            }
+            std::map<uint32_t, double> values;
+            for (auto it = e.params.cbegin(); it != e.params.cend(); ++it) {
+                quint32 id = 0;
+                if (ClipEffect::pluginParamId(it.key(), &id))
+                    values[id] = e.value(it.key());
+            }
+            s.plugin->setParameters(values);
         } else if (e.kind == ClipEffect::Kind::NoiseReduction) {
             s.nrReduction = e.value(QStringLiteral("reduction"));
             s.nrSensitivity = e.value(QStringLiteral("sensitivity"));
@@ -166,6 +208,8 @@ void AudioChain::reset()
 {
     for (Stage &s : m_stages) {
         s.reduction = 0;
+        if (s.plugin)
+            s.plugin->reset();
         if (s.denoiser)
             s.denoiser->reset();
         for (Biquad &b : s.filters)
@@ -182,6 +226,10 @@ void AudioChain::process(float *samples, int frames)
     const int ch = m_channels;
     double maxReduction = 0;
     for (Stage &s : m_stages) {
+        if (s.plugin) {
+            s.plugin->process(samples, frames, ch);
+            continue;
+        }
         if (s.denoiser) {
             s.denoiser->process(samples, frames);
             continue;
@@ -227,9 +275,12 @@ void AudioChain::process(float *samples, int frames)
 int AudioChain::latency() const
 {
     int n = 0;
-    for (const Stage &s : m_stages)
+    for (const Stage &s : m_stages) {
         if (s.denoiser)
             n += Denoiser::kLatency;
+        if (s.plugin)
+            n += s.plugin->latency();
+    }
     return n;
 }
 

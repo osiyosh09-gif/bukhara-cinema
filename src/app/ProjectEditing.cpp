@@ -2,6 +2,8 @@
 // Part of ProjectController.
 
 #include "app/ProjectController.h"
+#include "app/Vst3Plugins.h"
+#include "core/Vst3Host.h"
 
 #include <QHash>
 
@@ -464,6 +466,34 @@ int ProjectController::addClipEffect(const QUuid &clipId, ClipEffect::Kind kind)
         if (!c || ClipEffect::isAudio(kind) != (t.kindOf(clipId) == Timeline::Kind::Audio))
             return false;
         c->effects << ClipEffect::make(kind);
+        index = int(c->effects.size()) - 1;
+        return true;
+    });
+    return index;
+}
+
+int ProjectController::addClipPlugin(const QUuid &clipId, const QString &path, const QString &uid,
+                                     const QString &name, QString *error)
+{
+    if (timeline().kindOf(clipId) != Timeline::Kind::Audio) {
+        if (error)
+            *error = tr("Plug-ins work on sound clips.");
+        return -1;
+    }
+    vst3::Plugin *plugin = Vst3Plugins::uiInstance(path, uid, error);
+    if (!plugin)
+        return -1;
+    QMap<QString, double> values;
+    for (const vst3::ParamInfo &p : plugin->parameters())
+        if (!p.readOnly && !p.bypass)
+            values.insert(ClipEffect::pluginParamKey(p.id), p.defaultValue);
+    const QString shown = name.isEmpty() ? QString::fromStdString(plugin->info().name) : name;
+    int index = -1;
+    editTimeline(tr("Add plug-in"), [&](Timeline &t) {
+        TimelineClip *c = anyClip(t, clipId);
+        if (!c || t.kindOf(clipId) != Timeline::Kind::Audio)
+            return false;
+        c->effects << ClipEffect::makePlugin(path, uid, shown, values);
         index = int(c->effects.size()) - 1;
         return true;
     });

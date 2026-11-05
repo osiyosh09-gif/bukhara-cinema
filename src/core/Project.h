@@ -92,7 +92,7 @@ struct NestedSequence
 class Project
 {
 public:
-    static constexpr int kFormatVersion = 13; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences; 6: clip motion and speed; 7: transitions; 8: clip effects; 9: colour correction; 10: audio mixer (track volume and pan, master); 11: sound effects on audio clips; 12: subtitles; 13: multicamera sequences and clip angles
+    static constexpr int kFormatVersion = 14; // 2: timeline added; 3: titles, clip volume and fades; 4: markers; 5: nested sequences; 6: clip motion and speed; 7: transitions; 8: clip effects; 9: colour correction; 10: audio mixer (track volume and pan, master); 11: sound effects on audio clips; 12: subtitles; 13: multicamera sequences and clip angles; 14: VST 3 plug-ins on audio clips
     static QString fileExtension() { return QStringLiteral("bcproj"); }
 
     QString name = QStringLiteral("Untitled");

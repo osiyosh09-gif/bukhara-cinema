@@ -42,6 +42,8 @@ private:
     void refreshParams();  // the form of the current effect
     void addEffect();
     void fillKinds(); // the kinds for the current clip (picture or sound)
+    void buildPluginForm(const ClipEffect &e); // VST 3 parameters (phase 15c)
+    void updatePluginValues(const ClipEffect &e);
 
     ProjectController *m_ctl;
     TimelineView *m_view;
@@ -55,6 +57,7 @@ private:
     QUuid m_formClip;
     int m_formIndex = -1;
     int m_formKind = -1;
+    QString m_formPlugin; // path|uid the form shows
 
     QLabel *m_header;
     QWidget *m_target;          // Picture / Sound switch for linked clips
@@ -64,6 +67,7 @@ private:
     QWidget *m_body;
     QComboBox *m_kind;
     QToolButton *m_add;
+    QToolButton *m_findPlugins;
     QListWidget *m_list;
     QToolButton *m_up;
     QToolButton *m_down;
@@ -71,6 +75,7 @@ private:
     QGroupBox *m_paramsBox;
     QFormLayout *m_form;
     QLabel *m_note;
+    QLabel *m_pluginNote; // plug-in missing, or not all parameters shown
 };
 
 } // namespace bc

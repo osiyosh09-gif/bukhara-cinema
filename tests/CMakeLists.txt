@@ -209,3 +209,15 @@ add_executable(tst_phase15b tst_phase15b.cpp)
 target_link_libraries(tst_phase15b PRIVATE bc_ui Qt6::Test)
 add_test(NAME phase15b_interchange_import COMMAND tst_phase15b)
 set_tests_properties(phase15b_interchange_import PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
+
+# Phase 15c: VST 3 audio plug-ins, tested with a small plug-in built from the SDK.
+if(BC_ENABLE_VST3)
+    bc_add_test_vst3(BcTestGain vst3/BcTestGain.cpp)
+    add_executable(tst_phase15c tst_phase15c.cpp)
+    target_link_libraries(tst_phase15c PRIVATE bc_ui Qt6::Test)
+    add_dependencies(tst_phase15c BcTestGain)
+    target_compile_definitions(tst_phase15c PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}"
+                                                    BC_TEST_VST3_DIR="${CMAKE_CURRENT_BINARY_DIR}/test-vst3")
+    add_test(NAME phase15c_vst3_plugins COMMAND tst_phase15c)
+    set_tests_properties(phase15c_vst3_plugins PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 300)
+endif()

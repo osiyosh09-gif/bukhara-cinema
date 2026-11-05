@@ -479,11 +479,6 @@
         <translation>Файл &gt; Бошқа дастурлар учун экспорт асосий секвенцияни Premiere Pro, DaVinci Resolve ва бошқа дастурлар учун ёзади: қайси файлнинг қайси қисми қайси йўлакда қаерда туриши, cross dissolve ўтишлари, маркерлар ва (XML'да) клип овози. Nested ва мультикам клиплар ичидаги клипларга айланади. Сақлашдан олдин ойна нима ўтказилмаслигини кўрсатади: титрлар, эффектлар, ранг, ҳаракат, тезлик ўзгариши, субтитрлар ва бошқалар. EDL'да фақат V1 видео йўлаги бўлади. Файлларни Premiere Pro ва DaVinci Resolve'да очиш биз томондан синалмаган.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="76" />
-        <source>Audio plugins (VST3)</source>
-        <translation>Аудио плагинлар (VST3)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="75" />
         <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
         <translation>Бошқа дастурлардан импорт: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
@@ -492,6 +487,21 @@
         <location filename="../src/app/FeatureStatus.cpp" line="75" />
         <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
         <translation>Файл &gt; Бошқа дастурлардан импорт Premiere Pro, DaVinci Resolve ёки бошқа дастурда қилинган секвенцияни очади: клиплар ўз жойи билан, dissolve ўтишлари, маркерлар ва (XML'да) клип овози; битта nested клип бўлиб ёки тўғридан-тўғри очиқ секвенцияга, курсор жойига; битта бекор қилиш қадами. Медиа файллар йўли бўйича, файл ёнидан ёки кутубхонадан топилади; топилмаганлари қайта боғлаш учун офлайн қолади. Бошқа дастурдаги эффектлар, титрлар, тезлик ўзгариши ва nested секвенциялар импорт қилинмайди; ойна буни олдиндан кўрсатади. Premiere Pro ва DaVinci Resolve'нинг ўзидан олинган файллар биз томондан синалмаган.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>VST 3 audio plug-ins</source>
+        <translation>VST 3 аудио плагинлар</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>Audio effects installed on the computer as VST 3 plug-ins are listed in the Effects panel of a sound clip (standard VST 3 folder; Find plug-ins looks again). Their values appear as sliders and switches, change in one undo step, are saved in the project and work in playback and export. A plug-in missing on another computer lets the sound pass unchanged. Tested in CI with a small test plug-in built from the Steinberg SDK; commercial plug-ins have not been tested by us.</source>
+        <translation>Компьютерга VST 3 плагин сифатида ўрнатилган аудио эффектлар овоз клипининг «Эффектлар» панелида кўринади (стандарт VST 3 папкаси; «Плагинларни топиш» қайта қидиради). Қийматлари слайдер ва белгилар бўлиб чиқади, битта бекор қилиш қадамида ўзгаради, лойиҳада сақланади, ижро ва экспортда ишлайди. Бошқа компьютерда плагин бўлмаса овоз ўзгаришсиз ўтади. CI'да Steinberg SDK'дан йиғилган кичик синов плагини билан текширилган; тижорат плагинлари биз томондан синалмаган.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="77" />
+        <source>VST 3 plug-in windows and crash protection</source>
+        <translation>VST 3 плагин ойналари ва ишдан чиқишдан ҳимоя</translation>
     </message>
 </context>
 <context>
@@ -570,11 +580,6 @@
         <translation>Учинчи томон компонентлари</translation>
     </message>
     <message>
-        <location filename="../src/app/AboutDialog.cpp" line="22" />
-        <source>BUKHARA CINEMA uses the following open-source components. They are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.</source>
-        <translation>BUKHARA CINEMA қуйидаги очиқ кодли компонентлардан фойдаланади. Улар алоҳида DLL файллар сифатида уланган, шунинг учун уларни мос версиялар билан алмаштириш мумкин.</translation>
-    </message>
-    <message>
         <location filename="../src/app/AboutDialog.cpp" line="32" />
         <source>User interface</source>
         <translation>Фойдаланувчи интерфейси</translation>
@@ -648,6 +653,31 @@
         <location filename="../src/app/AboutDialog.cpp" line="78" />
         <source>Close</source>
         <translation>Ёпиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="22" />
+        <source>BUKHARA CINEMA uses the following open-source components. Except the VST 3 SDK, which is built into the program, they are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.</source>
+        <translation>BUKHARA CINEMA қуйидаги очиқ кодли компонентлардан фойдаланади. Дастур ичига қурилган VST 3 SDK'дан ташқари, улар алоҳида DLL файллар сифатида уланган, шунинг учун уларни мос версиялар билан алмаштириш мумкин.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="43" />
+        <source>Hosting VST 3 audio plug-ins (built into the program)</source>
+        <translation>VST 3 аудио плагинларни ишлатиш (дастур ичига қурилган)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="56" />
+        <source>VST is a registered trademark of Steinberg Media Technologies GmbH.</source>
+        <translation>VST is a registered trademark of Steinberg Media Technologies GmbH.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="89" />
+        <source>Works with VST® 3 audio plug-ins.</source>
+        <translation>VST® 3 аудио плагинлар билан ишлайди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="92" />
+        <source>Author: %1</source>
+        <translation>Муаллиф: %1</translation>
     </message>
 </context>
 <context>
@@ -1643,6 +1673,68 @@
         <location filename="../src/app/EffectsPanel.cpp" line="342" />
         <source>Title</source>
         <translation>Титр</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="80" />
+        <source>VST 3 plug-in</source>
+        <translation>VST 3 плагин</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="269" />
+        <source>Look for VST 3 plug-ins again. Found: %1</source>
+        <translation>VST 3 плагинларни қайта қидириш. Топилди: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="322" />
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="323" />
+        <source>VST 3: %1</source>
+        <translation>VST 3: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="339" />
+        <source>Find plug-ins</source>
+        <translation>Плагинларни топиш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="340" />
+        <source>Look for VST 3 plug-ins again</source>
+        <translation>VST 3 плагинларни қайта қидириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="411" />
+        <source>%1 (VST 3)</source>
+        <translation>%1 (VST 3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="504" />
+        <source>The plug-in "%1" is not on this computer or did not start, so the sound passes unchanged. Install it and press "Find plug-ins".
+%2</source>
+        <translation>«%1» плагини бу компьютерда йўқ ёки ишга тушмади, шунинг учун овоз ўзгаришсиз ўтади. Уни ўрнатинг ва «Плагинларни топиш»ни босинг.
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="524" />
+        <source>%1, %2</source>
+        <translation>%1, %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="557" />
+        <source>This plug-in has no values to set here.</source>
+        <translation>Бу плагинда бу ерда созланадиган қиймат йўқ.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="561" />
+        <source>Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.</source>
+        <translation>%2 та қийматдан фақат биринчи %1 таси кўрсатилган. Плагиннинг ўз ойнаси кейинги версияда келади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="608" />
+        <source>The plug-in did not start: %1</source>
+        <translation>Плагин ишга тушмади: %1</translation>
     </message>
 </context>
 <context>
@@ -4049,6 +4141,16 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="302" />
         <source>The clips could not be placed: the first video and audio tracks are locked.</source>
         <translation>Клипларни қўйиб бўлмади: биринчи видео ва аудио йўлаклар қулфланган.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="480" />
+        <source>Plug-ins work on sound clips.</source>
+        <translation>Плагинлар овоз клипларида ишлайди.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="492" />
+        <source>Add plug-in</source>
+        <translation>Плагин қўшиш</translation>
     </message>
 </context>
 <context>
