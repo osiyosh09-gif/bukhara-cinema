@@ -174,7 +174,8 @@ private slots:
         std::unique_ptr<vst3::Plugin> p = vst3::Plugin::create(bundlePath().toStdString(), kUid.toStdString(), &error);
         QVERIFY2(p, error.c_str());
         const std::vector<vst3::ParamInfo> params = p->parameters();
-        QCOMPARE(int(params.size()), 2);
+        QCOMPARE(int(params.size()), 4); // Gain, Invert and the hidden Crash and Hang (phase 15c-2)
+        QVERIFY(params[2].hidden && params[3].hidden);
         QCOMPARE(QString::fromStdString(params[0].title), QStringLiteral("Gain"));
         QCOMPARE(params[0].defaultValue, 0.5);
         QCOMPARE(params[1].stepCount, 1);

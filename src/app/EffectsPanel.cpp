@@ -18,6 +18,7 @@
 #include <QSet>
 #include <QSignalBlocker>
 #include <QSlider>
+#include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -190,6 +191,7 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     , m_form(new QFormLayout(m_paramsBox))
     , m_note(new QLabel)
     , m_pluginNote(new QLabel)
+    , m_crashWatch(new QTimer(this))
 {
     setObjectName(QStringLiteral("effectsPanel"));
     m_empty->setObjectName(QStringLiteral("effectsEmpty"));
@@ -262,6 +264,20 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     lay->addStretch(1);
 
     connect(m_add, &QToolButton::clicked, this, &EffectsPanel::addEffect);
+    m_crashWatch->setInterval(1000);
+    connect(m_crashWatch, &QTimer::timeout, this, [this] {
+        const TimelineClip *c = m_ctl->timeline().clip(m_clip);
+        const int row = currentEffect();
+        if (!c || row < 0 || row >= c->effects.size() || c->effects[row].kind != ClipEffect::Kind::Plugin) {
+            m_crashWatch->stop();
+            return;
+        }
+        const ClipEffect &e = c->effects[row];
+        if (Vst3Plugins::crashMessage(e.pluginPath, e.pluginId).isEmpty() == m_formCrashed) {
+            m_formPlugin.clear(); // rebuild: it stopped (or was restarted elsewhere)
+            refreshParams();
+        }
+    });
     connect(m_findPlugins, &QToolButton::clicked, this, [this] {
         const int n = Vst3Plugins::rescan();
         m_kindsFor = -1;
@@ -443,8 +459,11 @@ void EffectsPanel::refreshParams()
         if (m_formClip != m_clip || m_formIndex != row || m_formKind != int(e.kind) || m_formPlugin != pluginKey(e))
             buildPluginForm(e);
         updatePluginValues(e);
+        if (!m_crashWatch->isActive())
+            m_crashWatch->start();
         return;
     }
+    m_crashWatch->stop();
     m_formPlugin.clear();
     const QList<EffectParamSpec> specs = ClipEffect::specs(e.kind);
     if (m_formClip != m_clip || m_formIndex != row || m_formKind != int(e.kind)) {
@@ -498,6 +517,33 @@ void EffectsPanel::buildPluginForm(const ClipEffect &e)
     m_formIndex = currentEffect();
     m_formKind = int(e.kind);
     m_formPlugin = pluginKey(e);
+    // Phase 15c-2: a plug-in that crashed or hung in this run is not started again by itself.
+    const QString crash = Vst3Plugins::crashMessage(e.pluginPath, e.pluginId);
+    m_formCrashed = !crash.isEmpty();
+    if (m_formCrashed) {
+        auto *stopped = new QLabel(tr("The plug-in \"%1\" stopped working (%2). BUKHARA CINEMA keeps running; "
+                                      "the sound of this effect passes unchanged until the plug-in is started again.")
+                                       .arg(e.pluginName, crash.contains(QLatin1String("hung"))
+                                                              ? tr("it stopped answering")
+                                                              : tr("it crashed")));
+        stopped->setObjectName(QStringLiteral("effectPluginCrashed"));
+        stopped->setWordWrap(true);
+        stopped->setStyleSheet(QStringLiteral("color:#e06c5a;"));
+        m_form->addRow(stopped);
+        auto *restart = new QToolButton;
+        restart->setObjectName(QStringLiteral("effectPluginRestart"));
+        restart->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        restart->setText(tr("Start the plug-in again"));
+        const QString path = e.pluginPath, uid = e.pluginId;
+        connect(restart, &QToolButton::clicked, this, [this, path, uid] {
+            Vst3Plugins::restart(path, uid);
+            m_formPlugin.clear();
+            refreshParams();
+        });
+        m_form->addRow(restart);
+        m_pluginNote->clear();
+        return;
+    }
     QString error;
     vst3::Plugin *plugin = Vst3Plugins::uiInstance(e.pluginPath, e.pluginId, &error);
     if (!plugin) {
@@ -509,6 +555,31 @@ void EffectsPanel::buildPluginForm(const ClipEffect &e)
         m_form->addRow(missing);
         m_pluginNote->clear();
         return;
+    }
+    {
+        // The plug-in's own window (Windows; it runs in the plug-in host program).
+        auto *open = new QToolButton;
+        open->setObjectName(QStringLiteral("effectPluginWindow"));
+        open->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        open->setText(tr("Open plug-in window"));
+        if (!Vst3Plugins::editorsAvailable()) {
+            open->setEnabled(false);
+            open->setToolTip(tr("Plug-in windows work in the Windows version of the program."));
+        } else if (!plugin->hasEditor()) {
+            open->setEnabled(false);
+            open->setToolTip(tr("This plug-in has no window of its own."));
+        } else {
+            open->setToolTip(tr("What you change in the plug-in window is saved in the project and can be undone."));
+        }
+        connect(open, &QToolButton::clicked, this, [this] {
+            QString err;
+            if (!Vst3Plugins::openEditor(m_ctl, m_clip, currentEffect(), this, &err)) {
+                m_pluginNote->setText(tr("The plug-in window did not open: %1").arg(err));
+                m_pluginNote->setProperty("for", QString());
+                m_pluginNote->setVisible(true);
+            }
+        });
+        m_form->addRow(open);
     }
     int shown = 0, total = 0;
     for (const vst3::ParamInfo &p : plugin->parameters()) {
@@ -558,8 +629,7 @@ void EffectsPanel::buildPluginForm(const ClipEffect &e)
         none->setWordWrap(true);
         m_form->addRow(none);
     }
-    m_pluginNote->setText(total > shown ? tr("Only the first %1 of %2 values are shown. The plug-in's own window "
-                                             "comes in a later version.").arg(shown).arg(total)
+    m_pluginNote->setText(total > shown ? tr("Only the first %1 of %2 values are shown here.").arg(shown).arg(total)
                                         : QString());
     m_pluginNote->setProperty("for", m_formPlugin);
 }

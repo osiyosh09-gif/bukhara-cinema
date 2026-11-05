@@ -4,6 +4,7 @@
 #include "app/Logging.h"
 #include "app/MainWindow.h"
 #include "app/Theme.h"
+#include "app/Vst3Plugins.h"
 #include "engine/TimelinePlayer.h"
 
 #include <QApplication>
@@ -19,6 +20,8 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(bc::appName());
     QApplication::setApplicationVersion(bc::appVersion());
     QApplication::setWindowIcon(QIcon(QStringLiteral(":/icons/bukhara-cinema.png")));
+    // VST 3 plug-ins run in BukharaPluginHost next to the program (phase 15c-2).
+    bc::Vst3Plugins::useHostProgram(QCoreApplication::applicationDirPath());
 
     bc::Logging::init();
     qInfo("%s %s starting on %s (Qt %s)",

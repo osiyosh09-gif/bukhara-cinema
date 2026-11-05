@@ -10,6 +10,7 @@ class QFormLayout;
 class QGroupBox;
 class QLabel;
 class QListWidget;
+class QTimer;
 class QToolButton;
 
 namespace bc {
@@ -58,6 +59,8 @@ private:
     int m_formIndex = -1;
     int m_formKind = -1;
     QString m_formPlugin; // path|uid the form shows
+    bool m_formCrashed = false; // the form shows "the plug-in stopped" (phase 15c-2)
+    QTimer *m_crashWatch;       // notices a plug-in that stops while its form is shown
 
     QLabel *m_header;
     QWidget *m_target;          // Picture / Sound switch for linked clips

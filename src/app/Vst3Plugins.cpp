@@ -1,6 +1,12 @@
 #include "app/Vst3Plugins.h"
 
+#include "app/ProjectController.h"
 #include "core/Vst3Host.h"
+
+#include <QCoreApplication>
+#include <QPointer>
+#include <QSet>
+#include <QWidget>
 
 #include <QDateTime>
 #include <QDir>
@@ -89,11 +95,17 @@ void scan()
         if (entry.value(QStringLiteral("stamp")).toDouble() != double(t)) {
             settings.setValue(QString::fromLatin1(kScanningKey), bundle);
             settings.sync();
-            bool loaded = false;
+            bool crashedNow = false;
             std::string error;
-            const std::vector<vst3::PluginInfo> infos = vst3::describeBundle(bundle.toStdString(), true, &loaded, &error);
+            // In the host program when there is one: a crash there only marks the bundle.
+            const std::vector<vst3::PluginInfo> infos = vst3::describeBundleIsolated(bundle.toStdString(), &crashedNow, &error);
             settings.remove(QString::fromLatin1(kScanningKey));
             settings.sync();
+            if (crashedNow) {
+                bad << bundle;
+                settings.setValue(QString::fromLatin1(kBadKey), bad);
+                continue;
+            }
             QJsonArray classes;
             for (const vst3::PluginInfo &i : infos)
                 classes.append(QJsonObject{{QStringLiteral("uid"), QString::fromStdString(i.uid)},
@@ -153,8 +165,12 @@ QStringList Vst3Plugins::badBundles()
 vst3::Plugin *Vst3Plugins::uiInstance(const QString &path, const QString &uid, QString *error)
 {
     const QString key = path + QLatin1Char('|') + uid;
-    if (auto it = s_ui.constFind(key); it != s_ui.constEnd())
-        return it->get();
+    if (auto it = s_ui.constFind(key); it != s_ui.constEnd()) {
+        if (!(*it)->crashed())
+            return it->get();
+        s_ui.remove(key); // its host program ended: start again (or tell why not)
+        s_uiErrors.remove(key);
+    }
     if (s_uiErrors.contains(key)) {
         if (error)
             *error = s_uiErrors.value(key);
@@ -171,6 +187,230 @@ vst3::Plugin *Vst3Plugins::uiInstance(const QString &path, const QString &uid, Q
     vst3::Plugin *raw = p.get();
     s_ui.insert(key, std::shared_ptr<vst3::Plugin>(std::move(p)));
     return raw;
+}
+
+QString Vst3Plugins::crashMessage(const QString &path, const QString &uid)
+{
+    return QString::fromStdString(vst3::crashMessage(path.toStdString(), uid.toStdString()));
+}
+
+void Vst3Plugins::restart(const QString &path, const QString &uid)
+{
+    vst3::forgetCrash(path.toStdString(), uid.toStdString());
+    const QString key = path + QLatin1Char('|') + uid;
+    s_ui.remove(key);
+    s_uiErrors.remove(key);
+}
+
+void Vst3Plugins::useHostProgram(const QString &folder)
+{
+#ifdef Q_OS_WIN
+    const QString exe = QDir(folder).filePath(QStringLiteral("BukharaPluginHost.exe"));
+#else
+    const QString exe = QDir(folder).filePath(QStringLiteral("BukharaPluginHost"));
+#endif
+    if (QFileInfo(exe).isExecutable())
+        vst3::setHostProgram(QDir::toNativeSeparators(exe).toStdString());
+}
+
+// --- the plug-ins' own windows (phase 15c-2)
+
+namespace {
+
+struct EditorSession
+{
+    int serial = 0;
+    QPointer<ProjectController> ctl;
+    QUuid clip;
+    int index = -1;
+    QString path, uid;
+    std::unique_ptr<vst3::Plugin> plugin;
+};
+
+std::vector<std::unique_ptr<EditorSession>> s_editors;
+int s_serial = 0;
+QObject *s_context = nullptr;
+QSet<ProjectController *> s_watched;
+
+EditorSession *session(int serial)
+{
+    for (const auto &e : s_editors)
+        if (e->serial == serial)
+            return e.get();
+    return nullptr;
+}
+
+void closeSession(int serial)
+{
+    for (auto it = s_editors.begin(); it != s_editors.end(); ++it)
+        if ((*it)->serial == serial) {
+            std::unique_ptr<EditorSession> gone = std::move(*it);
+            s_editors.erase(it);
+            gone->plugin->closeEditor();
+            return; // `gone` ends its host program
+        }
+}
+
+std::map<uint32_t, double> pluginValues(const ClipEffect &e)
+{
+    std::map<uint32_t, double> values;
+    for (auto it = e.params.cbegin(); it != e.params.cend(); ++it) {
+        quint32 id = 0;
+        if (ClipEffect::pluginParamId(it.key(), &id))
+            values[id] = e.value(it.key());
+    }
+    return values;
+}
+
+// The effect a window belongs to, or null when it is gone or is another one now.
+const ClipEffect *effectOf(const EditorSession &s, ClipEffects *holder)
+{
+    if (!s.ctl)
+        return nullptr;
+    *holder = s.ctl->clipEffects(s.clip);
+    if (s.index < 0 || s.index >= holder->size())
+        return nullptr;
+    const ClipEffect &e = (*holder)[s.index];
+    if (e.kind != ClipEffect::Kind::Plugin || e.pluginPath != s.path || e.pluginId != s.uid)
+        return nullptr;
+    return &e;
+}
+
+// Undo, redo or a slider moved: the open windows show the project's values.
+void syncEditors(ProjectController *ctl)
+{
+    QList<int> stale;
+    for (const auto &s : s_editors) {
+        if (s->ctl != ctl)
+            continue;
+        ClipEffects holder;
+        const ClipEffect *e = effectOf(*s, &holder);
+        if (!e || s->plugin->crashed()) {
+            stale << s->serial;
+            continue;
+        }
+        s->plugin->setParameters(pluginValues(*e));
+    }
+    for (int serial : stale)
+        closeSession(serial);
+}
+
+void watch(ProjectController *ctl)
+{
+    if (!s_context) {
+        s_context = new QObject;
+        QObject::connect(qApp, &QCoreApplication::aboutToQuit, s_context, [] { Vst3Plugins::closeAllEditors(); });
+    }
+    if (s_watched.contains(ctl))
+        return;
+    s_watched.insert(ctl);
+    QObject::connect(ctl, &ProjectController::timelineChanged, s_context, [ctl] { syncEditors(ctl); });
+    QObject::connect(ctl, &ProjectController::projectReset, s_context, [ctl] {
+        QList<int> all;
+        for (const auto &s : s_editors)
+            if (s->ctl == ctl)
+                all << s->serial;
+        for (int serial : all)
+            closeSession(serial);
+    });
+    QObject::connect(ctl, &QObject::destroyed, s_context, [ctl] {
+        s_watched.remove(ctl);
+        QList<int> all;
+        for (const auto &s : s_editors)
+            if (!s->ctl || s->ctl == ctl)
+                all << s->serial;
+        for (int serial : all)
+            closeSession(serial);
+    });
+}
+
+} // namespace
+
+bool Vst3Plugins::editorsAvailable()
+{
+#ifdef Q_OS_WIN
+    return vst3::available() && !vst3::hostProgram().empty();
+#else
+    return false;
+#endif
+}
+
+bool Vst3Plugins::openEditor(ProjectController *ctl, const QUuid &clip, int index, QWidget *owner, QString *error)
+{
+    for (const auto &s : s_editors)
+        if (s->ctl == ctl && s->clip == clip && s->index == index && s->plugin->editorOpen())
+            return s->plugin->openEditor(owner ? quint64(owner->window()->winId()) : 0, {}, nullptr); // to the front
+    closeEditor(ctl, clip, index);
+    if (!editorsAvailable()) // the panel does not offer it then
+        return false;
+    auto s = std::make_unique<EditorSession>();
+    s->serial = ++s_serial;
+    s->ctl = ctl;
+    s->clip = clip;
+    s->index = index;
+    ClipEffects holder = ctl->clipEffects(clip);
+    if (index < 0 || index >= holder.size() || holder[index].kind != ClipEffect::Kind::Plugin)
+        return false;
+    const ClipEffect &e = holder[index];
+    s->path = e.pluginPath;
+    s->uid = e.pluginId;
+    std::string err;
+    s->plugin = vst3::Plugin::create(e.pluginPath.toStdString(), e.pluginId.toStdString(), &err);
+    if (!s->plugin) {
+        if (error)
+            *error = QString::fromStdString(err);
+        return false;
+    }
+    s->plugin->setParameters(pluginValues(e));
+    const int serial = s->serial;
+    s->plugin->setEditorCallbacks(
+        [serial](uint32_t id, double v) {
+            // From the host program's thread: the change goes through the controller (undo).
+            QMetaObject::invokeMethod(qApp, [serial, id, v] {
+                EditorSession *s = session(serial);
+                if (s && s->ctl)
+                    s->ctl->setClipEffectValue(s->clip, s->index, ClipEffect::pluginParamKey(id), v);
+            }, Qt::QueuedConnection);
+        },
+        [serial] { QMetaObject::invokeMethod(qApp, [serial] { closeSession(serial); }, Qt::QueuedConnection); });
+    watch(ctl);
+    const QString title = e.pluginName.isEmpty() ? e.pluginId : e.pluginName;
+    if (!s->plugin->openEditor(owner ? quint64(owner->window()->winId()) : 0, title.toStdString(), &err)) {
+        if (error)
+            *error = QString::fromStdString(err);
+        return false;
+    }
+    s_editors.push_back(std::move(s));
+    return true;
+}
+
+bool Vst3Plugins::isEditorOpen(ProjectController *ctl, const QUuid &clip, int index)
+{
+    for (const auto &s : s_editors)
+        if (s->ctl == ctl && s->clip == clip && s->index == index && s->plugin->editorOpen())
+            return true;
+    return false;
+}
+
+void Vst3Plugins::closeEditor(ProjectController *ctl, const QUuid &clip, int index)
+{
+    QList<int> found;
+    for (const auto &s : s_editors)
+        if (s->ctl == ctl && s->clip == clip && s->index == index)
+            found << s->serial;
+    for (int serial : found)
+        closeSession(serial);
+}
+
+void Vst3Plugins::closeAllEditors()
+{
+    while (!s_editors.empty())
+        closeSession(s_editors.front()->serial);
+}
+
+int Vst3Plugins::openEditorCount()
+{
+    return int(s_editors.size());
 }
 
 } // namespace bc

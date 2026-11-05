@@ -69,7 +69,7 @@ add_library(bc_vst3host STATIC
 if(WIN32)
     target_sources(bc_vst3host PRIVATE ${_s}/public.sdk/source/vst/hosting/module_win32.cpp
                                        ${_s}/public.sdk/source/common/threadchecker_win32.cpp)
-    target_link_libraries(bc_vst3host PUBLIC shell32 ole32)
+    target_link_libraries(bc_vst3host PUBLIC shell32 ole32 user32)
 elseif(UNIX AND NOT APPLE)
     target_sources(bc_vst3host PRIVATE ${_s}/public.sdk/source/vst/hosting/module_linux.cpp
                                        ${_s}/public.sdk/source/common/threadchecker_linux.cpp)

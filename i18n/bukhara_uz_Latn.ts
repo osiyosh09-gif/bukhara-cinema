@@ -503,6 +503,11 @@
         <source>VST 3 plug-in windows and crash protection</source>
         <translation>VST 3 plagin oynalari va ishdan chiqishdan himoya</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="77" />
+        <source>Each plug-in runs in a small program of its own (BukharaPluginHost). A plug-in that crashes or stops answering ends only that program: BUKHARA CINEMA keeps running, the sound passes unchanged and the Effects panel offers to start the plug-in again. Open plug-in window shows the plug-in's own window (Windows); what is changed there is saved in the project, can be undone and is heard in playback and export. Tested in CI with a test plug-in that crashes and hangs on purpose; commercial plug-ins have not been tested by us.</source>
+        <translation>Har bir plagin o‘zining kichik dasturida ishlaydi (BukharaPluginHost). Plagin ishdan chiqsa yoki javob bermay qolsa, faqat o‘sha dastur yopiladi: BUKHARA CINEMA ishlashda davom etadi, ovoz o‘zgarishsiz o‘tadi va «Effektlar» paneli plaginni qayta ishga tushirishni taklif qiladi. «Plagin oynasini ochish» plaginning o‘z oynasini ko‘rsatadi (Windows); u yerda o‘zgartirilgani loyihada saqlanadi, bekor qilinadi, ijro va eksportda eshitiladi. CI'da ataylab ishdan chiqadigan va qotadigan sinov plagini bilan tekshirilgan; tijorat plaginlari biz tomondan sinalmagan.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -1727,14 +1732,59 @@
         <translation>Bu plaginda bu yerda sozlanadigan qiymat yo‘q.</translation>
     </message>
     <message>
-        <location filename="../src/app/EffectsPanel.cpp" line="561" />
-        <source>Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.</source>
-        <translation>%2 ta qiymatdan faqat birinchi %1 tasi ko‘rsatilgan. Plaginning o‘z oynasi keyingi versiyada keladi.</translation>
-    </message>
-    <message>
         <location filename="../src/app/EffectsPanel.cpp" line="608" />
         <source>The plug-in did not start: %1</source>
         <translation>Plagin ishga tushmadi: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="524" />
+        <source>The plug-in "%1" stopped working (%2). BUKHARA CINEMA keeps running; the sound of this effect passes unchanged until the plug-in is started again.</source>
+        <translation>«%1» plagini ishdan chiqdi (%2). BUKHARA CINEMA ishlashda davom etadi; plagin qayta ishga tushirilguncha bu effektning ovozi o‘zgarishsiz o‘tadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="527" />
+        <source>it stopped answering</source>
+        <translation>javob bermay qoldi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="528" />
+        <source>it crashed</source>
+        <translation>xato bilan yopildi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="536" />
+        <source>Start the plug-in again</source>
+        <translation>Plaginni qayta ishga tushirish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="564" />
+        <source>Open plug-in window</source>
+        <translation>Plagin oynasini ochish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="567" />
+        <source>Plug-in windows work in the Windows version of the program.</source>
+        <translation>Plagin oynalari dasturning Windows versiyasida ishlaydi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="570" />
+        <source>This plug-in has no window of its own.</source>
+        <translation>Bu plaginning o‘z oynasi yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="572" />
+        <source>What you change in the plug-in window is saved in the project and can be undone.</source>
+        <translation>Plagin oynasida o‘zgartirganingiz loyihada saqlanadi va bekor qilish mumkin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="577" />
+        <source>The plug-in window did not open: %1</source>
+        <translation>Plagin oynasi ochilmadi: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="632" />
+        <source>Only the first %1 of %2 values are shown here.</source>
+        <translation>Bu yerda %2 ta qiymatdan faqat birinchi %1 tasi ko‘rsatilgan.</translation>
     </message>
 </context>
 <context>

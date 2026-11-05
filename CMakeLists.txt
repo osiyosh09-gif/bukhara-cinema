@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(BukharaCinema
-    VERSION 0.36.0
+    VERSION 0.37.0
     DESCRIPTION "BUKHARA CINEMA video editor"
     LANGUAGES CXX)
 
@@ -42,6 +42,8 @@ add_library(bc_core STATIC
     src/core/SceneDetect.h      src/core/SceneDetect.cpp
     src/core/Interchange.h      src/core/Interchange.cpp
     src/core/Vst3Host.h         src/core/Vst3Host.cpp
+    src/core/Vst3Ipc.h          src/core/Vst3Ipc.cpp
+    src/core/Vst3Remote.cpp
     src/core/InterchangeRead.cpp
     src/core/RenderPreview.h    src/core/RenderPreview.cpp
     src/core/Collector.h        src/core/Collector.cpp
@@ -160,6 +162,24 @@ add_executable(BukharaCinema WIN32 ${BC_APP_SOURCES})
 target_link_libraries(BukharaCinema PRIVATE bc_ui)
 
 install(TARGETS BukharaCinema RUNTIME DESTINATION .)
+
+# The plug-in host (phase 15c-2): each VST 3 plug-in runs in its own copy of
+# this small program, so a crashing plug-in cannot take the editor down.
+if(BC_ENABLE_VST3)
+    add_executable(BukharaPluginHost
+        src/pluginhost/main.cpp
+        src/core/Vst3Host.h src/core/Vst3Host.cpp
+        src/core/Vst3Ipc.h src/core/Vst3Ipc.cpp
+        src/core/Vst3Remote.cpp)
+    target_include_directories(BukharaPluginHost PRIVATE src)
+    target_compile_definitions(BukharaPluginHost PRIVATE BC_HAVE_VST3)
+    target_link_libraries(BukharaPluginHost PRIVATE bc_vst3host)
+    if(MINGW)
+        # One file without runtime DLLs next to it.
+        target_link_options(BukharaPluginHost PRIVATE -static -static-libgcc -static-libstdc++)
+    endif()
+    install(TARGETS BukharaPluginHost RUNTIME DESTINATION .)
+endif()
 install(FILES
     licenses/THIRD_PARTY.md
     licenses/LGPL-3.0.txt
