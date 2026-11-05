@@ -35,6 +35,8 @@
 #include "app/Formatting.h"
 #include "app/TimelinePanel.h"
 
+#include <algorithm>
+
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
@@ -230,6 +232,20 @@ void MainWindow::buildDocks()
 
     // The timeline panel exists first: the clip inspector follows its selection.
     m_timeline = new TimelinePanel(m_ctl);
+    // Sequence > Create multicamera sequence also takes the clips selected on the timeline.
+    m_bin->setTimelineMedia([this] {
+        QList<const TimelineClip *> clips;
+        for (const QUuid &id : m_timeline->view()->selection())
+            if (const TimelineClip *c = m_ctl->timeline().clip(id); c && !c->mediaId.isNull())
+                clips << c;
+        std::sort(clips.begin(), clips.end(), [](const TimelineClip *a, const TimelineClip *b) { return a->start < b->start; });
+        QList<QUuid> media;
+        for (const TimelineClip *c : clips)
+            media << c->mediaId;
+        return media;
+    });
+    connect(m_timeline, &TimelinePanel::selectionChanged, m_bin, &MediaBinPanel::updateMulticamAction);
+    connect(m_ctl, &ProjectController::timelineChanged, m_bin, &MediaBinPanel::updateMulticamAction);
 
     // Right: clip parameters, effects, color, audio
     m_rightTabs = new QTabWidget;
@@ -353,7 +369,8 @@ void MainWindow::setupOffReasons()
     explainWhenOff(QStringLiteral("actDetectScenes"), QT_TR_NOOP("Select video clips on the timeline first."));
     explainWhenOff(QStringLiteral("actAddTransition"), QT_TR_NOOP("Select a clip next to a cut first."));
     explainWhenOff(QStringLiteral("actCreateMulticam"),
-                   QT_TR_NOOP("Select two or more recordings of one event in the media bin first (Ctrl+click)."));
+                   QT_TR_NOOP(
+                       "Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline."));
     for (int i = 1; i <= 9; ++i) {
         explainWhenOff(QStringLiteral("actMulticamCamera%1").arg(i),
                        QT_TR_NOOP("Put the playhead on a multicamera clip that has this camera "

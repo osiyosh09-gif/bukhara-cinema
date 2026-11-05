@@ -359,6 +359,8 @@ public:
     bool startExport(const Project &project, const ExportSettings &settings, QString *error);
     void cancelExport();
     bool isExporting() const;
+    // Why the last export used another video codec (empty when it did not).
+    QString exportNote() const;
 
     // --- proxies (light copies of big videos for smooth playback)
     // Global settings (QSettings "proxy/use", "proxy/auto"), both on by default.

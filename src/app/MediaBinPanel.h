@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <QTreeWidget>
 #include <QUuid>
 #include <QWidget>
@@ -54,9 +56,13 @@ public:
     QUuid currentFolder() const;
     // Sequence > Create multicamera sequence (phase 12a): the selected video
     // and audio files (two or more) become the angles.
+    // When fewer than two files are selected in the bin, the media of the
+    // clips selected on the timeline are used (set by the main window).
     QAction *multicamAction() const { return m_multicam; }
     QList<QUuid> multicamMedia() const;
     void openMulticamDialog();
+    void setTimelineMedia(std::function<QList<QUuid>()> provider);
+    void updateMulticamAction();
 
 public slots:
     void importDialog();
@@ -88,6 +94,7 @@ private:
     QToolButton *m_folderBtn;
     QLabel *m_summary;
     QAction *m_multicam;
+    std::function<QList<QUuid>()> m_timelineMedia;
     QHash<QUuid, QTreeWidgetItem *> m_rows;
     bool m_rebuilding = false;
 };

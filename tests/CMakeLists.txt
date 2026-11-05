@@ -253,3 +253,10 @@ target_link_libraries(tst_audit PRIVATE bc_ui Qt6::Test)
 target_compile_definitions(tst_audit PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
 add_test(NAME audit_every_command COMMAND tst_audit)
 set_tests_properties(audit_every_command PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 600)
+
+# Multicamera and export as a user meets them (see tst_deepcheck.cpp).
+add_executable(tst_deepcheck tst_deepcheck.cpp)
+target_link_libraries(tst_deepcheck PRIVATE bc_ui Qt6::Test)
+target_compile_definitions(tst_deepcheck PRIVATE BC_FFMPEG_EXE="${BC_FFMPEG_EXE}")
+add_test(NAME deepcheck_multicam_export COMMAND tst_deepcheck)
+set_tests_properties(deepcheck_multicam_export PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;SDL_AUDIODRIVER=dummy" TIMEOUT 900)

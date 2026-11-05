@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>Fayl yozilmadi. Papkani va diskdagi bo‘sh joyni tekshiring.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>Eksport %2 kadrdan %1-kadrda to‘xtadi. Boshqa video kodekni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>Yozilgan faylda tasvir yo‘q. Boshqa video kodekni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 bu kompyuterda ishlamadi; fayl %2 bilan yozildi.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3460,11 +3475,6 @@
         <translation>Avval kesim yonidagi klipni tanlang.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="356" />
-        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
-        <translation>Avval media kutubxonasida bir voqeaning ikkita yoki undan ko‘p yozuvini tanlang (Ctrl+bosish).</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="359" />
         <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
         <translation>Kursorni shu kamerasi bor multikam klip ustiga qo‘ying («Sekvensiya &gt; Multikam sekvensiya yaratish»).</translation>
@@ -3478,6 +3488,11 @@
         <location filename="../src/app/MainWindow.cpp" line="813" />
         <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
         <translation>Kulrang menyu buyruqlari ustiga sichqoncha keltirsangiz, nima kerakligini aytadi. Yordam &gt; Funksiyalar holati nima ishlashini ko‘rsatadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Avval bir voqeaning ikkita yoki undan ko‘p yozuvini tanlang (Ctrl+bosish): media kutubxonasida yoki timeline'da.</translation>
     </message>
 </context>
 <context>
@@ -3579,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Multikam sekvensiya yaratish...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Media kutubxonasida bir voqeaning ikki yoki undan ko‘p yozuvini tanlang: ular ovozi bo‘yicha tenglashtirilib, bitta klipning rakurslariga aylanadi</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3729,6 +3739,11 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Proxy'ni o‘chirish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Media kutubxonasida (yoki timeline'da ularning kliplarini) bir voqeaning ikki yoki undan ko‘p yozuvini tanlang: ular ovozi bo‘yicha tenglashtirilib, bitta klipning rakurslariga aylanadi</translation>
     </message>
 </context>
 <context>

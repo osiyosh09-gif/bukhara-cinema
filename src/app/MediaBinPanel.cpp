@@ -168,7 +168,7 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     m_multicam->setEnabled(false);
     connect(m_multicam, &QAction::triggered, this, &MediaBinPanel::openMulticamDialog);
     connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
-            [this] { m_multicam->setEnabled(multicamMedia().size() >= 2); });
+            this, &MediaBinPanel::updateMulticamAction);
     connect(m_tree, &QTreeWidget::itemChanged, this, &MediaBinPanel::onItemChanged);
     connect(m_tree, &BinTree::filesDropped, this, [this](const QStringList &paths, const QUuid &folder) {
         m_ctl->importFiles(paths, folder);
@@ -187,6 +187,10 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     connect(m_ctl, &ProjectController::projectReset, this, &MediaBinPanel::rebuild);
     connect(m_ctl, &ProjectController::binChanged, this, &MediaBinPanel::rebuild);
     connect(m_ctl, &ProjectController::itemUpdated, this, &MediaBinPanel::updateItemRow);
+    // A file selected while it was still being read becomes usable when the reading ends.
+    connect(m_ctl, &ProjectController::itemUpdated, this, &MediaBinPanel::updateMulticamAction);
+    connect(m_ctl, &ProjectController::binChanged, this, &MediaBinPanel::updateMulticamAction);
+    connect(m_ctl, &ProjectController::projectReset, this, &MediaBinPanel::updateMulticamAction);
 
     retranslate();
     rebuild();
@@ -360,8 +364,8 @@ void MediaBinPanel::retranslate()
     m_folderBtn->setToolTip(tr("New folder"));
     m_filter->setPlaceholderText(tr("Search by name"));
     m_multicam->setText(tr("Create multicamera sequence..."));
-    m_multicam->setToolTip(tr("Select two or more recordings of one event in the media bin: they are lined up by sound "
-                              "and become the angles of one clip"));
+    m_multicam->setToolTip(tr("Select two or more recordings of one event in the media bin (or their clips on the "
+                              "timeline): they are lined up by sound and become the angles of one clip"));
 
     const int total = int(m_ctl->project().items.size());
     const int offline = m_ctl->offlineCount();
@@ -559,13 +563,34 @@ void MediaBinPanel::showContextMenu(const QPoint &pos)
 
 QList<QUuid> MediaBinPanel::multicamMedia() const
 {
-    QList<QUuid> out;
-    for (const QUuid &id : selectedItems()) {
-        const MediaItem *m = m_ctl->project().item(id);
-        if (m && m->probed && m->info.kind != MediaInfo::Kind::Image && (m->info.hasVideo() || m->info.hasAudio()))
-            out << id;
+    auto usable = [this](const QList<QUuid> &ids) {
+        QList<QUuid> out;
+        for (const QUuid &id : ids) {
+            const MediaItem *m = m_ctl->project().item(id);
+            if (m && m->probed && m->info.kind != MediaInfo::Kind::Image && (m->info.hasVideo() || m->info.hasAudio())
+                && !out.contains(id))
+                out << id;
+        }
+        return out;
+    };
+    QList<QUuid> out = usable(selectedItems());
+    if (out.size() < 2 && m_timelineMedia) {
+        const QList<QUuid> fromTimeline = usable(m_timelineMedia());
+        if (fromTimeline.size() >= 2)
+            out = fromTimeline;
     }
     return out;
+}
+
+void MediaBinPanel::setTimelineMedia(std::function<QList<QUuid>()> provider)
+{
+    m_timelineMedia = std::move(provider);
+    updateMulticamAction();
+}
+
+void MediaBinPanel::updateMulticamAction()
+{
+    m_multicam->setEnabled(multicamMedia().size() >= 2);
 }
 
 void MediaBinPanel::openMulticamDialog()

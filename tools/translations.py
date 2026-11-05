@@ -1210,7 +1210,7 @@ T.update({
     "Which camera this part of the clip shows. Split the clip (Ctrl+K) to switch cameras.": ("Клипнинг бу бўлаги қайси камерани кўрсатади. Камерани алмаштириш учун клипни бўлинг (Ctrl+K).", "Какую камеру показывает эта часть клипа. Чтобы переключить камеру, разрежьте клип (Ctrl+K)."),
     "Phase 12, part 1: multicamera sequences lined up by sound (Sequence menu); pick the camera in the Clip tab.": ("12-босқич, 1-қисм: овоз бўйича синхронланган мультикам секвенциялар (Секвенция менюси); камерани «Клип» панелида танланг.", "Этап 12, часть 1: мультикамерные секвенции с синхронизацией по звуку (меню «Секвенция»); камера выбирается во вкладке «Клип»."),
     "Create multicamera sequence...": ("Мультикам секвенция яратиш...", "Создать мультикамерную секвенцию..."),
-    "Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip": ("Медиа кутубхонасида бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади", "Выберите в медиатеке две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа"),
+    "Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip": ("Медиа кутубхонасида (ёки timeline'да уларнинг клипларини) бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади", "Выберите в медиатеке (или их клипы на таймлайне) две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа"),
     "Create multicamera sequence": ("Мультикам секвенция яратиш", "Создать мультикамерную секвенцию"),
     "By sound (the cameras recorded the same sound)": ("Овоз бўйича (камералар бир хил овозни ёзган)", "По звуку (камеры записали один и тот же звук)"),
     "By file start (all start together)": ("Файл бошидан (ҳаммаси бирга бошланади)", "По началу файла (все начинаются вместе)"),
@@ -1749,6 +1749,13 @@ _MAP = {
 _VOWELS = set("аеёиоуўэюяaeiou")
 
 
+# Export falls back to the encoder that needs no hardware (deep check)
+T.update({
+    'The export stopped at frame %1 of %2. Try another video codec.': ('Экспорт %2 кадрдан %1-кадрда тўхтади. Бошқа видео кодекни танланг.', 'Экспорт остановился на кадре %1 из %2. Выберите другой видеокодек.'),
+    'The written file has no picture. Try another video codec.': ('Ёзилган файлда тасвир йўқ. Бошқа видео кодекни танланг.', 'В записанном файле нет изображения. Выберите другой видеокодек.'),
+    '%1 did not work on this computer; the file was written with %2.': ('%1 бу компьютерда ишламади; файл %2 билан ёзилди.', '%1 не сработал на этом компьютере; файл записан с помощью %2.'),
+})
+
 # Why grey menu commands are off (audit)
 T.update({
     'Select clips on the timeline first.': ("Аввал timeline'да клипларни танланг.", 'Сначала выделите клипы на таймлайне.'),
@@ -1763,7 +1770,7 @@ T.update({
     'Select one video or audio clip on the timeline first.': ("Аввал timeline'да битта видео ёки аудио клипни танланг.", 'Сначала выделите на таймлайне один видео- или аудиоклип.'),
     'Select video clips on the timeline first.': ("Аввал timeline'да видео клипларни танланг.", 'Сначала выделите видеоклипы на таймлайне.'),
     'Select a clip next to a cut first.': ('Аввал кесим ёнидаги клипни танланг.', 'Сначала выделите клип рядом со склейкой.'),
-    'Select two or more recordings of one event in the media bin first (Ctrl+click).': ('Аввал медиа кутубхонасида бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш).', 'Сначала выделите в медиатеке две или больше записей одного события (Ctrl+щелчок).'),
+    'Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.': ('Аввал бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш): медиа кутубхонасида ёки timeline\'да.', 'Сначала выделите две или больше записей одного события (Ctrl+щелчок): в медиатеке или на таймлайне.'),
     'Put the playhead on a multicamera clip that has this camera (Sequence > Create multicamera sequence).': ('Курсорни шу камераси бор мультикам клип устига қўйинг («Секвенция > Мультикам секвенция яратиш»).', 'Поставьте курсор на многокамерный клип с этой камерой («Эпизод > Создать многокамерный эпизод»).'),
     'The video engine could not be loaded: see the log file.': ('Видео двигатели юкланмади: журнал файлига қаранг.', 'Не удалось загрузить видеодвижок: см. файл журнала.'),
     'Grey menu commands say what they need when you point at them. Help > Feature status lists what works.': ('Кулранг меню буйруқлари устига сичқонча келтирсангиз, нима кераклигини айтади. Ёрдам > Функциялар ҳолати нима ишлашини кўрсатади.', 'Серые команды меню показывают, что им нужно, если навести на них мышь. Справка > Состояние функций показывает, что работает.'),

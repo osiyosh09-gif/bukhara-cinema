@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>Файл ёзилмади. Папкани ва дискдаги бўш жойни текширинг.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>Экспорт %2 кадрдан %1-кадрда тўхтади. Бошқа видео кодекни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>Ёзилган файлда тасвир йўқ. Бошқа видео кодекни танланг.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 бу компьютерда ишламади; файл %2 билан ёзилди.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3460,11 +3475,6 @@
         <translation>Аввал кесим ёнидаги клипни танланг.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="356" />
-        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
-        <translation>Аввал медиа кутубхонасида бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш).</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="359" />
         <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
         <translation>Курсорни шу камераси бор мультикам клип устига қўйинг («Секвенция &gt; Мультикам секвенция яратиш»).</translation>
@@ -3478,6 +3488,11 @@
         <location filename="../src/app/MainWindow.cpp" line="813" />
         <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
         <translation>Кулранг меню буйруқлари устига сичқонча келтирсангиз, нима кераклигини айтади. Ёрдам &gt; Функциялар ҳолати нима ишлашини кўрсатади.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Аввал бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш): медиа кутубхонасида ёки timeline'да.</translation>
     </message>
 </context>
 <context>
@@ -3579,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Мультикам секвенция яратиш...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Медиа кутубхонасида бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3729,6 +3739,11 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Proxy'ни ўчириш</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Медиа кутубхонасида (ёки timeline'да уларнинг клипларини) бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади</translation>
     </message>
 </context>
 <context>

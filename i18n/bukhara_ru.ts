@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>Файл не записан. Проверьте папку и свободное место на диске.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>Экспорт остановился на кадре %1 из %2. Выберите другой видеокодек.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>В записанном файле нет изображения. Выберите другой видеокодек.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 не сработал на этом компьютере; файл записан с помощью %2.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3460,11 +3475,6 @@
         <translation>Сначала выделите клип рядом со склейкой.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="356" />
-        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
-        <translation>Сначала выделите в медиатеке две или больше записей одного события (Ctrl+щелчок).</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="359" />
         <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
         <translation>Поставьте курсор на многокамерный клип с этой камерой («Эпизод &gt; Создать многокамерный эпизод»).</translation>
@@ -3478,6 +3488,11 @@
         <location filename="../src/app/MainWindow.cpp" line="813" />
         <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
         <translation>Серые команды меню показывают, что им нужно, если навести на них мышь. Справка &gt; Состояние функций показывает, что работает.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Сначала выделите две или больше записей одного события (Ctrl+щелчок): в медиатеке или на таймлайне.</translation>
     </message>
 </context>
 <context>
@@ -3579,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Создать мультикамерную секвенцию...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Выберите в медиатеке две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3729,6 +3739,11 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Удалить прокси</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Выберите в медиатеке (или их клипы на таймлайне) две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа</translation>
     </message>
 </context>
 <context>

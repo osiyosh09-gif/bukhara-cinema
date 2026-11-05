@@ -944,6 +944,11 @@ bool ProjectController::isExporting() const
     return m_exporter && m_exporter->isRunning();
 }
 
+QString ProjectController::exportNote() const
+{
+    return m_exporter ? m_exporter->note() : QString();
+}
+
 bool ProjectController::canPlay() const
 {
     return m_player != nullptr && Engine::isReady();

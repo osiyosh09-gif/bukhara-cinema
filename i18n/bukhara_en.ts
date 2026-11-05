@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>The file was not written. Check the folder and free disk space.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>The export stopped at frame %1 of %2. Try another video codec.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>The written file has no picture. Try another video codec.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 did not work on this computer; the file was written with %2.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3460,11 +3475,6 @@
         <translation>Select a clip next to a cut first.</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="356" />
-        <source>Select two or more recordings of one event in the media bin first (Ctrl+click).</source>
-        <translation>Select two or more recordings of one event in the media bin first (Ctrl+click).</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="359" />
         <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
         <translation>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</translation>
@@ -3478,6 +3488,11 @@
         <location filename="../src/app/MainWindow.cpp" line="813" />
         <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
         <translation>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</translation>
     </message>
 </context>
 <context>
@@ -3579,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Create multicamera sequence...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3729,6 +3739,11 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Delete proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</translation>
     </message>
 </context>
 <context>
