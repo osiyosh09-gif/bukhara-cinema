@@ -31,11 +31,24 @@ struct ClipEffect
                       // Sound (phase 10b), on audio clips; see core/AudioFx.
                       Equalizer, Compressor,
                       // Phase 10c.
-                      NoiseReduction, HumRemoval };
+                      NoiseReduction, HumRemoval,
+                      // Phase 15c: a VST 3 audio effect (core/Vst3Host); its parameters
+                      // are stored as "p<parameter id>" = normalized value 0..1.
+                      Plugin };
 
     Kind kind = Kind::BrightnessContrast;
     bool enabled = true;
     QMap<QString, double> params; // missing keys use the default
+    // Kind::Plugin only.
+    QString pluginPath; // the .vst3 bundle
+    QString pluginId;   // class id, 32 hex digits
+    QString pluginName; // shown also when the plug-in is missing
+
+    static ClipEffect makePlugin(const QString &path, const QString &id, const QString &name,
+                                 const QMap<QString, double> &values = {});
+    static QString pluginParamKey(quint32 id) { return QStringLiteral("p") + QString::number(id); }
+    // The parameter id of a "p<id>" key; false for other keys.
+    static bool pluginParamId(const QString &key, quint32 *id);
 
     static ClipEffect make(Kind kind); // with default values
     static QList<Kind> kinds(bool audio = false); // picture kinds, or sound kinds

@@ -1558,6 +1558,42 @@ T.update({
         "Файл > Импорт из других монтажных программ открывает эпизод из Premiere Pro, DaVinci Resolve или другой программы: клипы на своих местах, растворения, маркеры и (в XML) громкость клипа; одним вложенным клипом или прямо в открытый эпизод под указатель; один шаг отмены. Медиафайлы находятся по пути, рядом с файлом или в медиатеке; ненайденные остаются офлайн для привязки. Эффекты, титры, изменение скорости и вложенные эпизоды другой программы не импортируются; окно заранее показывает это. Файлы из самих Premiere Pro и DaVinci Resolve нами не проверялись."),
 })
 
+# Phase 15c: VST 3 audio plug-ins
+T.update({
+    "VST 3 plug-in": ("VST 3 плагин", "Плагин VST 3"),
+    "Look for VST 3 plug-ins again. Found: %1": ("VST 3 плагинларни қайта қидириш. Топилди: %1", "Снова найти плагины VST 3. Найдено: %1"),
+    "%1 (%2)": ("%1 (%2)", "%1 (%2)"),
+    "VST 3: %1": ("VST 3: %1", "VST 3: %1"),
+    "Find plug-ins": ("Плагинларни топиш", "Найти плагины"),
+    "Look for VST 3 plug-ins again": ("VST 3 плагинларни қайта қидириш", "Снова найти плагины VST 3"),
+    "%1 (VST 3)": ("%1 (VST 3)", "%1 (VST 3)"),
+    'The plug-in "%1" is not on this computer or did not start, so the sound passes unchanged. Install it and press "Find plug-ins".\n%2': (
+        "«%1» плагини бу компьютерда йўқ ёки ишга тушмади, шунинг учун овоз ўзгаришсиз ўтади. Уни ўрнатинг ва «Плагинларни топиш»ни босинг.\n%2",
+        "Плагина «%1» нет на этом компьютере, или он не запустился, поэтому звук проходит без изменений. Установите его и нажмите «Найти плагины».\n%2"),
+    "%1, %2": ("%1, %2", "%1, %2"),
+    "This plug-in has no values to set here.": ("Бу плагинда бу ерда созланадиган қиймат йўқ.", "У этого плагина нет значений для настройки здесь."),
+    "Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.": (
+        "%2 та қийматдан фақат биринчи %1 таси кўрсатилган. Плагиннинг ўз ойнаси кейинги версияда келади.",
+        "Показаны только первые %1 из %2 значений. Собственное окно плагина появится в следующей версии."),
+    "The plug-in did not start: %1": ("Плагин ишга тушмади: %1", "Плагин не запустился: %1"),
+    "Plug-ins work on sound clips.": ("Плагинлар овоз клипларида ишлайди.", "Плагины работают со звуковыми клипами."),
+    "Add plug-in": ("Плагин қўшиш", "Добавить плагин"),
+    "BUKHARA CINEMA uses the following open-source components. Except the VST 3 SDK, which is built into the program, they are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.": (
+        "BUKHARA CINEMA қуйидаги очиқ кодли компонентлардан фойдаланади. Дастур ичига қурилган VST 3 SDK'дан ташқари, улар алоҳида DLL файллар сифатида уланган, шунинг учун уларни мос версиялар билан алмаштириш мумкин.",
+        "BUKHARA CINEMA использует следующие компоненты с открытым кодом. Кроме встроенного в программу VST 3 SDK, они подключены динамически (отдельными DLL), поэтому их можно заменить совместимыми версиями."),
+    "Hosting VST 3 audio plug-ins (built into the program)": ("VST 3 аудио плагинларни ишлатиш (дастур ичига қурилган)", "Работа с аудиоплагинами VST 3 (встроено в программу)"),
+    # Steinberg's attribution stays in English in every language.
+    "VST is a registered trademark of Steinberg Media Technologies GmbH.": (
+        "VST is a registered trademark of Steinberg Media Technologies GmbH.",
+        "VST is a registered trademark of Steinberg Media Technologies GmbH."),
+    "Works with VST® 3 audio plug-ins.": ("VST® 3 аудио плагинлар билан ишлайди.", "Работает с аудиоплагинами VST® 3."),
+    "VST 3 audio plug-ins": ("VST 3 аудио плагинлар", "Аудиоплагины VST 3"),
+    "Audio effects installed on the computer as VST 3 plug-ins are listed in the Effects panel of a sound clip (standard VST 3 folder; Find plug-ins looks again). Their values appear as sliders and switches, change in one undo step, are saved in the project and work in playback and export. A plug-in missing on another computer lets the sound pass unchanged. Tested in CI with a small test plug-in built from the Steinberg SDK; commercial plug-ins have not been tested by us.": (
+        "Компьютерга VST 3 плагин сифатида ўрнатилган аудио эффектлар овоз клипининг «Эффектлар» панелида кўринади (стандарт VST 3 папкаси; «Плагинларни топиш» қайта қидиради). Қийматлари слайдер ва белгилар бўлиб чиқади, битта бекор қилиш қадамида ўзгаради, лойиҳада сақланади, ижро ва экспортда ишлайди. Бошқа компьютерда плагин бўлмаса овоз ўзгаришсиз ўтади. CI'да Steinberg SDK'дан йиғилган кичик синов плагини билан текширилган; тижорат плагинлари биз томондан синалмаган.",
+        "Аудиоэффекты, установленные на компьютере как плагины VST 3, показываются в панели «Эффекты» звукового клипа (стандартная папка VST 3; «Найти плагины» ищет заново). Их значения — ползунки и переключатели, меняются одним шагом отмены, сохраняются в проекте и работают при воспроизведении и экспорте. Если плагина нет на другом компьютере, звук проходит без изменений. Проверено в CI небольшим тестовым плагином, собранным из Steinberg SDK; коммерческие плагины нами не проверялись."),
+    "VST 3 plug-in windows and crash protection": ("VST 3 плагин ойналари ва ишдан чиқишдан ҳимоя", "Окна плагинов VST 3 и защита от сбоев"),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",

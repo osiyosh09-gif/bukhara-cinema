@@ -32,6 +32,7 @@ constexpr KindName kNames[] = {
     {ClipEffect::Kind::Compressor, "compressor"},
     {ClipEffect::Kind::NoiseReduction, "noise_reduction"},
     {ClipEffect::Kind::HumRemoval, "hum_removal"},
+    {ClipEffect::Kind::Plugin, "vst3"},
 };
 
 } // namespace
@@ -40,15 +41,39 @@ QList<ClipEffect::Kind> ClipEffect::kinds(bool audio)
 {
     QList<Kind> out;
     for (const auto &k : kNames)
-        if (isAudio(k.kind) == audio)
+        if (isAudio(k.kind) == audio && k.kind != Kind::Plugin) // plug-ins are listed by name, not as a kind
             out << k.kind;
     return out;
+}
+
+ClipEffect ClipEffect::makePlugin(const QString &path, const QString &id, const QString &name,
+                                  const QMap<QString, double> &values)
+{
+    ClipEffect e;
+    e.kind = Kind::Plugin;
+    e.pluginPath = path;
+    e.pluginId = id;
+    e.pluginName = name;
+    for (auto it = values.cbegin(); it != values.cend(); ++it)
+        e.setValue(it.key(), it.value());
+    return e;
+}
+
+bool ClipEffect::pluginParamId(const QString &key, quint32 *id)
+{
+    if (key.size() < 2 || key[0] != QLatin1Char('p'))
+        return false;
+    bool ok = false;
+    const quint32 v = key.mid(1).toUInt(&ok);
+    if (ok && id)
+        *id = v;
+    return ok;
 }
 
 bool ClipEffect::isAudio(Kind kind)
 {
     return kind == Kind::Equalizer || kind == Kind::Compressor || kind == Kind::NoiseReduction
-           || kind == Kind::HumRemoval;
+           || kind == Kind::HumRemoval || kind == Kind::Plugin;
 }
 
 QString ClipEffect::kindToString(Kind k)
@@ -134,6 +159,8 @@ QList<EffectParamSpec> ClipEffect::specs(Kind kind)
         return {{QStringLiteral("hum_freq"), 40, 70, 50, 1, 0},
                 {QStringLiteral("harmonics"), 1, 10, 4, 1, 0},
                 {QStringLiteral("notch_width"), 0.5, 10, 2, 0.5, 1}};
+    case Kind::Plugin:
+        return {}; // the plug-in describes its own parameters ("p<id>", 0..1)
     }
     return {};
 }
@@ -149,6 +176,8 @@ ClipEffect ClipEffect::make(Kind kind)
 
 double ClipEffect::value(const QString &key) const
 {
+    if (kind == Kind::Plugin)
+        return pluginParamId(key, nullptr) ? std::clamp(params.value(key, 0.0), 0.0, 1.0) : 0.0;
     for (const auto &s : specs(kind))
         if (s.key == key)
             return std::clamp(params.value(key, s.def), s.min, s.max);
@@ -157,6 +186,15 @@ double ClipEffect::value(const QString &key) const
 
 bool ClipEffect::setValue(const QString &key, double v)
 {
+    if (kind == Kind::Plugin) {
+        if (!pluginParamId(key, nullptr) || !std::isfinite(v))
+            return false;
+        v = std::clamp(v, 0.0, 1.0);
+        if (params.contains(key) && params.value(key) == v)
+            return false;
+        params.insert(key, v);
+        return true;
+    }
     for (const auto &s : specs(kind)) {
         if (s.key != key)
             continue;
@@ -202,6 +240,8 @@ bool ClipEffect::isNeutral() const
         return value(QStringLiteral("reduction")) <= 0;
     case Kind::HumRemoval:
         return false;
+    case Kind::Plugin:
+        return false; // a plug-in may change the sound at any setting
     }
     return true;
 }
@@ -210,6 +250,9 @@ bool ClipEffect::operator==(const ClipEffect &o) const
 {
     if (kind != o.kind || enabled != o.enabled)
         return false;
+    if (kind == Kind::Plugin)
+        return pluginPath == o.pluginPath && pluginId == o.pluginId && pluginName == o.pluginName
+               && params == o.params;
     for (const auto &s : specs(kind))
         if (value(s.key) != o.value(s.key))
             return false;
@@ -224,6 +267,15 @@ QJsonArray effectsToJson(const ClipEffects &effects)
         o[QStringLiteral("kind")] = ClipEffect::kindToString(e.kind);
         if (!e.enabled)
             o[QStringLiteral("enabled")] = false;
+        if (e.kind == ClipEffect::Kind::Plugin) {
+            o[QStringLiteral("plugin_path")] = e.pluginPath;
+            o[QStringLiteral("plugin_id")] = e.pluginId;
+            o[QStringLiteral("plugin_name")] = e.pluginName;
+            QJsonObject values;
+            for (auto it = e.params.cbegin(); it != e.params.cend(); ++it)
+                values[it.key()] = it.value();
+            o[QStringLiteral("params")] = values;
+        }
         for (const auto &s : ClipEffect::specs(e.kind))
             o[s.key] = e.value(s.key);
         a.append(o);
@@ -241,6 +293,14 @@ ClipEffects effectsFromJson(const QJsonArray &a)
             continue; // unknown (newer) effect: skipped
         ClipEffect e = ClipEffect::make(kind);
         e.enabled = o.value(QStringLiteral("enabled")).toBool(true);
+        if (kind == ClipEffect::Kind::Plugin) {
+            e.pluginPath = o.value(QStringLiteral("plugin_path")).toString();
+            e.pluginId = o.value(QStringLiteral("plugin_id")).toString();
+            e.pluginName = o.value(QStringLiteral("plugin_name")).toString();
+            const QJsonObject values = o.value(QStringLiteral("params")).toObject();
+            for (auto it = values.begin(); it != values.end(); ++it)
+                e.setValue(it.key(), it.value().toDouble());
+        }
         for (const auto &s : ClipEffect::specs(kind))
             if (o.contains(s.key))
                 e.setValue(s.key, o.value(s.key).toDouble(s.def));
@@ -562,6 +622,7 @@ void applyEffects(uint8_t *rgba, int w, int h, const ClipEffects &effects, const
         case ClipEffect::Kind::Compressor:
         case ClipEffect::Kind::NoiseReduction:
         case ClipEffect::Kind::HumRemoval:
+        case ClipEffect::Kind::Plugin:
             break; // sound: core/AudioFx
         }
     }

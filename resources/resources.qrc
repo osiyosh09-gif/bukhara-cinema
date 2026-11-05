@@ -2,4 +2,7 @@
     <qresource prefix="/icons">
         <file alias="bukhara-cinema.png">icons/bukhara-cinema.png</file>
     </qresource>
+    <qresource prefix="/vst">
+        <file alias="vst-compatible.png">vst/VST_Compatible_Logo_Steinberg_with_TM.png</file>
+    </qresource>
 </RCC>

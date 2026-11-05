@@ -479,11 +479,6 @@
         <translation>Fayl &gt; Boshqa dasturlar uchun eksport asosiy sekvensiyani Premiere Pro, DaVinci Resolve va boshqa dasturlar uchun yozadi: qaysi faylning qaysi qismi qaysi yo‘lakda qayerda turishi, cross dissolve o‘tishlari, markerlar va (XML'da) klip ovozi. Nested va multikam kliplar ichidagi kliplarga aylanadi. Saqlashdan oldin oyna nima o‘tkazilmasligini ko‘rsatadi: titrlar, effektlar, rang, harakat, tezlik o‘zgarishi, subtitrlar va boshqalar. EDL'da faqat V1 video yo‘lagi bo‘ladi. Fayllarni Premiere Pro va DaVinci Resolve'da ochish biz tomondan sinalmagan.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="76" />
-        <source>Audio plugins (VST3)</source>
-        <translation>Audio plaginlar (VST3)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="75" />
         <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
         <translation>Boshqa dasturlardan import: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
@@ -492,6 +487,21 @@
         <location filename="../src/app/FeatureStatus.cpp" line="75" />
         <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
         <translation>Fayl &gt; Boshqa dasturlardan import Premiere Pro, DaVinci Resolve yoki boshqa dasturda qilingan sekvensiyani ochadi: kliplar o‘z joyi bilan, dissolve o‘tishlari, markerlar va (XML'da) klip ovozi; bitta nested klip bo‘lib yoki to‘g‘ridan-to‘g‘ri ochiq sekvensiyaga, kursor joyiga; bitta bekor qilish qadami. Media fayllar yo‘li bo‘yicha, fayl yonidan yoki kutubxonadan topiladi; topilmaganlari qayta bog‘lash uchun oflayn qoladi. Boshqa dasturdagi effektlar, titrlar, tezlik o‘zgarishi va nested sekvensiyalar import qilinmaydi; oyna buni oldindan ko‘rsatadi. Premiere Pro va DaVinci Resolve'ning o‘zidan olingan fayllar biz tomondan sinalmagan.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>VST 3 audio plug-ins</source>
+        <translation>VST 3 audio plaginlar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>Audio effects installed on the computer as VST 3 plug-ins are listed in the Effects panel of a sound clip (standard VST 3 folder; Find plug-ins looks again). Their values appear as sliders and switches, change in one undo step, are saved in the project and work in playback and export. A plug-in missing on another computer lets the sound pass unchanged. Tested in CI with a small test plug-in built from the Steinberg SDK; commercial plug-ins have not been tested by us.</source>
+        <translation>Kompyuterga VST 3 plagin sifatida o‘rnatilgan audio effektlar ovoz klipining «Effektlar» panelida ko‘rinadi (standart VST 3 papkasi; «Plaginlarni topish» qayta qidiradi). Qiymatlari slayder va belgilar bo‘lib chiqadi, bitta bekor qilish qadamida o‘zgaradi, loyihada saqlanadi, ijro va eksportda ishlaydi. Boshqa kompyuterda plagin bo‘lmasa ovoz o‘zgarishsiz o‘tadi. CI'da Steinberg SDK'dan yig‘ilgan kichik sinov plagini bilan tekshirilgan; tijorat plaginlari biz tomondan sinalmagan.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="77" />
+        <source>VST 3 plug-in windows and crash protection</source>
+        <translation>VST 3 plagin oynalari va ishdan chiqishdan himoya</translation>
     </message>
 </context>
 <context>
@@ -570,11 +580,6 @@
         <translation>Uchinchi tomon komponentlari</translation>
     </message>
     <message>
-        <location filename="../src/app/AboutDialog.cpp" line="22" />
-        <source>BUKHARA CINEMA uses the following open-source components. They are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.</source>
-        <translation>BUKHARA CINEMA quyidagi ochiq kodli komponentlardan foydalanadi. Ular alohida DLL fayllar sifatida ulangan, shuning uchun ularni mos versiyalar bilan almashtirish mumkin.</translation>
-    </message>
-    <message>
         <location filename="../src/app/AboutDialog.cpp" line="32" />
         <source>User interface</source>
         <translation>Foydalanuvchi interfeysi</translation>
@@ -648,6 +653,26 @@
         <location filename="../src/app/AboutDialog.cpp" line="78" />
         <source>Close</source>
         <translation>Yopish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="22" />
+        <source>BUKHARA CINEMA uses the following open-source components. Except the VST 3 SDK, which is built into the program, they are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.</source>
+        <translation>BUKHARA CINEMA quyidagi ochiq kodli komponentlardan foydalanadi. Dastur ichiga qurilgan VST 3 SDK'dan tashqari, ular alohida DLL fayllar sifatida ulangan, shuning uchun ularni mos versiyalar bilan almashtirish mumkin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="43" />
+        <source>Hosting VST 3 audio plug-ins (built into the program)</source>
+        <translation>VST 3 audio plaginlarni ishlatish (dastur ichiga qurilgan)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="56" />
+        <source>VST is a registered trademark of Steinberg Media Technologies GmbH.</source>
+        <translation>VST is a registered trademark of Steinberg Media Technologies GmbH.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="89" />
+        <source>Works with VST® 3 audio plug-ins.</source>
+        <translation>VST® 3 audio plaginlar bilan ishlaydi.</translation>
     </message>
 </context>
 <context>
@@ -1643,6 +1668,68 @@
         <location filename="../src/app/EffectsPanel.cpp" line="342" />
         <source>Title</source>
         <translation>Titr</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="80" />
+        <source>VST 3 plug-in</source>
+        <translation>VST 3 plagin</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="269" />
+        <source>Look for VST 3 plug-ins again. Found: %1</source>
+        <translation>VST 3 plaginlarni qayta qidirish. Topildi: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="322" />
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="323" />
+        <source>VST 3: %1</source>
+        <translation>VST 3: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="339" />
+        <source>Find plug-ins</source>
+        <translation>Plaginlarni topish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="340" />
+        <source>Look for VST 3 plug-ins again</source>
+        <translation>VST 3 plaginlarni qayta qidirish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="411" />
+        <source>%1 (VST 3)</source>
+        <translation>%1 (VST 3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="504" />
+        <source>The plug-in "%1" is not on this computer or did not start, so the sound passes unchanged. Install it and press "Find plug-ins".
+%2</source>
+        <translation>«%1» plagini bu kompyuterda yo‘q yoki ishga tushmadi, shuning uchun ovoz o‘zgarishsiz o‘tadi. Uni o‘rnating va «Plaginlarni topish»ni bosing.
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="524" />
+        <source>%1, %2</source>
+        <translation>%1, %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="557" />
+        <source>This plug-in has no values to set here.</source>
+        <translation>Bu plaginda bu yerda sozlanadigan qiymat yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="561" />
+        <source>Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.</source>
+        <translation>%2 ta qiymatdan faqat birinchi %1 tasi ko‘rsatilgan. Plaginning o‘z oynasi keyingi versiyada keladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="608" />
+        <source>The plug-in did not start: %1</source>
+        <translation>Plagin ishga tushmadi: %1</translation>
     </message>
 </context>
 <context>
@@ -4049,6 +4136,16 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="302" />
         <source>The clips could not be placed: the first video and audio tracks are locked.</source>
         <translation>Kliplarni qo‘yib bo‘lmadi: birinchi video va audio yo‘laklar qulflangan.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="480" />
+        <source>Plug-ins work on sound clips.</source>
+        <translation>Plaginlar ovoz kliplarida ishlaydi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="492" />
+        <source>Add plug-in</source>
+        <translation>Plagin qo‘shish</translation>
     </message>
 </context>
 <context>

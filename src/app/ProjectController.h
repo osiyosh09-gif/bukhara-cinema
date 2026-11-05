@@ -207,6 +207,10 @@ public:
     ClipEffects clipEffects(const QUuid &clipId) const;
     // Adds an effect with default values at the end; returns its index or -1.
     int addClipEffect(const QUuid &clipId, ClipEffect::Kind kind);
+    // Adds a VST 3 plug-in (phase 15c) to an audio clip with the plug-in's
+    // default values; returns its index, or -1 (also when it does not start).
+    int addClipPlugin(const QUuid &clipId, const QString &path, const QString &uid, const QString &name,
+                      QString *error = nullptr);
     bool removeClipEffect(const QUuid &clipId, int index);
     // Moves the effect one place up (delta -1) or down (+1).
     bool moveClipEffect(const QUuid &clipId, int index, int delta);

@@ -479,11 +479,6 @@
         <translation>Файл &gt; Экспорт для других монтажных программ записывает основной эпизод для Premiere Pro, DaVinci Resolve и других программ: какая часть какого файла где лежит на какой дорожке, растворения, маркеры и (в XML) громкость клипа. Вложенные и мультикамерные клипы становятся клипами внутри них. Перед сохранением окно показывает, что не будет перенесено: титры, эффекты, цвет, движение, изменение скорости, субтитры и другое. EDL содержит только видеодорожку V1. Открытие файлов в Premiere Pro и DaVinci Resolve нами не проверялось.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="76" />
-        <source>Audio plugins (VST3)</source>
-        <translation>Аудиоплагины (VST3)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="75" />
         <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
         <translation>Импорт из других программ: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
@@ -492,6 +487,21 @@
         <location filename="../src/app/FeatureStatus.cpp" line="75" />
         <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
         <translation>Файл &gt; Импорт из других монтажных программ открывает эпизод из Premiere Pro, DaVinci Resolve или другой программы: клипы на своих местах, растворения, маркеры и (в XML) громкость клипа; одним вложенным клипом или прямо в открытый эпизод под указатель; один шаг отмены. Медиафайлы находятся по пути, рядом с файлом или в медиатеке; ненайденные остаются офлайн для привязки. Эффекты, титры, изменение скорости и вложенные эпизоды другой программы не импортируются; окно заранее показывает это. Файлы из самих Premiere Pro и DaVinci Resolve нами не проверялись.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>VST 3 audio plug-ins</source>
+        <translation>Аудиоплагины VST 3</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="76" />
+        <source>Audio effects installed on the computer as VST 3 plug-ins are listed in the Effects panel of a sound clip (standard VST 3 folder; Find plug-ins looks again). Their values appear as sliders and switches, change in one undo step, are saved in the project and work in playback and export. A plug-in missing on another computer lets the sound pass unchanged. Tested in CI with a small test plug-in built from the Steinberg SDK; commercial plug-ins have not been tested by us.</source>
+        <translation>Аудиоэффекты, установленные на компьютере как плагины VST 3, показываются в панели «Эффекты» звукового клипа (стандартная папка VST 3; «Найти плагины» ищет заново). Их значения — ползунки и переключатели, меняются одним шагом отмены, сохраняются в проекте и работают при воспроизведении и экспорте. Если плагина нет на другом компьютере, звук проходит без изменений. Проверено в CI небольшим тестовым плагином, собранным из Steinberg SDK; коммерческие плагины нами не проверялись.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="77" />
+        <source>VST 3 plug-in windows and crash protection</source>
+        <translation>Окна плагинов VST 3 и защита от сбоев</translation>
     </message>
 </context>
 <context>
@@ -570,11 +580,6 @@
         <translation>Сторонние компоненты</translation>
     </message>
     <message>
-        <location filename="../src/app/AboutDialog.cpp" line="22" />
-        <source>BUKHARA CINEMA uses the following open-source components. They are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.</source>
-        <translation>BUKHARA CINEMA использует следующие компоненты с открытым кодом. Они подключены динамически (отдельными DLL), поэтому их можно заменить совместимыми версиями.</translation>
-    </message>
-    <message>
         <location filename="../src/app/AboutDialog.cpp" line="32" />
         <source>User interface</source>
         <translation>Пользовательский интерфейс</translation>
@@ -648,6 +653,26 @@
         <location filename="../src/app/AboutDialog.cpp" line="78" />
         <source>Close</source>
         <translation>Закрыть</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="22" />
+        <source>BUKHARA CINEMA uses the following open-source components. Except the VST 3 SDK, which is built into the program, they are linked dynamically (as separate DLL files), so they can be replaced with compatible versions.</source>
+        <translation>BUKHARA CINEMA использует следующие компоненты с открытым кодом. Кроме встроенного в программу VST 3 SDK, они подключены динамически (отдельными DLL), поэтому их можно заменить совместимыми версиями.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="43" />
+        <source>Hosting VST 3 audio plug-ins (built into the program)</source>
+        <translation>Работа с аудиоплагинами VST 3 (встроено в программу)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="56" />
+        <source>VST is a registered trademark of Steinberg Media Technologies GmbH.</source>
+        <translation>VST is a registered trademark of Steinberg Media Technologies GmbH.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="89" />
+        <source>Works with VST® 3 audio plug-ins.</source>
+        <translation>Работает с аудиоплагинами VST® 3.</translation>
     </message>
 </context>
 <context>
@@ -1643,6 +1668,68 @@
         <location filename="../src/app/EffectsPanel.cpp" line="342" />
         <source>Title</source>
         <translation>Титр</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="80" />
+        <source>VST 3 plug-in</source>
+        <translation>Плагин VST 3</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="269" />
+        <source>Look for VST 3 plug-ins again. Found: %1</source>
+        <translation>Снова найти плагины VST 3. Найдено: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="322" />
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="323" />
+        <source>VST 3: %1</source>
+        <translation>VST 3: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="339" />
+        <source>Find plug-ins</source>
+        <translation>Найти плагины</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="340" />
+        <source>Look for VST 3 plug-ins again</source>
+        <translation>Снова найти плагины VST 3</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="411" />
+        <source>%1 (VST 3)</source>
+        <translation>%1 (VST 3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="504" />
+        <source>The plug-in "%1" is not on this computer or did not start, so the sound passes unchanged. Install it and press "Find plug-ins".
+%2</source>
+        <translation>Плагина «%1» нет на этом компьютере, или он не запустился, поэтому звук проходит без изменений. Установите его и нажмите «Найти плагины».
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="524" />
+        <source>%1, %2</source>
+        <translation>%1, %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="557" />
+        <source>This plug-in has no values to set here.</source>
+        <translation>У этого плагина нет значений для настройки здесь.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="561" />
+        <source>Only the first %1 of %2 values are shown. The plug-in's own window comes in a later version.</source>
+        <translation>Показаны только первые %1 из %2 значений. Собственное окно плагина появится в следующей версии.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/EffectsPanel.cpp" line="608" />
+        <source>The plug-in did not start: %1</source>
+        <translation>Плагин не запустился: %1</translation>
     </message>
 </context>
 <context>
@@ -4049,6 +4136,16 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="302" />
         <source>The clips could not be placed: the first video and audio tracks are locked.</source>
         <translation>Клипы не удалось разместить: первые видео- и аудиодорожки заблокированы.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="480" />
+        <source>Plug-ins work on sound clips.</source>
+        <translation>Плагины работают со звуковыми клипами.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectEditing.cpp" line="492" />
+        <source>Add plug-in</source>
+        <translation>Добавить плагин</translation>
     </message>
 </context>
 <context>

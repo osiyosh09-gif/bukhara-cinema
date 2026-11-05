@@ -8,6 +8,8 @@
 
 namespace bc {
 
+namespace vst3 { class Plugin; }
+
 // In-place radix-2 FFT (size a power of two); `inverse` scales by 1/n.
 void fft(std::vector<std::complex<float>> &data, bool inverse);
 
@@ -51,7 +53,8 @@ private:
 // Sound effects of an audio clip: equalizer (low cut, bass shelf, middle
 // bell, treble shelf; RBJ biquads) and compressor (stereo linked, peak
 // detector, soft knee) from phase 10b; noise reduction (Denoiser) and hum
-// removal (notches at the mains frequency and its harmonics) from phase 10c.
+// removal (notches at the mains frequency and its harmonics) from phase 10c;
+// VST 3 plug-ins from phase 15c (a missing plug-in lets the sound through).
 // Works on interleaved float samples and keeps the state between calls, so a
 // stream is processed in blocks.
 class AudioChain
@@ -85,6 +88,8 @@ private:
         double reduction = 0;                      // smoothed, dB
         std::shared_ptr<Denoiser> denoiser;        // noise reduction
         double nrReduction = 0, nrSensitivity = 0;
+        std::shared_ptr<vst3::Plugin> plugin;      // VST 3 effect (phase 15c)
+        QString pluginKey;                         // path|id: the same plug-in keeps its instance
     };
 
     ClipEffects m_effects;

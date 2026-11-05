@@ -2,9 +2,12 @@
 
 #include "app/ProjectController.h"
 #include "app/TimelinePanel.h"
+#include "app/Vst3Plugins.h"
+#include "core/Vst3Host.h"
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDir>
 #include <QDoubleSpinBox>
 #include <QEvent>
 #include <QFormLayout>
@@ -14,8 +17,12 @@
 #include <QListWidget>
 #include <QSet>
 #include <QSignalBlocker>
+#include <QSlider>
 #include <QToolButton>
 #include <QVBoxLayout>
+
+#include <algorithm>
+#include <cmath>
 
 namespace bc {
 
@@ -29,6 +36,15 @@ bool isSwitch(const EffectParamSpec &s)
 QString paramObjectName(const QString &key)
 {
     return QStringLiteral("effectParam_") + key;
+}
+
+constexpr int kPluginRole = Qt::UserRole + 1; // combo: "path|uid|name" of a plug-in
+constexpr int kMaxPluginParams = 48;          // more would not fit the panel
+constexpr int kSliderSteps = 1000;
+
+QString pluginKey(const ClipEffect &e)
+{
+    return e.pluginPath + QLatin1Char('|') + e.pluginId;
 }
 
 } // namespace
@@ -60,6 +76,8 @@ QString EffectsPanel::kindName(ClipEffect::Kind kind)
         return tr("Noise reduction");
     case ClipEffect::Kind::HumRemoval:
         return tr("Hum removal (50/60 Hz)");
+    case ClipEffect::Kind::Plugin:
+        return tr("VST 3 plug-in");
     }
     return {};
 }
@@ -163,6 +181,7 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     , m_body(new QWidget)
     , m_kind(new QComboBox)
     , m_add(new QToolButton)
+    , m_findPlugins(new QToolButton)
     , m_list(new QListWidget)
     , m_up(new QToolButton)
     , m_down(new QToolButton)
@@ -170,11 +189,14 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     , m_paramsBox(new QGroupBox)
     , m_form(new QFormLayout(m_paramsBox))
     , m_note(new QLabel)
+    , m_pluginNote(new QLabel)
 {
     setObjectName(QStringLiteral("effectsPanel"));
     m_empty->setObjectName(QStringLiteral("effectsEmpty"));
     m_kind->setObjectName(QStringLiteral("effectAddKind"));
     m_add->setObjectName(QStringLiteral("effectAdd"));
+    m_findPlugins->setObjectName(QStringLiteral("effectFindPlugins"));
+    m_pluginNote->setObjectName(QStringLiteral("effectPluginNote"));
     m_list->setObjectName(QStringLiteral("effectList"));
     m_up->setObjectName(QStringLiteral("effectUp"));
     m_down->setObjectName(QStringLiteral("effectDown"));
@@ -216,6 +238,8 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     addRow->addWidget(m_kind, 1);
     m_add->setToolButtonStyle(Qt::ToolButtonTextOnly);
     addRow->addWidget(m_add);
+    m_findPlugins->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    addRow->addWidget(m_findPlugins);
     body->addLayout(addRow);
     m_list->setMaximumHeight(150);
     body->addWidget(m_list);
@@ -228,6 +252,9 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     btnRow->addWidget(m_remove);
     body->addLayout(btnRow);
     body->addWidget(m_paramsBox);
+    m_pluginNote->setWordWrap(true);
+    m_pluginNote->setStyleSheet(QStringLiteral("color:#d1a54a;"));
+    body->addWidget(m_pluginNote);
     m_note->setWordWrap(true);
     m_note->setStyleSheet(QStringLiteral("color:#8a8a8a;"));
     body->addWidget(m_note);
@@ -235,6 +262,12 @@ EffectsPanel::EffectsPanel(ProjectController *controller, TimelineView *view, QW
     lay->addStretch(1);
 
     connect(m_add, &QToolButton::clicked, this, &EffectsPanel::addEffect);
+    connect(m_findPlugins, &QToolButton::clicked, this, [this] {
+        const int n = Vst3Plugins::rescan();
+        m_kindsFor = -1;
+        fillKinds();
+        m_findPlugins->setToolTip(tr("Look for VST 3 plug-ins again. Found: %1").arg(n));
+    });
     connect(m_list, &QListWidget::currentRowChanged, this, [this] {
         if (!m_updating)
             refreshParams();
@@ -281,6 +314,17 @@ void EffectsPanel::fillKinds()
     m_kind->clear();
     for (const ClipEffect::Kind k : ClipEffect::kinds(m_audio))
         m_kind->addItem(kindName(k), int(k));
+    if (m_audio && Vst3Plugins::available()) {
+        const QList<Vst3PluginEntry> plugins = Vst3Plugins::plugins();
+        if (!plugins.isEmpty())
+            m_kind->insertSeparator(m_kind->count());
+        for (const Vst3PluginEntry &p : plugins) {
+            const QString text = p.vendor.isEmpty() ? p.name : tr("%1 (%2)").arg(p.name, p.vendor);
+            m_kind->addItem(tr("VST 3: %1").arg(text), int(ClipEffect::Kind::Plugin));
+            m_kind->setItemData(m_kind->count() - 1, QStringList{p.path, p.uid, p.name}, kPluginRole);
+            m_kind->setItemData(m_kind->count() - 1, QDir::toNativeSeparators(p.path), Qt::ToolTipRole);
+        }
+    }
     m_kind->setCurrentIndex(std::clamp(cur, 0, m_kind->count() - 1));
     m_kindsFor = int(m_audio);
 }
@@ -292,6 +336,8 @@ void EffectsPanel::retranslate()
     m_targetAudio->setText(tr("Sound"));
     m_add->setText(tr("Add"));
     m_add->setToolTip(tr("Add the chosen effect to the clip"));
+    m_findPlugins->setText(tr("Find plug-ins"));
+    m_findPlugins->setToolTip(tr("Look for VST 3 plug-ins again"));
     m_up->setToolTip(tr("Move up (effects work from top to bottom)"));
     m_down->setToolTip(tr("Move down"));
     m_remove->setText(tr("Remove"));
@@ -323,6 +369,7 @@ void EffectsPanel::refresh()
     if (m_kindsFor != int(m_audio))
         fillKinds();
     m_target->setVisible(both);
+    m_findPlugins->setVisible(m_audio && Vst3Plugins::available());
     {
         const QSignalBlocker b1(m_targetVideo), b2(m_targetAudio);
         (m_audio ? m_targetAudio : m_targetVideo)->setChecked(true);
@@ -360,7 +407,10 @@ void EffectsPanel::refresh()
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
             m_list->addItem(item);
         }
-        item->setText(kindName(effects[i].kind));
+        item->setText(effects[i].kind == ClipEffect::Kind::Plugin
+                          ? tr("%1 (VST 3)").arg(effects[i].pluginName.isEmpty() ? effects[i].pluginId
+                                                                                 : effects[i].pluginName)
+                          : kindName(effects[i].kind));
         item->setCheckState(effects[i].enabled ? Qt::Checked : Qt::Unchecked);
     }
     if (!effects.isEmpty())
@@ -381,12 +431,21 @@ void EffectsPanel::refreshParams()
     m_down->setEnabled(has && c && row + 1 < c->effects.size());
     m_remove->setEnabled(has);
     m_paramsBox->setVisible(has);
+    m_pluginNote->setVisible(false);
     if (!has) {
         m_formClip = QUuid();
         m_formIndex = m_formKind = -1;
+        m_formPlugin.clear();
         return;
     }
     const ClipEffect &e = c->effects[row];
+    if (e.kind == ClipEffect::Kind::Plugin) {
+        if (m_formClip != m_clip || m_formIndex != row || m_formKind != int(e.kind) || m_formPlugin != pluginKey(e))
+            buildPluginForm(e);
+        updatePluginValues(e);
+        return;
+    }
+    m_formPlugin.clear();
     const QList<EffectParamSpec> specs = ClipEffect::specs(e.kind);
     if (m_formClip != m_clip || m_formIndex != row || m_formKind != int(e.kind)) {
         while (m_form->rowCount() > 0)
@@ -431,10 +490,127 @@ void EffectsPanel::refreshParams()
     m_updating = false;
 }
 
+void EffectsPanel::buildPluginForm(const ClipEffect &e)
+{
+    while (m_form->rowCount() > 0)
+        m_form->removeRow(0);
+    m_formClip = m_clip;
+    m_formIndex = currentEffect();
+    m_formKind = int(e.kind);
+    m_formPlugin = pluginKey(e);
+    QString error;
+    vst3::Plugin *plugin = Vst3Plugins::uiInstance(e.pluginPath, e.pluginId, &error);
+    if (!plugin) {
+        auto *missing = new QLabel(tr("The plug-in \"%1\" is not on this computer or did not start, so the sound "
+                                      "passes unchanged. Install it and press \"Find plug-ins\".\n%2")
+                                       .arg(e.pluginName, QDir::toNativeSeparators(e.pluginPath)));
+        missing->setObjectName(QStringLiteral("effectPluginMissing"));
+        missing->setWordWrap(true);
+        m_form->addRow(missing);
+        m_pluginNote->clear();
+        return;
+    }
+    int shown = 0, total = 0;
+    for (const vst3::ParamInfo &p : plugin->parameters()) {
+        if (p.hidden || p.readOnly || p.bypass)
+            continue;
+        ++total;
+        if (shown >= kMaxPluginParams)
+            continue;
+        ++shown;
+        const QString key = ClipEffect::pluginParamKey(p.id);
+        QString title = QString::fromStdString(p.title);
+        if (!p.units.empty())
+            title = tr("%1, %2").arg(title, QString::fromStdString(p.units));
+        if (p.stepCount == 1) {
+            auto *box = new QCheckBox(title);
+            box->setObjectName(paramObjectName(key));
+            connect(box, &QCheckBox::toggled, this, [this, key](bool on) {
+                if (!m_updating)
+                    m_ctl->setClipEffectValue(m_clip, currentEffect(), key, on ? 1 : 0);
+            });
+            m_form->addRow(box);
+            continue;
+        }
+        auto *row = new QWidget;
+        auto *lay = new QHBoxLayout(row);
+        lay->setContentsMargins(0, 0, 0, 0);
+        auto *slider = new QSlider(Qt::Horizontal);
+        slider->setObjectName(paramObjectName(key));
+        // A plug-in with n steps gets exactly its n + 1 positions.
+        slider->setRange(0, p.stepCount > 1 ? p.stepCount : kSliderSteps);
+        auto *text = new QLabel;
+        text->setObjectName(paramObjectName(key) + QStringLiteral("_text"));
+        text->setMinimumWidth(64);
+        lay->addWidget(slider, 1);
+        lay->addWidget(text);
+        const quint32 id = p.id;
+        connect(slider, &QSlider::valueChanged, this, [this, key, id, slider, text, plugin](int v) {
+            const double norm = double(v) / std::max(1, slider->maximum());
+            text->setText(QString::fromStdString(plugin->valueText(id, norm)));
+            if (!m_updating)
+                m_ctl->setClipEffectValue(m_clip, currentEffect(), key, norm);
+        });
+        m_form->addRow(title, row);
+    }
+    if (total == 0) {
+        auto *none = new QLabel(tr("This plug-in has no values to set here."));
+        none->setWordWrap(true);
+        m_form->addRow(none);
+    }
+    m_pluginNote->setText(total > shown ? tr("Only the first %1 of %2 values are shown. The plug-in's own window "
+                                             "comes in a later version.").arg(shown).arg(total)
+                                        : QString());
+    m_pluginNote->setProperty("for", m_formPlugin);
+}
+
+void EffectsPanel::updatePluginValues(const ClipEffect &e)
+{
+    vst3::Plugin *plugin = Vst3Plugins::uiInstance(e.pluginPath, e.pluginId);
+    m_pluginNote->setVisible(plugin && !m_pluginNote->text().isEmpty()
+                             && m_pluginNote->property("for").toString() == pluginKey(e));
+    if (!plugin)
+        return;
+    m_updating = true;
+    for (const vst3::ParamInfo &p : plugin->parameters()) {
+        const QString key = ClipEffect::pluginParamKey(p.id);
+        QWidget *w = m_paramsBox->findChild<QWidget *>(paramObjectName(key));
+        if (!w)
+            continue;
+        const double v = e.params.contains(key) ? e.value(key) : p.defaultValue;
+        if (auto *box = qobject_cast<QCheckBox *>(w)) {
+            box->setChecked(v >= 0.5);
+        } else if (auto *slider = qobject_cast<QSlider *>(w)) {
+            const int pos = int(std::lround(v * slider->maximum()));
+            if (slider->value() == pos) // still refresh the text (first build)
+                emit slider->valueChanged(pos);
+            else
+                slider->setValue(pos);
+        }
+    }
+    m_paramsBox->setEnabled(e.enabled);
+    m_updating = false;
+}
+
 void EffectsPanel::addEffect()
 {
     if (m_clip.isNull())
         return;
+    if (m_kind->currentData().toInt() == int(ClipEffect::Kind::Plugin)) {
+        const QStringList p = m_kind->currentData(kPluginRole).toStringList();
+        if (p.size() != 3)
+            return;
+        QString error;
+        const int index = m_ctl->addClipPlugin(m_clip, p[0], p[1], p[2], &error);
+        if (index >= 0) {
+            m_list->setCurrentRow(index);
+        } else {
+            m_pluginNote->setText(tr("The plug-in did not start: %1").arg(error));
+            m_pluginNote->setProperty("for", QString());
+            m_pluginNote->setVisible(true);
+        }
+        return;
+    }
     const int index = m_ctl->addClipEffect(m_clip, ClipEffect::Kind(m_kind->currentData().toInt()));
     if (index >= 0)
         m_list->setCurrentRow(index);
