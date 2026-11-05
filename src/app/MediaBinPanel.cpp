@@ -167,8 +167,7 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     m_multicam->setObjectName(QStringLiteral("actCreateMulticam"));
     m_multicam->setEnabled(false);
     connect(m_multicam, &QAction::triggered, this, &MediaBinPanel::openMulticamDialog);
-    connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
-            this, &MediaBinPanel::updateMulticamAction);
+    connect(m_tree, &QTreeWidget::itemSelectionChanged, this, &MediaBinPanel::updateMulticamAction);
     connect(m_tree, &QTreeWidget::itemChanged, this, &MediaBinPanel::onItemChanged);
     connect(m_tree, &BinTree::filesDropped, this, [this](const QStringList &paths, const QUuid &folder) {
         m_ctl->importFiles(paths, folder);
@@ -588,9 +587,20 @@ void MediaBinPanel::setTimelineMedia(std::function<QList<QUuid>()> provider)
     updateMulticamAction();
 }
 
+void MediaBinPanel::setTimelineNest(std::function<QUuid()> provider)
+{
+    m_timelineNest = std::move(provider);
+    updateMulticamAction();
+}
+
+QUuid MediaBinPanel::nestCandidate() const
+{
+    return m_timelineNest && multicamMedia().size() < 2 ? m_timelineNest() : QUuid();
+}
+
 void MediaBinPanel::updateMulticamAction()
 {
-    const bool on = multicamMedia().size() >= 2;
+    const bool on = multicamMedia().size() >= 2 || !nestCandidate().isNull();
     // Why the selected files cannot be angles (shown with the reason it is off).
     QStringList why;
     if (!on) {
@@ -619,8 +629,12 @@ void MediaBinPanel::updateMulticamAction()
 void MediaBinPanel::openMulticamDialog()
 {
     const QList<QUuid> ids = multicamMedia();
-    if (ids.size() < 2)
+    if (ids.size() < 2) {
+        // Clips already lined up in a nested sequence: it becomes the multicamera one as it is.
+        if (const QUuid nest = nestCandidate(); !nest.isNull())
+            m_ctl->makeMulticam(nest);
         return;
+    }
     auto *dlg = new MulticamDialog(m_ctl, ids, window());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->open();

@@ -24,6 +24,7 @@
 #include <QSignalSpy>
 #include <QStandardPaths>
 #include <QTemporaryDir>
+#include <QUndoStack>
 #include <QtTest>
 
 #include <algorithm>
@@ -293,6 +294,59 @@ private slots:
         exportAndCheck(*ctl, m_dir + QStringLiteral("/Синов ҳ261.mp4"), broken, &note);
         QVERIFY2(!note.isEmpty(), "the stopped codec was not replaced");
         qInfo("fallback: %s", qPrintable(note));
+    }
+
+    // The owner's way: clips stacked on V1..V3 and nested (Clip > Nest); the
+    // nested clip selected, the command makes that sequence a multicamera one.
+    void nestedClipBecomesMulticam()
+    {
+        MainWindow w;
+        w.resize(1366, 768);
+        w.show();
+        QVERIFY(QTest::qWaitForWindowExposed(&w));
+        ProjectController *ctl = w.controller();
+        QCOMPARE(ctl->importFiles({m_camA, m_camB}), 2);
+        waitIdle(*ctl);
+        const QList<QUuid> va = ctl->placeMedia({ctl->project().items[0].id}, 0, 0);
+        const QList<QUuid> vb = ctl->placeMedia({ctl->project().items[1].id}, 1, 0);
+        QVERIFY(!va.isEmpty() && !vb.isEmpty());
+        QList<QUuid> all;
+        for (const TimelineTrack &t : ctl->timeline().tracks)
+            for (const TimelineClip &c : t.clips)
+                all << c.id;
+        const QUuid nestId = ctl->nestClips(all);
+        QVERIFY(!nestId.isNull());
+        QVERIFY(!ctl->isMulticam(nestId));
+        QUuid nestClip;
+        for (const TimelineTrack &t : ctl->timeline().tracks)
+            for (const TimelineClip &c : t.clips)
+                if (c.nestId == nestId && t.kind == Kind::Video)
+                    nestClip = c.id;
+        QVERIFY(!nestClip.isNull());
+
+        auto *bin = w.findChild<MediaBinPanel *>(QStringLiteral("mediaBin"));
+        bin->tree()->clearSelection();
+        QAction *act = w.findChild<QAction *>(QStringLiteral("actCreateMulticam"));
+        auto *view = w.findChild<TimelineView *>(QStringLiteral("timelineView"));
+        view->setSelection({nestClip});
+        QTest::qWait(50);
+        QVERIFY2(act->isEnabled(), "a selected nested clip with two cameras");
+        act->trigger();
+        QVERIFY(ctl->isMulticam(nestId));
+        QCOMPARE(ctl->multicamAngles(nestId, Kind::Video).size(), qsizetype(2));
+        QVERIFY(!act->isEnabled()); // already a multicamera one
+        ctl->setPlayhead(50);
+        QAction *cam2 = w.findChild<QAction *>(QStringLiteral("actMulticamCamera2"));
+        QVERIFY(cam2 && cam2->isEnabled());
+        cam2->trigger();
+        bool switched = false;
+        for (const TimelineTrack &t : ctl->timeline().tracks)
+            for (const TimelineClip &c : t.clips)
+                switched |= c.nestId == nestId && t.kind == Kind::Video && c.angle == 1;
+        QVERIFY(switched);
+        ctl->undoStack()->undo(); // the switch
+        ctl->undoStack()->undo(); // multicamera again a plain nested sequence
+        QVERIFY(!ctl->isMulticam(nestId));
     }
 };
 

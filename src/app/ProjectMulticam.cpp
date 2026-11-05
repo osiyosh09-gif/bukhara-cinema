@@ -96,6 +96,42 @@ QUuid ProjectController::createMulticam(const QList<QUuid> &mediaIds, const QLis
     return ok ? nest.id : QUuid();
 }
 
+QUuid ProjectController::multicamCandidate(const QList<QUuid> &selection) const
+{
+    QUuid found;
+    for (const QUuid &id : selection) {
+        const TimelineClip *c = timeline().clip(id);
+        if (!c || !c->isNested())
+            continue;
+        if (!found.isNull() && found != c->nestId)
+            return {}; // clips of two different sequences
+        found = c->nestId;
+    }
+    const NestedSequence *n = m_project.nest(found);
+    if (!n || n->multicam)
+        return {};
+    int withClips = 0;
+    for (const TimelineTrack &t : n->timeline.tracks)
+        if (t.kind == Timeline::Kind::Video && !t.clips.isEmpty())
+            ++withClips;
+    return withClips >= 2 ? found : QUuid();
+}
+
+bool ProjectController::makeMulticam(const QUuid &nestId)
+{
+    const NestedSequence *found = m_project.nest(nestId);
+    if (!found || found->multicam)
+        return false;
+    return editProject(tr("Create multicamera sequence"), [&](EditState &s) {
+        for (NestedSequence &n : s.nested)
+            if (n.id == nestId && !n.multicam) {
+                n.multicam = true;
+                return true;
+            }
+        return false;
+    });
+}
+
 bool ProjectController::isMulticam(const QUuid &nestId) const
 {
     const NestedSequence *n = m_project.nest(nestId);

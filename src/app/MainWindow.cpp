@@ -244,6 +244,7 @@ void MainWindow::buildDocks()
             media << c->mediaId;
         return media;
     });
+    m_bin->setTimelineNest([this] { return m_ctl->multicamCandidate(m_timeline->view()->selection()); });
     connect(m_timeline->view(), &TimelineView::selectionChanged, m_bin, &MediaBinPanel::updateMulticamAction);
     connect(m_ctl, &ProjectController::timelineChanged, m_bin, &MediaBinPanel::updateMulticamAction);
 

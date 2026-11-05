@@ -62,6 +62,8 @@ public:
     QList<QUuid> multicamMedia() const;
     void openMulticamDialog();
     void setTimelineMedia(std::function<QList<QUuid>()> provider);
+    // A nested sequence selected on the timeline that can become a multicamera one.
+    void setTimelineNest(std::function<QUuid()> provider);
     void updateMulticamAction();
 
 signals:
@@ -100,6 +102,8 @@ private:
     QLabel *m_summary;
     QAction *m_multicam;
     std::function<QList<QUuid>()> m_timelineMedia;
+    std::function<QUuid()> m_timelineNest;
+    QUuid nestCandidate() const;
     QHash<QUuid, QTreeWidgetItem *> m_rows;
     bool m_rebuilding = false;
 };

@@ -248,6 +248,11 @@ public:
     // uses. Images are not allowed. One undo step; returns the sequence id.
     QUuid createMulticam(const QList<QUuid> &mediaIds, const QList<qint64> &starts, int audioAngle = 0);
     bool isMulticam(const QUuid &nestId) const;
+    // A nested sequence whose recordings are already lined up on their own
+    // tracks becomes a multicamera one (angle n = video/audio track n): the
+    // nest of a selected nested clip with two or more video tracks with clips.
+    QUuid multicamCandidate(const QList<QUuid> &selection) const;
+    bool makeMulticam(const QUuid &nestId);
     // Names of the angles of that kind (the media on each track, or "Angle n").
     QStringList multicamAngles(const QUuid &nestId, Timeline::Kind kind) const;
     // Shows (video clip) or plays (audio clip) another angle of its multicamera sequence.
