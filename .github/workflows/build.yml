@@ -46,6 +46,10 @@ jobs:
         run: cmake --build build
       - name: Test
         run: ctest --test-dir build --output-on-failure
+      # Every menu command: enabled or not and why (the report of tests/tst_audit.cpp).
+      - name: Menu command report
+        run: |
+          QT_QPA_PLATFORM=offscreen SDL_AUDIODRIVER=dummy build/tests/tst_audit 2>/dev/null | grep -E "AUDIT|UNEXPLAINED|commands run|dialogs closed" || true
       # The committed i18n/*.ts must hold exactly the texts lupdate finds in the code.
       - name: Translation files match the code
         run: |
