@@ -24,6 +24,20 @@ jobs:
           sudo apt-get install -y -qq qt6-base-dev qt6-tools-dev qt6-l10n-tools qt6-tools-dev-tools libgl-dev ninja-build \
             libavformat-dev libavcodec-dev libavutil-dev libswscale-dev ffmpeg pkg-config \
             libmlt-dev libmlt++-dev libmlt-data
+      # Phase 14b: speech recognition test (Vosk library + English model, and a
+      # sentence spoken by espeak-ng; only for the tests, nothing is shipped from here).
+      - name: Speech recognition test data
+        run: |
+          sudo apt-get install -y -qq espeak-ng unzip
+          curl -sSL -o /tmp/vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-linux-x86_64-0.3.45.zip
+          unzip -q /tmp/vosk.zip -d /tmp/vosk
+          if curl -sSL --fail -o /tmp/model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
+            unzip -q /tmp/model.zip -d /tmp/models
+            echo "BC_VOSK_MODEL=/tmp/models/vosk-model-small-en-us-0.15" >> "$GITHUB_ENV"
+          fi
+          espeak-ng -v en-us -s 130 -w /tmp/speech.wav "One two three four five. Hello world. This is a test."
+          echo "BC_VOSK_LIB=/tmp/vosk/vosk-linux-x86_64-0.3.45/libvosk.so" >> "$GITHUB_ENV"
+          echo "BC_SPEECH_WAV=/tmp/speech.wav" >> "$GITHUB_ENV"
       # Ubuntu's MLT is only used to run the tests here; the Windows package
       # ships its own MLT built from source with the LGPL parts only.
       - name: Configure
@@ -80,6 +94,7 @@ jobs:
             mingw-w64-ucrt-x86_64-dlfcn
             mingw-w64-ucrt-x86_64-libiconv
             git
+            unzip
 
       - name: Download FFmpeg (LGPL shared build)
         shell: pwsh
@@ -124,6 +139,35 @@ jobs:
           # WINDOWS_DEPLOY layout: DLLs in mlt/, modules in mlt/lib/mlt, data in mlt/share/mlt
           find mlt -maxdepth 3 | sort | head -60
 
+      # Phase 14b: Vosk speech recognition (Apache 2.0, prebuilt libvosk.dll; shipped),
+      # plus an English model and a sentence from Windows' own speech synthesizer for the test.
+      - name: Download Vosk
+        run: |
+          set -e
+          curl -sSL -o vosk.zip https://github.com/alphacep/vosk-api/releases/download/v0.3.45/vosk-win64-0.3.45.zip
+          unzip -q vosk.zip -d vosk-dl
+          # libvosk.dll is built with an older (msvcrt) C++ runtime than ours: it is loaded
+          # only by BukharaSpeech.exe (static), with its own runtime DLLs next to it.
+          mkdir -p vosk && cp -v vosk-dl/vosk-win64-0.3.45/*.dll vosk/
+          echo "BC_VOSK_LIB=$(cygpath -m "$PWD/vosk/libvosk.dll")" >> "$GITHUB_ENV"
+          if curl -sSL --fail -o model.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip; then
+            unzip -q model.zip -d models
+            echo "BC_VOSK_MODEL=$(cygpath -m "$PWD/models/vosk-model-small-en-us-0.15")" >> "$GITHUB_ENV"
+          fi
+
+      - name: Spoken sentence for the speech test
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          Add-Type -AssemblyName System.Speech
+          $s = New-Object System.Speech.Synthesis.SpeechSynthesizer
+          $wav = Join-Path $PWD 'speech.wav'
+          $s.SetOutputToWaveFile($wav)
+          $s.Rate = -1
+          $s.Speak('One two three four five. Hello world. This is a test.')
+          $s.Dispose()
+          if (Test-Path $wav) { "BC_SPEECH_WAV=$($wav -replace '\\','/')" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
+
       - name: Read version
         id: ver
         run: |
@@ -162,6 +206,9 @@ jobs:
           cmake --install build --prefix dist
           # Plug-ins run in this program (phase 15c-2): it must be in the package.
           test -f dist/BukharaPluginHost.exe
+          # Speech recognition (phase 14b); its C++ runtime DLLs come from MSYS2 below.
+          test -f dist/BukharaSpeech.exe
+          mkdir -p dist/speech && cp -v vosk/*.dll dist/speech/
           # FFmpeg LGPL DLLs (not from MSYS2, so copied explicitly)
           cp -v ffmpeg/bin/av*.dll ffmpeg/bin/sw*.dll dist/
           mkdir -p dist/licenses/ffmpeg

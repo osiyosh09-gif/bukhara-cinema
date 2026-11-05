@@ -299,11 +299,6 @@
         <translation>Select video clips on the timeline, then Clip &gt; Detect scene changes: each video is read once on this computer (no internet, no AI model) and the hard cuts between shots are found. Split cuts the clips (with their sound) at every new shot, or markers are put there instead; one undo step. A slider sets the sensitivity. Slow fades between shots are not found.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="73" />
-        <source>AI assistants: transcription, text-based editing</source>
-        <translation>AI assistants: transcription, text-based editing</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="36" />
         <source>Sequence settings: size, frame rate, audio</source>
         <translation>Sequence settings: size, frame rate, audio</translation>
@@ -518,6 +513,16 @@
         <source>Sequence &gt; Automatic multicamera edit cuts a multicamera clip between its cameras: by whoever is speaking (the camera that hears a person loudest shows that person; a wide shot when nobody or several people speak, and between long shots) or in a rhythm. Shortest and longest shot can be set; the result is one undo step and every cut can be changed afterwards. Works best when each camera or person has its own microphone. Without the internet and without an AI model; tested in CI with recordings made for the test, not with real interviews.</source>
         <translation>Sequence &gt; Automatic multicamera edit cuts a multicamera clip between its cameras: by whoever is speaking (the camera that hears a person loudest shows that person; a wide shot when nobody or several people speak, and between long shots) or in a rhythm. Shortest and longest shot can be set; the result is one undo step and every cut can be changed afterwards. Works best when each camera or person has its own microphone. Without the internet and without an AI model; tested in CI with recordings made for the test, not with real interviews.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="65" />
+        <source>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</source>
+        <translation>Graphics &gt; Subtitles from speech hears the selected clips (or the first audio track) on this computer with Vosk (Apache 2.0) and writes what is said as subtitle lines: one undo step, then they can be corrected in the Subtitles panel. Models for Uzbek, Russian and English are downloaded once (40-50 MB) or taken from a folder; Uzbek can be written in Cyrillic letters. Nothing is sent anywhere. About one word in eight may be wrong. Tested in CI with English speech made by a speech synthesizer, not with real Uzbek recordings.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="73" />
+        <source>Edit by transcript: delete words to cut the video</source>
+        <translation>Edit by transcript: delete words to cut the video</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -693,6 +698,11 @@
         <location filename="../src/app/AboutDialog.cpp" line="92" />
         <source>Author: %1</source>
         <translation>Author: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/AboutDialog.cpp" line="57" />
+        <source>Speech recognition for subtitles (libvosk.dll; models downloaded separately)</source>
+        <translation>Speech recognition for subtitles (libvosk.dll; models downloaded separately)</translation>
     </message>
 </context>
 <context>
@@ -3379,6 +3389,21 @@
         <source>Cut a multicamera clip between its cameras by who is speaking, or in a rhythm</source>
         <translation>Cut a multicamera clip between its cameras by who is speaking, or in a rhythm</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="543" />
+        <source>Subtitles from speech: %1 added.</source>
+        <translation>Subtitles from speech: %1 added.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="662" />
+        <source>Hear the clips on this computer and write what is said as subtitles</source>
+        <translation>Hear the clips on this computer and write what is said as subtitles</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="548" />
+        <source>Edit by transcript (delete words to cut)...</source>
+        <translation>Edit by transcript (delete words to cut)...</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4365,6 +4390,11 @@
         <source>Automatic multicamera edit</source>
         <translation>Automatic multicamera edit</translation>
     </message>
+    <message>
+        <location filename="../src/app/ProjectSpeech.cpp" line="286" />
+        <source>Subtitles from speech</source>
+        <translation>Subtitles from speech</translation>
+    </message>
 </context>
 <context>
     <name>bc::ProjectInfoPanel</name>
@@ -4825,6 +4855,184 @@
         <location filename="../src/app/Shortcuts.cpp" line="251" />
         <source>%1 was used by: %2. It was removed there.</source>
         <translation>%1 was used by: %2. It was removed there.</translation>
+    </message>
+</context>
+<context>
+    <name>bc::SpeechDialog</name>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="31" />
+        <source>Uzbek</source>
+        <translation>Uzbek</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="33" />
+        <source>Russian</source>
+        <translation>Russian</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="35" />
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="36" />
+        <source>Other language</source>
+        <translation>Other language</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="54" />
+        <source>Subtitles from speech</source>
+        <translation>Subtitles from speech</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="65" />
+        <source>Download</source>
+        <translation>Download</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="66" />
+        <source>Model folder...</source>
+        <translation>Model folder...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="67" />
+        <source>Use a Vosk model you already have (an unpacked folder)</source>
+        <translation>Use a Vosk model you already have (an unpacked folder)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="68" />
+        <source>Write Uzbek in Cyrillic letters</source>
+        <translation>Write Uzbek in Cyrillic letters</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="72" />
+        <source> letters</source>
+        <translation> letters</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="73" />
+        <source>Replace the subtitles there were where these clips are</source>
+        <translation>Replace the subtitles there were where these clips are</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="83" />
+        <source>Language:</source>
+        <translation>Language:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="85" />
+        <source>Line length:</source>
+        <translation>Line length:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="88" />
+        <source>Speech is recognized on this computer with Vosk (free, Apache 2.0); the sound is not sent anywhere. A model is downloaded once (about 40-50 MB) from alphacephei.com. About one word in eight may be wrong: read the subtitles through in the Subtitles panel. Each recording is heard once and remembered.</source>
+        <translation>Speech is recognized on this computer with Vosk (free, Apache 2.0); the sound is not sent anywhere. A model is downloaded once (about 40-50 MB) from alphacephei.com. About one word in eight may be wrong: read the subtitles through in the Subtitles panel. Each recording is heard once and remembered.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="97" />
+        <source>Close</source>
+        <translation>Close</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="98" />
+        <source>Make subtitles</source>
+        <translation>Make subtitles</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="153" />
+        <source>%1 (%2)</source>
+        <translation>%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="158" />
+        <source>%1: download (%2 MB)</source>
+        <translation>%1: download (%2 MB)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="186" />
+        <source>Stop</source>
+        <translation>Stop</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="191" />
+        <source>Select the clips to hear on the timeline (or none: then the first audio track is heard).</source>
+        <translation>Select the clips to hear on the timeline (or none: then the first audio track is heard).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="193" />
+        <source>Download a model for this language first, or choose a model folder.</source>
+        <translation>Download a model for this language first, or choose a model folder.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="195" />
+        <source>The speech recognition library (libvosk) is missing: %1</source>
+        <translation>The speech recognition library (libvosk) is missing: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="197" />
+        <source>Clips to hear: %1.</source>
+        <translation>Clips to hear: %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="215" />
+        <source>Cannot write %1.</source>
+        <translation>Cannot write %1.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="223" />
+        <source>Downloading the model...</source>
+        <translation>Downloading the model...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="238" />
+        <source>The model could not be downloaded: %1</source>
+        <translation>The model could not be downloaded: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="240" />
+        <source>Unpacking the model...</source>
+        <translation>Unpacking the model...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="245" />
+        <source>The model could not be unpacked: %1</source>
+        <translation>The model could not be unpacked: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="259" />
+        <source>Folder of a Vosk model</source>
+        <translation>Folder of a Vosk model</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="263" />
+        <source>This folder holds no Vosk model (no am/final.mdl in it).</source>
+        <translation>This folder holds no Vosk model (no am/final.mdl in it).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="278" />
+        <source>Listening... you can keep working. A minute of sound takes about half a minute.</source>
+        <translation>Listening... you can keep working. A minute of sound takes about half a minute.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="290" />
+        <source>Stopped.</source>
+        <translation>Stopped.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="290" />
+        <source>Speech could not be recognized: %1</source>
+        <translation>Speech could not be recognized: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="298" />
+        <source>Subtitles added: %1. Ctrl+Z removes them.</source>
+        <translation>Subtitles added: %1. Ctrl+Z removes them.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/SpeechDialog.cpp" line="299" />
+        <source>No speech was found in these clips.</source>
+        <translation>No speech was found in these clips.</translation>
     </message>
 </context>
 <context>

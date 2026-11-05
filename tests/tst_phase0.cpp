@@ -122,7 +122,7 @@ private slots:
         QCOMPARE(Language::instance().current(), code);
         QCOMPARE(menuAt(w, 1)->title(), editMenu);
         QCOMPARE(w.findChild<QTabWidget *>(QStringLiteral("leftTabs"))->tabText(0), mediaBin);
-        auto *planned = w.findChild<QAction *>(QStringLiteral("actAutoCaptions"));
+        auto *planned = w.findChild<QAction *>(QStringLiteral("actTextEditing"));
         QVERIFY(planned->text().endsWith(phaseTag));
 
         // Persisted for the next start.

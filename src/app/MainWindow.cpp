@@ -22,6 +22,7 @@
 #include "app/ScopesPanel.h"
 #include "app/MulticamMonitor.h"
 #include "app/AutoMulticamDialog.h"
+#include "app/SpeechDialog.h"
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
 #include "app/ExportDialog.h"
@@ -533,7 +534,18 @@ void MainWindow::buildMenus()
     m_graphicsMenu->addAction(m_subtitlesPanel->addAction_());
     m_graphicsMenu->addAction(m_subtitlesPanel->importAction());
     m_graphicsMenu->addAction(m_subtitlesPanel->exportAction());
-    addPlanned(m_graphicsMenu, QT_TR_NOOP("Subtitles from speech (automatic)..."), 14, QStringLiteral("actAutoCaptions"));
+    // Phase 14b: subtitles from speech, recognized on this computer (Vosk).
+    m_autoCaptionsAct = m_graphicsMenu->addAction(QString(), this, [this] {
+        SpeechDialog dlg(m_ctl, m_timeline->view()->selection(), this);
+        if (dlg.exec() == QDialog::Accepted) {
+            m_inspectorDock->show();
+            m_rightTabs->setCurrentWidget(m_subtitlesPanel);
+            statusBar()->showMessage(tr("Subtitles from speech: %1 added.").arg(dlg.added()), 5000);
+        }
+    });
+    m_autoCaptionsAct->setObjectName(QStringLiteral("actAutoCaptions"));
+    // Next AI step: cut the video by deleting words from what was heard.
+    addPlanned(m_graphicsMenu, QT_TR_NOOP("Edit by transcript (delete words to cut)..."), 14, QStringLiteral("actTextEditing"));
     // The subtitle strip on the timeline and the Subtitles panel show the same subtitle.
     connect(m_timeline->view(), &TimelineView::subtitleClicked, this, [this](const QUuid &id) {
         m_inspectorDock->show();
@@ -648,6 +660,8 @@ void MainWindow::retranslate()
     m_renderPreviewAct->setToolTip(tr("Render the red parts of the selected clips (or of the whole sequence) once, so "
                                       "they play smoothly (Enter on the timeline)"));
     m_deletePreviewsAct->setText(tr("Delete preview files"));
+    m_autoCaptionsAct->setText(tr("Subtitles from speech (automatic)..."));
+    m_autoCaptionsAct->setToolTip(tr("Hear the clips on this computer and write what is said as subtitles"));
     m_autoMulticamAct->setText(tr("Automatic multicamera edit..."));
     m_autoMulticamAct->setToolTip(tr("Cut a multicamera clip between its cameras by who is speaking, or in a rhythm"));
     m_mixLoudnessAct->setText(tr("Mix loudness..."));
