@@ -7,6 +7,7 @@
 #include "app/RecoveryDialog.h"
 #include "app/FeatureStatus.h"
 #include "app/InterchangeDialog.h"
+#include "app/InterchangeImportDialog.h"
 #include "app/Logging.h"
 #include "app/MediaBinPanel.h"
 #include "app/MonitorView.h"
@@ -48,6 +49,7 @@
 #include <QMenuBar>
 #include <QScreen>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QSplitter>
 #include <QStatusBar>
 #include <QStyle>
@@ -336,6 +338,8 @@ void MainWindow::buildMenus()
     connect(m_ctl, &ProjectController::timelineChanged, this, updateInterchange);
     connect(m_ctl, &ProjectController::projectReset, this, updateInterchange);
     m_interchangeAct->setEnabled(false);
+    m_importInterchangeAct = m_fileMenu->addAction(QString(), this, &MainWindow::openImportInterchange);
+    m_importInterchangeAct->setObjectName(QStringLiteral("actImportInterchange"));
     m_fileMenu->addSeparator();
     m_cacheAct = m_fileMenu->addAction(QString(), this, &MainWindow::openCache);
     m_cacheAct->setObjectName(QStringLiteral("actMediaCache"));
@@ -626,6 +630,9 @@ void MainWindow::retranslate()
     m_interchangeAct->setText(tr("Export for other editors..."));
     m_interchangeAct->setToolTip(tr("Save the main sequence as XML, OpenTimelineIO or EDL for Premiere Pro, "
                                     "DaVinci Resolve and other editors"));
+    m_importInterchangeAct->setText(tr("Import from other editors..."));
+    m_importInterchangeAct->setToolTip(tr("Open a sequence from Premiere Pro, DaVinci Resolve or another editor: "
+                                          "Final Cut Pro XML, OpenTimelineIO or EDL"));
     m_collectAct->setText(tr("Collect project..."));
     m_collectAct->setToolTip(tr("Copy the project and its media into one folder"));
     m_cacheAct->setText(tr("Media cache..."));
@@ -1034,6 +1041,24 @@ void MainWindow::openInterchange()
     InterchangeDialog dlg(m_ctl, this);
     if (dlg.exec() == QDialog::Accepted && !dlg.savedPath().isEmpty())
         statusBar()->showMessage(tr("Saved for other editors: %1").arg(QDir::toNativeSeparators(dlg.savedPath())),
+                                 15000);
+}
+
+void MainWindow::openImportInterchange()
+{
+    QSettings settings;
+    const QString key = QStringLiteral("interchange/importDir");
+    QString dir = settings.value(key).toString();
+    if (dir.isEmpty())
+        dir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    const QString path = QFileDialog::getOpenFileName(this, tr("Import from other editors"), dir,
+                                                      tr("Timelines (*.xml *.otio *.edl)"));
+    if (path.isEmpty())
+        return;
+    settings.setValue(key, QFileInfo(path).absolutePath());
+    InterchangeImportDialog dlg(m_ctl, path, this);
+    if (dlg.exec() == QDialog::Accepted && dlg.importedClips() > 0)
+        statusBar()->showMessage(tr("Imported from %1: %2 clips").arg(QFileInfo(path).fileName()).arg(dlg.importedClips()),
                                  15000);
 }
 

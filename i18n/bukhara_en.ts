@@ -479,14 +479,19 @@
         <translation>File &gt; Export for other editors writes the main sequence for Premiere Pro, DaVinci Resolve and other editors: which part of which file lies where on which track, cross dissolves, markers and (XML) clip volume. Nested and multicamera clips become the clips inside them. Before saving, the window lists what will not be transferred: titles, effects, colour, motion, speed changes, subtitles and more. The EDL holds video track V1 only. Opening the files in Premiere Pro and DaVinci Resolve has not been tested by us.</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="75" />
-        <source>Import from other editors (XML, OpenTimelineIO, EDL)</source>
-        <translation>Import from other editors (XML, OpenTimelineIO, EDL)</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="76" />
         <source>Audio plugins (VST3)</source>
         <translation>Audio plugins (VST3)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</source>
+        <translation>Import from other editors: Final Cut Pro XML, OpenTimelineIO, EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="75" />
+        <source>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</source>
+        <translation>File &gt; Import from other editors opens a sequence made in Premiere Pro, DaVinci Resolve or another editor: clips with their places, dissolves, markers and (XML) clip volume, as one nested clip or straight onto the open sequence at the playhead; one undo step. Media files are found by their path, next to the file or in the bin; files not found stay offline for relinking. Effects, titles, speed changes and nested sequences of the other editor are not imported; the window lists them first. Files from Premiere Pro and DaVinci Resolve themselves have not been tested by us.</translation>
     </message>
 </context>
 <context>
@@ -2103,6 +2108,129 @@
     </message>
 </context>
 <context>
+    <name>bc::InterchangeImportDialog</name>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="37" />
+        <source>Import from other editors</source>
+        <translation>Import from other editors</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="46" />
+        <source>As one nested clip at the playhead (double-click it to edit)</source>
+        <translation>As one nested clip at the playhead (double-click it to edit)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="47" />
+        <source>Clips straight onto the open sequence at the playhead</source>
+        <translation>Clips straight onto the open sequence at the playhead</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="52" />
+        <source>Close</source>
+        <translation>Close</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="53" />
+        <source>Import</source>
+        <translation>Import</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="74" />
+        <source>File: %1</source>
+        <translation>File: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="86" />
+        <source>Final Cut Pro XML</source>
+        <translation>Final Cut Pro XML</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="87" />
+        <source>OpenTimelineIO</source>
+        <translation>OpenTimelineIO</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="88" />
+        <source>EDL (CMX 3600)</source>
+        <translation>EDL (CMX 3600)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="90" />
+        <source>Format: %1</source>
+        <translation>Format: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="91" />
+        <source>Clips: %1 on %2 video and %3 audio tracks</source>
+        <translation>Clips: %1 on %2 video and %3 audio tracks</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="94" />
+        <source>Media files: %1 found, %2 not found. Files not found stay offline; relink them later in the media bin.</source>
+        <translation>Media files: %1 found, %2 not found. Files not found stay offline; relink them later in the media bin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="99" />
+        <source>An EDL has no frame rate: the sequence rate (%1 fps) is used.</source>
+        <translation>An EDL has no frame rate: the sequence rate (%1 fps) is used.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="100" />
+        <source>EDL source times are timecodes: for camera files with their own start timecode the clips may show the wrong part. XML and OpenTimelineIO do not have this problem.</source>
+        <translation>EDL source times are timecodes: for camera files with their own start timecode the clips may show the wrong part. XML and OpenTimelineIO do not have this problem.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="105" />
+        <source>The file runs at %1 fps, the sequence at %2 fps: times are converted to the sequence.</source>
+        <translation>The file runs at %1 fps, the sequence at %2 fps: times are converted to the sequence.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="113" />
+        <source>Everything in the file will be imported.</source>
+        <translation>Everything in the file will be imported.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="115" />
+        <source>Not imported:</source>
+        <translation>Not imported:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="131" />
+        <source>Titles, colour mattes and other generated clips: %1</source>
+        <translation>Titles, colour mattes and other generated clips: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="132" />
+        <source>Effects, motion or colour settings: %1 clips</source>
+        <translation>Effects, motion or colour settings: %1 clips</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="133" />
+        <source>Speed changes: %1 clips (they play at normal speed)</source>
+        <translation>Speed changes: %1 clips (they play at normal speed)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="134" />
+        <source>Nested sequences and multicamera clips: %1</source>
+        <translation>Nested sequences and multicamera clips: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="135" />
+        <source>Transitions other than dissolves: %1 (they become dissolves)</source>
+        <translation>Transitions other than dissolves: %1 (they become dissolves)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="136" />
+        <source>Clips switched off: %1</source>
+        <translation>Clips switched off: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/InterchangeImportDialog.cpp" line="137" />
+        <source>Clips without a media file: %1</source>
+        <translation>Clips without a media file: %1</translation>
+    </message>
+</context>
+<context>
     <name>bc::LoudnessDialog</name>
     <message>
         <location filename="../src/app/LoudnessDialog.cpp" line="43" />
@@ -2925,6 +3053,31 @@
         <location filename="../src/app/MainWindow.cpp" line="1036" />
         <source>Saved for other editors: %1</source>
         <translation>Saved for other editors: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="633" />
+        <source>Import from other editors...</source>
+        <translation>Import from other editors...</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="634" />
+        <source>Open a sequence from Premiere Pro, DaVinci Resolve or another editor: Final Cut Pro XML, OpenTimelineIO or EDL</source>
+        <translation>Open a sequence from Premiere Pro, DaVinci Resolve or another editor: Final Cut Pro XML, OpenTimelineIO or EDL</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1054" />
+        <source>Import from other editors</source>
+        <translation>Import from other editors</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1055" />
+        <source>Timelines (*.xml *.otio *.edl)</source>
+        <translation>Timelines (*.xml *.otio *.edl)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1061" />
+        <source>Imported from %1: %2 clips</source>
+        <translation>Imported from %1: %2 clips</translation>
     </message>
 </context>
 <context>
@@ -3871,6 +4024,31 @@
         <location filename="../src/app/ProjectInterchange.cpp" line="23" />
         <source>Could not write the file %1: %2</source>
         <translation>Could not write the file %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="62" />
+        <source>Could not open the file %1: %2</source>
+        <translation>Could not open the file %1: %2</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="77" />
+        <source>This file could not be read as a timeline.</source>
+        <translation>This file could not be read as a timeline.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="82" />
+        <source>The file holds no clips.</source>
+        <translation>The file holds no clips.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="240" />
+        <source>Import from other editors</source>
+        <translation>Import from other editors</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectInterchange.cpp" line="302" />
+        <source>The clips could not be placed: the first video and audio tracks are locked.</source>
+        <translation>The clips could not be placed: the first video and audio tracks are locked.</translation>
     </message>
 </context>
 <context>

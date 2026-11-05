@@ -89,6 +89,7 @@ private:
     void renderPreview();
     void openExportQueue(); // File > Export queue (phase 13a)
     void openInterchange(); // File > Export for other editors (phase 15a)
+    void openImportInterchange(); // File > Import from other editors (phase 15b)
     void openVersions(); // File > Previous versions
     void openCollect();  // File > Collect project
     void openCache();    // File > Media cache
@@ -139,6 +140,7 @@ private:
     QAction *m_exportAct = nullptr;
     QAction *m_exportQueueAct = nullptr;
     QAction *m_interchangeAct = nullptr;
+    QAction *m_importInterchangeAct = nullptr;
     ExportQueue *m_exportQueue = nullptr;
     ExportQueueDialog *m_exportQueueDialog = nullptr;
 public:
