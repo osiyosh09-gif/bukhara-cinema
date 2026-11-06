@@ -43,6 +43,7 @@
 #include <QDesktopServices>
 #include <functional>
 #include <QDir>
+#include <QPair>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QFileInfo>
@@ -234,14 +235,23 @@ void MainWindow::buildDocks()
     m_timeline = new TimelinePanel(m_ctl);
     // Sequence > Create multicamera sequence also takes the clips selected on the timeline.
     m_bin->setTimelineMedia([this] {
-        QList<const TimelineClip *> clips;
-        for (const QUuid &id : m_timeline->view()->selection())
-            if (const TimelineClip *c = m_ctl->timeline().clip(id); c && !c->mediaId.isNull())
-                clips << c;
-        std::sort(clips.begin(), clips.end(), [](const TimelineClip *a, const TimelineClip *b) { return a->start < b->start; });
+        // Selection order is a QSet (arbitrary), so sort by position on the
+        // timeline instead: start time, then track, both deterministic.
+        const Timeline &tl = m_ctl->timeline();
+        QList<QPair<Timeline::ClipRef, const TimelineClip *>> clips;
+        for (const QUuid &id : m_timeline->view()->selection()) {
+            const Timeline::ClipRef ref = tl.find(id);
+            if (const TimelineClip *c = tl.clip(id); c && ref.isValid() && !c->mediaId.isNull())
+                clips << qMakePair(ref, c);
+        }
+        std::sort(clips.begin(), clips.end(), [](const auto &a, const auto &b) {
+            if (a.second->start != b.second->start)
+                return a.second->start < b.second->start;
+            return a.first.track < b.first.track;
+        });
         QList<QUuid> media;
-        for (const TimelineClip *c : clips)
-            media << c->mediaId;
+        for (const auto &pair : clips)
+            media << pair.second->mediaId;
         return media;
     });
     m_bin->setTimelineNest([this] { return m_ctl->multicamCandidate(m_timeline->view()->selection()); });
