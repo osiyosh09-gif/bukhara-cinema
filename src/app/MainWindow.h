@@ -2,6 +2,7 @@
 
 #include <QByteArray>
 #include <QMainWindow>
+#include <QPointer>
 
 class QAction;
 class QDockWidget;
@@ -107,6 +108,16 @@ private:
         int phase;
     };
     QList<PlannedAction> m_planned;
+    // Why a command is off (shown as its tool tip while it is disabled).
+    struct OffReason
+    {
+        QPointer<QAction> action;
+        const char *sourceText;
+    };
+    QList<OffReason> m_offReasons;
+    void explainWhenOff(const QString &objectName, const char *sourceText);
+    void applyOffReason(const OffReason &r);
+    void setupOffReasons();
 
     QMenu *m_fileMenu = nullptr;
     QMenu *m_editMenu = nullptr;

@@ -295,7 +295,10 @@ void ExportDialog::onFinished(bool ok, const QString &error)
     setRunning(false);
     if (ok) {
         m_progress->setValue(1000);
-        m_status->setText(tr("Done: %1").arg(QDir::toNativeSeparators(path())));
+        QString text = tr("Done: %1").arg(QDir::toNativeSeparators(path()));
+        if (const QString note = m_ctl->exportNote(); !note.isEmpty())
+            text += QLatin1Char('\n') + note;
+        m_status->setText(text);
         m_openFolder->show();
     } else if (error.isEmpty()) {
         m_progress->setValue(0);

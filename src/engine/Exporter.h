@@ -43,6 +43,9 @@ public:
     bool start(const Project &project, const ExportSettings &settings, QString *error);
     void cancel(); // stops and deletes the unfinished file
     bool isRunning() const { return m_running; }
+    // After a finished export: why another video codec was used (a hardware
+    // encoder that stopped on this computer), else empty.
+    QString note() const { return m_note; }
     qint64 totalFrames() const { return m_total; }
 
 signals:
@@ -50,6 +53,9 @@ signals:
     void finished(bool ok, const QString &error); // error is empty after cancel()
 
 private:
+    bool launch(const ExportSettings &settings, QString *error);
+    void stopGraph();
+    bool tryFallback(const QString &why);
     void poll();
     void finish(bool ok, const QString &error);
 
@@ -58,7 +64,10 @@ private:
     QTimer m_timer;
     QElapsedTimer m_clock;
     ExportSettings m_settings;
+    Project m_project;
+    QString m_note;
     qint64 m_total = 0;
+    qint64 m_reached = 0; // furthest frame seen
     bool m_running = false;
 };
 

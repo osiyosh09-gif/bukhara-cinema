@@ -254,11 +254,6 @@
         <translation>Multicamera sequence lined up by sound</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="66" />
-        <source>Select two or more recordings of one event in the media bin, then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
-        <translation>Select two or more recordings of one event in the media bin, then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="67" />
         <source>Multicamera monitor: all angles at once, switching while playing (keys 1-9)</source>
         <translation>Multicamera monitor: all angles at once, switching while playing (keys 1-9)</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="73" />
         <source>Edit by transcript: delete words to cut the video</source>
         <translation>Edit by transcript: delete words to cut the video</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="66" />
+        <source>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
+        <translation>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</translation>
     </message>
 </context>
 <context>
@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>The file was not written. Check the folder and free disk space.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>The export stopped at frame %1 of %2. Try another video codec.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>The written file has no picture. Try another video codec.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 did not work on this computer; the file was written with %2.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3230,11 +3245,6 @@
         <translation>Subtitles</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
-        <translation>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Rename marker</translation>
@@ -3404,6 +3414,86 @@
         <source>Edit by transcript (delete words to cut)...</source>
         <translation>Edit by transcript (delete words to cut)...</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="335" />
+        <source>Select clips on the timeline first.</source>
+        <translation>Select clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="336" />
+        <source>Open a clip in the Source monitor first: double-click it in the media bin.</source>
+        <translation>Open a clip in the Source monitor first: double-click it in the media bin.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="341" />
+        <source>Nothing to undo yet.</source>
+        <translation>Nothing to undo yet.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="342" />
+        <source>Nothing to redo.</source>
+        <translation>Nothing to redo.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="343" />
+        <source>Copy or cut clips first.</source>
+        <translation>Copy or cut clips first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="346" />
+        <source>Save the project first: older versions are kept each time it is saved again.</source>
+        <translation>Save the project first: older versions are kept each time it is saved again.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="347" />
+        <source>Put clips on the timeline first.</source>
+        <translation>Put clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="349" />
+        <source>Put the playhead over a clip on the timeline first.</source>
+        <translation>Put the playhead over a clip on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="350" />
+        <source>Select audio clips on the timeline first.</source>
+        <translation>Select audio clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="352" />
+        <source>Select one video or audio clip on the timeline first.</source>
+        <translation>Select one video or audio clip on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="353" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Select video clips on the timeline first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="354" />
+        <source>Select a clip next to a cut first.</source>
+        <translation>Select a clip next to a cut first.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
+        <translation>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="366" />
+        <source>The video engine could not be loaded: see the log file.</source>
+        <translation>The video engine could not be loaded: see the log file.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="813" />
+        <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
+        <translation>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -3504,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Create multicamera sequence...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3654,6 +3739,36 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Delete proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="602" />
+        <source>%1: still being read, wait a moment</source>
+        <translation>%1: still being read, wait a moment</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="604" />
+        <source>%1: the file could not be read (its name is red)</source>
+        <translation>%1: the file could not be read (its name is red)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="606" />
+        <source>%1: a picture, not a recording</source>
+        <translation>%1: a picture, not a recording</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="608" />
+        <source>%1: no picture and no sound found in it</source>
+        <translation>%1: no picture and no sound found in it</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="612" />
+        <source>Selected: %1 recording(s); at least two are needed.</source>
+        <translation>Selected: %1 recording(s); at least two are needed.</translation>
     </message>
 </context>
 <context>

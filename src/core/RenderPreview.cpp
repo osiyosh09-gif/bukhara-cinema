@@ -445,7 +445,7 @@ bool Reader::open(const QString &path, QString *error)
     };
     d = std::make_unique<Impl>();
     int rc;
-    if ((rc = avformat_open_input(&d->in, QFile::encodeName(path).constData(), nullptr, nullptr)) < 0)
+    if ((rc = avformat_open_input(&d->in, QFileInfo(path).absoluteFilePath().toUtf8().constData(), nullptr, nullptr)) < 0)
         return fail(averr(rc));
     if ((rc = avformat_find_stream_info(d->in, nullptr)) < 0)
         return fail(averr(rc));

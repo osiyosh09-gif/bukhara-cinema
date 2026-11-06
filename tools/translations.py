@@ -1200,9 +1200,9 @@ T.update({
 
 T.update({
     "Multicamera sequence lined up by sound": ("Овоз бўйича синхронланган мультикам секвенция", "Мультикамерная секвенция, синхронизированная по звуку"),
-    "Select two or more recordings of one event in the media bin, then Sequence > Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.": (
-        "Медиа кутубхонасида бир воқеанинг икки ёки ундан кўп ёзувини танланг, кейин «Секвенция > Мультикам секвенция яратиш»: улар овози бўйича (ёки файл бошидан) тенглаштирилади ва timeline'га битта клип қўйилади. Клипни бўлинг ва ҳар бир бўлагининг камерасини «Клип» панелида танланг (расм ва овоз алоҳида); синхронни қўлда тўғрилаш учун клипни икки марта босинг.",
-        "Выберите в медиатеке две или больше записей одного события, затем «Секвенция > Создать мультикамерную секвенцию»: они выравниваются по звуку (или по началу файлов), и на таймлайн ставится один клип. Разрежьте его и выберите камеру для каждой части во вкладке «Клип» (картинка и звук отдельно); двойной щелчок открывает его для точной подстройки."),
+    "Select two or more recordings of one event (in the media bin or on the timeline), then Sequence > Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.": (
+        "Бир воқеанинг икки ёки ундан кўп ёзувини танланг (медиа кутубхонасида ёки timeline'да), кейин «Секвенция > Мультикам секвенция яратиш»: улар овози бўйича (ёки файл бошидан) тенглаштирилади ва timeline'га битта клип қўйилади. Ёзувлари ўз йўлакларида аллақачон тенглаштирилган nested секвенция шундайлигича мультикамга айланади (унинг клипини танлаб, худди шу буйруқ). Клипни бўлинг ва ҳар бир бўлагининг камерасини «Клип» панелида танланг (расм ва овоз алоҳида); синхронни қўлда тўғрилаш учун клипни икки марта босинг.",
+        "Выберите две или больше записей одного события (в медиатеке или на таймлайне), затем «Секвенция > Создать мультикамерную секвенцию»: они выравниваются по звуку (или по началу файлов), и на таймлайн ставится один клип. Вложенная секвенция, записи которой уже выровнены на своих дорожках, становится мультикамерной как есть (выделите её клип, та же команда). Разрежьте его и выберите камеру для каждой части во вкладке «Клип» (картинка и звук отдельно); двойной щелчок открывает его для точной подстройки."),
     "Multicamera monitor: all angles at once, switching while playing (keys 1-9)": ("Мультикам монитор: ҳамма ракурслар бир экранда, ижро пайтида алмаштириш (1–9 тугмалари)", "Мультикамерный монитор: все ракурсы сразу, переключение во время воспроизведения (клавиши 1–9)"),
     "Multicamera": ("Мультикам", "Мультикамера"),
     "Picture:": ("Расм:", "Картинка:"),
@@ -1210,7 +1210,7 @@ T.update({
     "Which camera this part of the clip shows. Split the clip (Ctrl+K) to switch cameras.": ("Клипнинг бу бўлаги қайси камерани кўрсатади. Камерани алмаштириш учун клипни бўлинг (Ctrl+K).", "Какую камеру показывает эта часть клипа. Чтобы переключить камеру, разрежьте клип (Ctrl+K)."),
     "Phase 12, part 1: multicamera sequences lined up by sound (Sequence menu); pick the camera in the Clip tab.": ("12-босқич, 1-қисм: овоз бўйича синхронланган мультикам секвенциялар (Секвенция менюси); камерани «Клип» панелида танланг.", "Этап 12, часть 1: мультикамерные секвенции с синхронизацией по звуку (меню «Секвенция»); камера выбирается во вкладке «Клип»."),
     "Create multicamera sequence...": ("Мультикам секвенция яратиш...", "Создать мультикамерную секвенцию..."),
-    "Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip": ("Медиа кутубхонасида бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади", "Выберите в медиатеке две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа"),
+    "Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip": ("Медиа кутубхонасида (ёки timeline'да уларнинг клипларини) бир воқеанинг икки ёки ундан кўп ёзувини танланг: улар овози бўйича тенглаштирилиб, битта клипнинг ракурсларига айланади", "Выберите в медиатеке (или их клипы на таймлайне) две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа"),
     "Create multicamera sequence": ("Мультикам секвенция яратиш", "Создать мультикамерную секвенцию"),
     "By sound (the cameras recorded the same sound)": ("Овоз бўйича (камералар бир хил овозни ёзган)", "По звуку (камеры записали один и тот же звук)"),
     "By file start (all start together)": ("Файл бошидан (ҳаммаси бирга бошланади)", "По началу файла (все начинаются вместе)"),
@@ -1748,6 +1748,42 @@ _MAP = {
 }
 _VOWELS = set("аеёиоуўэюяaeiou")
 
+
+# Export falls back to the encoder that needs no hardware (deep check)
+T.update({
+    'The export stopped at frame %1 of %2. Try another video codec.': ('Экспорт %2 кадрдан %1-кадрда тўхтади. Бошқа видео кодекни танланг.', 'Экспорт остановился на кадре %1 из %2. Выберите другой видеокодек.'),
+    'The written file has no picture. Try another video codec.': ('Ёзилган файлда тасвир йўқ. Бошқа видео кодекни танланг.', 'В записанном файле нет изображения. Выберите другой видеокодек.'),
+    '%1 did not work on this computer; the file was written with %2.': ('%1 бу компьютерда ишламади; файл %2 билан ёзилди.', '%1 не сработал на этом компьютере; файл записан с помощью %2.'),
+})
+
+# Why the multicamera command is off: the selected files (deep check)
+T.update({
+    '%1: still being read, wait a moment': ('%1: ҳали ўқиляпти, бир оз кутинг', '%1: ещё читается, подождите немного'),
+    '%1: the file could not be read (its name is red)': ('%1: файлни ўқиб бўлмади (номи қизил)', '%1: файл не удалось прочитать (имя красное)'),
+    '%1: a picture, not a recording': ('%1: бу расм, ёзув эмас', '%1: это изображение, а не запись'),
+    '%1: no picture and no sound found in it': ('%1: унда тасвир ҳам, овоз ҳам топилмади', '%1: в нём не найдено ни изображения, ни звука'),
+    'Selected: %1 recording(s); at least two are needed.': ('Танланган: %1 та ёзув; камида иккита керак.', 'Выбрано записей: %1; нужно минимум две.'),
+})
+
+# Why grey menu commands are off (audit)
+T.update({
+    'Select clips on the timeline first.': ("Аввал timeline'да клипларни танланг.", 'Сначала выделите клипы на таймлайне.'),
+    'Open a clip in the Source monitor first: double-click it in the media bin.': ('Аввал клипни Source мониторида очинг: медиа кутубхонасида уни икки марта босинг.', 'Сначала откройте клип в мониторе источника: дважды щёлкните его в медиатеке.'),
+    'Nothing to undo yet.': ('Ҳозирча бекор қиладиган амал йўқ.', 'Пока нечего отменять.'),
+    'Nothing to redo.': ('Қайтарадиган амал йўқ.', 'Нечего повторять.'),
+    'Copy or cut clips first.': ('Аввал клипларни нусхаланг ёки кесиб олинг.', 'Сначала скопируйте или вырежьте клипы.'),
+    'Save the project first: older versions are kept each time it is saved again.': ('Аввал лойиҳани сақланг: ҳар сафар қайта сақлаганда эски версиялари қолади.', 'Сначала сохраните проект: при каждом новом сохранении старые версии сохраняются.'),
+    'Put clips on the timeline first.': ("Аввал timeline'га клип қўйинг.", 'Сначала поместите клипы на таймлайн.'),
+    'Put the playhead over a clip on the timeline first.': ("Аввал курсорни timeline'даги клип устига қўйинг.", 'Сначала поставьте курсор на клип на таймлайне.'),
+    'Select audio clips on the timeline first.': ("Аввал timeline'да аудио клипларни танланг.", 'Сначала выделите аудиоклипы на таймлайне.'),
+    'Select one video or audio clip on the timeline first.': ("Аввал timeline'да битта видео ёки аудио клипни танланг.", 'Сначала выделите на таймлайне один видео- или аудиоклип.'),
+    'Select video clips on the timeline first.': ("Аввал timeline'да видео клипларни танланг.", 'Сначала выделите видеоклипы на таймлайне.'),
+    'Select a clip next to a cut first.': ('Аввал кесим ёнидаги клипни танланг.', 'Сначала выделите клип рядом со склейкой.'),
+    'Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.': ('Аввал бир воқеанинг иккита ёки ундан кўп ёзувини танланг (Ctrl+босиш): медиа кутубхонасида ёки timeline\'да.', 'Сначала выделите две или больше записей одного события (Ctrl+щелчок): в медиатеке или на таймлайне.'),
+    'Put the playhead on a multicamera clip that has this camera (Sequence > Create multicamera sequence).': ('Курсорни шу камераси бор мультикам клип устига қўйинг («Секвенция > Мультикам секвенция яратиш»).', 'Поставьте курсор на многокамерный клип с этой камерой («Эпизод > Создать многокамерный эпизод»).'),
+    'The video engine could not be loaded: see the log file.': ('Видео двигатели юкланмади: журнал файлига қаранг.', 'Не удалось загрузить видеодвижок: см. файл журнала.'),
+    'Grey menu commands say what they need when you point at them. Help > Feature status lists what works.': ('Кулранг меню буйруқлари устига сичқонча келтирсангиз, нима кераклигини айтади. Ёрдам > Функциялар ҳолати нима ишлашини кўрсатади.', 'Серые команды меню показывают, что им нужно, если навести на них мышь. Справка > Состояние функций показывает, что работает.'),
+})
 
 def cyr_to_lat(text: str) -> str:
     out = []

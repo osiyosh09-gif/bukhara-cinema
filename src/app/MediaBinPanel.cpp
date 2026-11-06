@@ -167,8 +167,7 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     m_multicam->setObjectName(QStringLiteral("actCreateMulticam"));
     m_multicam->setEnabled(false);
     connect(m_multicam, &QAction::triggered, this, &MediaBinPanel::openMulticamDialog);
-    connect(m_tree, &QTreeWidget::itemSelectionChanged, this,
-            [this] { m_multicam->setEnabled(multicamMedia().size() >= 2); });
+    connect(m_tree, &QTreeWidget::itemSelectionChanged, this, &MediaBinPanel::updateMulticamAction);
     connect(m_tree, &QTreeWidget::itemChanged, this, &MediaBinPanel::onItemChanged);
     connect(m_tree, &BinTree::filesDropped, this, [this](const QStringList &paths, const QUuid &folder) {
         m_ctl->importFiles(paths, folder);
@@ -187,6 +186,10 @@ MediaBinPanel::MediaBinPanel(ProjectController *controller, QWidget *parent)
     connect(m_ctl, &ProjectController::projectReset, this, &MediaBinPanel::rebuild);
     connect(m_ctl, &ProjectController::binChanged, this, &MediaBinPanel::rebuild);
     connect(m_ctl, &ProjectController::itemUpdated, this, &MediaBinPanel::updateItemRow);
+    // A file selected while it was still being read becomes usable when the reading ends.
+    connect(m_ctl, &ProjectController::itemUpdated, this, &MediaBinPanel::updateMulticamAction);
+    connect(m_ctl, &ProjectController::binChanged, this, &MediaBinPanel::updateMulticamAction);
+    connect(m_ctl, &ProjectController::projectReset, this, &MediaBinPanel::updateMulticamAction);
 
     retranslate();
     rebuild();
@@ -360,8 +363,8 @@ void MediaBinPanel::retranslate()
     m_folderBtn->setToolTip(tr("New folder"));
     m_filter->setPlaceholderText(tr("Search by name"));
     m_multicam->setText(tr("Create multicamera sequence..."));
-    m_multicam->setToolTip(tr("Select two or more recordings of one event in the media bin: they are lined up by sound "
-                              "and become the angles of one clip"));
+    m_multicam->setToolTip(tr("Select two or more recordings of one event in the media bin (or their clips on the "
+                              "timeline): they are lined up by sound and become the angles of one clip"));
 
     const int total = int(m_ctl->project().items.size());
     const int offline = m_ctl->offlineCount();
@@ -559,20 +562,79 @@ void MediaBinPanel::showContextMenu(const QPoint &pos)
 
 QList<QUuid> MediaBinPanel::multicamMedia() const
 {
-    QList<QUuid> out;
-    for (const QUuid &id : selectedItems()) {
-        const MediaItem *m = m_ctl->project().item(id);
-        if (m && m->probed && m->info.kind != MediaInfo::Kind::Image && (m->info.hasVideo() || m->info.hasAudio()))
-            out << id;
+    auto usable = [this](const QList<QUuid> &ids) {
+        QList<QUuid> out;
+        for (const QUuid &id : ids) {
+            const MediaItem *m = m_ctl->project().item(id);
+            if (m && m->probed && m->info.kind != MediaInfo::Kind::Image && (m->info.hasVideo() || m->info.hasAudio())
+                && !out.contains(id))
+                out << id;
+        }
+        return out;
+    };
+    QList<QUuid> out = usable(selectedItems());
+    if (out.size() < 2 && m_timelineMedia) {
+        const QList<QUuid> fromTimeline = usable(m_timelineMedia());
+        if (fromTimeline.size() >= 2)
+            out = fromTimeline;
     }
     return out;
+}
+
+void MediaBinPanel::setTimelineMedia(std::function<QList<QUuid>()> provider)
+{
+    m_timelineMedia = std::move(provider);
+    updateMulticamAction();
+}
+
+void MediaBinPanel::setTimelineNest(std::function<QUuid()> provider)
+{
+    m_timelineNest = std::move(provider);
+    updateMulticamAction();
+}
+
+QUuid MediaBinPanel::nestCandidate() const
+{
+    return m_timelineNest && multicamMedia().size() < 2 ? m_timelineNest() : QUuid();
+}
+
+void MediaBinPanel::updateMulticamAction()
+{
+    const bool on = multicamMedia().size() >= 2 || !nestCandidate().isNull();
+    // Why the selected files cannot be angles (shown with the reason it is off).
+    QStringList why;
+    if (!on) {
+        for (const QUuid &id : selectedItems()) {
+            const MediaItem *m = m_ctl->project().item(id);
+            if (!m)
+                continue;
+            if (m_ctl->isProbing(id))
+                why << tr("%1: still being read, wait a moment").arg(m->name);
+            else if (!m->probed)
+                why << tr("%1: the file could not be read (its name is red)").arg(m->name);
+            else if (m->info.kind == MediaInfo::Kind::Image)
+                why << tr("%1: a picture, not a recording").arg(m->name);
+            else if (!m->info.hasVideo() && !m->info.hasAudio())
+                why << tr("%1: no picture and no sound found in it").arg(m->name);
+        }
+        const int usable = int(multicamMedia().size());
+        if (why.isEmpty() && !selectedItems().isEmpty())
+            why << tr("Selected: %1 recording(s); at least two are needed.").arg(usable);
+    }
+    m_multicam->setProperty("bc_offDetail", why.join(QLatin1Char('\n')));
+    m_multicam->setEnabled(on);
+    emit multicamChecked();
 }
 
 void MediaBinPanel::openMulticamDialog()
 {
     const QList<QUuid> ids = multicamMedia();
-    if (ids.size() < 2)
+    if (ids.size() < 2) {
+        // Clips already lined up in a nested sequence: it becomes the multicamera one as it is.
+        if (const QUuid nest = nestCandidate(); !nest.isNull())
+            m_ctl->makeMulticam(nest);
         return;
+    }
     auto *dlg = new MulticamDialog(m_ctl, ids, window());
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->open();

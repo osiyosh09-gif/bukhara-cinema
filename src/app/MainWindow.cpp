@@ -35,10 +35,13 @@
 #include "app/Formatting.h"
 #include "app/TimelinePanel.h"
 
+#include <algorithm>
+
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopServices>
+#include <functional>
 #include <QDir>
 #include <QDockWidget>
 #include <QFileDialog>
@@ -86,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
     buildDocks();
     buildMenus();
     buildToolbar();
+    setupOffReasons();
 
     m_statusLabel = new QLabel(this);
     statusBar()->addWidget(m_statusLabel, 1);
@@ -228,6 +232,21 @@ void MainWindow::buildDocks()
 
     // The timeline panel exists first: the clip inspector follows its selection.
     m_timeline = new TimelinePanel(m_ctl);
+    // Sequence > Create multicamera sequence also takes the clips selected on the timeline.
+    m_bin->setTimelineMedia([this] {
+        QList<const TimelineClip *> clips;
+        for (const QUuid &id : m_timeline->view()->selection())
+            if (const TimelineClip *c = m_ctl->timeline().clip(id); c && !c->mediaId.isNull())
+                clips << c;
+        std::sort(clips.begin(), clips.end(), [](const TimelineClip *a, const TimelineClip *b) { return a->start < b->start; });
+        QList<QUuid> media;
+        for (const TimelineClip *c : clips)
+            media << c->mediaId;
+        return media;
+    });
+    m_bin->setTimelineNest([this] { return m_ctl->multicamCandidate(m_timeline->view()->selection()); });
+    connect(m_timeline->view(), &TimelineView::selectionChanged, m_bin, &MediaBinPanel::updateMulticamAction);
+    connect(m_ctl, &ProjectController::timelineChanged, m_bin, &MediaBinPanel::updateMulticamAction);
 
     // Right: clip parameters, effects, color, audio
     m_rightTabs = new QTabWidget;
@@ -280,6 +299,96 @@ QAction *MainWindow::addPlanned(QMenu *menu, const char *sourceText, int phase, 
     a->setProperty("bc_phase", phase);
     m_planned.append({a, sourceText, phase});
     return a;
+}
+
+void MainWindow::explainWhenOff(const QString &objectName, const char *sourceText)
+{
+    QAction *a = findChild<QAction *>(objectName);
+    if (!a)
+        return;
+    const OffReason r{a, sourceText};
+    m_offReasons.append(r);
+    connect(a, &QAction::enabledChanged, this, [this, r] { applyOffReason(r); });
+    applyOffReason(r);
+}
+
+void MainWindow::applyOffReason(const OffReason &r)
+{
+    QAction *a = r.action;
+    if (!a)
+        return;
+    QString reason = tr(r.sourceText);
+    if (const QString detail = a->property("bc_offDetail").toString(); !detail.isEmpty())
+        reason += QLatin1Char('\n') + detail;
+    const QString shown = a->property("bc_reasonShown").toString();
+    if (!a->isEnabled()) {
+        if (a->toolTip() != shown && a->toolTip() != reason) {
+            // What it says while it works; empty when Qt makes it from the text.
+            QString auto_ = a->text();
+            auto_.remove(QLatin1Char('&'));
+            if (auto_.endsWith(QLatin1String("...")))
+                auto_.chop(3);
+            a->setProperty("bc_tipOn", a->toolTip() == auto_ ? QString() : a->toolTip());
+        }
+        a->setToolTip(reason);
+        a->setProperty("bc_reasonShown", reason);
+    } else if (!shown.isEmpty() && (a->toolTip() == shown || a->toolTip() == reason)) {
+        a->setToolTip(a->property("bc_tipOn").toString());
+        a->setProperty("bc_reasonShown", QString());
+    }
+}
+
+void MainWindow::setupOffReasons()
+{
+    // Menus show tool tips: a grey command then says what it needs.
+    std::function<void(QMenu *)> showTips = [&](QMenu *m) {
+        m->setToolTipsVisible(true);
+        for (QAction *a : m->actions())
+            if (a->menu())
+                showTips(a->menu());
+    };
+    for (QAction *top : menuBar()->actions())
+        if (top->menu())
+            showTips(top->menu());
+
+    static const char *selectClips = QT_TR_NOOP("Select clips on the timeline first.");
+    static const char *openSource = QT_TR_NOOP("Open a clip in the Source monitor first: double-click it in the media bin.");
+    for (const char *name : {"actCut", "actCopy", "actDelete", "actRippleDelete", "actLink", "actNest"})
+        explainWhenOff(QString::fromLatin1(name), selectClips);
+    for (const char *name : {"actInsert", "actOverwrite", "actMarkIn", "actMarkOut", "actClearInOut"})
+        explainWhenOff(QString::fromLatin1(name), openSource);
+    explainWhenOff(QStringLiteral("actUndo"), QT_TR_NOOP("Nothing to undo yet."));
+    explainWhenOff(QStringLiteral("actRedo"), QT_TR_NOOP("Nothing to redo."));
+    explainWhenOff(QStringLiteral("actPaste"), QT_TR_NOOP("Copy or cut clips first."));
+    explainWhenOff(QStringLiteral("actPasteInsert"), QT_TR_NOOP("Copy or cut clips first."));
+    explainWhenOff(QStringLiteral("actVersions"),
+                   QT_TR_NOOP("Save the project first: older versions are kept each time it is saved again."));
+    explainWhenOff(QStringLiteral("actExport"), QT_TR_NOOP("Put clips on the timeline first."));
+    explainWhenOff(QStringLiteral("actExportInterchange"), QT_TR_NOOP("Put clips on the timeline first."));
+    explainWhenOff(QStringLiteral("actSplit"), QT_TR_NOOP("Put the playhead over a clip on the timeline first."));
+    explainWhenOff(QStringLiteral("actAudioGain"), QT_TR_NOOP("Select audio clips on the timeline first."));
+    explainWhenOff(QStringLiteral("actNormalizeLoudness"), QT_TR_NOOP("Select audio clips on the timeline first."));
+    explainWhenOff(QStringLiteral("actSpeed"), QT_TR_NOOP("Select one video or audio clip on the timeline first."));
+    explainWhenOff(QStringLiteral("actDetectScenes"), QT_TR_NOOP("Select video clips on the timeline first."));
+    explainWhenOff(QStringLiteral("actAddTransition"), QT_TR_NOOP("Select a clip next to a cut first."));
+    explainWhenOff(QStringLiteral("actCreateMulticam"),
+                   QT_TR_NOOP(
+                       "Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline."));
+    connect(m_bin, &MediaBinPanel::multicamChecked, this, [this] {
+        for (const OffReason &r : std::as_const(m_offReasons))
+            if (r.action == m_bin->multicamAction())
+                applyOffReason(r);
+    });
+    for (int i = 1; i <= 9; ++i) {
+        explainWhenOff(QStringLiteral("actMulticamCamera%1").arg(i),
+                       QT_TR_NOOP("Put the playhead on a multicamera clip that has this camera "
+                                  "(Sequence > Create multicamera sequence)."));
+        explainWhenOff(QStringLiteral("actMulticamSound%1").arg(i),
+                       QT_TR_NOOP("Put the playhead on a multicamera clip that has this camera "
+                                  "(Sequence > Create multicamera sequence)."));
+    }
+    for (const char *name : {"actRenderPreview", "actMixLoudness", "actPlayPause"})
+        explainWhenOff(QString::fromLatin1(name), QT_TR_NOOP("The video engine could not be loaded: see the log file."));
 }
 
 void MainWindow::buildMenus()
@@ -726,8 +835,11 @@ void MainWindow::retranslate()
     m_rightTabs->setTabText(3, tr("Audio"));
     m_rightTabs->setTabText(4, tr("Subtitles"));
 
-    m_statusLabel->setText(m_ctl->canPlay() ? tr("Phase 14, part 1: scene change detection (Clip > Detect scene changes), on this computer without the internet.")
+    m_statusLabel->setText(m_ctl->canPlay() ? tr("Grey menu commands say what they need when you point at them. Help > Feature status lists what works.")
                                      : tr("The video engine (MLT) could not be loaded: playback is off. See the log file."));
+    // The tool tips were just set again: grey commands get their reason back.
+    for (const OffReason &r : m_offReasons)
+        applyOffReason(r);
 }
 
 // ---------------------------------------------------------------------------

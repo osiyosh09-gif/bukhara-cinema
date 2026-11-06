@@ -254,11 +254,6 @@
         <translation>Ovoz bo‘yicha sinxronlangan multikam sekvensiya</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="66" />
-        <source>Select two or more recordings of one event in the media bin, then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
-        <translation>Media kutubxonasida bir voqeaning ikki yoki undan ko‘p yozuvini tanlang, keyin «Sekvensiya &gt; Multikam sekvensiya yaratish»: ular ovozi bo‘yicha (yoki fayl boshidan) tenglashtiriladi va timeline'ga bitta klip qo‘yiladi. Klipni bo‘ling va har bir bo‘lagining kamerasini «Klip» panelida tanlang (rasm va ovoz alohida); sinxronni qo‘lda to‘g‘rilash uchun klipni ikki marta bosing.</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="67" />
         <source>Multicamera monitor: all angles at once, switching while playing (keys 1-9)</source>
         <translation>Multikam monitor: hamma rakurslar bir ekranda, ijro paytida almashtirish (1–9 tugmalari)</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="73" />
         <source>Edit by transcript: delete words to cut the video</source>
         <translation>Matn orqali montaj: so‘zni o‘chirib videoni kesish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="66" />
+        <source>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
+        <translation>Bir voqeaning ikki yoki undan ko‘p yozuvini tanlang (media kutubxonasida yoki timeline'da), keyin «Sekvensiya &gt; Multikam sekvensiya yaratish»: ular ovozi bo‘yicha (yoki fayl boshidan) tenglashtiriladi va timeline'ga bitta klip qo‘yiladi. Yozuvlari o‘z yo‘laklarida allaqachon tenglashtirilgan nested sekvensiya shundayligicha multikamga aylanadi (uning klipini tanlab, xuddi shu buyruq). Klipni bo‘ling va har bir bo‘lagining kamerasini «Klip» panelida tanlang (rasm va ovoz alohida); sinxronni qo‘lda to‘g‘rilash uchun klipni ikki marta bosing.</translation>
     </message>
 </context>
 <context>
@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>Fayl yozilmadi. Papkani va diskdagi bo‘sh joyni tekshiring.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>Eksport %2 kadrdan %1-kadrda to‘xtadi. Boshqa video kodekni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>Yozilgan faylda tasvir yo‘q. Boshqa video kodekni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 bu kompyuterda ishlamadi; fayl %2 bilan yozildi.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3230,11 +3245,6 @@
         <translation>Subtitrlar</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
-        <translation>14-bosqich, 1-qism: sahna almashishlarini topish (Klip &gt; Sahna almashishlarini topish), shu kompyuterda, internetsiz.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Markerni nomlash</translation>
@@ -3404,6 +3414,86 @@
         <source>Edit by transcript (delete words to cut)...</source>
         <translation>Matn orqali montaj (so‘zni o‘chirib kesish)...</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="335" />
+        <source>Select clips on the timeline first.</source>
+        <translation>Avval timeline'da kliplarni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="336" />
+        <source>Open a clip in the Source monitor first: double-click it in the media bin.</source>
+        <translation>Avval klipni Source monitorida oching: media kutubxonasida uni ikki marta bosing.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="341" />
+        <source>Nothing to undo yet.</source>
+        <translation>Hozircha bekor qiladigan amal yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="342" />
+        <source>Nothing to redo.</source>
+        <translation>Qaytaradigan amal yo‘q.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="343" />
+        <source>Copy or cut clips first.</source>
+        <translation>Avval kliplarni nusxalang yoki kesib oling.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="346" />
+        <source>Save the project first: older versions are kept each time it is saved again.</source>
+        <translation>Avval loyihani saqlang: har safar qayta saqlaganda eski versiyalari qoladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="347" />
+        <source>Put clips on the timeline first.</source>
+        <translation>Avval timeline'ga klip qo‘ying.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="349" />
+        <source>Put the playhead over a clip on the timeline first.</source>
+        <translation>Avval kursorni timeline'dagi klip ustiga qo‘ying.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="350" />
+        <source>Select audio clips on the timeline first.</source>
+        <translation>Avval timeline'da audio kliplarni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="352" />
+        <source>Select one video or audio clip on the timeline first.</source>
+        <translation>Avval timeline'da bitta video yoki audio klipni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="353" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Avval timeline'da video kliplarni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="354" />
+        <source>Select a clip next to a cut first.</source>
+        <translation>Avval kesim yonidagi klipni tanlang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
+        <translation>Kursorni shu kamerasi bor multikam klip ustiga qo‘ying («Sekvensiya &gt; Multikam sekvensiya yaratish»).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="366" />
+        <source>The video engine could not be loaded: see the log file.</source>
+        <translation>Video dvigateli yuklanmadi: jurnal fayliga qarang.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="813" />
+        <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
+        <translation>Kulrang menyu buyruqlari ustiga sichqoncha keltirsangiz, nima kerakligini aytadi. Yordam &gt; Funksiyalar holati nima ishlashini ko‘rsatadi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Avval bir voqeaning ikkita yoki undan ko‘p yozuvini tanlang (Ctrl+bosish): media kutubxonasida yoki timeline'da.</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -3504,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Multikam sekvensiya yaratish...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Media kutubxonasida bir voqeaning ikki yoki undan ko‘p yozuvini tanlang: ular ovozi bo‘yicha tenglashtirilib, bitta klipning rakurslariga aylanadi</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3654,6 +3739,36 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Proxy'ni o‘chirish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Media kutubxonasida (yoki timeline'da ularning kliplarini) bir voqeaning ikki yoki undan ko‘p yozuvini tanlang: ular ovozi bo‘yicha tenglashtirilib, bitta klipning rakurslariga aylanadi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="602" />
+        <source>%1: still being read, wait a moment</source>
+        <translation>%1: hali o‘qilyapti, bir oz kuting</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="604" />
+        <source>%1: the file could not be read (its name is red)</source>
+        <translation>%1: faylni o‘qib bo‘lmadi (nomi qizil)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="606" />
+        <source>%1: a picture, not a recording</source>
+        <translation>%1: bu rasm, yozuv emas</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="608" />
+        <source>%1: no picture and no sound found in it</source>
+        <translation>%1: unda tasvir ham, ovoz ham topilmadi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="612" />
+        <source>Selected: %1 recording(s); at least two are needed.</source>
+        <translation>Tanlangan: %1 ta yozuv; kamida ikkita kerak.</translation>
     </message>
 </context>
 <context>

@@ -254,11 +254,6 @@
         <translation>Мультикамерная секвенция, синхронизированная по звуку</translation>
     </message>
     <message>
-        <location filename="../src/app/FeatureStatus.cpp" line="66" />
-        <source>Select two or more recordings of one event in the media bin, then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
-        <translation>Выберите в медиатеке две или больше записей одного события, затем «Секвенция &gt; Создать мультикамерную секвенцию»: они выравниваются по звуку (или по началу файлов), и на таймлайн ставится один клип. Разрежьте его и выберите камеру для каждой части во вкладке «Клип» (картинка и звук отдельно); двойной щелчок открывает его для точной подстройки.</translation>
-    </message>
-    <message>
         <location filename="../src/app/FeatureStatus.cpp" line="67" />
         <source>Multicamera monitor: all angles at once, switching while playing (keys 1-9)</source>
         <translation>Мультикамерный монитор: все ракурсы сразу, переключение во время воспроизведения (клавиши 1–9)</translation>
@@ -522,6 +517,11 @@
         <location filename="../src/app/FeatureStatus.cpp" line="73" />
         <source>Edit by transcript: delete words to cut the video</source>
         <translation>Монтаж по тексту: удаление слов вырезает видео</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="66" />
+        <source>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
+        <translation>Выберите две или больше записей одного события (в медиатеке или на таймлайне), затем «Секвенция &gt; Создать мультикамерную секвенцию»: они выравниваются по звуку (или по началу файлов), и на таймлайн ставится один клип. Вложенная секвенция, записи которой уже выровнены на своих дорожках, становится мультикамерной как есть (выделите её клип, та же команда). Разрежьте его и выберите камеру для каждой части во вкладке «Клип» (картинка и звук отдельно); двойной щелчок открывает его для точной подстройки.</translation>
     </message>
 </context>
 <context>
@@ -2243,6 +2243,21 @@
         <source>The file was not written. Check the folder and free disk space.</source>
         <translation>Файл не записан. Проверьте папку и свободное место на диске.</translation>
     </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="192" />
+        <source>The export stopped at frame %1 of %2. Try another video codec.</source>
+        <translation>Экспорт остановился на кадре %1 из %2. Выберите другой видеокодек.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="196" />
+        <source>The written file has no picture. Try another video codec.</source>
+        <translation>В записанном файле нет изображения. Выберите другой видеокодек.</translation>
+    </message>
+    <message>
+        <location filename="../src/engine/Exporter.cpp" line="171" />
+        <source>%1 did not work on this computer; the file was written with %2.</source>
+        <translation>%1 не сработал на этом компьютере; файл записан с помощью %2.</translation>
+    </message>
 </context>
 <context>
     <name>bc::InterchangeDialog</name>
@@ -3230,11 +3245,6 @@
         <translation>Субтитры</translation>
     </message>
     <message>
-        <location filename="../src/app/MainWindow.cpp" line="688" />
-        <source>Phase 14, part 1: scene change detection (Clip &gt; Detect scene changes), on this computer without the internet.</source>
-        <translation>Этап 14, часть 1: поиск смены сцен («Клип &gt; Найти смену сцен»), на этом компьютере без интернета.</translation>
-    </message>
-    <message>
         <location filename="../src/app/MainWindow.cpp" line="808" />
         <source>Rename marker</source>
         <translation>Переименовать маркер</translation>
@@ -3404,6 +3414,86 @@
         <source>Edit by transcript (delete words to cut)...</source>
         <translation>Монтаж по тексту (удалить слова, чтобы вырезать)...</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="335" />
+        <source>Select clips on the timeline first.</source>
+        <translation>Сначала выделите клипы на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="336" />
+        <source>Open a clip in the Source monitor first: double-click it in the media bin.</source>
+        <translation>Сначала откройте клип в мониторе источника: дважды щёлкните его в медиатеке.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="341" />
+        <source>Nothing to undo yet.</source>
+        <translation>Пока нечего отменять.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="342" />
+        <source>Nothing to redo.</source>
+        <translation>Нечего повторять.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="343" />
+        <source>Copy or cut clips first.</source>
+        <translation>Сначала скопируйте или вырежьте клипы.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="346" />
+        <source>Save the project first: older versions are kept each time it is saved again.</source>
+        <translation>Сначала сохраните проект: при каждом новом сохранении старые версии сохраняются.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="347" />
+        <source>Put clips on the timeline first.</source>
+        <translation>Сначала поместите клипы на таймлайн.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="349" />
+        <source>Put the playhead over a clip on the timeline first.</source>
+        <translation>Сначала поставьте курсор на клип на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="350" />
+        <source>Select audio clips on the timeline first.</source>
+        <translation>Сначала выделите аудиоклипы на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="352" />
+        <source>Select one video or audio clip on the timeline first.</source>
+        <translation>Сначала выделите на таймлайне один видео- или аудиоклип.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="353" />
+        <source>Select video clips on the timeline first.</source>
+        <translation>Сначала выделите видеоклипы на таймлайне.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="354" />
+        <source>Select a clip next to a cut first.</source>
+        <translation>Сначала выделите клип рядом со склейкой.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="359" />
+        <source>Put the playhead on a multicamera clip that has this camera (Sequence &gt; Create multicamera sequence).</source>
+        <translation>Поставьте курсор на многокамерный клип с этой камерой («Эпизод &gt; Создать многокамерный эпизод»).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="366" />
+        <source>The video engine could not be loaded: see the log file.</source>
+        <translation>Не удалось загрузить видеодвижок: см. файл журнала.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="813" />
+        <source>Grey menu commands say what they need when you point at them. Help &gt; Feature status lists what works.</source>
+        <translation>Серые команды меню показывают, что им нужно, если навести на них мышь. Справка &gt; Состояние функций показывает, что работает.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="373" />
+        <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
+        <translation>Сначала выделите две или больше записей одного события (Ctrl+щелчок): в медиатеке или на таймлайне.</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -3504,11 +3594,6 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="362" />
         <source>Create multicamera sequence...</source>
         <translation>Создать мультикамерную секвенцию...</translation>
-    </message>
-    <message>
-        <location filename="../src/app/MediaBinPanel.cpp" line="363" />
-        <source>Select two or more recordings of one event in the media bin: they are lined up by sound and become the angles of one clip</source>
-        <translation>Выберите в медиатеке две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа</translation>
     </message>
     <message>
         <location filename="../src/app/MediaBinPanel.cpp" line="368" />
@@ -3654,6 +3739,36 @@
         <location filename="../src/app/MediaBinPanel.cpp" line="550" />
         <source>Delete proxy</source>
         <translation>Удалить прокси</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="367" />
+        <source>Select two or more recordings of one event in the media bin (or their clips on the timeline): they are lined up by sound and become the angles of one clip</source>
+        <translation>Выберите в медиатеке (или их клипы на таймлайне) две или больше записей одного события: они выравниваются по звуку и становятся ракурсами одного клипа</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="602" />
+        <source>%1: still being read, wait a moment</source>
+        <translation>%1: ещё читается, подождите немного</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="604" />
+        <source>%1: the file could not be read (its name is red)</source>
+        <translation>%1: файл не удалось прочитать (имя красное)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="606" />
+        <source>%1: a picture, not a recording</source>
+        <translation>%1: это изображение, а не запись</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="608" />
+        <source>%1: no picture and no sound found in it</source>
+        <translation>%1: в нём не найдено ни изображения, ни звука</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MediaBinPanel.cpp" line="612" />
+        <source>Selected: %1 recording(s); at least two are needed.</source>
+        <translation>Выбрано записей: %1; нужно минимум две.</translation>
     </message>
 </context>
 <context>

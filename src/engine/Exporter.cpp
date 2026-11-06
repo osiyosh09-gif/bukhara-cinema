@@ -2,6 +2,7 @@
 
 #include "engine/TimelinePlayer.h"
 
+#include "core/MediaProbe.h"
 #include "core/Subtitles.h"
 
 #include <QDir>
@@ -64,20 +65,45 @@ bool Exporter::start(const Project &project, const ExportSettings &settings, QSt
             return fail(tr("Could not write the subtitle file %1.").arg(QDir::toNativeSeparators(srt.fileName())));
     }
 
+    m_project = project;
+    m_settings = settings;
+    m_note.clear();
+    if (!launch(settings, error)) {
+        // A hardware encoder that does not start: the always-working one instead.
+        if (!tryFallback(error ? *error : QString()))
+            return false;
+    }
+    m_running = true;
+    m_clock.start();
+    m_timer.start();
+    emit progress(0, m_total, -1);
+    return true;
+}
+
+bool Exporter::launch(const ExportSettings &settings, QString *error)
+{
+    auto fail = [&](const QString &text) {
+        if (error)
+            *error = text;
+        stopGraph();
+        return false;
+    };
     m_graph = std::make_unique<TimelinePlayer>();
     if (settings.burnSubtitles) {
-        m_graph->setProject(project);
+        m_graph->setProject(m_project);
     } else {
-        Project copy = project;
+        Project copy = m_project;
         copy.timeline.subtitleStyle.show = false;
         m_graph->setProject(copy);
     }
     if (!m_graph->m_tractor || !m_graph->m_profile)
         return fail(tr("The sequence could not be prepared for export."));
 
-    const SequenceSettings &seq = project.sequence;
+    const SequenceSettings &seq = m_project.sequence;
+    // FFmpeg takes file names in UTF-8 on every system (Windows too), so names
+    // with letters outside the Windows code page (ў, қ, ғ, ҳ...) work.
     auto consumer = std::make_unique<Mlt::Consumer>(*m_graph->m_profile, "avformat",
-                                                    QFile::encodeName(settings.path).constData());
+                                                    QFileInfo(settings.path).absoluteFilePath().toUtf8().constData());
     if (!consumer->is_valid())
         return fail(tr("The MP4 writer (MLT avformat) is not available."));
     consumer->set("f", "mp4");
@@ -111,10 +137,39 @@ bool Exporter::start(const Project &project, const ExportSettings &settings, QSt
         return fail(tr("The export could not start."));
     m_consumer = std::move(consumer);
     m_settings = settings;
-    m_running = true;
+    m_reached = 0;
+    return true;
+}
+
+void Exporter::stopGraph()
+{
+    if (m_consumer) {
+        m_consumer->stop(); // writes the end of the file
+        m_consumer.reset();
+    }
+    m_graph.reset();
+}
+
+// The chosen encoder stopped early (a hardware encoder can open in the test
+// and still refuse real frames): the file is written again with the last
+// usable encoder, which never needs hardware.
+bool Exporter::tryFallback(const QString &why)
+{
+    const QList<MediaProbe::VideoEncoder> encoders = MediaProbe::usableVideoEncoders();
+    if (encoders.isEmpty() || !m_note.isEmpty()
+        || (encoders.last().codec == m_settings.encoder.codec && encoders.last().pixFmt == m_settings.encoder.pixFmt))
+        return false;
+    const QString failed = m_settings.encoder.label.isEmpty() ? m_settings.encoder.codec : m_settings.encoder.label;
+    qWarning("export: %s stopped (%s); writing again with %s", qPrintable(failed), qPrintable(why),
+             qPrintable(encoders.last().codec));
+    stopGraph();
+    QFile::remove(m_settings.path);
+    ExportSettings again = m_settings;
+    again.encoder = encoders.last();
+    if (!launch(again, nullptr))
+        return false;
+    m_note = tr("%1 did not work on this computer; the file was written with %2.").arg(failed, again.encoder.label);
     m_clock.start();
-    m_timer.start();
-    emit progress(0, m_total, -1);
     return true;
 }
 
@@ -123,31 +178,39 @@ void Exporter::poll()
     if (!m_running)
         return;
     const qint64 frame = std::clamp<qint64>(m_graph->m_tractor->position(), 0, m_total);
+    m_reached = std::max(m_reached, frame);
     const qint64 elapsed = m_clock.elapsed();
     const qint64 remaining = frame > 0 ? elapsed * (m_total - frame) / frame : -1;
     emit progress(frame, m_total, remaining);
-    if (m_consumer->is_stopped())
+    if (!m_consumer->is_stopped())
+        return;
+    stopGraph(); // writes the end of the file
+    QString why;
+    const QFileInfo fi(m_settings.path);
+    MediaInfo info;
+    if (m_reached + 2 < m_total - 1)
+        why = tr("The export stopped at frame %1 of %2. Try another video codec.").arg(m_reached).arg(m_total);
+    else if (!fi.exists() || fi.size() == 0)
+        why = tr("The file was not written. Check the folder and free disk space.");
+    else if (!MediaProbe::probe(m_settings.path, info, nullptr) || !info.hasVideo())
+        why = tr("The written file has no picture. Try another video codec.");
+    if (why.isEmpty()) {
         finish(true, QString());
+        return;
+    }
+    // The encoder gave up: once more with the encoder that needs no hardware.
+    if (fi.absoluteDir().exists() && tryFallback(why))
+        return;
+    finish(false, why);
 }
 
 void Exporter::finish(bool ok, const QString &error)
 {
     m_timer.stop();
-    if (m_consumer) {
-        m_consumer->stop(); // writes the end of the file
-        m_consumer.reset();
-    }
-    m_graph.reset();
+    stopGraph();
     m_running = false;
-    if (ok) {
-        const QFileInfo fi(m_settings.path);
-        if (!fi.exists() || fi.size() == 0) {
-            ok = false;
-            emit finished(false, tr("The file was not written. Check the folder and free disk space."));
-            return;
-        }
+    if (ok)
         emit progress(m_total, m_total, 0);
-    }
     emit finished(ok, error);
 }
 
