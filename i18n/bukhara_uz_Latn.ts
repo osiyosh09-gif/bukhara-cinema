@@ -523,6 +523,16 @@
         <source>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
         <translation>Bir voqeaning ikki yoki undan ko‘p yozuvini tanlang (media kutubxonasida yoki timeline'da), keyin «Sekvensiya &gt; Multikam sekvensiya yaratish»: ular ovozi bo‘yicha (yoki fayl boshidan) tenglashtiriladi va timeline'ga bitta klip qo‘yiladi. Yozuvlari o‘z yo‘laklarida allaqachon tenglashtirilgan nested sekvensiya shundayligicha multikamga aylanadi (uning klipini tanlab, xuddi shu buyruq). Klipni bo‘ling va har bir bo‘lagining kamerasini «Klip» panelida tanlang (rasm va ovoz alohida); sinxronni qo‘lda to‘g‘rilash uchun klipni ikki marta bosing.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="79" />
+        <source>Claude command assistant</source>
+        <translation>Claude buyruq yordamchisi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="79" />
+        <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
+        <translation>«Oyna &gt; Claude yordamchisi»: yozma o‘zbekcha buyruq («kameralarni sinxronla», «multikamni kes») dialoglarni ochmasdan «Sekvensiya &gt; Multikam sekvensiya yaratish» (ovoz bo‘yicha sinxron) yoki «Sekvensiya &gt; Avtomatik multikam montaj»ni bajaradi. Dasturning qolgan qismidan farqli ravishda, bu internet va Anthropic API kalitini talab qiladi (faqat shu kompyuterda, Sozlamalarda saqlanadi, loyiha faylida yo‘q); har buyruq ozgina xarajat qiladi. Boshqa narsa yozilsa, qisqa yozma javob qaytadi va hech narsa o‘zgarmaydi.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3494,6 +3504,11 @@
         <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
         <translation>Avval bir voqeaning ikkita yoki undan ko‘p yozuvini tanlang (Ctrl+bosish): media kutubxonasida yoki timeline'da.</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1" />
+        <source>Claude assistant</source>
+        <translation>Claude yordamchisi</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4509,6 +4524,41 @@
         <location filename="../src/app/ProjectSpeech.cpp" line="286" />
         <source>Subtitles from speech</source>
         <translation>Nutqdan subtitr</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>At least two files are needed to sync.</source>
+        <translation>Sinxronlash uchun kamida ikki fayl kerak.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>No multicamera clip found. First sync the cameras to create a multicamera sequence.</source>
+        <translation>Multikam klip topilmadi. Avval kameralarni sinxronlab, multikam sekvensiya yarating.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>Not enough difference was found to cut (the cameras hear almost the same sound).</source>
+        <translation>Kesish uchun yetarli farq topilmadi (kameralar deyarli bir xil ovozni eshitadi).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The cameras were synced by sound; the multicamera sequence was created.</source>
+        <translation>Kameralar ovoz bo‘yicha sinxronlandi, multikam sekvensiya yaratildi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera clip was cut %1 times between the cameras.</source>
+        <translation>Multikam klip kameralar orasida %1 marta kesildi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera sequence could not be created (the files did not match).</source>
+        <translation>Multikam sekvensiya yaratilmadi (fayllar mos kelmadi).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera sequence was created; some files' sound did not match and were placed from the start (can be fixed by hand).</source>
+        <translation>Multikam sekvensiya yaratildi; ba’zi fayllarning ovozi mos kelmadi va ular boshidan joylashtirildi (qo‘lda tuzatish mumkin).</translation>
     </message>
 </context>
 <context>
@@ -5714,6 +5764,112 @@
         <location filename="../src/app/RecoveryDialog.cpp" line="113" />
         <source>Cancel</source>
         <translation>Bekor qilish</translation>
+    </message>
+</context>
+<context>
+    <name>bc::ClaudeAssistant</name>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Cutting the multicamera clip automatically</source>
+        <translation>Multikam klipni avtomatik kesish</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Error contacting Claude: %1</source>
+        <translation>Claude bilan bog‘lanishda xato: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>No Claude API key has been entered yet (Settings).</source>
+        <translation>Hali Claude API kaliti kiritilmagan (Sozlamalar).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Syncing the cameras</source>
+        <translation>Kameralarni sinxronlash</translation>
+    </message>
+</context>
+<context>
+    <name>bc::ClaudeAssistantPanel</name>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved.</source>
+        <translation>API kalit saqlandi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved. Every command is sent to Claude over the internet and costs a little.</source>
+        <translation>API kalit saqlandi. Har buyruq internet orqali Claude'ga yuboriladi va ozgina xarajat qiladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Anthropic API key (console.anthropic.com)</source>
+        <translation>Anthropic API kaliti (console.anthropic.com)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Claude:</source>
+        <translation>Claude:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Done:</source>
+        <translation>Bajarildi:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Enter the API key first, then press "Save".</source>
+        <translation>Avval API kalitni kiritib, «Saqlash»ni bosing.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Error:</source>
+        <translation>Xato:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>No API key entered: commands will not work. Get one from console.anthropic.com.</source>
+        <translation>API kalit kiritilmagan: buyruqlar ishlamaydi. Kalitni console.anthropic.com'dan oling.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Not done:</source>
+        <translation>Bajarilmadi:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Running:</source>
+        <translation>Bajarilmoqda:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Save</source>
+        <translation>Saqlash</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Send</source>
+        <translation>Yubor</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>System:</source>
+        <translation>Tizim:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Type a command, e.g. "sync the cameras"</source>
+        <translation>Buyruq yozing, masalan: «kameralarni sinxronla»</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Type a new key to replace it</source>
+        <translation>Almashtirish uchun yangi kalitni yozing</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>You:</source>
+        <translation>Siz:</translation>
     </message>
 </context>
 </TS>

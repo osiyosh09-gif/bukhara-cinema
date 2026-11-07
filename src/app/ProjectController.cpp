@@ -114,6 +114,12 @@ ProjectController::ProjectController(QObject *parent)
                 requestSourceFrame();
         });
     }
+    // Claude command assistant (ProjectClaudeCommands.cpp): a pending sync or
+    // cut command resumes once the sound it was waiting for is read.
+    connect(this, &ProjectController::multicamSoundReady, this, [this](bool) {
+        continueSyncCamerasCommand();
+        continueAutoCutCamerasCommand();
+    });
 }
 
 ProjectController::~ProjectController()

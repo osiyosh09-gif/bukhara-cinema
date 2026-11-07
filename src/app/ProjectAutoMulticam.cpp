@@ -91,6 +91,29 @@ void ProjectController::analyzeMulticamSound(const QList<QUuid> &clipIds)
                         todo << qMakePair(m->id, m->path);
                 }
     }
+    fetchEnvelopes(todo);
+}
+
+void ProjectController::analyzeMediaSound(const QList<QUuid> &mediaIds)
+{
+    if (m_soundRunning)
+        return;
+    QList<QPair<QUuid, QString>> todo;
+    for (const QUuid &id : mediaIds) {
+        const MediaItem *m = m_project.item(id);
+        if (!m || m_envelopes.contains(m->id) || m_envelopesFailed.contains(m->id))
+            continue;
+        bool listed = false;
+        for (const auto &p : todo)
+            listed |= p.first == m->id;
+        if (!listed)
+            todo << qMakePair(m->id, m->path);
+    }
+    fetchEnvelopes(todo);
+}
+
+void ProjectController::fetchEnvelopes(const QList<QPair<QUuid, QString>> &todo)
+{
     if (todo.isEmpty()) {
         emit multicamSoundReady(true);
         return;
