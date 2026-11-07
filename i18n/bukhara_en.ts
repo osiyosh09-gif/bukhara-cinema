@@ -523,6 +523,16 @@
         <source>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
         <translation>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="79" />
+        <source>Claude command assistant</source>
+        <translation>Claude command assistant</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="79" />
+        <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
+        <translation>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3494,6 +3504,11 @@
         <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
         <translation>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1" />
+        <source>Claude assistant</source>
+        <translation>Claude assistant</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4509,6 +4524,41 @@
         <location filename="../src/app/ProjectSpeech.cpp" line="286" />
         <source>Subtitles from speech</source>
         <translation>Subtitles from speech</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>At least two files are needed to sync.</source>
+        <translation>At least two files are needed to sync.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>No multicamera clip found. First sync the cameras to create a multicamera sequence.</source>
+        <translation>No multicamera clip found. First sync the cameras to create a multicamera sequence.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>Not enough difference was found to cut (the cameras hear almost the same sound).</source>
+        <translation>Not enough difference was found to cut (the cameras hear almost the same sound).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The cameras were synced by sound; the multicamera sequence was created.</source>
+        <translation>The cameras were synced by sound; the multicamera sequence was created.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera clip was cut %1 times between the cameras.</source>
+        <translation>The multicamera clip was cut %1 times between the cameras.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera sequence could not be created (the files did not match).</source>
+        <translation>The multicamera sequence could not be created (the files did not match).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera sequence was created; some files' sound did not match and were placed from the start (can be fixed by hand).</source>
+        <translation>The multicamera sequence was created; some files' sound did not match and were placed from the start (can be fixed by hand).</translation>
     </message>
 </context>
 <context>
@@ -5714,6 +5764,112 @@
         <location filename="../src/app/RecoveryDialog.cpp" line="113" />
         <source>Cancel</source>
         <translation>Cancel</translation>
+    </message>
+</context>
+<context>
+    <name>bc::ClaudeAssistant</name>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Cutting the multicamera clip automatically</source>
+        <translation>Cutting the multicamera clip automatically</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Error contacting Claude: %1</source>
+        <translation>Error contacting Claude: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>No Claude API key has been entered yet (Settings).</source>
+        <translation>No Claude API key has been entered yet (Settings).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Syncing the cameras</source>
+        <translation>Syncing the cameras</translation>
+    </message>
+</context>
+<context>
+    <name>bc::ClaudeAssistantPanel</name>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved.</source>
+        <translation>API key saved.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved. Every command is sent to Claude over the internet and costs a little.</source>
+        <translation>API key saved. Every command is sent to Claude over the internet and costs a little.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Anthropic API key (console.anthropic.com)</source>
+        <translation>Anthropic API key (console.anthropic.com)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Claude:</source>
+        <translation>Claude:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Done:</source>
+        <translation>Done:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Enter the API key first, then press "Save".</source>
+        <translation>Enter the API key first, then press "Save".</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Error:</source>
+        <translation>Error:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>No API key entered: commands will not work. Get one from console.anthropic.com.</source>
+        <translation>No API key entered: commands will not work. Get one from console.anthropic.com.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Not done:</source>
+        <translation>Not done:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Running:</source>
+        <translation>Running:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Save</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Send</source>
+        <translation>Send</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>System:</source>
+        <translation>System:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Type a command, e.g. "sync the cameras"</source>
+        <translation>Type a command, e.g. "sync the cameras"</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Type a new key to replace it</source>
+        <translation>Type a new key to replace it</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>You:</source>
+        <translation>You:</translation>
     </message>
 </context>
 </TS>

@@ -523,6 +523,16 @@
         <source>Select two or more recordings of one event (in the media bin or on the timeline), then Sequence &gt; Create multicamera sequence: they are lined up by their sound (or by file start) and one clip goes to the timeline. A nested sequence whose recordings are already lined up on their own tracks becomes a multicamera one as it is (select its clip, same command). Split it and pick the camera of each part in the Clip tab (picture and sound separately); double-click it to fine-tune the sync.</source>
         <translation>Выберите две или больше записей одного события (в медиатеке или на таймлайне), затем «Секвенция &gt; Создать мультикамерную секвенцию»: они выравниваются по звуку (или по началу файлов), и на таймлайн ставится один клип. Вложенная секвенция, записи которой уже выровнены на своих дорожках, становится мультикамерной как есть (выделите её клип, та же команда). Разрежьте его и выберите камеру для каждой части во вкладке «Клип» (картинка и звук отдельно); двойной щелчок открывает его для точной подстройки.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="79" />
+        <source>Claude command assistant</source>
+        <translation>Ассистент команд Claude</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="79" />
+        <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
+        <translation>«Окно &gt; Помощник Claude»: введённая узбекская команда («синхронизируй камеры», «разрежь мультикам») запускает «Эпизод &gt; Создать многокамерный эпизод» (синхронизация по звуку) или «Эпизод &gt; Автоматический многокамерный монтаж» без открытия их диалогов. В отличие от остальной программы, для этого нужен интернет и ключ API Anthropic (хранится только на этом компьютере, в настройках, никогда в файле проекта); каждая команда стоит немного. Если написано что-то другое, приходит короткий письменный ответ и ничего не меняется.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3494,6 +3504,11 @@
         <source>Select two or more recordings of one event first (Ctrl+click): in the media bin or on the timeline.</source>
         <translation>Сначала выделите две или больше записей одного события (Ctrl+щелчок): в медиатеке или на таймлайне.</translation>
     </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="1" />
+        <source>Claude assistant</source>
+        <translation>Помощник Claude</translation>
+    </message>
 </context>
 <context>
     <name>bc::MediaBinPanel</name>
@@ -4509,6 +4524,41 @@
         <location filename="../src/app/ProjectSpeech.cpp" line="286" />
         <source>Subtitles from speech</source>
         <translation>Субтитры из речи</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>At least two files are needed to sync.</source>
+        <translation>Для синхронизации нужно минимум два файла.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>No multicamera clip found. First sync the cameras to create a multicamera sequence.</source>
+        <translation>Многокамерный клип не найден. Сначала синхронизируйте камеры, чтобы создать многокамерный эпизод.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>Not enough difference was found to cut (the cameras hear almost the same sound).</source>
+        <translation>Не найдено достаточной разницы для разреза (камеры слышат почти одинаковый звук).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The cameras were synced by sound; the multicamera sequence was created.</source>
+        <translation>Камеры синхронизированы по звуку, многокамерный эпизод создан.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera clip was cut %1 times between the cameras.</source>
+        <translation>Многокамерный клип разрезан между камерами %1 раз.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera sequence could not be created (the files did not match).</source>
+        <translation>Не удалось создать многокамерный эпизод (файлы не совпали).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ProjectClaudeCommands.cpp" line="1" />
+        <source>The multicamera sequence was created; some files' sound did not match and were placed from the start (can be fixed by hand).</source>
+        <translation>Многокамерный эпизод создан; звук некоторых файлов не совпал, и они были размещены с начала (можно исправить вручную).</translation>
     </message>
 </context>
 <context>
@@ -5714,6 +5764,112 @@
         <location filename="../src/app/RecoveryDialog.cpp" line="113" />
         <source>Cancel</source>
         <translation>Отмена</translation>
+    </message>
+</context>
+<context>
+    <name>bc::ClaudeAssistant</name>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Cutting the multicamera clip automatically</source>
+        <translation>Автоматическая нарезка многокамерного клипа</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Error contacting Claude: %1</source>
+        <translation>Ошибка связи с Claude: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>No Claude API key has been entered yet (Settings).</source>
+        <translation>Ключ API Claude ещё не введён (Настройки).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Syncing the cameras</source>
+        <translation>Синхронизация камер</translation>
+    </message>
+</context>
+<context>
+    <name>bc::ClaudeAssistantPanel</name>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved.</source>
+        <translation>Ключ API сохранён.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved. Every command is sent to Claude over the internet and costs a little.</source>
+        <translation>Ключ API сохранён. Каждая команда отправляется Claude через интернет и стоит немного.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Anthropic API key (console.anthropic.com)</source>
+        <translation>Ключ API Anthropic (console.anthropic.com)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Claude:</source>
+        <translation>Claude:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Done:</source>
+        <translation>Готово:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Enter the API key first, then press "Save".</source>
+        <translation>Сначала введите ключ API, затем нажмите «Сохранить».</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Error:</source>
+        <translation>Ошибка:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>No API key entered: commands will not work. Get one from console.anthropic.com.</source>
+        <translation>Ключ API не введён: команды не будут работать. Получите его на console.anthropic.com.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Not done:</source>
+        <translation>Не выполнено:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Running:</source>
+        <translation>Выполняется:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Send</source>
+        <translation>Отправить</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>System:</source>
+        <translation>Система:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Type a command, e.g. "sync the cameras"</source>
+        <translation>Введите команду, например: «синхронизируй камеры»</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Type a new key to replace it</source>
+        <translation>Введите новый ключ, чтобы заменить его</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>You:</source>
+        <translation>Вы:</translation>
     </message>
 </context>
 </TS>
