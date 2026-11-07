@@ -28,6 +28,7 @@ class ExportQueue;
 class ExportQueueDialog;
 class MulticamMonitor;
 class Autosave;
+class ClaudeAssistantPanel;
 
 // Main window layout:
 //   top     - menus and toolbar (save, export)
@@ -200,6 +201,9 @@ private:
     MulticamMonitor *m_multicam = nullptr;   // phase 12b
     QDockWidget *m_multicamDock = nullptr;
     QAction *m_multicamAct = nullptr;
+    ClaudeAssistantPanel *m_claude = nullptr; // phase 17a
+    QDockWidget *m_claudeDock = nullptr;
+    QAction *m_claudeAct = nullptr;
     QMenu *m_cameraMenu = nullptr;
     QMenu *m_soundMenu = nullptr;
     QList<QAction *> m_cameraActs;           // 1..9

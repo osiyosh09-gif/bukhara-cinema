@@ -96,6 +96,17 @@ QUuid ProjectController::createMulticam(const QList<QUuid> &mediaIds, const QLis
     return ok ? nest.id : QUuid();
 }
 
+QUuid ProjectController::multicamClipForNest(const QUuid &nestId, Timeline::Kind kind) const
+{
+    const Timeline &tl = timeline();
+    for (const TimelineTrack &t : tl.tracks)
+        if (t.kind == kind)
+            for (const TimelineClip &c : t.clips)
+                if (c.nestId == nestId)
+                    return c.id;
+    return {};
+}
+
 QUuid ProjectController::multicamCandidate(const QList<QUuid> &selection) const
 {
     QUuid found;

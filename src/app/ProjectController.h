@@ -304,6 +304,24 @@ public:
     // Cuts the clips at those frames (with their linked sound, which keeps its
     // camera) and sets the cameras: one undo step. Returns the cuts made.
     int applyAutoMulticam(const QList<QUuid> &clipIds, const AutoMulticam::Settings &settings);
+    // Reads the sound of raw media (not yet a multicamera sequence); shares
+    // the cache and background work with analyzeMulticamSound.
+    void analyzeMediaSound(const QList<QUuid> &mediaIds);
+    // The clip of that nested sequence on the open timeline (null when none).
+    QUuid multicamClipForNest(const QUuid &nestId, Timeline::Kind kind = Timeline::Kind::Video) const;
+
+    // --- Claude command assistant (phase 17a, ProjectClaudeCommands.cpp)
+    // What a natural-language command does: sync the given recordings by
+    // sound and create a multicamera sequence of them (same as Sequence >
+    // Create multicamera sequence, sync by sound), then cut it automatically
+    // between the cameras (same as Sequence > Automatic multicamera edit,
+    // with the last used, or default, settings). Both read the cameras'
+    // sound in the background first when needed; the result (or failure
+    // reason) comes back as claudeCommandFinished. One call runs
+    // at a time per command kind; a new call of the same kind replaces the
+    // pending one.
+    void syncCamerasCommand(const QList<QUuid> &mediaIds);
+    void autoCutCamerasCommand(const QList<QUuid> &selection);
 
     // --- loudness of the whole mix (phase 13c, ProjectMixLoudness.cpp)
     // Measures the mixed sound of the open sequence as the export hears it
@@ -494,6 +512,9 @@ signals:
     void speechReady(bool ok, const QString &error);
     void multicamSoundProgress(int done, int total);
     void multicamSoundReady(bool ok);
+    // A Claude command finished (or could not continue): `ok` and a short
+    // translated message to show the user, success or failure.
+    void claudeCommandFinished(bool ok, const QString &message);
     void mixLoudnessProgress(qint64 frame, qint64 total);
     void mixLoudnessMeasured(bool ok, const QString &error); // error empty after cancel
     void previewProgress(qint64 frame, qint64 total);
@@ -513,6 +534,12 @@ private:
     void startNextProxy();
     void refreshOnlineState();
     static QString thumbCachePath(const QString &mediaPath);
+    // Shared background work of analyzeMulticamSound / analyzeMediaSound:
+    // reads (or loads from cache) the envelope of each (media id, path),
+    // stores it in m_envelopes / m_envelopesFailed, reports progress.
+    void fetchEnvelopes(const QList<QPair<QUuid, QString>> &todo);
+    void continueSyncCamerasCommand();
+    void continueAutoCutCamerasCommand();
     // Phase 15b: the file a clip of another editor means: an item already in
     // the bin, a file on the disk (also next to the timeline file), or, when
     // none exists, the path it should have. *exists tells which.
@@ -630,6 +657,12 @@ private:
     bool m_soundRunning = false;
     std::shared_ptr<std::atomic_bool> m_soundCancel;
     QThreadPool m_soundPool; // reads the cameras' sound
+    // Claude command assistant (ProjectClaudeCommands.cpp): the one pending
+    // command of each kind (a new call of the same kind replaces it).
+    bool m_pendingSyncActive = false;
+    QList<QUuid> m_pendingSyncMedia;
+    bool m_pendingCutActive = false;
+    QList<QUuid> m_pendingCutClips;
     // Subtitles from speech (ProjectSpeech.cpp): what was heard, by "media id|model dir".
     QHash<QString, Speech::Transcript> m_transcripts;
     bool m_speechRunning = false;
