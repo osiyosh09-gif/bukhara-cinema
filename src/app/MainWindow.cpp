@@ -22,6 +22,7 @@
 #include "app/ScopesPanel.h"
 #include "app/MulticamMonitor.h"
 #include "app/AutoMulticamDialog.h"
+#include "app/ClaudeAssistantPanel.h"
 #include "app/SpeechDialog.h"
 #include "app/EffectsPanel.h"
 #include "app/CollectDialog.h"
@@ -289,6 +290,15 @@ void MainWindow::buildDocks()
     m_multicamDock->setWidget(m_multicam);
     addDockWidget(Qt::RightDockWidgetArea, m_multicamDock);
     m_multicamDock->hide();
+    // Claude command assistant: also off until opened (it is a paid cloud API).
+    m_claude = new ClaudeAssistantPanel(m_ctl);
+    m_claude->setMediaSelectionSource([this] { return m_bin->multicamMedia(); });
+    m_claude->setTimelineSelectionSource([this] { return m_timeline->view()->selection(); });
+    m_claudeDock = new QDockWidget(this);
+    m_claudeDock->setObjectName(QStringLiteral("claudeDock"));
+    m_claudeDock->setWidget(m_claude);
+    addDockWidget(Qt::RightDockWidgetArea, m_claudeDock);
+    m_claudeDock->hide();
 
     // Bottom: timeline
     m_timelineDock = new QDockWidget(this);
@@ -697,6 +707,9 @@ void MainWindow::buildMenus()
     m_multicamAct = m_multicamDock->toggleViewAction();
     m_multicamAct->setObjectName(QStringLiteral("actMulticamMonitor"));
     m_windowMenu->addAction(m_multicamAct);
+    m_claudeAct = m_claudeDock->toggleViewAction();
+    m_claudeAct->setObjectName(QStringLiteral("actClaudeAssistant"));
+    m_windowMenu->addAction(m_claudeAct);
     m_windowMenu->addSeparator();
     m_resetLayoutAct = m_windowMenu->addAction(QString(), this, &MainWindow::resetLayout);
     m_resetLayoutAct->setObjectName(QStringLiteral("actResetLayout"));
@@ -830,6 +843,7 @@ void MainWindow::retranslate()
     m_timelineDock->setWindowTitle(tr("Timeline"));
     m_scopesDock->setWindowTitle(tr("Scopes"));
     m_multicamDock->setWindowTitle(tr("Multicamera monitor"));
+    m_claudeDock->setWindowTitle(tr("Claude assistant"));
     m_cameraMenu->setTitle(tr("Switch camera"));
     m_soundMenu->setTitle(tr("Switch sound"));
     for (int i = 0; i < m_cameraActs.size(); ++i) {
@@ -1015,6 +1029,7 @@ void MainWindow::resetLayout()
     m_timelineDock->show();
     m_scopesDock->hide();
     m_multicamDock->hide();
+    m_claudeDock->hide();
     resizeDocks({m_mediaDock, m_inspectorDock}, {300, 320}, Qt::Horizontal);
     resizeDocks({m_timelineDock}, {300}, Qt::Vertical);
     const int half = m_monitorSplit->width() / 2;

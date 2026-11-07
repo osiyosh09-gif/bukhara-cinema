@@ -125,6 +125,9 @@ add_library(bc_ui STATIC
     src/app/ProjectSubtitles.cpp
     src/app/ProjectInterchange.cpp
     src/app/ProjectAutoMulticam.cpp
+    src/app/ProjectClaudeCommands.cpp
+    src/app/ClaudeAssistant.h      src/app/ClaudeAssistant.cpp
+    src/app/ClaudeAssistantPanel.h src/app/ClaudeAssistantPanel.cpp
     src/app/ProjectSpeech.cpp
     src/app/SpeechDialog.h      src/app/SpeechDialog.cpp
     src/app/AutoMulticamDialog.h src/app/AutoMulticamDialog.cpp

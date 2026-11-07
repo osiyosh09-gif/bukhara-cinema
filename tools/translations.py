@@ -1732,6 +1732,54 @@ T.update({
         "«Графика > Субтитры из речи» прослушивает выделенные клипы (или первую аудиодорожку) на этом компьютере с помощью Vosk (Apache 2.0) и записывает сказанное строками субтитров: один шаг отмены, затем их можно исправить в панели «Субтитры». Модели для узбекского, русского и английского загружаются один раз (40–50 МБ) или берутся из папки; узбекский можно писать кириллицей. Ничего никуда не отправляется. Примерно каждое восьмое слово может быть неверным. Проверено в CI на английской речи синтезатора, а не на реальных узбекских записях."),
 })
 
+# Claude command assistant (phase 17a)
+T.update({
+    'Claude command assistant': ('Claude буйруқ ёрдамчиси', 'Ассистент команд Claude'),
+    'Window > Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence > Create multicamera sequence (sync by sound) or Sequence > Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.': (
+        '«Ойна > Claude ёрдамчиси»: ёзма ўзбекча буйруқ («камераларни синхронла», «мультикамни кес») диалогларни очмасдан «Секвенция > Мультикам секвенция яратиш» (овоз бўйича синхрон) ёки «Секвенция > Автоматик мультикам монтаж»ни бажаради. Дастурнинг қолган қисмидан фарқли равишда, бу интернет ва Anthropic API калитини талаб қилади (фақат шу компьютерда, Созламаларда сақланади, лойиҳа файлида йўқ); ҳар буйруқ озгина харажат қилади. Бошқа нарса ёзилса, қисқа ёзма жавоб қайтади ва ҳеч нарса ўзгармайди.',
+        '«Окно > Помощник Claude»: введённая узбекская команда («синхронизируй камеры», «разрежь мультикам») запускает «Эпизод > Создать многокамерный эпизод» (синхронизация по звуку) или «Эпизод > Автоматический многокамерный монтаж» без открытия их диалогов. В отличие от остальной программы, для этого нужен интернет и ключ API Anthropic (хранится только на этом компьютере, в настройках, никогда в файле проекта); каждая команда стоит немного. Если написано что-то другое, приходит короткий письменный ответ и ничего не меняется.'),
+    'At least two files are needed to sync.': ('Синхронлаш учун камида икки файл керак.', 'Для синхронизации нужно минимум два файла.'),
+    'The multicamera sequence could not be created (the files did not match).': (
+        'Мультикам секвенция яратилмади (файллар мос келмади).', 'Не удалось создать многокамерный эпизод (файлы не совпали).'),
+    'The cameras were synced by sound; the multicamera sequence was created.': (
+        'Камералар овоз бўйича синхронланди, мультикам секвенция яратилди.', 'Камеры синхронизированы по звуку, многокамерный эпизод создан.'),
+    "The multicamera sequence was created; some files' sound did not match and were placed from the start (can be fixed by hand).": (
+        'Мультикам секвенция яратилди; баъзи файлларнинг овози мос келмади ва улар бошидан жойлаштирилди (қўлда тузатиш мумкин).',
+        'Многокамерный эпизод создан; звук некоторых файлов не совпал, и они были размещены с начала (можно исправить вручную).'),
+    'No multicamera clip found. First sync the cameras to create a multicamera sequence.': (
+        'Мультикам клип топилмади. Аввал камераларни синхронлаб, мультикам секвенция яратинг.',
+        'Многокамерный клип не найден. Сначала синхронизируйте камеры, чтобы создать многокамерный эпизод.'),
+    'The multicamera clip was cut %1 times between the cameras.': (
+        'Мультикам клип камералар орасида %1 марта кесилди.', 'Многокамерный клип разрезан между камерами %1 раз.'),
+    'Not enough difference was found to cut (the cameras hear almost the same sound).': (
+        'Кесиш учун етарли фарқ топилмади (камералар деярли бир хил овозни эшитади).',
+        'Не найдено достаточной разницы для разреза (камеры слышат почти одинаковый звук).'),
+    'No Claude API key has been entered yet (Settings).': ('Ҳали Claude API калити киритилмаган (Созламалар).', 'Ключ API Claude ещё не введён (Настройки).'),
+    'Error contacting Claude: %1': ("Claude билан боғланишда хато: %1", 'Ошибка связи с Claude: %1'),
+    'Syncing the cameras': ('Камераларни синхронлаш', 'Синхронизация камер'),
+    'Cutting the multicamera clip automatically': ('Мультикам клипни автоматик кесиш', 'Автоматическая нарезка многокамерного клипа'),
+    'Type a command, e.g. "sync the cameras"': ('Буйруқ ёзинг, масалан: «камераларни синхронла»', 'Введите команду, например: «синхронизируй камеры»'),
+    'Send': ('Юбор', 'Отправить'),
+    'Claude:': ('Claude:', 'Claude:'),
+    'Running:': ('Бажарилмоқда:', 'Выполняется:'),
+    'Error:': ('Хато:', 'Ошибка:'),
+    'Done:': ('Бажарилди:', 'Готово:'),
+    'Not done:': ('Бажарилмади:', 'Не выполнено:'),
+    'API key saved. Every command is sent to Claude over the internet and costs a little.': (
+        "API калит сақланди. Ҳар буйруқ интернет орқали Claude'га юборилади ва озгина харажат қилади.",
+        'Ключ API сохранён. Каждая команда отправляется Claude через интернет и стоит немного.'),
+    'No API key entered: commands will not work. Get one from console.anthropic.com.': (
+        "API калит киритилмаган: буйруқлар ишламайди. Калитни console.anthropic.com'дан олинг.",
+        'Ключ API не введён: команды не будут работать. Получите его на console.anthropic.com.'),
+    'Type a new key to replace it': ('Алмаштириш учун янги калитни ёзинг', 'Введите новый ключ, чтобы заменить его'),
+    'Anthropic API key (console.anthropic.com)': ('Anthropic API калити (console.anthropic.com)', 'Ключ API Anthropic (console.anthropic.com)'),
+    'System:': ('Тизим:', 'Система:'),
+    'API key saved.': ('API калит сақланди.', 'Ключ API сохранён.'),
+    'You:': ('Сиз:', 'Вы:'),
+    'Enter the API key first, then press "Save".': ('Аввал API калитни киритиб, «Сақлаш»ни босинг.', 'Сначала введите ключ API, затем нажмите «Сохранить».'),
+    'Claude assistant': ('Claude ёрдамчиси', 'Помощник Claude'),
+})
+
 LATIN_OVERRIDES = {
     "[phase %1]": "[%1-bosqich]",
     "%1 kHz, %2": "%1 kHz, %2",
