@@ -5823,6 +5823,11 @@
     </message>
     <message>
         <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Gemini:</source>
+        <translation>Gemini:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
         <source>Done:</source>
         <translation>Готово:</translation>
     </message>

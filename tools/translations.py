@@ -1817,6 +1817,7 @@ T.update({
         "API калит киритилмаган: буйруқлар ишламайди. Бепул калитни aistudio.google.com'дан олинг.",
         'Ключ API не введён: команды не будут работать. Получите бесплатный ключ на aistudio.google.com.'),
     'Gemini API key (aistudio.google.com)': ('Gemini API калити (aistudio.google.com)', 'Ключ API Gemini (aistudio.google.com)'),
+    'Gemini:': ('Gemini:', 'Gemini:'),
 })
 
 # Why the multicamera command is off: the selected files (deep check)
