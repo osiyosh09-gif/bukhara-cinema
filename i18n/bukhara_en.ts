@@ -5788,6 +5788,16 @@
         <source>Syncing the cameras</source>
         <translation>Syncing the cameras</translation>
     </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>No Gemini API key has been entered yet (Settings).</source>
+        <translation>No Gemini API key has been entered yet (Settings).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Error contacting Gemini: %1</source>
+        <translation>Error contacting Gemini: %1</translation>
+    </message>
 </context>
 <context>
     <name>bc::ClaudeAssistantPanel</name>
@@ -5810,6 +5820,11 @@
         <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
         <source>Claude:</source>
         <translation>Claude:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Gemini:</source>
+        <translation>Gemini:</translation>
     </message>
     <message>
         <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
@@ -5870,6 +5885,31 @@
         <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
         <source>You:</source>
         <translation>You:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Claude (Anthropic)</source>
+        <translation>Claude (Anthropic)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Gemini (Google, free)</source>
+        <translation>Gemini (Google, free)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved. Every command is sent to Gemini over the internet; Google's free tier usually covers it.</source>
+        <translation>API key saved. Every command is sent to Gemini over the internet; Google's free tier usually covers it.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>No API key entered: commands will not work. Get a free one from aistudio.google.com.</source>
+        <translation>No API key entered: commands will not work. Get a free one from aistudio.google.com.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Gemini API key (aistudio.google.com)</source>
+        <translation>Gemini API key (aistudio.google.com)</translation>
     </message>
 </context>
 </TS>

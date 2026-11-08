@@ -1804,6 +1804,22 @@ T.update({
     '%1 did not work on this computer; the file was written with %2.': ('%1 бу компьютерда ишламади; файл %2 билан ёзилди.', '%1 не сработал на этом компьютере; файл записан с помощью %2.'),
 })
 
+# Claude command assistant: a second, free provider (Google Gemini)
+T.update({
+    'Claude (Anthropic)': ('Claude (Anthropic)', 'Claude (Anthropic)'),
+    'Gemini (Google, free)': ('Gemini (Google, бепул)', 'Gemini (Google, бесплатно)'),
+    'No Gemini API key has been entered yet (Settings).': ("Ҳали Gemini API калити киритилмаган (Созламалар).", 'Ключ API Gemini ещё не введён (Настройки).'),
+    'Error contacting Gemini: %1': ('Gemini билан боғланишда хато: %1', 'Ошибка связи с Gemini: %1'),
+    "API key saved. Every command is sent to Gemini over the internet; Google's free tier usually covers it.": (
+        "API калит сақланди. Ҳар буйруқ интернет орқали Gemini'га юборилади; Google'нинг бепул лимити одатда етарли бўлади.",
+        'Ключ API сохранён. Каждая команда отправляется Gemini через интернет; бесплатного лимита Google обычно достаточно.'),
+    'No API key entered: commands will not work. Get a free one from aistudio.google.com.': (
+        "API калит киритилмаган: буйруқлар ишламайди. Бепул калитни aistudio.google.com'дан олинг.",
+        'Ключ API не введён: команды не будут работать. Получите бесплатный ключ на aistudio.google.com.'),
+    'Gemini API key (aistudio.google.com)': ('Gemini API калити (aistudio.google.com)', 'Ключ API Gemini (aistudio.google.com)'),
+    'Gemini:': ('Gemini:', 'Gemini:'),
+})
+
 # Why the multicamera command is off: the selected files (deep check)
 T.update({
     '%1: still being read, wait a moment': ('%1: ҳали ўқиляпти, бир оз кутинг', '%1: ещё читается, подождите немного'),
