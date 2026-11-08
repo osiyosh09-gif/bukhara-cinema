@@ -5788,6 +5788,16 @@
         <source>Syncing the cameras</source>
         <translation>Kameralarni sinxronlash</translation>
     </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>No Gemini API key has been entered yet (Settings).</source>
+        <translation>Hali Gemini API kaliti kiritilmagan (Sozlamalar).</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistant.cpp" line="1" />
+        <source>Error contacting Gemini: %1</source>
+        <translation>Gemini bilan bog‘lanishda xato: %1</translation>
+    </message>
 </context>
 <context>
     <name>bc::ClaudeAssistantPanel</name>
@@ -5870,6 +5880,31 @@
         <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
         <source>You:</source>
         <translation>Siz:</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Claude (Anthropic)</source>
+        <translation>Claude (Anthropic)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Gemini (Google, free)</source>
+        <translation>Gemini (Google, bepul)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>API key saved. Every command is sent to Gemini over the internet; Google's free tier usually covers it.</source>
+        <translation>API kalit saqlandi. Har buyruq internet orqali Gemini'ga yuboriladi; Google'ning bepul limiti odatda yetarli bo‘ladi.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>No API key entered: commands will not work. Get a free one from aistudio.google.com.</source>
+        <translation>API kalit kiritilmagan: buyruqlar ishlamaydi. Bepul kalitni aistudio.google.com'dan oling.</translation>
+    </message>
+    <message>
+        <location filename="../src/app/ClaudeAssistantPanel.cpp" line="1" />
+        <source>Gemini API key (aistudio.google.com)</source>
+        <translation>Gemini API kaliti (aistudio.google.com)</translation>
     </message>
 </context>
 </TS>

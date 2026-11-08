@@ -10,6 +10,7 @@ class QLineEdit;
 class QPlainTextEdit;
 class QPushButton;
 class QLabel;
+class QComboBox;
 
 namespace bc {
 
@@ -17,10 +18,11 @@ class ProjectController;
 class ClaudeAssistant;
 
 // Window > Claude yordamchisi (phase 17a): a small chat box where a typed
-// Uzbek command runs one of two actions (see ClaudeAssistant) through the
-// Claude Haiku model. Needs an internet connection and an Anthropic API key
-// (kept on this computer only, in Settings); every command has a small
-// cost. Off by default, like the scopes and the multicamera monitor.
+// Uzbek command runs one of two actions (see ClaudeAssistant). A combo box
+// picks the provider -- Claude (Anthropic, paid) or Gemini (Google, has a
+// free tier) -- each with its own API key, kept on this computer only, in
+// Settings. Needs an internet connection either way. Off by default, like
+// the scopes and the multicamera monitor.
 class ClaudeAssistantPanel : public QWidget
 {
     Q_OBJECT
@@ -41,6 +43,7 @@ private:
 
     ProjectController *m_ctl;
     ClaudeAssistant *m_assistant;
+    QComboBox *m_providerCombo;
     QLabel *m_keyStatus;
     QLineEdit *m_keyEdit;
     QPushButton *m_keySave;

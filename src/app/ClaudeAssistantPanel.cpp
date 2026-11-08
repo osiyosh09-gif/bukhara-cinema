@@ -3,6 +3,7 @@
 #include "app/ClaudeAssistant.h"
 #include "app/ProjectController.h"
 
+#include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -14,10 +15,20 @@ namespace bc {
 
 ClaudeAssistantPanel::ClaudeAssistantPanel(ProjectController *controller, QWidget *parent)
     : QWidget(parent), m_ctl(controller), m_assistant(new ClaudeAssistant(controller, this))
+    , m_providerCombo(new QComboBox(this))
     , m_keyStatus(new QLabel(this)), m_keyEdit(new QLineEdit(this)), m_keySave(new QPushButton(this))
     , m_log(new QPlainTextEdit(this)), m_input(new QLineEdit(this)), m_send(new QPushButton(this))
 {
     setObjectName(QStringLiteral("claudeAssistantPanel"));
+    m_providerCombo->setObjectName(QStringLiteral("claudeProviderCombo"));
+    m_providerCombo->addItem(tr("Claude (Anthropic)"));
+    m_providerCombo->addItem(tr("Gemini (Google, free)"));
+    m_providerCombo->setCurrentIndex(ClaudeAssistant::provider() == ClaudeAssistant::Provider::Gemini ? 1 : 0);
+    connect(m_providerCombo, &QComboBox::currentIndexChanged, this, [this](int index) {
+        ClaudeAssistant::setProvider(index == 1 ? ClaudeAssistant::Provider::Gemini : ClaudeAssistant::Provider::Anthropic);
+        refreshKeyRow();
+    });
+
     m_keyStatus->setObjectName(QStringLiteral("claudeKeyStatus"));
     m_keyStatus->setWordWrap(true);
     m_keyStatus->setStyleSheet(QStringLiteral("color:#8a8a8a;"));
@@ -47,6 +58,7 @@ ClaudeAssistantPanel::ClaudeAssistantPanel(ProjectController *controller, QWidge
     inputRow->addWidget(m_send);
 
     auto *lay = new QVBoxLayout(this);
+    lay->addWidget(m_providerCombo);
     lay->addWidget(m_keyStatus);
     lay->addLayout(keyRow);
     lay->addWidget(m_log, 1);
@@ -57,7 +69,7 @@ ClaudeAssistantPanel::ClaudeAssistantPanel(ProjectController *controller, QWidge
         m_input->setEnabled(!busy);
     });
     connect(m_assistant, &ClaudeAssistant::reply, this, [this](const QString &text) {
-        appendLine(tr("Claude:"), text);
+        appendLine(ClaudeAssistant::provider() == ClaudeAssistant::Provider::Gemini ? tr("Gemini:") : tr("Claude:"), text);
     });
     connect(m_assistant, &ClaudeAssistant::actionStarted, this, [this](const QString &name) {
         appendLine(tr("Running:"), name);
@@ -74,13 +86,21 @@ ClaudeAssistantPanel::ClaudeAssistantPanel(ProjectController *controller, QWidge
 
 void ClaudeAssistantPanel::refreshKeyRow()
 {
+    const bool gemini = ClaudeAssistant::provider() == ClaudeAssistant::Provider::Gemini;
     const bool has = m_assistant->hasApiKey();
-    m_keyStatus->setText(has
-        ? tr("API key saved. Every command is sent to Claude over the internet and costs a little.")
-        : tr("No API key entered: commands will not work. Get one from console.anthropic.com."));
+    if (gemini) {
+        m_keyStatus->setText(has
+            ? tr("API key saved. Every command is sent to Gemini over the internet; Google's free tier usually covers it.")
+            : tr("No API key entered: commands will not work. Get a free one from aistudio.google.com."));
+    } else {
+        m_keyStatus->setText(has
+            ? tr("API key saved. Every command is sent to Claude over the internet and costs a little.")
+            : tr("No API key entered: commands will not work. Get one from console.anthropic.com."));
+    }
     m_keyEdit->clear();
     m_keyEdit->setPlaceholderText(has ? tr("Type a new key to replace it")
-                                      : tr("Anthropic API key (console.anthropic.com)"));
+                                      : (gemini ? tr("Gemini API key (aistudio.google.com)")
+                                                : tr("Anthropic API key (console.anthropic.com)")));
 }
 
 void ClaudeAssistantPanel::saveKey()

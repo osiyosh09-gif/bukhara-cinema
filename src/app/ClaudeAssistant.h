@@ -20,20 +20,30 @@ class ProjectController;
 //   auto_cut_cameras: cut a multicamera clip between its cameras (Sequence >
 //                      Automatic multicamera edit, with the last used, or
 //                      default, settings, without the dialog) --
-// using the Claude Haiku model over the internet (Anthropic's paid API: an
-// internet connection and a small cost per command). The API key is kept in
-// QSettings on this computer only, never in the project file or in git.
-// Anything the model does not recognise as one of those two actions comes
-// back as a short reply, shown as text; no project change is made for it.
+// using a small model over the internet, picked by Provider: Claude Haiku
+// (Anthropic's paid API) or Gemini Flash-Lite (Google, has a free tier).
+// Either way: an internet connection is needed, and each provider's API key
+// is kept in QSettings on this computer only, never in the project file or
+// in git. Anything the model does not recognise as one of those two actions
+// comes back as a short reply, shown as text; no project change is made for it.
 class ClaudeAssistant : public QObject
 {
     Q_OBJECT
 public:
+    // Two interchangeable providers for the same two fixed tools: Claude
+    // (Anthropic, paid) or Gemini (Google, has a free tier). Each keeps its
+    // own API key in QSettings; switching providers does not touch the
+    // other provider's saved key.
+    enum class Provider { Anthropic, Gemini };
+
     explicit ClaudeAssistant(ProjectController *controller, QObject *parent = nullptr);
     ~ClaudeAssistant() override;
 
-    static QString apiKey();
-    static void setApiKey(const QString &key);
+    static Provider provider();
+    static void setProvider(Provider p);
+
+    static QString apiKey();           // for the current provider
+    static void setApiKey(const QString &key); // for the current provider
     bool hasApiKey() const { return !apiKey().isEmpty(); }
 
     // What sync_cameras / auto_cut_cameras run on: the panel sets these from
@@ -52,11 +62,14 @@ signals:
     void busyChanged(bool busy);
 
 private:
+    void sendAnthropic(const QString &command, const QString &key);
+    void sendGemini(const QString &command, const QString &key);
     void handleFinished();
 
     ProjectController *m_ctl;
     QNetworkAccessManager *m_net;
     QNetworkReply *m_reply = nullptr;
+    Provider m_pendingProvider = Provider::Anthropic; // provider the in-flight request was sent to
     QList<QUuid> m_mediaSelection;
     QList<QUuid> m_timelineSelection;
 };
