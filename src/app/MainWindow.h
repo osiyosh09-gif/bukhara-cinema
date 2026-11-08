@@ -5,6 +5,7 @@
 #include <QPointer>
 
 class QAction;
+class QActionGroup;
 class QDockWidget;
 class QMenu;
 class QTabWidget;
@@ -23,6 +24,8 @@ class TimelinePanel;
 class ClipInspector;
 class EffectsPanel;
 class SubtitlesPanel;
+class ColorPanel;
+class AudioMixer;
 class ScopesPanel;
 class ExportQueue;
 class ExportQueueDialog;
@@ -38,6 +41,13 @@ class ClaudeAssistantPanel;
 //   bottom  - multitrack timeline
 // All panels are QDockWidgets: resizable, movable, closable; the layout is
 // stored in QSettings and can be reset from Window > Reset layout.
+//
+// Workspace bar (phase 17c, DaVinci Resolve style): a bottom toolbar with
+// three page buttons (Edit/Color/Audio) that jump the right-hand Properties
+// tabs to the matching panel and show/hide the Scopes dock with it. It only
+// drives the existing dock/tab widgets (same object names as before, so
+// tests that reach a panel directly through "rightTabs" are unaffected); it
+// does not move panels between docks or hide the media bin/timeline.
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -62,9 +72,16 @@ private:
     void buildDocks();
     void buildMenus();
     void buildToolbar();
+    void buildWorkspaceBar();
     void retranslate();
     void saveLayout();
     void restoreLayout();
+
+    // DaVinci Resolve style page switcher (phase 17c). Edit is the normal
+    // layout (Clip tab, Scopes hidden); Color selects the Colour tab and
+    // opens Scopes; Audio selects the Audio tab.
+    enum class Workspace { Edit, Color, Audio };
+    void switchWorkspace(Workspace w);
 
     // A menu entry for a feature that is not implemented yet: it is disabled
     // and shows the phase in which it will arrive.
@@ -188,12 +205,20 @@ private:
     QAction *m_tbSave = nullptr;
     QAction *m_tbExport = nullptr;
 
+    QToolBar *m_workspaceBar = nullptr; // phase 17c: Edit/Color/Audio page switcher
+    QActionGroup *m_workspaceGroup = nullptr;
+    QAction *m_workspaceEditAct = nullptr;
+    QAction *m_workspaceColorAct = nullptr;
+    QAction *m_workspaceAudioAct = nullptr;
+
     QDockWidget *m_mediaDock = nullptr;
     QDockWidget *m_inspectorDock = nullptr;
     QDockWidget *m_timelineDock = nullptr;
     QTabWidget *m_leftTabs = nullptr;
     QTabWidget *m_rightTabs = nullptr;
     EffectsPanel *m_effectsPanel = nullptr;
+    ColorPanel *m_colorPanel = nullptr;
+    AudioMixer *m_audioMixer = nullptr;
     SubtitlesPanel *m_subtitlesPanel = nullptr;
     ScopesPanel *m_scopes = nullptr;
     QDockWidget *m_scopesDock = nullptr;

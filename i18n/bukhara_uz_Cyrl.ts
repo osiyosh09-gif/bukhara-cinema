@@ -533,6 +533,16 @@
         <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
         <translation>«Ойна &gt; Claude ёрдамчиси»: ёзма ўзбекча буйруқ («камераларни синхронла», «мультикамни кес») диалогларни очмасдан «Секвенция &gt; Мультикам секвенция яратиш» (овоз бўйича синхрон) ёки «Секвенция &gt; Автоматик мультикам монтаж»ни бажаради. Дастурнинг қолган қисмидан фарқли равишда, бу интернет ва Anthropic API калитини талаб қилади (фақат шу компьютерда, Созламаларда сақланади, лойиҳа файлида йўқ); ҳар буйруқ озгина харажат қилади. Бошқа нарса ёзилса, қисқа ёзма жавоб қайтади ва ҳеч нарса ўзгармайди.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>Edit/Color/Audio workspace bar</source>
+        <translation>Монтаж/Ранг/Овоз иш столи тугмалари</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window &gt; Scopes and the Properties tabs still work directly, as before.</source>
+        <translation>Пастдаги тугмалар қатори (DaVinci Resolve услубида) «Параметрлар» панелини Клип, Ранг ёки Овоз табига ўтказади; Ранг танланса Scopes ҳам очилади. Ойна &gt; Scopes ва табларнинг ўзи ҳам олдингидек ишлайверади.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3508,6 +3518,41 @@
         <location filename="../src/app/MainWindow.cpp" line="1" />
         <source>Claude assistant</source>
         <translation>Claude ёрдамчиси</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="904" />
+        <source>Workspace bar</source>
+        <translation>Иш столи панели</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="905" />
+        <source>Edit page</source>
+        <translation>Монтаж</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="906" />
+        <source>Clip properties (the normal layout)</source>
+        <translation>Клип параметрлари (одатдаги жойлашув)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="907" />
+        <source>Color page</source>
+        <translation>Ранг</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="908" />
+        <source>Colour tab and Scopes, one click away</source>
+        <translation>Ранг таби ва Scopes бир босишда очилади</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="909" />
+        <source>Audio page</source>
+        <translation>Овоз</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="910" />
+        <source>Audio mixer tab, one click away</source>
+        <translation>Аудио микшер таби бир босишда очилади</translation>
     </message>
 </context>
 <context>

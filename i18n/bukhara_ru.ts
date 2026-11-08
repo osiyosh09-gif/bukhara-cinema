@@ -533,6 +533,16 @@
         <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
         <translation>«Окно &gt; Помощник Claude»: введённая узбекская команда («синхронизируй камеры», «разрежь мультикам») запускает «Эпизод &gt; Создать многокамерный эпизод» (синхронизация по звуку) или «Эпизод &gt; Автоматический многокамерный монтаж» без открытия их диалогов. В отличие от остальной программы, для этого нужен интернет и ключ API Anthropic (хранится только на этом компьютере, в настройках, никогда в файле проекта); каждая команда стоит немного. Если написано что-то другое, приходит короткий письменный ответ и ничего не меняется.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>Edit/Color/Audio workspace bar</source>
+        <translation>Панель рабочих пространств «Монтаж/Цвет/Звук»</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window &gt; Scopes and the Properties tabs still work directly, as before.</source>
+        <translation>Ряд кнопок внизу (в стиле DaVinci Resolve) переключает панель «Параметры» на вкладку «Клип», «Цвет» или «Звук»; при выборе «Цвет» также открывается Scopes. Меню «Окно &gt; Scopes» и сами вкладки по-прежнему работают напрямую, как раньше.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3508,6 +3518,41 @@
         <location filename="../src/app/MainWindow.cpp" line="1" />
         <source>Claude assistant</source>
         <translation>Помощник Claude</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="904" />
+        <source>Workspace bar</source>
+        <translation>Панель рабочих пространств</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="905" />
+        <source>Edit page</source>
+        <translation>Монтаж</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="906" />
+        <source>Clip properties (the normal layout)</source>
+        <translation>Параметры клипа (обычная раскладка)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="907" />
+        <source>Color page</source>
+        <translation>Цвет</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="908" />
+        <source>Colour tab and Scopes, one click away</source>
+        <translation>Вкладка «Цвет» и Scopes открываются в один клик</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="909" />
+        <source>Audio page</source>
+        <translation>Звук</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="910" />
+        <source>Audio mixer tab, one click away</source>
+        <translation>Вкладка аудиомиксера открывается в один клик</translation>
     </message>
 </context>
 <context>

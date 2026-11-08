@@ -24,6 +24,7 @@ QList<FeatureEntry> entries()
     using S = FeatureEntry::State;
     return {
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Main window with five resizable zones"), QCoreApplication::translate("FeatureStatus", "Panels can be resized, moved, hidden and reset; the layout is remembered.")},
+        {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Edit/Color/Audio workspace bar"), QCoreApplication::translate("FeatureStatus", "A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window > Scopes and the Properties tabs still work directly, as before.")},
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Dark grey theme"), {}},
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "Interface languages: Uzbek (Cyrillic, Latin), Russian and English"), QCoreApplication::translate("FeatureStatus", "Switch in File > Settings; applies immediately.")},
         {S::Ready,   0, QCoreApplication::translate("FeatureStatus", "About window and third-party licenses"), {}},

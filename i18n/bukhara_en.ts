@@ -533,6 +533,16 @@
         <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
         <translation>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>Edit/Color/Audio workspace bar</source>
+        <translation>Edit/Color/Audio workspace bar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window &gt; Scopes and the Properties tabs still work directly, as before.</source>
+        <translation>A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window &gt; Scopes and the Properties tabs still work directly, as before.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3508,6 +3518,41 @@
         <location filename="../src/app/MainWindow.cpp" line="1" />
         <source>Claude assistant</source>
         <translation>Claude assistant</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="904" />
+        <source>Workspace bar</source>
+        <translation>Workspace bar</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="905" />
+        <source>Edit page</source>
+        <translation>Edit page</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="906" />
+        <source>Clip properties (the normal layout)</source>
+        <translation>Clip properties (the normal layout)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="907" />
+        <source>Color page</source>
+        <translation>Color page</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="908" />
+        <source>Colour tab and Scopes, one click away</source>
+        <translation>Colour tab and Scopes, one click away</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="909" />
+        <source>Audio page</source>
+        <translation>Audio page</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="910" />
+        <source>Audio mixer tab, one click away</source>
+        <translation>Audio mixer tab, one click away</translation>
     </message>
 </context>
 <context>

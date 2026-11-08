@@ -533,6 +533,16 @@
         <source>Window &gt; Claude assistant: a typed Uzbek command ("sync the cameras", "cut the multicam") runs Sequence &gt; Create multicamera sequence (sync by sound) or Sequence &gt; Automatic multicamera edit, without opening their dialogs. Unlike the rest of the program, this needs the internet and an Anthropic API key (kept in Settings on this computer only, never in the project file); each command has a small cost. Anything else typed gets a short written reply and changes nothing.</source>
         <translation>«Oyna &gt; Claude yordamchisi»: yozma o‘zbekcha buyruq («kameralarni sinxronla», «multikamni kes») dialoglarni ochmasdan «Sekvensiya &gt; Multikam sekvensiya yaratish» (ovoz bo‘yicha sinxron) yoki «Sekvensiya &gt; Avtomatik multikam montaj»ni bajaradi. Dasturning qolgan qismidan farqli ravishda, bu internet va Anthropic API kalitini talab qiladi (faqat shu kompyuterda, Sozlamalarda saqlanadi, loyiha faylida yo‘q); har buyruq ozgina xarajat qiladi. Boshqa narsa yozilsa, qisqa yozma javob qaytadi va hech narsa o‘zgarmaydi.</translation>
     </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>Edit/Color/Audio workspace bar</source>
+        <translation>Montaj/Rang/Ovoz ish stoli tugmalari</translation>
+    </message>
+    <message>
+        <location filename="../src/app/FeatureStatus.cpp" line="27" />
+        <source>A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window &gt; Scopes and the Properties tabs still work directly, as before.</source>
+        <translation>Pastdagi tugmalar qatori (DaVinci Resolve uslubida) «Parametrlar» panelini Klip, Rang yoki Ovoz tabiga o‘tkazadi; Rang tanlansa Scopes ham ochiladi. Oyna &gt; Scopes va tablarning o‘zi ham oldingidek ishlayveradi.</translation>
+    </message>
 </context>
 <context>
     <name>Fmt</name>
@@ -3508,6 +3518,41 @@
         <location filename="../src/app/MainWindow.cpp" line="1" />
         <source>Claude assistant</source>
         <translation>Claude yordamchisi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="904" />
+        <source>Workspace bar</source>
+        <translation>Ish stoli paneli</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="905" />
+        <source>Edit page</source>
+        <translation>Montaj</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="906" />
+        <source>Clip properties (the normal layout)</source>
+        <translation>Klip parametrlari (odatdagi joylashuv)</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="907" />
+        <source>Color page</source>
+        <translation>Rang</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="908" />
+        <source>Colour tab and Scopes, one click away</source>
+        <translation>Rang tabi va Scopes bir bosishda ochiladi</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="909" />
+        <source>Audio page</source>
+        <translation>Ovoz</translation>
+    </message>
+    <message>
+        <location filename="../src/app/MainWindow.cpp" line="910" />
+        <source>Audio mixer tab, one click away</source>
+        <translation>Audio miksher tabi bir bosishda ochiladi</translation>
     </message>
 </context>
 <context>

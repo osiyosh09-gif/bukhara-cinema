@@ -1820,6 +1820,21 @@ T.update({
     'Gemini:': ('Gemini:', 'Gemini:'),
 })
 
+# Workspace bar (phase 17c): DaVinci Resolve style Edit/Color/Audio page switcher
+T.update({
+    'Workspace bar': ('Иш столи панели', 'Панель рабочих пространств'),
+    'Edit page': ('Монтаж', 'Монтаж'),
+    'Clip properties (the normal layout)': ('Клип параметрлари (одатдаги жойлашув)', 'Параметры клипа (обычная раскладка)'),
+    'Color page': ('Ранг', 'Цвет'),
+    'Colour tab and Scopes, one click away': ('Ранг таби ва Scopes бир босишда очилади', 'Вкладка «Цвет» и Scopes открываются в один клик'),
+    'Audio page': ('Овоз', 'Звук'),
+    'Audio mixer tab, one click away': ('Аудио микшер таби бир босишда очилади', 'Вкладка аудиомиксера открывается в один клик'),
+    'Edit/Color/Audio workspace bar': ('Монтаж/Ранг/Овоз иш столи тугмалари', 'Панель рабочих пространств «Монтаж/Цвет/Звук»'),
+    'A row of buttons at the bottom (DaVinci Resolve style) jumps the Properties panel to the Clip, Colour or Audio tab; Color also opens Scopes. Window > Scopes and the Properties tabs still work directly, as before.': (
+        'Пастдаги тугмалар қатори (DaVinci Resolve услубида) «Параметрлар» панелини Клип, Ранг ёки Овоз табига ўтказади; Ранг танланса Scopes ҳам очилади. Ойна > Scopes ва табларнинг ўзи ҳам олдингидек ишлайверади.',
+        'Ряд кнопок внизу (в стиле DaVinci Resolve) переключает панель «Параметры» на вкладку «Клип», «Цвет» или «Звук»; при выборе «Цвет» также открывается Scopes. Меню «Окно > Scopes» и сами вкладки по-прежнему работают напрямую, как раньше.'),
+})
+
 # Why the multicamera command is off: the selected files (deep check)
 T.update({
     '%1: still being read, wait a moment': ('%1: ҳали ўқиляпти, бир оз кутинг', '%1: ещё читается, подождите немного'),

@@ -39,6 +39,7 @@
 #include <algorithm>
 
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDesktopServices>
@@ -91,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     buildDocks();
     buildMenus();
     buildToolbar();
+    buildWorkspaceBar();
     setupOffReasons();
 
     m_statusLabel = new QLabel(this);
@@ -266,8 +268,10 @@ void MainWindow::buildDocks()
     m_rightTabs->addTab(m_clipInspector, QString());
     m_effectsPanel = new EffectsPanel(m_ctl, m_timeline->view());
     m_rightTabs->addTab(m_effectsPanel, QString());
-    m_rightTabs->addTab(new ColorPanel(m_ctl, m_timeline->view()), QString());
-    m_rightTabs->addTab(new AudioMixer(m_ctl), QString());
+    m_colorPanel = new ColorPanel(m_ctl, m_timeline->view());
+    m_rightTabs->addTab(m_colorPanel, QString());
+    m_audioMixer = new AudioMixer(m_ctl);
+    m_rightTabs->addTab(m_audioMixer, QString());
     m_subtitlesPanel = new SubtitlesPanel(m_ctl);
     m_rightTabs->addTab(m_subtitlesPanel, QString());
     m_inspectorDock = new QDockWidget(this);
@@ -748,6 +752,65 @@ void MainWindow::buildToolbar()
     m_toolbar->addAction(m_settingsAct);
 }
 
+void MainWindow::buildWorkspaceBar()
+{
+    // DaVinci Resolve style page switcher (phase 17c): centred buttons at the
+    // bottom that jump the right-hand Properties tabs to the matching panel.
+    // This only selects a tab and toggles the Scopes dock -- it never moves a
+    // panel out of "rightTabs" or hides the media bin/timeline, so it adds no
+    // risk to the existing panels or the tests that reach them directly.
+    m_workspaceBar = new QToolBar(this);
+    m_workspaceBar->setObjectName(QStringLiteral("workspaceBar"));
+    m_workspaceBar->setMovable(false);
+    m_workspaceBar->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    addToolBar(Qt::BottomToolBarArea, m_workspaceBar);
+
+    auto *leftSpacer = new QWidget(m_workspaceBar);
+    leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_workspaceBar->addWidget(leftSpacer);
+
+    m_workspaceGroup = new QActionGroup(this);
+    m_workspaceGroup->setExclusive(true);
+
+    m_workspaceEditAct = m_workspaceBar->addAction(QString());
+    m_workspaceEditAct->setObjectName(QStringLiteral("actWorkspaceEdit"));
+    m_workspaceColorAct = m_workspaceBar->addAction(QString());
+    m_workspaceColorAct->setObjectName(QStringLiteral("actWorkspaceColor"));
+    m_workspaceAudioAct = m_workspaceBar->addAction(QString());
+    m_workspaceAudioAct->setObjectName(QStringLiteral("actWorkspaceAudio"));
+    for (QAction *a : {m_workspaceEditAct, m_workspaceColorAct, m_workspaceAudioAct}) {
+        a->setCheckable(true);
+        m_workspaceGroup->addAction(a);
+    }
+    m_workspaceEditAct->setChecked(true); // matches the default layout: Clip tab, Scopes hidden
+    connect(m_workspaceEditAct, &QAction::triggered, this, [this] { switchWorkspace(Workspace::Edit); });
+    connect(m_workspaceColorAct, &QAction::triggered, this, [this] { switchWorkspace(Workspace::Color); });
+    connect(m_workspaceAudioAct, &QAction::triggered, this, [this] { switchWorkspace(Workspace::Audio); });
+
+    auto *rightSpacer = new QWidget(m_workspaceBar);
+    rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_workspaceBar->addWidget(rightSpacer);
+}
+
+void MainWindow::switchWorkspace(Workspace w)
+{
+    m_inspectorDock->show();
+    switch (w) {
+    case Workspace::Edit:
+        m_rightTabs->setCurrentWidget(m_clipInspector);
+        m_scopesDock->hide();
+        break;
+    case Workspace::Color:
+        m_rightTabs->setCurrentWidget(m_colorPanel);
+        m_scopesDock->show();
+        break;
+    case Workspace::Audio:
+        m_rightTabs->setCurrentWidget(m_audioMixer);
+        m_scopesDock->hide();
+        break;
+    }
+}
+
 void MainWindow::retranslate()
 {
     updateTitle();
@@ -837,6 +900,14 @@ void MainWindow::retranslate()
     m_tbExport->setToolTip(tr("Export to MP4 (Ctrl+M)"));
     m_exportAct->setText(tr("Export..."));
     m_exportQueueAct->setText(tr("Export queue..."));
+
+    m_workspaceBar->setWindowTitle(tr("Workspace bar"));
+    m_workspaceEditAct->setText(tr("Edit page"));
+    m_workspaceEditAct->setToolTip(tr("Clip properties (the normal layout)"));
+    m_workspaceColorAct->setText(tr("Color page"));
+    m_workspaceColorAct->setToolTip(tr("Colour tab and Scopes, one click away"));
+    m_workspaceAudioAct->setText(tr("Audio page"));
+    m_workspaceAudioAct->setToolTip(tr("Audio mixer tab, one click away"));
 
     m_mediaDock->setWindowTitle(tr("Project"));
     m_inspectorDock->setWindowTitle(tr("Properties"));
@@ -1030,6 +1101,8 @@ void MainWindow::resetLayout()
     m_scopesDock->hide();
     m_multicamDock->hide();
     m_claudeDock->hide();
+    m_rightTabs->setCurrentWidget(m_clipInspector);
+    m_workspaceEditAct->setChecked(true);
     resizeDocks({m_mediaDock, m_inspectorDock}, {300, 320}, Qt::Horizontal);
     resizeDocks({m_timelineDock}, {300}, Qt::Vertical);
     const int half = m_monitorSplit->width() / 2;
